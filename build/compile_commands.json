@@ -1,0 +1,20 @@
+[
+{
+  "directory": "E:/QTproject/kylinqt/build",
+  "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj -c E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp",
+  "file": "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj"
+},
+{
+  "directory": "E:/QTproject/kylinqt/build",
+  "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/main.cpp.obj -c E:/QTproject/kylinqt/main.cpp",
+  "file": "E:/QTproject/kylinqt/main.cpp",
+  "output": "CMakeFiles/kylinqt.dir/main.cpp.obj"
+},
+{
+  "directory": "E:/QTproject/kylinqt/build",
+  "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj -c E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp",
+  "file": "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp",
+  "output": "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
+}
+]

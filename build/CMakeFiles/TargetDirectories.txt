@@ -1,0 +1,4 @@
+E:/QTproject/kylinqt/build/CMakeFiles/kylinqt.dir
+E:/QTproject/kylinqt/build/CMakeFiles/edit_cache.dir
+E:/QTproject/kylinqt/build/CMakeFiles/rebuild_cache.dir
+E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir
