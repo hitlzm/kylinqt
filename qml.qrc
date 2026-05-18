@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>components/Sendarea.qml</file>
+        <file>components/LaserRecvArea.qml</file>
     </qresource>
 </RCC>

@@ -51,6 +51,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Qml/Qt5Qml_QTcpServerConnectionFactory.cmake"
   "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Quick/Qt5QuickConfig.cmake"
   "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Quick/Qt5QuickConfigVersion.cmake"
+  "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
+  "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake"
   "E:/QTproject/kylinqt/CMakeLists.txt"
   "CMakeFiles/4.1.0-rc2/CMakeCXXCompiler.cmake"
   "CMakeFiles/4.1.0-rc2/CMakeRCCompiler.cmake"

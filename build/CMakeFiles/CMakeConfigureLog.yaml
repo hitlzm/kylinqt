@@ -3850,3 +3850,132 @@ events:
         - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
         - "C:/Program Files (x86)/kylinqt"
 ...
+
+---
+events:
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5/Qt5Config.cmake:28 (find_package)"
+      - "CMakeLists.txt:27 (find_package)"
+    name: "Qt5SerialPort"
+    configs:
+      -
+        filename: "Qt5SerialPortConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "qt5serialport-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "Qt5SerialPort"
+      search_paths:
+        - "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/Qt5SerialPortConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/qt5serialport-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPortConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/qt5serialport-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
+      mode: "config"
+      version: "5.12.8"
+    search_context:
+      ENV{PATH}:
+        - "C:\\Users\\hitlz\\bin"
+        - "E:\\Git\\Git\\mingw64\\bin"
+        - "E:\\Git\\Git\\usr\\local\\bin"
+        - "E:\\Git\\Git\\usr\\bin"
+        - "E:\\Git\\Git\\usr\\bin"
+        - "E:\\Git\\Git\\mingw64\\bin"
+        - "E:\\Git\\Git\\usr\\bin"
+        - "C:\\Users\\hitlz\\bin"
+        - "E:\\FFmpeg\\FFmpeg4.2.1_install\\bin"
+        - "E:\\ubantu\\vnwaredownload\\bin"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\windows\\system32"
+        - "C:\\windows"
+        - "C:\\windows\\System32\\Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\windows\\System32\\OpenSSH"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2"
+        - "C:\\Program Files\\dotnet"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:\\matlab2\\runtime\\win64"
+        - "E:\\matlab2\\bin"
+        - "C:\\Program Files (x86)\\STMicroelectronics\\STM32 ST-LINK Utility\\ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:\\VScode\\mingw64\\bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:\\VScode\\cmake-4.1.0-rc2-windows-x86_64\\cmake-4.1.0-rc2-windows-x86_64\\bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
+        - "C:\\WINDOWS\\System32\\OpenSSH"
+        - "E:\\Git\\Git\\cmd"
+        - "E:\\MSYS2\\mingw64\\bin"
+        - "E:\\ninja-win"
+        - "C:\\Users\\hitlz\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Bandizip"
+        - "C:\\Users\\hitlz\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Users\\hitlz\\anaconda3"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:\\Users\\hitlz\\anaconda3\\Library\\bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:\\texlive\\2022\\bin\\win32"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:\\Git\\Git\\usr\\bin\\vendor_perl"
+        - "E:\\Git\\Git\\usr\\bin\\core_perl"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "E:/Git/Git/mingw64"
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
+        - "C:/Program Files (x86)/kylinqt"
+...

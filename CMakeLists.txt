@@ -24,21 +24,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
 
 if(ANDROID)
     add_library(kylinqt SHARED
       main.cpp
       qml.qrc
+      serialport/serialport.cpp
+      serialport/serialport_image.cpp
+      serialport/serialport_laser.cpp
     )
 else()
     add_executable(kylinqt
       main.cpp
       qml.qrc
+      serialport/serialport.cpp
+      serialport/serialport_image.cpp
+      serialport/serialport_laser.cpp
     )
 endif()
 
 target_compile_definitions(kylinqt
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(kylinqt
-  PRIVATE Qt5::Core Qt5::Quick)
+  PRIVATE Qt5::Core Qt5::Quick Qt5::SerialPort)

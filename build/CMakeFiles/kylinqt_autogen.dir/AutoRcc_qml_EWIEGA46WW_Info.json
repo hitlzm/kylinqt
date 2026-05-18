@@ -7,7 +7,12 @@
 	"CROSS_CONFIG" : false,
 	"GENERATOR" : "Unix Makefiles",
 	"INCLUDE_DIR" : "E:/QTproject/kylinqt/build/kylinqt_autogen/include",
-	"INPUTS" : [ "E:/QTproject/kylinqt/main.qml" ],
+	"INPUTS" : 
+	[
+		"E:/QTproject/kylinqt/main.qml",
+		"E:/QTproject/kylinqt/components/Sendarea.qml",
+		"E:/QTproject/kylinqt/components/LaserRecvArea.qml"
+	],
 	"LOCK_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,
 	"OPTIONS" : [ "-name", "qml" ],

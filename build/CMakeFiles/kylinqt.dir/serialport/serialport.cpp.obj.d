@@ -1,6 +1,5 @@
-CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
- E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp \
+CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj: \
+ E:/QTproject/kylinqt/serialport/serialport.cpp \
  E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
@@ -227,8 +226,19 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp \
- E:/QTproject/kylinqt/serialport/serialport_image.h \
- E:/QTproject/kylinqt/serialport/serialport.h \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_laser.cpp \
- E:/QTproject/kylinqt/serialport/serialport_laser.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h

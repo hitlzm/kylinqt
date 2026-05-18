@@ -81,13 +81,35 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsIntegrationPlugin.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5Gui_QXdgDesktopPortalThemePlugin.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake",
 		"E:/QTproject/kylinqt/qml.qrc"
 	],
 	"CMAKE_SOURCE_DIR" : "E:/QTproject/kylinqt",
 	"CROSS_CONFIG" : false,
 	"DEP_FILE" : "",
 	"DEP_FILE_RULE_NAME" : "",
-	"HEADERS" : [],
+	"HEADERS" : 
+	[
+		[
+			"E:/QTproject/kylinqt/serialport/serialport.h",
+			"MU",
+			"YN6D6BICVT/moc_serialport.cpp",
+			null
+		],
+		[
+			"E:/QTproject/kylinqt/serialport/serialport_image.h",
+			"MU",
+			"YN6D6BICVT/moc_serialport_image.cpp",
+			null
+		],
+		[
+			"E:/QTproject/kylinqt/serialport/serialport_laser.h",
+			"MU",
+			"YN6D6BICVT/moc_serialport_laser.cpp",
+			null
+		]
+	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
 	"INCLUDE_DIR" : "E:/QTproject/kylinqt/build/kylinqt_autogen/include",
 	"MOC_COMPILATION_FILE" : "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp",
@@ -98,7 +120,8 @@
 		"QT_NETWORK_LIB",
 		"QT_QML_DEBUG",
 		"QT_QML_LIB",
-		"QT_QUICK_LIB"
+		"QT_QUICK_LIB",
+		"QT_SERIALPORT_LIB"
 	],
 	"MOC_DEPEND_FILTERS" : 
 	[
@@ -119,6 +142,7 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtANGLE",
+		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort",
 		"E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++",
 		"E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32",
 		"E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward",
@@ -151,7 +175,10 @@
 	"SETTINGS_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
-		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ]
+		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/serialport/serialport_image.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/serialport/serialport_laser.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

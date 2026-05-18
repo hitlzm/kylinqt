@@ -257,6 +257,9 @@ Qt5Qml_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Qml
 //The directory containing a CMake configuration file for Qt5Quick.
 Qt5Quick_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Quick
 
+//The directory containing a CMake configuration file for Qt5SerialPort.
+Qt5SerialPort_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort
+
 //The directory containing a CMake configuration file for Qt5.
 Qt5_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5
 

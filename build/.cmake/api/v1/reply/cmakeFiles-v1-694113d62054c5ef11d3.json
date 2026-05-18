@@ -323,6 +323,14 @@
 			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake"
 		},
 		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
+		},
+		{
 			"path" : "qml.qrc"
 		}
 	],

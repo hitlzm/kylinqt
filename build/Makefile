@@ -214,6 +214,78 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+serialport/serialport.obj: serialport/serialport.cpp.obj
+.PHONY : serialport/serialport.obj
+
+# target to build an object file
+serialport/serialport.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj
+.PHONY : serialport/serialport.cpp.obj
+
+serialport/serialport.i: serialport/serialport.cpp.i
+.PHONY : serialport/serialport.i
+
+# target to preprocess a source file
+serialport/serialport.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport.cpp.i
+.PHONY : serialport/serialport.cpp.i
+
+serialport/serialport.s: serialport/serialport.cpp.s
+.PHONY : serialport/serialport.s
+
+# target to generate assembly for a file
+serialport/serialport.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport.cpp.s
+.PHONY : serialport/serialport.cpp.s
+
+serialport/serialport_image.obj: serialport/serialport_image.cpp.obj
+.PHONY : serialport/serialport_image.obj
+
+# target to build an object file
+serialport/serialport_image.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj
+.PHONY : serialport/serialport_image.cpp.obj
+
+serialport/serialport_image.i: serialport/serialport_image.cpp.i
+.PHONY : serialport/serialport_image.i
+
+# target to preprocess a source file
+serialport/serialport_image.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.i
+.PHONY : serialport/serialport_image.cpp.i
+
+serialport/serialport_image.s: serialport/serialport_image.cpp.s
+.PHONY : serialport/serialport_image.s
+
+# target to generate assembly for a file
+serialport/serialport_image.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.s
+.PHONY : serialport/serialport_image.cpp.s
+
+serialport/serialport_laser.obj: serialport/serialport_laser.cpp.obj
+.PHONY : serialport/serialport_laser.obj
+
+# target to build an object file
+serialport/serialport_laser.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj
+.PHONY : serialport/serialport_laser.cpp.obj
+
+serialport/serialport_laser.i: serialport/serialport_laser.cpp.i
+.PHONY : serialport/serialport_laser.i
+
+# target to preprocess a source file
+serialport/serialport_laser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.i
+.PHONY : serialport/serialport_laser.cpp.i
+
+serialport/serialport_laser.s: serialport/serialport_laser.cpp.s
+.PHONY : serialport/serialport_laser.s
+
+# target to generate assembly for a file
+serialport/serialport_laser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.s
+.PHONY : serialport/serialport_laser.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -233,6 +305,15 @@ help:
 	@echo "... main.obj"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... serialport/serialport.obj"
+	@echo "... serialport/serialport.i"
+	@echo "... serialport/serialport.s"
+	@echo "... serialport/serialport_image.obj"
+	@echo "... serialport/serialport_image.i"
+	@echo "... serialport/serialport_image.s"
+	@echo "... serialport/serialport_laser.obj"
+	@echo "... serialport/serialport_laser.i"
+	@echo "... serialport/serialport_laser.s"
 .PHONY : help
 
 
