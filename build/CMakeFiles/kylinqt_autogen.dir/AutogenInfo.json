@@ -108,6 +108,12 @@
 			"MU",
 			"YN6D6BICVT/moc_serialport_laser.cpp",
 			null
+		],
+		[
+			"E:/QTproject/kylinqt/serialport/serialport_turntable.h",
+			"MU",
+			"YN6D6BICVT/moc_serialport_turntable.cpp",
+			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -178,7 +184,12 @@
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_image.cpp", "MU", null ],
-		[ "E:/QTproject/kylinqt/serialport/serialport_laser.cpp", "MU", null ]
+		[ "E:/QTproject/kylinqt/serialport/serialport_laser.cpp", "MU", null ],
+		[
+			"E:/QTproject/kylinqt/serialport/serialport_turntable.cpp",
+			"MU",
+			null
+		]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

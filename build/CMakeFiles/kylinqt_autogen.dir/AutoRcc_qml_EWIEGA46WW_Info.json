@@ -10,7 +10,7 @@
 	"INPUTS" : 
 	[
 		"E:/QTproject/kylinqt/main.qml",
-		"E:/QTproject/kylinqt/components/Sendarea.qml",
+		"E:/QTproject/kylinqt/components/LaserSendArea.qml",
 		"E:/QTproject/kylinqt/components/LaserRecvArea.qml"
 	],
 	"LOCK_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",

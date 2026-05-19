@@ -31,6 +31,12 @@
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+  "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj -c E:/QTproject/kylinqt/serialport/serialport_turntable.cpp",
+  "file": "E:/QTproject/kylinqt/serialport/serialport_turntable.cpp",
+  "output": "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj"
+},
+{
+  "directory": "E:/QTproject/kylinqt/build",
   "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj -c E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp",
   "file": "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp",
   "output": "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"

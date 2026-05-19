@@ -1,6 +1,6 @@
-CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
- E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp \
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: \
+ E:/QTproject/kylinqt/serialport/serialport_turntable.cpp \
+ E:/QTproject/kylinqt/serialport/serialport_turntable.h \
  E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
@@ -226,11 +226,4 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp \
- E:/QTproject/kylinqt/serialport/serialport_image.h \
- E:/QTproject/kylinqt/serialport/serialport.h \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_laser.cpp \
- E:/QTproject/kylinqt/serialport/serialport_laser.h \
- E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_turntable.cpp \
- E:/QTproject/kylinqt/serialport/serialport_turntable.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h
