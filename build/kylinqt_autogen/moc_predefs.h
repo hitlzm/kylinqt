@@ -133,6 +133,7 @@
 #define __cpp_ref_qualifiers 200710
 #define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
 #define __INT_LEAST32_MAX__ 0x7fffffff
+#define TaoQuickImportPath "file:///E:/QTproject/kylinqt/"
 #define __DEC32_MIN__ 1E-95DF
 #define __DEPRECATED 1
 #define __cpp_rvalue_references 200610

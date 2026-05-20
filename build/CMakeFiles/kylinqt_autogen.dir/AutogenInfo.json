@@ -36,6 +36,7 @@
 		"F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/Platform/Linker/Windows-GNU-CXX.cmake",
 		"F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/Platform/Linker/Windows-GNU.cmake",
 		"F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/Platform/Linker/GNU.cmake",
+		"E:/QTproject/kylinqt/taoQuick.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5/Qt5ConfigVersion.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5/Qt5Config.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5/Qt5ModuleLocation.cmake",
@@ -127,7 +128,8 @@
 		"QT_QML_DEBUG",
 		"QT_QML_LIB",
 		"QT_QUICK_LIB",
-		"QT_SERIALPORT_LIB"
+		"QT_SERIALPORT_LIB",
+		"TaoQuickImportPath=\"file:///E:/QTproject/kylinqt/\""
 	],
 	"MOC_DEPEND_FILTERS" : 
 	[

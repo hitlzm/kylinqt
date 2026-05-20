@@ -2835,8 +2835,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5"
-      binary: "E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5"
+      source: "E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9"
+      binary: "E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9"
     cmakeVariables:
       CMAKE_CXX_FLAGS: ""
       CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
@@ -2845,21 +2845,21 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5'
+        Change Dir: 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9'
         
-        Run Build Command(s): F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E env VERBOSE=1 F:/VScode/mingw64/bin/make.exe -f Makefile cmTC_2c500/fast
-        F:/VScode/mingw64/bin/make.exe  -f CMakeFiles/cmTC_2c500.dir/build.make CMakeFiles/cmTC_2c500.dir/build
-        make[1]: Entering directory 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5'
-        Building CXX object CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj
-        E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe   -v -o CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj -c F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp
+        Run Build Command(s): F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E env VERBOSE=1 F:/VScode/mingw64/bin/make.exe -f Makefile cmTC_2bc01/fast
+        F:/VScode/mingw64/bin/make.exe  -f CMakeFiles/cmTC_2bc01.dir/build.make CMakeFiles/cmTC_2bc01.dir/build
+        make[1]: Entering directory 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9'
+        Building CXX object CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj
+        E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe   -v -o CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj -c F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp
         Using built-in specs.
         COLLECT_GCC=E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe
         Target: x86_64-w64-mingw32
         Configured with: ../../../src/gcc-7.3.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 --enable-shared --enable-static --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-mpc=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-isl=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev0, Built by MinGW-W64 project' --with-bugurl=https://sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/include -I/c/mingw730/prerequisites/x86_64-zlib-static/include -I/c/mingw730/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/include -I/c/mingw730/prerequisites/x86_64-zlib-static/include -I/c/mingw730/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/include -I/c/mingw730/prerequisites/x86_64-zlib-static/include -I/c/mingw730/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/lib -L/c/mingw730/prerequisites/x86_64-zlib-static/lib -L/c/mingw730/prerequisites/x86_64-w64-mingw32-static/lib '
         Thread model: posix
         gcc version 7.3.0 (x86_64-posix-seh-rev0, Built by MinGW-W64 project) 
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona'
-         E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/cc1plus.exe -quiet -v -iprefix E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/ -D_REENTRANT F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=core2 -march=nocona -auxbase-strip CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj -version -o C:\\Users\\hitlz\\AppData\\Local\\Temp\\cccjXKNT.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona'
+         E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/cc1plus.exe -quiet -v -iprefix E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/ -D_REENTRANT F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=core2 -march=nocona -auxbase-strip CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj -version -o C:\\Users\\hitlz\\AppData\\Local\\Temp\\ccGzPP03.s
         GNU C++14 (x86_64-posix-seh-rev0, Built by MinGW-W64 project) version 7.3.0 (x86_64-w64-mingw32)
         	compiled by GNU C version 7.3.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.18-GMP
         
@@ -2886,16 +2886,16 @@ events:
         
         GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
         Compiler executable checksum: 86cf749bb84a0f12f1d61bff4e68fffd
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona'
-         E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj C:\\Users\\hitlz\\AppData\\Local\\Temp\\cccjXKNT.s
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona'
+         E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj C:\\Users\\hitlz\\AppData\\Local\\Temp\\ccGzPP03.s
         GNU assembler version 2.30 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.30
         COMPILER_PATH=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/;E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/
         LIBRARY_PATH=E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../
-        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona'
-        Linking CXX executable cmTC_2c500.exe
-        F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E rm -f CMakeFiles/cmTC_2c500.dir/objects.a
-        E:/QT5.12.8/Tools/mingw730_64/bin/ar.exe qc CMakeFiles/cmTC_2c500.dir/objects.a @CMakeFiles/cmTC_2c500.dir/objects1.rsp
-        E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe  -v -Wl,-v -Wl,--whole-archive CMakeFiles/cmTC_2c500.dir/objects.a -Wl,--no-whole-archive -o cmTC_2c500.exe -Wl,--out-implib,libcmTC_2c500.dll.a -Wl,--major-image-version,0,--minor-image-version,0
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona'
+        Linking CXX executable cmTC_2bc01.exe
+        F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E rm -f CMakeFiles/cmTC_2bc01.dir/objects.a
+        E:/QT5.12.8/Tools/mingw730_64/bin/ar.exe qc CMakeFiles/cmTC_2bc01.dir/objects.a @CMakeFiles/cmTC_2bc01.dir/objects1.rsp
+        E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe  -v -Wl,-v -Wl,--whole-archive CMakeFiles/cmTC_2bc01.dir/objects.a -Wl,--no-whole-archive -o cmTC_2bc01.exe -Wl,--out-implib,libcmTC_2bc01.dll.a -Wl,--major-image-version,0,--minor-image-version,0
         Using built-in specs.
         COLLECT_GCC=E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe
         COLLECT_LTO_WRAPPER=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe
@@ -2905,13 +2905,13 @@ events:
         gcc version 7.3.0 (x86_64-posix-seh-rev0, Built by MinGW-W64 project) 
         COMPILER_PATH=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/;E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/
         LIBRARY_PATH=E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/;E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2c500.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona'
-         E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/collect2.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cchJ0Fqd.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2c500.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2c500.dir/objects.a --no-whole-archive --out-implib libcmTC_2c500.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2bc01.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona'
+         E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/collect2.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cclyb5qc.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2bc01.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2bc01.dir/objects.a --no-whole-archive --out-implib libcmTC_2bc01.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o
         collect2 version 7.3.0
-        E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cchJ0Fqd.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2c500.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2c500.dir/objects.a --no-whole-archive --out-implib libcmTC_2c500.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o
+        E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cclyb5qc.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2bc01.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2bc01.dir/objects.a --no-whole-archive --out-implib libcmTC_2bc01.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o
         GNU ld (GNU Binutils) 2.30
-        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2c500.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona'
-        make[1]: Leaving directory 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5'
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2bc01.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona'
+        make[1]: Leaving directory 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9'
         
       exitCode: 0
   -
@@ -2950,21 +2950,21 @@ events:
       Parsed CXX implicit link information:
         link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
         linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)))("|,| |$)]
-        ignore line: [Change Dir: 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5']
+        ignore line: [Change Dir: 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9']
         ignore line: []
-        ignore line: [Run Build Command(s): F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E env VERBOSE=1 F:/VScode/mingw64/bin/make.exe -f Makefile cmTC_2c500/fast]
-        ignore line: [F:/VScode/mingw64/bin/make.exe  -f CMakeFiles/cmTC_2c500.dir/build.make CMakeFiles/cmTC_2c500.dir/build]
-        ignore line: [make[1]: Entering directory 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-39tvj5']
-        ignore line: [Building CXX object CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj]
-        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe   -v -o CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj -c F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [Run Build Command(s): F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E env VERBOSE=1 F:/VScode/mingw64/bin/make.exe -f Makefile cmTC_2bc01/fast]
+        ignore line: [F:/VScode/mingw64/bin/make.exe  -f CMakeFiles/cmTC_2bc01.dir/build.make CMakeFiles/cmTC_2bc01.dir/build]
+        ignore line: [make[1]: Entering directory 'E:/QTproject/kylinqt/build/CMakeFiles/CMakeScratch/TryCompile-16xgb9']
+        ignore line: [Building CXX object CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj]
+        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe   -v -o CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj -c F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe]
         ignore line: [Target: x86_64-w64-mingw32]
         ignore line: [Configured with: ../../../src/gcc-7.3.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 --enable-shared --enable-static --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-mpc=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-isl=/c/mingw730/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev0, Built by MinGW-W64 project' --with-bugurl=https://sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/include -I/c/mingw730/prerequisites/x86_64-zlib-static/include -I/c/mingw730/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/include -I/c/mingw730/prerequisites/x86_64-zlib-static/include -I/c/mingw730/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/include -I/c/mingw730/prerequisites/x86_64-zlib-static/include -I/c/mingw730/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/c/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64/opt/lib -L/c/mingw730/prerequisites/x86_64-zlib-static/lib -L/c/mingw730/prerequisites/x86_64-w64-mingw32-static/lib ']
         ignore line: [Thread model: posix]
         ignore line: [gcc version 7.3.0 (x86_64-posix-seh-rev0  Built by MinGW-W64 project) ]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona']
-        ignore line: [ E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/cc1plus.exe -quiet -v -iprefix E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/ -D_REENTRANT F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=core2 -march=nocona -auxbase-strip CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj -version -o C:\\Users\\hitlz\\AppData\\Local\\Temp\\cccjXKNT.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona']
+        ignore line: [ E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/cc1plus.exe -quiet -v -iprefix E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/ -D_REENTRANT F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=core2 -march=nocona -auxbase-strip CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj -version -o C:\\Users\\hitlz\\AppData\\Local\\Temp\\ccGzPP03.s]
         ignore line: [GNU C++14 (x86_64-posix-seh-rev0  Built by MinGW-W64 project) version 7.3.0 (x86_64-w64-mingw32)]
         ignore line: [	compiled by GNU C version 7.3.0  GMP version 6.1.2  MPFR version 4.0.1  MPC version 1.1.0  isl version isl-0.18-GMP]
         ignore line: []
@@ -2991,8 +2991,8 @@ events:
         ignore line: []
         ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
         ignore line: [Compiler executable checksum: 86cf749bb84a0f12f1d61bff4e68fffd]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona']
-        ignore line: [ E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj C:\\Users\\hitlz\\AppData\\Local\\Temp\\cccjXKNT.s]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona']
+        ignore line: [ E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj C:\\Users\\hitlz\\AppData\\Local\\Temp\\ccGzPP03.s]
         ignore line: [GNU assembler version 2.30 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.30]
         ignore line: [COMPILER_PATH=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/]
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/]
@@ -3003,11 +3003,11 @@ events:
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib/]
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/]
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2c500.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona']
-        ignore line: [Linking CXX executable cmTC_2c500.exe]
-        ignore line: [F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E rm -f CMakeFiles/cmTC_2c500.dir/objects.a]
-        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/ar.exe qc CMakeFiles/cmTC_2c500.dir/objects.a @CMakeFiles/cmTC_2c500.dir/objects1.rsp]
-        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe  -v -Wl -v -Wl --whole-archive CMakeFiles/cmTC_2c500.dir/objects.a -Wl --no-whole-archive -o cmTC_2c500.exe -Wl --out-implib libcmTC_2c500.dll.a -Wl --major-image-version 0 --minor-image-version 0]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_2bc01.dir/CMakeCXXCompilerABI.cpp.obj' '-c' '-shared-libgcc' '-mtune=core2' '-march=nocona']
+        ignore line: [Linking CXX executable cmTC_2bc01.exe]
+        ignore line: [F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E rm -f CMakeFiles/cmTC_2bc01.dir/objects.a]
+        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/ar.exe qc CMakeFiles/cmTC_2bc01.dir/objects.a @CMakeFiles/cmTC_2bc01.dir/objects1.rsp]
+        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe  -v -Wl -v -Wl --whole-archive CMakeFiles/cmTC_2bc01.dir/objects.a -Wl --no-whole-archive -o cmTC_2bc01.exe -Wl --out-implib libcmTC_2bc01.dll.a -Wl --major-image-version 0 --minor-image-version 0]
         ignore line: [Using built-in specs.]
         ignore line: [COLLECT_GCC=E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe]
         ignore line: [COLLECT_LTO_WRAPPER=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe]
@@ -3024,13 +3024,13 @@ events:
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib/]
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/]
         ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../]
-        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2c500.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona']
-        link line: [ E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/collect2.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cchJ0Fqd.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2c500.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2c500.dir/objects.a --no-whole-archive --out-implib libcmTC_2c500.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_2bc01.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona']
+        link line: [ E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/collect2.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cclyb5qc.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2bc01.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2bc01.dir/objects.a --no-whole-archive --out-implib libcmTC_2bc01.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o]
           arg [E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/collect2.exe] ==> ignore
           arg [-plugin] ==> ignore
           arg [E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll] ==> ignore
           arg [-plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe] ==> ignore
-          arg [-plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cchJ0Fqd.res] ==> ignore
+          arg [-plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cclyb5qc.res] ==> ignore
           arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
           arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
@@ -3054,7 +3054,7 @@ events:
           arg [i386pep] ==> ignore
           arg [-Bdynamic] ==> search dynamic
           arg [-o] ==> ignore
-          arg [cmTC_2c500.exe] ==> ignore
+          arg [cmTC_2bc01.exe] ==> ignore
           arg [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o] ==> obj [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o]
           arg [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o] ==> obj [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o]
           arg [-LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0] ==> dir [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0]
@@ -3065,10 +3065,10 @@ events:
           arg [-LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../..] ==> dir [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../..]
           arg [-v] ==> ignore
           arg [--whole-archive] ==> ignore
-          arg [CMakeFiles/cmTC_2c500.dir/objects.a] ==> ignore
+          arg [CMakeFiles/cmTC_2bc01.dir/objects.a] ==> ignore
           arg [--no-whole-archive] ==> ignore
           arg [--out-implib] ==> ignore
-          arg [libcmTC_2c500.dll.a] ==> ignore
+          arg [libcmTC_2bc01.dll.a] ==> ignore
           arg [--major-image-version] ==> ignore
           arg [0] ==> ignore
           arg [--minor-image-version] ==> ignore
@@ -3094,7 +3094,7 @@ events:
           arg [-lmsvcrt] ==> lib [msvcrt]
           arg [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o] ==> obj [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o]
         ignore line: [collect2 version 7.3.0]
-        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cchJ0Fqd.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2c500.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2c500.dir/objects.a --no-whole-archive --out-implib libcmTC_2c500.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o]
+        ignore line: [E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/liblto_plugin-0.dll -plugin-opt=E:/QT5.12.8/Tools/mingw730_64/bin/../libexec/gcc/x86_64-w64-mingw32/7.3.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\hitlz\\AppData\\Local\\Temp\\cclyb5qc.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw730/x86_64-730-posix-seh-rt_v5-rev0/mingw64 -m i386pep -Bdynamic -o cmTC_2bc01.exe E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtbegin.o -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0 -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib/../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../../../x86_64-w64-mingw32/lib -LE:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/../../.. -v --whole-archive CMakeFiles/cmTC_2bc01.dir/objects.a --no-whole-archive --out-implib libcmTC_2bc01.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt E:/QT5.12.8/Tools/mingw730_64/bin/../lib/gcc/x86_64-w64-mingw32/7.3.0/crtend.o]
         linker tool for 'CXX': E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/bin/ld.exe
         remove lib [msvcrt]
         remove lib [msvcrt]
@@ -3721,6 +3721,123 @@ events:
   -
     kind: "find_package-v1"
     backtrace:
+      - "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5/Qt5Config.cmake:28 (find_package)"
+      - "CMakeLists.txt:27 (find_package)"
+    name: "Qt5SerialPort"
+    configs:
+      -
+        filename: "Qt5SerialPortConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "qt5serialport-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "Qt5SerialPort"
+      search_paths:
+        - "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/Qt5SerialPortConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/qt5serialport-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPortConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/qt5serialport-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
+      mode: "config"
+      version: "5.12.8"
+    search_context:
+      ENV{PATH}:
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:/FFmpeg/FFmpeg4.2.1_install/bin"
+        - "E:\\ubantu\\vnwaredownload\\bin\\"
+        - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:/windows/system32"
+        - "C:\\windows"
+        - "C:/windows/System32/Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/windows/System32/OpenSSH/"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR"
+        - "C:/WINDOWS/system32"
+        - "C:/WINDOWS"
+        - "C:/WINDOWS/System32/Wbem"
+        - "C:/WINDOWS/System32/WindowsPowerShell/v1.0/"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2\\"
+        - "C:/Program Files/dotnet/"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:/matlab2/runtime/win64"
+        - "E:\\matlab2\\bin"
+        - "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:/VScode/mingw64/bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/WINDOWS/System32/OpenSSH/"
+        - "E:\\Git\\Git\\cmd"
+        - "E:/MSYS2/mingw64/bin"
+        - "E:\\ninja-win"
+        - "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps"
+        - "C:\\Program Files\\Bandizip\\"
+        - "C:/Users/hitlz/AppData/Local/Programs/Microsoft VS Code/bin"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:/Users/hitlz/anaconda3"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:/Users/hitlz/anaconda3/Library/bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:/texlive/2022/bin/win32"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
+        - "C:/Program Files (x86)/kylinqt"
+  -
+    kind: "find_package-v1"
+    backtrace:
       - "CMakeLists.txt:27 (find_package)"
     name: "Qt5"
     components:
@@ -3730,6 +3847,10 @@ events:
         found: false
       -
         name: "Quick"
+        required: true
+        found: false
+      -
+        name: "SerialPort"
         required: true
         found: false
     configs:
@@ -3845,135 +3966,6 @@ events:
         - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
       CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
       CMAKE_SYSTEM_PREFIX_PATH:
-        - "C:/Program Files"
-        - "C:/Program Files (x86)"
-        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
-        - "C:/Program Files (x86)/kylinqt"
-...
-
----
-events:
-  -
-    kind: "find_package-v1"
-    backtrace:
-      - "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5/Qt5Config.cmake:28 (find_package)"
-      - "CMakeLists.txt:27 (find_package)"
-    name: "Qt5SerialPort"
-    configs:
-      -
-        filename: "Qt5SerialPortConfig.cmake"
-        kind: "cmake"
-      -
-        filename: "qt5serialport-config.cmake"
-        kind: "cmake"
-    version_request:
-      exact: false
-    settings:
-      required: "required_explicit"
-      quiet: false
-      global: false
-      policy_scope: true
-      bypass_provider: false
-      names:
-        - "Qt5SerialPort"
-      search_paths:
-        - "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake"
-      path_suffixes:
-        - ""
-      paths:
-        CMAKE_FIND_USE_CMAKE_PATH: false
-        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
-        CMAKE_FIND_USE_INSTALL_PREFIX: true
-        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
-        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
-        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
-        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
-    candidates:
-      -
-        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/Qt5SerialPortConfig.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/qt5serialport-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPortConfig.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/qt5serialport-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-    found:
-      path: "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
-      mode: "config"
-      version: "5.12.8"
-    search_context:
-      ENV{PATH}:
-        - "C:\\Users\\hitlz\\bin"
-        - "E:\\Git\\Git\\mingw64\\bin"
-        - "E:\\Git\\Git\\usr\\local\\bin"
-        - "E:\\Git\\Git\\usr\\bin"
-        - "E:\\Git\\Git\\usr\\bin"
-        - "E:\\Git\\Git\\mingw64\\bin"
-        - "E:\\Git\\Git\\usr\\bin"
-        - "C:\\Users\\hitlz\\bin"
-        - "E:\\FFmpeg\\FFmpeg4.2.1_install\\bin"
-        - "E:\\ubantu\\vnwaredownload\\bin"
-        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
-        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
-        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\libnvvp"
-        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
-        - "C:\\windows\\system32"
-        - "C:\\windows"
-        - "C:\\windows\\System32\\Wbem"
-        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0"
-        - "C:\\windows\\System32\\OpenSSH"
-        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
-        - "C:\\Program Files\\NVIDIA Corporation\\NVIDIA NvDLISR"
-        - "C:\\WINDOWS\\system32"
-        - "C:\\WINDOWS"
-        - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
-        - "C:\\WINDOWS\\System32\\OpenSSH"
-        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
-        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2"
-        - "C:\\Program Files\\dotnet"
-        - "D:\\Shared\\LabVIEW CLI"
-        - "E:\\matlab2\\runtime\\win64"
-        - "E:\\matlab2\\bin"
-        - "C:\\Program Files (x86)\\STMicroelectronics\\STM32 ST-LINK Utility\\ST-LINK Utility"
-        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
-        - "F:\\VScode\\mingw64\\bin"
-        - "E:\\@keil project\\VSCODEGCC\\bin"
-        - "F:\\VScode\\cmake-4.1.0-rc2-windows-x86_64\\cmake-4.1.0-rc2-windows-x86_64\\bin"
-        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
-        - "C:\\WINDOWS\\system32"
-        - "C:\\WINDOWS"
-        - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0"
-        - "C:\\WINDOWS\\System32\\OpenSSH"
-        - "E:\\Git\\Git\\cmd"
-        - "E:\\MSYS2\\mingw64\\bin"
-        - "E:\\ninja-win"
-        - "C:\\Users\\hitlz\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Bandizip"
-        - "C:\\Users\\hitlz\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
-        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
-        - "C:\\Users\\hitlz\\anaconda3"
-        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
-        - "C:\\Users\\hitlz\\anaconda3\\Library\\bin"
-        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
-        - "D:\\texlive\\2022\\bin\\win32"
-        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
-        - "E:\\Git\\Git\\usr\\bin\\vendor_perl"
-        - "E:\\Git\\Git\\usr\\bin\\core_perl"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
-      CMAKE_SYSTEM_PREFIX_PATH:
-        - "E:/Git/Git/mingw64"
         - "C:/Program Files"
         - "C:/Program Files (x86)"
         - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"

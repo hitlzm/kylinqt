@@ -239,6 +239,12 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+QML2_IMPORT_PATH:STRING=E:/QTproject/kylinqt
+
+QML_DESIGNER_IMPORT_PATH:STRING=E:/QTproject/kylinqt
+
+QML_IMPORT_PATH:STRING=E:/QTproject/kylinqt
+
 //No help, variable specified on the command line.
 QT_QML_GENERATE_QMLLS_INI:STRING=ON
 
@@ -262,6 +268,9 @@ Qt5SerialPort_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort
 
 //The directory containing a CMake configuration file for Qt5.
 Qt5_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5
+
+//tao quick import path
+TaoQuickImportPath:STRING=file:///E:/QTproject/kylinqt/
 
 //Value Computed by CMake
 kylinqt_BINARY_DIR:STATIC=E:/QTproject/kylinqt/build

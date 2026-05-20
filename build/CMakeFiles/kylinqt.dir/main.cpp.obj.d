@@ -255,4 +255,6 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmllist.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/QQmlContext \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcontext.h

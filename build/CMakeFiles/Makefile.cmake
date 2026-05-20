@@ -58,6 +58,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/4.1.0-rc2/CMakeRCCompiler.cmake"
   "CMakeFiles/4.1.0-rc2/CMakeSystem.cmake"
   "E:/QTproject/kylinqt/qml.qrc"
+  "E:/QTproject/kylinqt/taoQuick.cmake"
   "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXInformation.cmake"
   "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCommonLanguageInclude.cmake"
   "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeGenericSystem.cmake"
