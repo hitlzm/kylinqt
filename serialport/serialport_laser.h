@@ -13,12 +13,22 @@ public:
 
 protected:
     QByteArray parseData(const QByteArray &rawData) override;
+private:
+    uint8_t xorChecksumcore(const uint8_t* data, size_t len);
+    uint8_t xorChecksum(const QByteArray& data);
 };
 
 //激光导引头接收结构体
 #pragma pack(push,1)
 typedef struct {
+    
+    quint8 frame_header1;       // 0x55
+    quint8 frame_header2;       // 0xAA
+    quint8 frame_header3;       // 0xDC
 
+    quint8 frame_status;        //帧长与帧计数器
+    quint8 frame_ID;            //帧ID
+    //数据包字节
         // 字节1: DYT状态
     quint8 dyt_status;          // 0x00:待机, 0x01:自检中, 0x04:定轴搜索, 0x05:矩形搜索,
                                 // 0x06:圆形搜索, 0x07:捕获, 0x08:稳定跟踪, 0x09:记忆跟踪,
@@ -84,7 +94,8 @@ typedef struct {
 
     // 字节31-32: 软件2版本号 (控制板, UINT16, 1bit=0.01, 例0x00C9=2.01)
     quint16 software_version2;
-
+    //以下为异或校验位
+    quint8 XOR_result;            //按位异或校验位
 
 }laser_recv_frame;
 #pragma pack(pop)
@@ -92,6 +103,14 @@ typedef struct {
 //激光导引头发送结构体
 #pragma pack(push,1)
 typedef struct {
+    
+    quint8 frame_header1;       // 0x55
+    quint8 frame_header2;       // 0xAA
+    quint8 frame_header3;       // 0xDC
+
+    quint8 frame_status;        //帧长与帧计数器
+    quint8 frame_ID;            //帧ID
+    //以下为发送数据包
     // 字节1: 控制指令1
     quint8 cmd;                     // 0x00:无动作, 0x01:自检, 0x02:锁定, 0x03:参数装订(改激光周期),
                                     // 0x06:定轴搜索, 0x07:矩形搜索, 0x08:圆形搜索,
@@ -120,6 +139,8 @@ typedef struct {
     qint16 param5;                  // 含义取决于cmd:
                                     // - 矩形搜索: 俯仰搜索范围(半幅)
                                     // - 其他指令: 无意义(填0)
+    //以下为异或校验位
+    quint8 XOR_result;            //按位异或校验位
 }laser_send_frame;
 #pragma pack(pop)
 #endif // SERIALPORT_LASER_H

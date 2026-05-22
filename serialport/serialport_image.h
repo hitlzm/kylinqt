@@ -13,6 +13,10 @@ public:
 
 protected:
     QByteArray parseData(const QByteArray &rawData) override;
+private:
+     static uint16_t crc16_table[256];
+     void init_crc16_table(uint16_t poly = 0x1021) ;
+     uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
 };
 
 //图像导引头接收数据结构体
