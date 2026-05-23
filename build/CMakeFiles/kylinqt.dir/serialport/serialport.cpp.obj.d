@@ -224,8 +224,12 @@ CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \

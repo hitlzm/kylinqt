@@ -3,6 +3,447 @@
 
 #include "serialport.h"
 
+class ImageData : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int frameLength READ frameLength NOTIFY frameLengthChanged)
+    Q_PROPERTY(int bFrameSequence READ bFrameSequence NOTIFY bFrameSequenceChanged)
+    Q_PROPERTY(int aFrameSequenceReply READ aFrameSequenceReply NOTIFY aFrameSequenceReplyChanged)
+    Q_PROPERTY(int aFrameValidFlag READ aFrameValidFlag NOTIFY aFrameValidFlagChanged)
+    Q_PROPERTY(int seekerCtrlReply READ seekerCtrlReply NOTIFY seekerCtrlReplyChanged)
+    Q_PROPERTY(int opticalParamReply READ opticalParamReply NOTIFY opticalParamReplyChanged)
+    Q_PROPERTY(int currentWorkChannel READ currentWorkChannel NOTIFY currentWorkChannelChanged)
+    Q_PROPERTY(int selfCheckFlag READ selfCheckFlag NOTIFY selfCheckFlagChanged)
+    Q_PROPERTY(float pitchLosAngVel READ pitchLosAngVel NOTIFY pitchLosAngVelChanged)
+    Q_PROPERTY(float yawLosAngVel READ yawLosAngVel NOTIFY yawLosAngVelChanged)
+    Q_PROPERTY(int targetBackgroundType READ targetBackgroundType NOTIFY targetBackgroundTypeChanged)
+    Q_PROPERTY(int opticalWorkState READ opticalWorkState NOTIFY opticalWorkStateChanged)
+    Q_PROPERTY(float pitchFrameAngle READ pitchFrameAngle NOTIFY pitchFrameAngleChanged)
+    Q_PROPERTY(float yawFrameAngle READ yawFrameAngle NOTIFY yawFrameAngleChanged)
+    Q_PROPERTY(int correctionCmdStatus READ correctionCmdStatus NOTIFY correctionCmdStatusChanged)
+    Q_PROPERTY(int correctionCmdCount READ correctionCmdCount NOTIFY correctionCmdCountChanged)
+    Q_PROPERTY(float pitchGyro READ pitchGyro NOTIFY pitchGyroChanged)
+    Q_PROPERTY(float yawGyro READ yawGyro NOTIFY yawGyroChanged)
+    Q_PROPERTY(int trackingState READ trackingState NOTIFY trackingStateChanged)
+    Q_PROPERTY(int trackerState READ trackerState NOTIFY trackerStateChanged)
+    Q_PROPERTY(int azimuthDeviationPixel READ azimuthDeviationPixel NOTIFY azimuthDeviationPixelChanged)
+    Q_PROPERTY(int pitchDeviationPixel READ pitchDeviationPixel NOTIFY pitchDeviationPixelChanged)
+    Q_PROPERTY(float azimuthGyroOutput READ azimuthGyroOutput NOTIFY azimuthGyroOutputChanged)
+    Q_PROPERTY(float pitchGyroOutput READ pitchGyroOutput NOTIFY pitchGyroOutputChanged)
+    Q_PROPERTY(float azimuthMasterCmd READ azimuthMasterCmd NOTIFY azimuthMasterCmdChanged)
+    Q_PROPERTY(float pitchMasterCmd READ pitchMasterCmd NOTIFY pitchMasterCmdChanged)
+    Q_PROPERTY(int platformSelfCheck READ platformSelfCheck NOTIFY platformSelfCheckChanged)
+    Q_PROPERTY(int servoRunningTime READ servoRunningTime NOTIFY servoRunningTimeChanged)
+    Q_PROPERTY(int servoStep READ servoStep NOTIFY servoStepChanged)
+    Q_PROPERTY(int infraredFrameNum READ infraredFrameNum NOTIFY infraredFrameNumChanged)
+    Q_PROPERTY(int cbhTv4405 READ cbhTv4405 NOTIFY cbhTv4405Changed)
+    Q_PROPERTY(int infraredFrameRate READ infraredFrameRate NOTIFY infraredFrameRateChanged)
+    Q_PROPERTY(int tvFrameRate READ tvFrameRate NOTIFY tvFrameRateChanged)
+    Q_PROPERTY(int gateSize READ gateSize NOTIFY gateSizeChanged)
+    Q_PROPERTY(int softwareVersion1 READ softwareVersion1 NOTIFY softwareVersion1Changed)
+    Q_PROPERTY(int softwareVersion2 READ softwareVersion2 NOTIFY softwareVersion2Changed)
+    Q_PROPERTY(int softwareVersion3 READ softwareVersion3 NOTIFY softwareVersion3Changed)
+
+public:
+    explicit ImageData(QObject *parent = nullptr);
+
+    int frameLength() const;
+    int bFrameSequence() const;
+    int aFrameSequenceReply() const;
+    int aFrameValidFlag() const;
+    int seekerCtrlReply() const;
+    int opticalParamReply() const;
+    int currentWorkChannel() const;
+    int selfCheckFlag() const;
+    float pitchLosAngVel() const;
+    float yawLosAngVel() const;
+    int targetBackgroundType() const;
+    int opticalWorkState() const;
+    float pitchFrameAngle() const;
+    float yawFrameAngle() const;
+    int correctionCmdStatus() const;
+    int correctionCmdCount() const;
+    float pitchGyro() const;
+    float yawGyro() const;
+    int trackingState() const;
+    int trackerState() const;
+    int azimuthDeviationPixel() const;
+    int pitchDeviationPixel() const;
+    float azimuthGyroOutput() const;
+    float pitchGyroOutput() const;
+    float azimuthMasterCmd() const;
+    float pitchMasterCmd() const;
+    int platformSelfCheck() const;
+    int servoRunningTime() const;
+    int servoStep() const;
+    int infraredFrameNum() const;
+    int cbhTv4405() const;
+    int infraredFrameRate() const;
+    int tvFrameRate() const;
+    int gateSize() const;
+    int softwareVersion1() const;
+    int softwareVersion2() const;
+    int softwareVersion3() const;
+
+    void updateFromFrame(const QByteArray &frame);
+
+signals:
+    void frameLengthChanged();
+    void bFrameSequenceChanged();
+    void aFrameSequenceReplyChanged();
+    void aFrameValidFlagChanged();
+    void seekerCtrlReplyChanged();
+    void opticalParamReplyChanged();
+    void currentWorkChannelChanged();
+    void selfCheckFlagChanged();
+    void pitchLosAngVelChanged();
+    void yawLosAngVelChanged();
+    void targetBackgroundTypeChanged();
+    void opticalWorkStateChanged();
+    void pitchFrameAngleChanged();
+    void yawFrameAngleChanged();
+    void correctionCmdStatusChanged();
+    void correctionCmdCountChanged();
+    void pitchGyroChanged();
+    void yawGyroChanged();
+    void trackingStateChanged();
+    void trackerStateChanged();
+    void azimuthDeviationPixelChanged();
+    void pitchDeviationPixelChanged();
+    void azimuthGyroOutputChanged();
+    void pitchGyroOutputChanged();
+    void azimuthMasterCmdChanged();
+    void pitchMasterCmdChanged();
+    void platformSelfCheckChanged();
+    void servoRunningTimeChanged();
+    void servoStepChanged();
+    void infraredFrameNumChanged();
+    void cbhTv4405Changed();
+    void infraredFrameRateChanged();
+    void tvFrameRateChanged();
+    void gateSizeChanged();
+    void softwareVersion1Changed();
+    void softwareVersion2Changed();
+    void softwareVersion3Changed();
+
+private:
+    inline float fromRawValue_a(qint16 raw)
+    {
+    return static_cast<float>(raw)
+            * 0.01f;
+    }
+    inline float fromRawValue_b(qint16 raw)
+    {
+    return static_cast<float>(raw)
+            * 0.002f;
+    }
+    int m_frameLength = 0;
+    int m_bFrameSequence = 0;
+    int m_aFrameSequenceReply = 0;
+    int m_aFrameValidFlag = 0;
+    int m_seekerCtrlReply = 0;
+    int m_opticalParamReply = 0;
+    int m_currentWorkChannel = 0;
+    int m_selfCheckFlag = 0;
+    float m_pitchLosAngVel = 0;
+    float m_yawLosAngVel = 0;
+    int m_targetBackgroundType = 0;
+    int m_opticalWorkState = 0;
+    float m_pitchFrameAngle = 0;
+    float m_yawFrameAngle = 0;
+    int m_correctionCmdStatus = 0;
+    int m_correctionCmdCount = 0;
+    float m_pitchGyro = 0;
+    float m_yawGyro = 0;
+    int m_trackingState = 0;
+    int m_trackerState = 0;
+    int m_azimuthDeviationPixel = 0;
+    int m_pitchDeviationPixel = 0;
+    float m_azimuthGyroOutput = 0;
+    float m_pitchGyroOutput = 0;
+    float m_azimuthMasterCmd = 0;
+    float m_pitchMasterCmd = 0;
+    int m_platformSelfCheck = 0;
+    int m_servoRunningTime = 0;
+    int m_servoStep = 0;
+    int m_infraredFrameNum = 0;
+    int m_cbhTv4405 = 0;
+    int m_infraredFrameRate = 0;
+    int m_tvFrameRate = 0;
+    int m_gateSize = 0;
+    int m_softwareVersion1 = 0;
+    int m_softwareVersion2 = 0;
+    int m_softwareVersion3 = 0;
+};
+
+class ImageSendData : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int frameLength READ frameLength WRITE setFrameLength NOTIFY frameLengthChanged)
+    Q_PROPERTY(int aFrameSequence READ aFrameSequence WRITE setAFrameSequence NOTIFY aFrameSequenceChanged)
+    Q_PROPERTY(int seekerCtrlWord READ seekerCtrlWord WRITE setSeekerCtrlWord NOTIFY seekerCtrlWordChanged)
+    Q_PROPERTY(int opticalParamCtrl READ opticalParamCtrl WRITE setOpticalParamCtrl NOTIFY opticalParamCtrlChanged)
+    Q_PROPERTY(int templateIndex READ templateIndex WRITE setTemplateIndex NOTIFY templateIndexChanged)
+    Q_PROPERTY(int targetBackgroundType READ targetBackgroundType WRITE setTargetBackgroundType NOTIFY targetBackgroundTypeChanged)
+    Q_PROPERTY(int missileTargetDistance READ missileTargetDistance WRITE setMissileTargetDistance NOTIFY missileTargetDistanceChanged)
+    Q_PROPERTY(float missileSpeed READ missileSpeed WRITE setMissileSpeed NOTIFY missileSpeedChanged)
+    Q_PROPERTY(float bodyPitchAngle READ bodyPitchAngle WRITE setBodyPitchAngle NOTIFY bodyPitchAngleChanged)
+    Q_PROPERTY(float bodyYawAngle READ bodyYawAngle WRITE setBodyYawAngle NOTIFY bodyYawAngleChanged)
+    Q_PROPERTY(float bodyRollAngle READ bodyRollAngle WRITE setBodyRollAngle NOTIFY bodyRollAngleChanged)
+    Q_PROPERTY(float bodyPitchRate READ bodyPitchRate WRITE setBodyPitchRate NOTIFY bodyPitchRateChanged)
+    Q_PROPERTY(float bodyYawRate READ bodyYawRate WRITE setBodyYawRate NOTIFY bodyYawRateChanged)
+    Q_PROPERTY(float bodyRollRate READ bodyRollRate WRITE setBodyRollRate NOTIFY bodyRollRateChanged)
+    Q_PROPERTY(float bodyVelX READ bodyVelX WRITE setBodyVelX NOTIFY bodyVelXChanged)
+    Q_PROPERTY(float bodyVelY READ bodyVelY WRITE setBodyVelY NOTIFY bodyVelYChanged)
+    Q_PROPERTY(float bodyVelZ READ bodyVelZ WRITE setBodyVelZ NOTIFY bodyVelZChanged)
+    Q_PROPERTY(int bodyPosX READ bodyPosX WRITE setBodyPosX NOTIFY bodyPosXChanged)
+    Q_PROPERTY(int bodyPosY READ bodyPosY WRITE setBodyPosY NOTIFY bodyPosYChanged)
+    Q_PROPERTY(int bodyPosZ READ bodyPosZ WRITE setBodyPosZ NOTIFY bodyPosZChanged)
+    Q_PROPERTY(float pitchGimbalPreset READ pitchGimbalPreset WRITE setPitchGimbalPreset NOTIFY pitchGimbalPresetChanged)
+    Q_PROPERTY(float yawGimbalPreset READ yawGimbalPreset WRITE setYawGimbalPreset NOTIFY yawGimbalPresetChanged)
+    Q_PROPERTY(int irIntegrationTime READ irIntegrationTime WRITE setIrIntegrationTime NOTIFY irIntegrationTimeChanged)
+    Q_PROPERTY(int trackingCorrectionCmd READ trackingCorrectionCmd WRITE setTrackingCorrectionCmd NOTIFY trackingCorrectionCmdChanged)
+    Q_PROPERTY(int correctionFrameNum READ correctionFrameNum WRITE setCorrectionFrameNum NOTIFY correctionFrameNumChanged)
+    Q_PROPERTY(int correctedPitchPos READ correctedPitchPos WRITE setCorrectedPitchPos NOTIFY correctedPitchPosChanged)
+    Q_PROPERTY(int correctedYawPos READ correctedYawPos WRITE setCorrectedYawPos NOTIFY correctedYawPosChanged)
+    Q_PROPERTY(float searchPitchRate READ searchPitchRate WRITE setSearchPitchRate NOTIFY searchPitchRateChanged)
+    Q_PROPERTY(float searchYawRate READ searchYawRate WRITE setSearchYawRate NOTIFY searchYawRateChanged)
+    Q_PROPERTY(int gateSize READ gateSize WRITE setGateSize NOTIFY gateSizeChanged)
+    Q_PROPERTY(int osdSwitch READ osdSwitch WRITE setOsdSwitch NOTIFY osdSwitchChanged)
+    Q_PROPERTY(int captureRefImgCmd READ captureRefImgCmd WRITE setCaptureRefImgCmd NOTIFY captureRefImgCmdChanged)
+    Q_PROPERTY(int targetAltitude READ targetAltitude WRITE setTargetAltitude NOTIFY targetAltitudeChanged)
+    Q_PROPERTY(float aircraftPitch READ aircraftPitch WRITE setAircraftPitch NOTIFY aircraftPitchChanged)
+    Q_PROPERTY(float aircraftYaw READ aircraftYaw WRITE setAircraftYaw NOTIFY aircraftYawChanged)
+    Q_PROPERTY(float aircraftRoll READ aircraftRoll WRITE setAircraftRoll NOTIFY aircraftRollChanged)
+    Q_PROPERTY(int focalLength READ focalLength WRITE setFocalLength NOTIFY focalLengthChanged)
+    Q_PROPERTY(float podPitchAngle READ podPitchAngle WRITE setPodPitchAngle NOTIFY podPitchAngleChanged)
+    Q_PROPERTY(float podYawAngle READ podYawAngle WRITE setPodYawAngle NOTIFY podYawAngleChanged)
+    Q_PROPERTY(int satelliteMapScale READ satelliteMapScale WRITE setSatelliteMapScale NOTIFY satelliteMapScaleChanged)
+    Q_PROPERTY(int podType READ podType WRITE setPodType NOTIFY podTypeChanged)
+    Q_PROPERTY(double targetLongitude READ targetLongitude WRITE setTargetLongitude NOTIFY targetLongitudeChanged)
+    Q_PROPERTY(double targetLatitude READ targetLatitude WRITE setTargetLatitude NOTIFY targetLatitudeChanged)
+    Q_PROPERTY(double aircraftLongitude READ aircraftLongitude WRITE setAircraftLongitude NOTIFY aircraftLongitudeChanged)
+    Q_PROPERTY(double aircraftLatitude READ aircraftLatitude WRITE setAircraftLatitude NOTIFY aircraftLatitudeChanged)
+    Q_PROPERTY(int aircraftAltitude READ aircraftAltitude WRITE setAircraftAltitude NOTIFY aircraftAltitudeChanged)
+    Q_PROPERTY(int pixelSize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged)
+
+public:
+    explicit ImageSendData(QObject *parent = nullptr);
+
+    int frameLength() const;
+    void setFrameLength(int value);
+    int aFrameSequence() const;
+    void setAFrameSequence(int value);
+    int seekerCtrlWord() const;
+    void setSeekerCtrlWord(int value);
+    int opticalParamCtrl() const;
+    void setOpticalParamCtrl(int value);
+    int templateIndex() const;
+    void setTemplateIndex(int value);
+    int targetBackgroundType() const;
+    void setTargetBackgroundType(int value);
+    int missileTargetDistance() const;
+    void setMissileTargetDistance(int value);
+    float missileSpeed() const;
+    void setMissileSpeed(float value);
+    float bodyPitchAngle() const;
+    void setBodyPitchAngle(float value);
+    float bodyYawAngle() const;
+    void setBodyYawAngle(float value);
+    float bodyRollAngle() const;
+    void setBodyRollAngle(float value);
+    float bodyPitchRate() const;
+    void setBodyPitchRate(float value);
+    float bodyYawRate() const;
+    void setBodyYawRate(float value);
+    float bodyRollRate() const;
+    void setBodyRollRate(float value);
+    float bodyVelX() const;
+    void setBodyVelX(float value);
+    float bodyVelY() const;
+    void setBodyVelY(float value);
+    float bodyVelZ() const;
+    void setBodyVelZ(float value);
+    int bodyPosX() const;
+    void setBodyPosX(int value);
+    int bodyPosY() const;
+    void setBodyPosY(int value);
+    int bodyPosZ() const;
+    void setBodyPosZ(int value);
+    float pitchGimbalPreset() const;
+    void setPitchGimbalPreset(float value);
+    float yawGimbalPreset() const;
+    void setYawGimbalPreset(float value);
+    int irIntegrationTime() const;
+    void setIrIntegrationTime(int value);
+    int trackingCorrectionCmd() const;
+    void setTrackingCorrectionCmd(int value);
+    int correctionFrameNum() const;
+    void setCorrectionFrameNum(int value);
+    int correctedPitchPos() const;
+    void setCorrectedPitchPos(int value);
+    int correctedYawPos() const;
+    void setCorrectedYawPos(int value);
+    float searchPitchRate() const;
+    void setSearchPitchRate(float value);
+    float searchYawRate() const;
+    void setSearchYawRate(float value);
+    int gateSize() const;
+    void setGateSize(int value);
+    int osdSwitch() const;
+    void setOsdSwitch(int value);
+    int captureRefImgCmd() const;
+    void setCaptureRefImgCmd(int value);
+    int targetAltitude() const;
+    void setTargetAltitude(int value);
+    float aircraftPitch() const;
+    void setAircraftPitch(float value);
+    float aircraftYaw() const;
+    void setAircraftYaw(float value);
+    float aircraftRoll() const;
+    void setAircraftRoll(float value);
+    int focalLength() const;
+    void setFocalLength(int value);
+    float podPitchAngle() const;
+    void setPodPitchAngle(float value);
+    float podYawAngle() const;
+    void setPodYawAngle(float value);
+    int satelliteMapScale() const;
+    void setSatelliteMapScale(int value);
+    int podType() const;
+    void setPodType(int value);
+    double targetLongitude() const;
+    void setTargetLongitude(double value);
+    double targetLatitude() const;
+    void setTargetLatitude(double value);
+    double aircraftLongitude() const;
+    void setAircraftLongitude(double value);
+    double aircraftLatitude() const;
+    void setAircraftLatitude(double value);
+    int aircraftAltitude() const;
+    void setAircraftAltitude(int value);
+    int pixelSize() const;
+    void setPixelSize(int value);
+
+    QByteArray buildFrame() const;
+
+signals:
+    void frameLengthChanged();
+    void aFrameSequenceChanged();
+    void seekerCtrlWordChanged();
+    void opticalParamCtrlChanged();
+    void templateIndexChanged();
+    void targetBackgroundTypeChanged();
+    void missileTargetDistanceChanged();
+    void missileSpeedChanged();
+    void bodyPitchAngleChanged();
+    void bodyYawAngleChanged();
+    void bodyRollAngleChanged();
+    void bodyPitchRateChanged();
+    void bodyYawRateChanged();
+    void bodyRollRateChanged();
+    void bodyVelXChanged();
+    void bodyVelYChanged();
+    void bodyVelZChanged();
+    void bodyPosXChanged();
+    void bodyPosYChanged();
+    void bodyPosZChanged();
+    void pitchGimbalPresetChanged();
+    void yawGimbalPresetChanged();
+    void irIntegrationTimeChanged();
+    void trackingCorrectionCmdChanged();
+    void correctionFrameNumChanged();
+    void correctedPitchPosChanged();
+    void correctedYawPosChanged();
+    void searchPitchRateChanged();
+    void searchYawRateChanged();
+    void gateSizeChanged();
+    void osdSwitchChanged();
+    void captureRefImgCmdChanged();
+    void targetAltitudeChanged();
+    void aircraftPitchChanged();
+    void aircraftYawChanged();
+    void aircraftRollChanged();
+    void focalLengthChanged();
+    void podPitchAngleChanged();
+    void podYawAngleChanged();
+    void satelliteMapScaleChanged();
+    void podTypeChanged();
+    void targetLongitudeChanged();
+    void targetLatitudeChanged();
+    void aircraftLongitudeChanged();
+    void aircraftLatitudeChanged();
+    void aircraftAltitudeChanged();
+    void pixelSizeChanged();
+
+private:
+    inline qint16 toRawValue_a(float value) const
+    {
+    return static_cast<qint16>(
+                qRound(value / 0.1f));
+    }
+
+    inline qint16 toRawValue_b(float value) const
+    {
+    return static_cast<qint16>(
+                qRound(value / 0.01f));
+    }
+    inline qint16 toRawValue_c(float value) const
+    {
+    return static_cast<qint16>(
+                qRound(value / 0.002f));
+    }
+    int m_frameLength = 0;
+    int m_aFrameSequence = 0;
+    int m_seekerCtrlWord = 0;
+    int m_opticalParamCtrl = 0;
+    int m_templateIndex = 0;
+    int m_targetBackgroundType = 0;
+    int m_missileTargetDistance = 0;
+    float m_missileSpeed = 0;
+    float m_bodyPitchAngle = 0;
+    float m_bodyYawAngle = 0;
+    float m_bodyRollAngle = 0;
+    float m_bodyPitchRate = 0;
+    float m_bodyYawRate = 0;
+    float m_bodyRollRate = 0;
+    float m_bodyVelX = 0;
+    float m_bodyVelY = 0;
+    float m_bodyVelZ = 0;
+    int m_bodyPosX = 0;
+    int m_bodyPosY = 0;
+    int m_bodyPosZ = 0;
+    float m_pitchGimbalPreset = 0;
+    float m_yawGimbalPreset = 0;
+    int m_irIntegrationTime = 0;
+    int m_trackingCorrectionCmd = 0;
+    int m_correctionFrameNum = 0;
+    int m_correctedPitchPos = 0;
+    int m_correctedYawPos = 0;
+    float m_searchPitchRate = 0;
+    float m_searchYawRate = 0;
+    int m_gateSize = 0;
+    int m_osdSwitch = 0;
+    int m_captureRefImgCmd = 0;
+    int m_targetAltitude = 0;
+    float m_aircraftPitch = 0;
+    float m_aircraftYaw = 0;
+    float m_aircraftRoll = 0;
+    int m_focalLength = 0;
+    float m_podPitchAngle = 0;
+    float m_podYawAngle = 0;
+    int m_satelliteMapScale = 0;
+    int m_podType = 0;
+    double m_targetLongitude = 0;
+    double m_targetLatitude = 0;
+    double m_aircraftLongitude = 0;
+    double m_aircraftLatitude = 0;
+    int m_aircraftAltitude = 0;
+    int m_pixelSize = 0;
+};
+
 class SerialPortImage : public SerialPort
 {
     Q_OBJECT
@@ -11,13 +452,23 @@ public:
     explicit SerialPortImage(QObject *parent = nullptr);
     ~SerialPortImage() override;
 
+    ImageData* imageData() const;
+    ImageSendData* imageSendData() const;
+
+    static void init_crc16_table(uint16_t poly = 0x1021);
+    static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
+
 protected:
     QByteArray parseData(const QByteArray &rawData) override;
+
 private:
-     static uint16_t crc16_table[256];
-     void init_crc16_table(uint16_t poly = 0x1021) ;
-     uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
+    static uint16_t crc16_table[256];
+    ImageData *m_imageData;
+    ImageSendData *m_imageSendData;
+    
+
 };
+
 
 //图像导引头接收数据结构体
 #pragma pack(push,1)

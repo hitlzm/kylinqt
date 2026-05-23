@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_SerialPort_t {
-    QByteArrayData data[12];
-    char stringdata0[145];
+    QByteArrayData data[23];
+    char stringdata0[268];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -39,16 +39,31 @@ QT_MOC_LITERAL(4, 36, 13), // "errorOccurred"
 QT_MOC_LITERAL(5, 50, 8), // "errorMsg"
 QT_MOC_LITERAL(6, 59, 9), // "connected"
 QT_MOC_LITERAL(7, 69, 12), // "disconnected"
-QT_MOC_LITERAL(8, 82, 15), // "handleReadyRead"
-QT_MOC_LITERAL(9, 98, 11), // "handleError"
-QT_MOC_LITERAL(10, 110, 28), // "QSerialPort::SerialPortError"
-QT_MOC_LITERAL(11, 139, 5) // "error"
+QT_MOC_LITERAL(8, 82, 15), // "portOpenChanged"
+QT_MOC_LITERAL(9, 98, 21), // "availablePortsChanged"
+QT_MOC_LITERAL(10, 120, 15), // "handleReadyRead"
+QT_MOC_LITERAL(11, 136, 11), // "handleError"
+QT_MOC_LITERAL(12, 148, 28), // "QSerialPort::SerialPortError"
+QT_MOC_LITERAL(13, 177, 5), // "error"
+QT_MOC_LITERAL(14, 183, 8), // "openPort"
+QT_MOC_LITERAL(15, 192, 8), // "portName"
+QT_MOC_LITERAL(16, 201, 8), // "baudRate"
+QT_MOC_LITERAL(17, 210, 9), // "closePort"
+QT_MOC_LITERAL(18, 220, 9), // "scanPorts"
+QT_MOC_LITERAL(19, 230, 8), // "sendData"
+QT_MOC_LITERAL(20, 239, 4), // "data"
+QT_MOC_LITERAL(21, 244, 14), // "availablePorts"
+QT_MOC_LITERAL(22, 259, 8) // "portOpen"
 
     },
     "SerialPort\0dataReceived\0\0parsedData\0"
     "errorOccurred\0errorMsg\0connected\0"
-    "disconnected\0handleReadyRead\0handleError\0"
-    "QSerialPort::SerialPortError\0error"
+    "disconnected\0portOpenChanged\0"
+    "availablePortsChanged\0handleReadyRead\0"
+    "handleError\0QSerialPort::SerialPortError\0"
+    "error\0openPort\0portName\0baudRate\0"
+    "closePort\0scanPorts\0sendData\0data\0"
+    "availablePorts\0portOpen"
 };
 #undef QT_MOC_LITERAL
 
@@ -58,32 +73,56 @@ static const uint qt_meta_data_SerialPort[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
-       0,    0, // properties
+      12,   14, // methods
+       2,   98, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       4,       // signalCount
+       6,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   44,    2, 0x06 /* Public */,
-       4,    1,   47,    2, 0x06 /* Public */,
-       6,    0,   50,    2, 0x06 /* Public */,
-       7,    0,   51,    2, 0x06 /* Public */,
+       1,    1,   74,    2, 0x06 /* Public */,
+       4,    1,   77,    2, 0x06 /* Public */,
+       6,    0,   80,    2, 0x06 /* Public */,
+       7,    0,   81,    2, 0x06 /* Public */,
+       8,    0,   82,    2, 0x06 /* Public */,
+       9,    0,   83,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       8,    0,   52,    2, 0x08 /* Private */,
-       9,    1,   53,    2, 0x08 /* Private */,
+      10,    0,   84,    2, 0x08 /* Private */,
+      11,    1,   85,    2, 0x08 /* Private */,
+
+ // methods: name, argc, parameters, tag, flags
+      14,    2,   88,    2, 0x02 /* Public */,
+      17,    0,   93,    2, 0x02 /* Public */,
+      18,    0,   94,    2, 0x02 /* Public */,
+      19,    1,   95,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QByteArray,    3,
     QMetaType::Void, QMetaType::QString,    5,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 10,   11,
+    QMetaType::Void, 0x80000000 | 12,   13,
+
+ // methods: parameters
+    QMetaType::Bool, QMetaType::QString, QMetaType::Int,   15,   16,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Bool, QMetaType::QByteArray,   20,
+
+ // properties: name, type, flags
+      21, QMetaType::QStringList, 0x00495001,
+      22, QMetaType::Bool, 0x00495001,
+
+ // properties: notify_signal_id
+       5,
+       4,
 
        0        // eod
 };
@@ -98,8 +137,16 @@ void SerialPort::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 1: _t->errorOccurred((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 2: _t->connected(); break;
         case 3: _t->disconnected(); break;
-        case 4: _t->handleReadyRead(); break;
-        case 5: _t->handleError((*reinterpret_cast< QSerialPort::SerialPortError(*)>(_a[1]))); break;
+        case 4: _t->portOpenChanged(); break;
+        case 5: _t->availablePortsChanged(); break;
+        case 6: _t->handleReadyRead(); break;
+        case 7: _t->handleError((*reinterpret_cast< QSerialPort::SerialPortError(*)>(_a[1]))); break;
+        case 8: { bool _r = _t->openPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 9: _t->closePort(); break;
+        case 10: _t->scanPorts(); break;
+        case 11: { bool _r = _t->sendData((*reinterpret_cast< const QByteArray(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -132,7 +179,35 @@ void SerialPort::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
                 return;
             }
         }
+        {
+            using _t = void (SerialPort::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::portOpenChanged)) {
+                *result = 4;
+                return;
+            }
+        }
+        {
+            using _t = void (SerialPort::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::availablePortsChanged)) {
+                *result = 5;
+                return;
+            }
+        }
     }
+#ifndef QT_NO_PROPERTIES
+    else if (_c == QMetaObject::ReadProperty) {
+        auto *_t = static_cast<SerialPort *>(_o);
+        Q_UNUSED(_t)
+        void *_v = _a[0];
+        switch (_id) {
+        case 0: *reinterpret_cast< QStringList*>(_v) = _t->availablePorts(); break;
+        case 1: *reinterpret_cast< bool*>(_v) = _t->isOpen(); break;
+        default: break;
+        }
+    } else if (_c == QMetaObject::WriteProperty) {
+    } else if (_c == QMetaObject::ResetProperty) {
+    }
+#endif // QT_NO_PROPERTIES
 }
 
 QT_INIT_METAOBJECT const QMetaObject SerialPort::staticMetaObject = { {
@@ -164,14 +239,31 @@ int SerialPort::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 6;
+        _id -= 12;
     }
+#ifndef QT_NO_PROPERTIES
+    else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
+            || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType) {
+        qt_static_metacall(this, _c, _id, _a);
+        _id -= 2;
+    } else if (_c == QMetaObject::QueryPropertyDesignable) {
+        _id -= 2;
+    } else if (_c == QMetaObject::QueryPropertyScriptable) {
+        _id -= 2;
+    } else if (_c == QMetaObject::QueryPropertyStored) {
+        _id -= 2;
+    } else if (_c == QMetaObject::QueryPropertyEditable) {
+        _id -= 2;
+    } else if (_c == QMetaObject::QueryPropertyUser) {
+        _id -= 2;
+    }
+#endif // QT_NO_PROPERTIES
     return _id;
 }
 
@@ -199,6 +291,18 @@ void SerialPort::connected()
 void SerialPort::disconnected()
 {
     QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
+}
+
+// SIGNAL 4
+void SerialPort::portOpenChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
+}
+
+// SIGNAL 5
+void SerialPort::availablePortsChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

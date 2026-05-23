@@ -15,18 +15,9 @@ Window {
     //     y:100
     // }
     LaserSendArea{
-        x:100
-        y:100
+        x:0
+        y:0
     }
-    CusButton_Blue {
-        x:800
-        y:800
-        width: 120
-        height: 36
-        text: "Hello"
-        onClicked: {
-            console.log("hello TaoQuick")
-        }
-    }
+    
     
 }

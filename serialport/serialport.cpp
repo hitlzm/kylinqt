@@ -9,11 +9,43 @@ SerialPort::SerialPort(QObject *parent)
             this, &SerialPort::handleReadyRead);
     connect(m_serialPort, &QSerialPort::errorOccurred,
             this, &SerialPort::handleError);
+
+    scanPorts();
 }
 
 SerialPort::~SerialPort()
 {
     close();
+}
+
+QStringList SerialPort::availablePorts() const
+{
+    return m_availablePorts;
+}
+
+void SerialPort::scanPorts()
+{
+    m_availablePorts.clear();
+    const auto ports = QSerialPortInfo::availablePorts();
+    for (const auto &info : ports) {
+        m_availablePorts.append(info.portName());
+    }
+    emit availablePortsChanged();
+}
+
+bool SerialPort::openPort(const QString &portName, int baudRate)
+{
+    return open(portName, static_cast<qint32>(baudRate));
+}
+
+void SerialPort::closePort()
+{
+    close();
+}
+
+bool SerialPort::sendData(const QByteArray &data)
+{
+    return send(data) > 0;
 }
 
 bool SerialPort::open(const QString &portName, qint32 baudRate)
@@ -27,6 +59,7 @@ bool SerialPort::open(const QString &portName, qint32 baudRate)
 
     if (m_serialPort->open(QIODevice::ReadWrite)) {
         emit connected();
+        emit portOpenChanged();
         return true;
     }
 
@@ -39,6 +72,7 @@ void SerialPort::close()
     if (m_serialPort->isOpen()) {
         m_serialPort->close();
         emit disconnected();
+        emit portOpenChanged();
     }
 }
 

@@ -257,4 +257,18 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/QQmlContext \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcontext.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcontext.h \
+ E:/QTproject/kylinqt/serialport/serialport_laser.h \
+ E:/QTproject/kylinqt/serialport/serialport.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h

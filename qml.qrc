@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>components/LaserRecvArea.qml</file>
         <file>components/LaserSendArea.qml</file>
+        <file>components/MyTextField.qml</file>
     </qresource>
 </RCC>

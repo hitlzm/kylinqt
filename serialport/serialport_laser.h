@@ -3,6 +3,178 @@
 
 #include "serialport.h"
 
+class LaserData : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int frameStatus READ frameStatus NOTIFY frameStatusChanged)
+    Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
+    Q_PROPERTY(int dytStatus READ dytStatus NOTIFY dytStatusChanged)
+    Q_PROPERTY(int detectorStatus READ detectorStatus NOTIFY detectorStatusChanged)
+    Q_PROPERTY(int faultInfo READ faultInfo NOTIFY faultInfoChanged)
+    Q_PROPERTY(float opticalAzimuth READ opticalAzimuth NOTIFY opticalAzimuthChanged)
+    Q_PROPERTY(float opticalPitch READ opticalPitch NOTIFY opticalPitchChanged)
+    Q_PROPERTY(float gyroAzimuthRate READ gyroAzimuthRate NOTIFY gyroAzimuthRateChanged)
+    Q_PROPERTY(float gyroPitchRate READ gyroPitchRate NOTIFY gyroPitchRateChanged)
+    Q_PROPERTY(float losAzimuthRate READ losAzimuthRate NOTIFY losAzimuthRateChanged)
+    Q_PROPERTY(float losPitchRate READ losPitchRate NOTIFY losPitchRateChanged)
+    Q_PROPERTY(float deviationAzimuth READ deviationAzimuth NOTIFY deviationAzimuthChanged)
+    Q_PROPERTY(float deviationPitch READ deviationPitch NOTIFY deviationPitchChanged)
+    Q_PROPERTY(int laserPeriod READ laserPeriod NOTIFY laserPeriodChanged)
+    Q_PROPERTY(int gainStatus READ gainStatus NOTIFY gainStatusChanged)
+    Q_PROPERTY(float quadrant1Energy READ quadrant1Energy NOTIFY quadrant1EnergyChanged)
+    Q_PROPERTY(float quadrant2Energy READ quadrant2Energy NOTIFY quadrant2EnergyChanged)
+    Q_PROPERTY(float quadrant3Energy READ quadrant3Energy NOTIFY quadrant3EnergyChanged)
+    Q_PROPERTY(float quadrant4Energy READ quadrant4Energy NOTIFY quadrant4EnergyChanged)
+    Q_PROPERTY(float softwareVersion1 READ softwareVersion1 NOTIFY softwareVersion1Changed)
+    Q_PROPERTY(float softwareVersion2 READ softwareVersion2 NOTIFY softwareVersion2Changed)
+
+public:
+    explicit LaserData(QObject *parent = nullptr);
+
+    int frameStatus() const;
+    int frameId() const;
+    int dytStatus() const;
+    int detectorStatus() const;
+    int faultInfo() const;
+    float opticalAzimuth() const;
+    float opticalPitch() const;
+    float gyroAzimuthRate() const;
+    float gyroPitchRate() const;
+    float losAzimuthRate() const;
+    float losPitchRate() const;
+    float deviationAzimuth() const;
+    float deviationPitch() const;
+    int laserPeriod() const;
+    int gainStatus() const;
+    float quadrant1Energy() const;
+    float quadrant2Energy() const;
+    float quadrant3Energy() const;
+    float quadrant4Energy() const;
+    float softwareVersion1() const;
+    float softwareVersion2() const;
+
+    void updateFromFrame(const QByteArray &frame);
+
+signals:
+    void frameStatusChanged();
+    void frameIdChanged();
+    void dytStatusChanged();
+    void detectorStatusChanged();
+    void faultInfoChanged();
+    void opticalAzimuthChanged();
+    void opticalPitchChanged();
+    void gyroAzimuthRateChanged();
+    void gyroPitchRateChanged();
+    void losAzimuthRateChanged();
+    void losPitchRateChanged();
+    void deviationAzimuthChanged();
+    void deviationPitchChanged();
+    void laserPeriodChanged();
+    void gainStatusChanged();
+    void quadrant1EnergyChanged();
+    void quadrant2EnergyChanged();
+    void quadrant3EnergyChanged();
+    void quadrant4EnergyChanged();
+    void softwareVersion1Changed();
+    void softwareVersion2Changed();
+
+private:
+    inline float fromRawValue_a(qint16 raw)
+    {
+    return static_cast<float>(raw)
+            * 0.01f;
+    }
+    inline float fromRawValue_b(qint16 raw)
+    {
+    return static_cast<float>(raw)
+            * 0.001f;
+    }
+    int m_frameStatus = 0;
+    int m_frameId = 0;
+    int m_dytStatus = 0;
+    int m_detectorStatus = 0;
+    int m_faultInfo = 0;
+    float m_opticalAzimuth = 0;
+    float m_opticalPitch = 0;
+    float m_gyroAzimuthRate = 0;
+    float m_gyroPitchRate = 0;
+    float m_losAzimuthRate = 0;
+    float m_losPitchRate = 0;
+    float m_deviationAzimuth = 0;
+    float m_deviationPitch = 0;
+    int m_laserPeriod = 0;
+    int m_gainStatus = 0;
+    float m_quadrant1Energy = 0;
+    float m_quadrant2Energy = 0;
+    float m_quadrant3Energy = 0;
+    float m_quadrant4Energy = 0;
+    float m_softwareVersion1 = 0;
+    float m_softwareVersion2 = 0;
+};
+
+class LaserSendData : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int frameStatus READ frameStatus WRITE setFrameStatus NOTIFY frameStatusChanged)
+    Q_PROPERTY(int frameId READ frameId WRITE setFrameId NOTIFY frameIdChanged)
+    Q_PROPERTY(int cmd READ cmd WRITE setCmd NOTIFY cmdChanged)
+    Q_PROPERTY(int laserPeriod READ laserPeriod WRITE setLaserPeriod NOTIFY laserPeriodChanged)
+    Q_PROPERTY(float param2 READ param2 WRITE setParam2 NOTIFY param2Changed)
+    Q_PROPERTY(float param3 READ param3 WRITE setParam3 NOTIFY param3Changed)
+    Q_PROPERTY(float param4 READ param4 WRITE setParam4 NOTIFY param4Changed)
+    Q_PROPERTY(float param5 READ param5 WRITE setParam5 NOTIFY param5Changed)
+
+public:
+    explicit LaserSendData(QObject *parent = nullptr);
+
+    int frameStatus() const;
+    void setFrameStatus(int value);
+    int frameId() const;
+    void setFrameId(int value);
+    int cmd() const;
+    void setCmd(int value);
+    int laserPeriod() const;
+    void setLaserPeriod(int value);
+    float param2() const;
+    void setParam2(float value);
+    float param3() const;
+    void setParam3(float value);
+    float param4() const;
+    void setParam4(float value);
+    float param5() const;
+    void setParam5(float value);
+
+    QByteArray buildFrame() const;
+
+signals:
+    void frameStatusChanged();
+    void frameIdChanged();
+    void cmdChanged();
+    void laserPeriodChanged();
+    void param2Changed();
+    void param3Changed();
+    void param4Changed();
+    void param5Changed();
+
+private:
+    inline qint16 toRawValue(float value) const
+    {
+        return static_cast<qint16>(
+                qRound(value / 0.01f));
+    }
+
+    int m_frameStatus = 0;
+    int m_frameId = 1;
+    int m_cmd = 0;
+    int m_laserPeriod = 0;
+    float m_param2 = 0;
+    float m_param3 = 0;
+    float m_param4 = 0;
+    float m_param5 = 0;
+};
+
 class SerialPortLaser : public SerialPort
 {
     Q_OBJECT
@@ -11,12 +183,19 @@ public:
     explicit SerialPortLaser(QObject *parent = nullptr);
     ~SerialPortLaser() override;
 
+    LaserData* laserData() const;
+    LaserSendData* laserSendData() const;
+
 protected:
     QByteArray parseData(const QByteArray &rawData) override;
+
 private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
     uint8_t xorChecksum(const QByteArray& data);
+    LaserData *m_laserData;
+    LaserSendData *m_laserSendData;
 };
+
 
 //激光导引头接收结构体
 #pragma pack(push,1)

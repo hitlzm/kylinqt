@@ -1,8 +1,8 @@
-// LaserSendArea.qml
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-
+import taoQuick 1.0
+import "./"
 Rectangle {
     id: root
     width: 900
@@ -23,6 +23,8 @@ Rectangle {
         "圆形位置"
     ]
 
+    property int currentCmd: 0
+
     Text {
         id: titleText
         text: "激光导引头控制区"
@@ -31,9 +33,9 @@ Rectangle {
         color: "#000000"
 
         anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors.leftMargin: 10
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: 10
     }
 
     // 左侧命令区
@@ -41,7 +43,7 @@ Rectangle {
         id: commandArea
         width: 140
         height: 520
-        color: "#8d8d8d"
+        color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
@@ -57,9 +59,9 @@ Rectangle {
             Repeater {
                 model: root.commandList
 
-                delegate: RadioButton {
+                delegate: CusRadioButton {
                     text: modelData
-
+                    checked: index === root.currentCmd
                     font.pixelSize: 16
 
                     indicator.width: 18
@@ -72,13 +74,15 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: 30
                     }
+
+                    onClicked: root.currentCmd = index
                 }
             }
         }
     }
 
-    // 串口选择
-    ComboBox {
+    // 串口选择 - 绑定到 C++ laserSerial 对象
+    CusComboBox {
         id: serialComboBox
         width: 220
         height: 42
@@ -88,11 +92,11 @@ Rectangle {
         anchors.left: commandArea.right
         anchors.leftMargin: 80
 
-        model: ["COM1", "COM2", "COM3", "COM4"]
+        model: laserSerial.availablePorts
     }
 
     // 波特率
-    ComboBox {
+    CusComboBox {
         id: baudComboBox
         width: 220
         height: 42
@@ -104,47 +108,67 @@ Rectangle {
         model: ["9600", "115200", "230400", "460800"]
     }
 
-    
     // 打开串口按钮
-    Button {
+    CusButton_Blue {
         id: openButton
         width: 160
         height: 50
-        text: "打开串口"
+        text: laserSerial.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.bottom
         anchors.topMargin: 60
         anchors.horizontalCenter: serialComboBox.horizontalCenter
+
+        onClicked: {
+            if (laserSerial.portOpen) {
+                laserSerial.closePort()
+            } else {
+                laserSerial.openPort(serialComboBox.currentText,
+                                     parseInt(baudComboBox.currentText))
+            }
+        }
     }
 
     // 发送数据按钮
-    Button {
+    CusButton_Blue {
         id: sendButton
         width: 160
         height: 50
         text: "发送数据"
+        enabled: laserSerial.portOpen
 
         anchors.top: baudComboBox.bottom
         anchors.topMargin: 60
         anchors.horizontalCenter: baudComboBox.horizontalCenter
+
+        onClicked: {
+            var data = ""
+            root.sendData(data)
+        }
     }
 
     // 左侧输入框
     Column {
         id: leftInputColumn
-        spacing: 20
+        spacing: 30
 
         anchors.top: openButton.bottom
         anchors.topMargin: 30
         anchors.horizontalCenter: openButton.horizontalCenter
 
         Repeater {
-            model: 5
+            model: [
+                "激光周期",
+                "方位角度",
+                "俯仰角度",
+                "搜索范围/半径 ",
+                "搜索范围"
+            ]
 
-            delegate: TextField {
-                width: 220
-                height: 40
-                placeholderText: "请输入内容"
+            delegate: MyTextField {
+                mywidth: 120
+                myheight: 40
+                title: modelData
             }
         }
     }
@@ -152,7 +176,7 @@ Rectangle {
     // 右侧输入框
     Column {
         id: rightInputColumn
-        spacing: 20
+        spacing: 30
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 30
@@ -160,12 +184,32 @@ Rectangle {
 
         Repeater {
             model: 5
-
-            delegate: TextField {
-                width: 220
-                height: 40
-                placeholderText: "请输入内容"
+            
+            delegate: MyTextField {
+                mywidth: 120
+                myheight: 40
+                title: "预留参数 " + (index + 1)
             }
         }
     }
+
+    // 发送数据信号
+    signal sendData(string data)
+
+    // 连接到 laserSerial 信号
+    Connections {
+        target: laserSerial
+        function onErrorOccurred(msg) {
+            console.log("Serial error:", msg)
+        }
+        function onConnected() {
+            console.log("Serial connected")
+        }
+        function onDisconnected() {
+            console.log("Serial disconnected")
+        }
+        
+    }
+
+    
 }
