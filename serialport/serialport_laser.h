@@ -178,7 +178,7 @@ private:
 class SerialPortLaser : public SerialPort
 {
     Q_OBJECT
-
+    Q_PROPERTY(LaserData* laserData READ laserData CONSTANT)
 public:
     explicit SerialPortLaser(QObject *parent = nullptr);
     ~SerialPortLaser() override;

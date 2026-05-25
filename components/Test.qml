@@ -5,12 +5,12 @@ import taoQuick 1.0
 import "./"
 Rectangle {
     id: root
-    width: 1200
-    height: 500
-    color: '#eff3f6'
+    width: 1100
+    height: 650
+    color: '#e9f0f9'
 
     property var commandList: [
-        "控制指令",
+        
         "无动作",
         "自检",
         "锁定",
@@ -27,7 +27,7 @@ Rectangle {
 
     Text {
         id: titleText
-        text: "激光导引头控制区"
+        text: "图像导引头发送区"
         font.pixelSize: 24
         font.bold: true
         color: "#000000"
@@ -42,20 +42,27 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 140
-        height: 520
+        height: 400
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
         anchors.leftMargin: 10
-        anchors.top: titleText.bottom
-        anchors.topMargin: 20
+        // anchors.top: titleText.bottom
+        // anchors.topMargin: 20
+        anchors.verticalCenter: root.verticalCenter
 
         Column {
             spacing: 6
             anchors.fill: parent
             anchors.margins: 12
-
+            
+            Text {
+                text: "控制指令"
+                font.pixelSize: 16
+                font.bold: true
+                color: "#000000"
+            }
             Repeater {
                 model: root.commandList
 
@@ -87,10 +94,10 @@ Rectangle {
         width: 220
         height: 42
 
-        anchors.top: parent.top
+        anchors.top: titleText.bottom
         anchors.topMargin: 20
         anchors.left: commandArea.right
-        anchors.leftMargin: 80
+        anchors.leftMargin: 30
 
         model: laserSerial.availablePorts
     }
@@ -103,7 +110,7 @@ Rectangle {
 
         anchors.top: serialComboBox.top
         anchors.left: serialComboBox.right
-        anchors.leftMargin: 80
+        anchors.leftMargin: 30
 
         model: ["9600", "115200", "230400", "460800"]
     }
@@ -111,13 +118,14 @@ Rectangle {
     // 打开串口按钮
     CusButton_Blue {
         id: openButton
-        width: 160
-        height: 50
+        width: 120
+        height: 42
         text: laserSerial.portOpen ? "关闭串口" : "打开串口"
 
-        anchors.top: serialComboBox.bottom
-        anchors.topMargin: 60
-        anchors.horizontalCenter: serialComboBox.horizontalCenter
+        anchors.top: serialComboBox.top
+        anchors.left: baudComboBox.right
+        anchors.leftMargin: 30 
+        // anchors.horizontalCenter: serialComboBox.horizontalCenter
 
         onClicked: {
             if (laserSerial.portOpen) {
@@ -132,14 +140,15 @@ Rectangle {
     // 发送数据按钮
     CusButton_Blue {
         id: sendButton
-        width: 160
-        height: 50
+        width: 120
+        height: 42
         text: "发送数据"
         enabled: laserSerial.portOpen
 
-        anchors.top: baudComboBox.bottom
-        anchors.topMargin: 60
-        anchors.horizontalCenter: baudComboBox.horizontalCenter
+        anchors.top: serialComboBox.top
+        anchors.left: openButton.right
+        anchors.leftMargin: 30
+        // anchors.horizontalCenter: baudComboBox.horizontalCenter
 
         onClicked: {
             var data = ""
@@ -152,9 +161,9 @@ Rectangle {
         id: leftInputColumn
         spacing: 30
 
-        anchors.top: openButton.bottom
+        anchors.top: serialComboBox.bottom
         anchors.topMargin: 30
-        anchors.horizontalCenter: openButton.horizontalCenter
+        anchors.horizontalCenter: serialComboBox.horizontalCenter
 
         Repeater {
             model: [
@@ -162,12 +171,16 @@ Rectangle {
                 "方位角度",
                 "俯仰角度",
                 "搜索范围/半径 ",
-                "搜索范围"
+                "搜索范围",
+                "预留参数 1",
+                "预留参数 2",
+                "预留参数 3",
+                
             ]
 
             delegate: MyTextField {
-                mywidth: 120
-                myheight: 40
+                mywidth: 100
+                myheight: 30
                 title: modelData
             }
         }
@@ -180,21 +193,99 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 30
-        anchors.horizontalCenter: sendButton.horizontalCenter
-
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: leftInputColumn.right
+        anchors.leftMargin: 30
         Repeater {
-            model: 5
+            model: 8
             
             delegate: MyTextField {
-                mywidth: 120
-                myheight: 40
+                mywidth: 100
+                myheight: 30
                 title: "预留参数 " + (index + 1)
             }
         }
     }
 
-    // 发送数据信号
-    signal sendData(string data)
+    Column {
+        id: thirdInputColumn
+        spacing: 30
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 30
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: rightInputColumn.right
+        anchors.leftMargin: 30
+        Repeater {
+            model: 8
+            
+            delegate: MyTextField {
+                mywidth: 100
+                myheight: 30
+                title: "预留参数 " + (index + 1)
+            }
+        }
+    }
+
+    Column {
+        id:fourthInputColumn
+        spacing: 30
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 30
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: thirdInputColumn.right
+        anchors.leftMargin: 30
+        Repeater {
+            model: 8
+            
+            delegate: MyTextField {
+                mywidth: 100
+                myheight: 30
+                title: "预留参数 " + (index + 1)
+            }
+        }
+    }
+    Column {
+        id:mInputColumn5
+        spacing: 30
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 30
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: fourthInputColumn.right
+        anchors.leftMargin: 30
+        Repeater {
+            model: 8
+            
+            delegate: MyTextField {
+                mywidth: 100
+                myheight: 30
+                title: "预留参数 " + (index + 1)
+            }
+        }
+    }
+     Column {
+        id:mInputColumn6
+        spacing: 30
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 30
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: mInputColumn5.right
+        anchors.leftMargin: 30
+        Repeater {
+            model: 8
+            
+            delegate: MyTextField {
+                mywidth: 100
+                myheight: 30
+                title: "预留参数 " + (index + 1)
+            }
+        }
+    }
+    // // 发送数据信号
+    // signal sendData(string data)
 
     // 连接到 laserSerial 信号
     Connections {

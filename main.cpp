@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "serialport/serialport_laser.h"
+#include "serialport/serialport_image.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,12 +13,14 @@ int main(int argc, char *argv[])
     qmlRegisterType<SerialPortLaser>("SerialPort", 1, 0, "SerialPortLaser");
 
     SerialPortLaser laserPort;
+    SerialPortImage imagePort;
 
     QQmlApplicationEngine engine;
 
     engine.addImportPath(TaoQuickImportPath);
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
     engine.rootContext()->setContextProperty("laserSerial", &laserPort);
+    engine.rootContext()->setContextProperty("imageSerial", &imagePort);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

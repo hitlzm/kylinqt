@@ -9,6 +9,7 @@ uint16_t SerialPortImage::crc16_table[256] = {0};
 ImageData::ImageData(QObject *parent)
     : QObject(parent)
 {
+    
 }
 
 int ImageData::frameLength() const { return m_frameLength; }
@@ -401,7 +402,10 @@ SerialPortImage::SerialPortImage(QObject *parent)
     init_crc16_table();
 }
 
-SerialPortImage::~SerialPortImage() = default;
+SerialPortImage::~SerialPortImage() {
+    delete m_imageData;
+    delete m_imageSendData;
+}
 
 ImageData* SerialPortImage::imageData() const
 {

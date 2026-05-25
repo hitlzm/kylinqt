@@ -74,6 +74,10 @@ kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: CMakeFiles/kylinqt_autogen.dir/AutoRcc_q
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/main.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserSendArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyTextField.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/DataLabel.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Mytextfield2.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Test.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserRecvArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe

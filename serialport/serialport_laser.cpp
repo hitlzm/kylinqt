@@ -237,7 +237,10 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
 {
 }
 
-SerialPortLaser::~SerialPortLaser() = default;
+SerialPortLaser::~SerialPortLaser() {
+    delete m_laserData;
+    delete m_laserSendData;
+}
 
 LaserData* SerialPortLaser::laserData() const
 {

@@ -379,6 +379,7 @@ signals:
     void pixelSizeChanged();
 
 private:
+    //把显示数据转化为串口原始数据
     inline qint16 toRawValue_a(float value) const
     {
     return static_cast<qint16>(
@@ -447,17 +448,17 @@ private:
 class SerialPortImage : public SerialPort
 {
     Q_OBJECT
-
+    Q_PROPERTY(ImageData* imageData READ imageData CONSTANT)
 public:
     explicit SerialPortImage(QObject *parent = nullptr);
     ~SerialPortImage() override;
 
-    ImageData* imageData() const;
+    ImageData* imageData() const ;
     ImageSendData* imageSendData() const;
 
     static void init_crc16_table(uint16_t poly = 0x1021);
     static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
-
+    
 protected:
     QByteArray parseData(const QByteArray &rawData) override;
 
@@ -465,7 +466,6 @@ private:
     static uint16_t crc16_table[256];
     ImageData *m_imageData;
     ImageSendData *m_imageSendData;
-    
 
 };
 

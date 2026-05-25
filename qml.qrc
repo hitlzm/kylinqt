@@ -4,5 +4,9 @@
         <file>components/LaserRecvArea.qml</file>
         <file>components/LaserSendArea.qml</file>
         <file>components/MyTextField.qml</file>
+        <file>components/DataLabel.qml</file>
+        <file>components/Myvideo.qml</file>
+        <file>components/Test.qml</file>
+        <file>components/Mytextfield2.qml</file>
     </qresource>
 </RCC>
