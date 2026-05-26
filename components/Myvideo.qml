@@ -15,7 +15,7 @@ Rectangle {
         id: mediaPlayer
 
         // 本地视频
-        source: "file:///E:/test.mp4"
+        source: "null"
 
         // RTSP 示例
         // source: "rtsp://192.168.1.100:554/live"

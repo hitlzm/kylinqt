@@ -6,11 +6,11 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 500
+    height: 540
     color: '#eff3f6'
 
     property var commandList: [
-        "控制指令",
+
         "无动作",
         "自检",
         "锁定",
@@ -27,7 +27,7 @@ Rectangle {
 
     Text {
         id: titleText
-        text: "激光导引头控制区"
+        text: "激光导引头发送区"
         font.pixelSize: 24
         font.bold: true
         color: "#000000"
@@ -42,7 +42,7 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 140
-        height: 520
+        height: 400
         color: '#faf7f7'
         radius: 4
 
@@ -55,7 +55,12 @@ Rectangle {
             spacing: 6
             anchors.fill: parent
             anchors.margins: 12
-
+            Text {
+                text: "控制指令"
+                font.pixelSize: 16
+                font.bold: true
+                color: "#000000"
+            }
             Repeater {
                 model: root.commandList
 
@@ -87,10 +92,9 @@ Rectangle {
         width: 220
         height: 42
 
-        anchors.top: parent.top
-        anchors.topMargin: 20
-        anchors.left: commandArea.right
-        anchors.leftMargin: 80
+        anchors.top: titleText.top
+        anchors.left: titleText.right
+        anchors.leftMargin: 30
 
         model: laserSerial.availablePorts
     }
@@ -103,7 +107,7 @@ Rectangle {
 
         anchors.top: serialComboBox.top
         anchors.left: serialComboBox.right
-        anchors.leftMargin: 80
+        anchors.leftMargin: 30
 
         model: ["9600", "115200", "230400", "460800"]
     }
@@ -111,14 +115,13 @@ Rectangle {
     // 打开串口按钮
     CusButton_Blue {
         id: openButton
-        width: 160
-        height: 50
+        width: 120
+        height: 42
         text: laserSerial.portOpen ? "关闭串口" : "打开串口"
 
-        anchors.top: serialComboBox.bottom
-        anchors.topMargin: 60
-        anchors.horizontalCenter: serialComboBox.horizontalCenter
-
+        anchors.top: serialComboBox.top
+        anchors.left: baudComboBox.right
+        anchors.leftMargin: 30
         onClicked: {
             if (laserSerial.portOpen) {
                 laserSerial.closePort()
@@ -132,14 +135,14 @@ Rectangle {
     // 发送数据按钮
     CusButton_Blue {
         id: sendButton
-        width: 160
-        height: 50
+        width: 120
+        height: 42
         text: "发送数据"
         enabled: laserSerial.portOpen
 
-        anchors.top: baudComboBox.bottom
-        anchors.topMargin: 60
-        anchors.horizontalCenter: baudComboBox.horizontalCenter
+        anchors.top: serialComboBox.top
+        anchors.left: openButton.right
+        anchors.leftMargin: 30
 
         onClicked: {
             var data = ""
@@ -152,9 +155,10 @@ Rectangle {
         id: leftInputColumn
         spacing: 30
 
-        anchors.top: openButton.bottom
+        anchors.top: serialComboBox.bottom
         anchors.topMargin: 30
-        anchors.horizontalCenter: openButton.horizontalCenter
+        anchors.left:commandArea.right
+        anchors.leftMargin: 30
 
         Repeater {
             model: [
@@ -180,7 +184,9 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 30
-        anchors.horizontalCenter: sendButton.horizontalCenter
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: leftInputColumn.right
+        anchors.leftMargin: 30
 
         Repeater {
             model: 5

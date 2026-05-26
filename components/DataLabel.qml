@@ -2,7 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 Row {
-    spacing: 8
+    spacing: 2
     property string label: ""
     property string value: ""
     property color valueColor: "#1a73e8"

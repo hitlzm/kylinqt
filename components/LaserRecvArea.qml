@@ -6,13 +6,14 @@ import "./"
 
 Rectangle {
     id: root
-    width: 900
-    height: 680
+    width: 1200
+    height: 400
     color: '#e9f0f9'
+    property int groupHeight1: 150
 
     Text {
         id: titleText
-        text: "图像导引头接收区"
+        text: "激光导引头接收区"
         font.pixelSize: 24
         font.bold: true
         color: "#000000"
@@ -33,17 +34,17 @@ Rectangle {
         anchors.topMargin: 16
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
-        color: "transparent"
+        color: '#eddada'
 
         ColumnLayout {
-         anchors.fill: parent
-         spacing: 5    
+            anchors.fill: parent
+            spacing: 1
 
             RowLayout {
-                id:firstRow
+                id: firstRow
                 spacing: 4
 
-                // ── 帧信息 ──
+                // ── 状态信息 ──
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
@@ -51,87 +52,50 @@ Rectangle {
                         border.width: 1
                         radius: 2
                     }
-                    title: "帧信息"
+                    title: "状态信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 150
+                    label: Label {
+                        text: parent.title
+                        font.pixelSize: 18
+                        leftPadding: 12
+                        topPadding: 6
+                    }
 
                     Row {
                         spacing: 30
+                        anchors.centerIn: parent
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "B帧流水号:"; value: imageSerial.imageData.bFrameSequence }
-                            DataLabel { label: "A帧流水号回告:"; value: imageSerial.imageData.aFrameSequenceReply }
+
                             DataLabel {
-                                label: "A帧有效标志:"
-                                value: imageSerial.imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
-                                valueColor: imageSerial.imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+                                label: "DYT状态:"
+                                value: {
+                                    switch(laserSerial.laserData.dytStatus) {
+                                        case 0x00: return "待机"
+                                        case 0x01: return "自检中"
+                                        case 0x04: return "定轴搜索"
+                                        case 0x05: return "矩形搜索"
+                                        case 0x06: return "圆形搜索"
+                                        case 0x07: return "捕获"
+                                        case 0x08: return "稳定跟踪"
+                                        case 0x09: return "记忆跟踪"
+                                        case 0x0A: return "定轴搜索(位置)"
+                                        case 0x0B: return "矩形搜索(位置)"
+                                        case 0x0C: return "圆形搜索(位置)"
+                                        default: return "未知(0x" + laserSerial.laserData.dytStatus.toString(16) + ")"
+                                    }
+                                }
                             }
-                        }    
-                       
-                    }
-                }
-
-                // ── 控制/状态信息 ──
-                GroupBox {
-                    background: Rectangle {
-                        color: "transparent"
-                        border.color: "gray"
-                        border.width: 1
-                        radius: 2
-                    }
-                    title: "控制/状态信息"
-                    font.pixelSize: 18
-                    Layout.fillWidth: true
-
-                    Row {
-                        spacing: 40
-
-                        Column {
-                            spacing: 6
-                            DataLabel { label: "导引头控制字回告:"; value: "0x" + imageSerial.imageData.seekerCtrlReply.toString(16).toUpperCase() }
-                            DataLabel { label: "光学参数装订回告:"; value: "0x" + imageSerial.imageData.opticalParamReply.toString(16).toUpperCase() }
+                            DataLabel { label: "探测器状态:"; value: "0x" + laserSerial.laserData.detectorStatus.toString(16).toUpperCase() }
                             DataLabel {
-                                label: "当前工作通道:"
-                                value: imageSerial.imageData.currentWorkChannel === 0x02 ? "红外" : (imageSerial.imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
+                                label: "故障信息:"
+                                value: laserSerial.laserData.faultInfo === 0 ? "无故障" : "故障码: 0x" + laserSerial.laserData.faultInfo.toString(16).toUpperCase()
+                                valueColor: laserSerial.laserData.faultInfo === 0 ? "#1a73e8" : "#d93025"
                             }
-                            DataLabel { label: "自检标志:"; value: "0x" + imageSerial.imageData.selfCheckFlag.toString(16).toUpperCase() }
-                            
                         }
-                       
-                        Column {
-                            spacing: 6
-                            DataLabel { label: "目标/背景类型:"; value: imageSerial.imageData.targetBackgroundType }
-                            DataLabel { label: "光学工作状态:"; value: imageSerial.imageData.opticalWorkState }
-                            DataLabel { label: "修正指令状态:"; value: imageSerial.imageData.correctionCmdStatus }
-                            DataLabel { label: "修正指令次数:"; value: imageSerial.imageData.correctionCmdCount }
-                        }
-                    }
-                }
-
-                // ── 跟踪信息 ──
-                GroupBox {
-                    background: Rectangle {
-                        color: "transparent"
-                        border.color: "gray"
-                        border.width: 1
-                        radius: 2
-                    }
-                    title: "跟踪信息"
-                    font.pixelSize: 18
-                    Layout.fillWidth: true
-
-                    Row {
-                        spacing: 40
-
-                        Column {
-                            spacing: 6
-                            DataLabel { label: "跟踪状态:"; value: imageSerial.imageData.trackingState }
-                            DataLabel { label: "跟踪器状态:"; value: imageSerial.imageData.trackerState }
-                            DataLabel { label: "方位偏差像素:"; value: imageSerial.imageData.azimuthDeviationPixel }
-                            DataLabel { label: "俯仰偏差像素:"; value: imageSerial.imageData.pitchDeviationPixel }
-                        }
-                        
                     }
                 }
 
@@ -146,26 +110,29 @@ Rectangle {
                     title: "角度信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 150
+                    label: Label {
+                        text: parent.title
+                        font.pixelSize: 18
+                        leftPadding: 12
+                        topPadding: 6
+                    }
 
                     Row {
                         spacing: 40
+                        anchors.centerIn: parent
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "俯仰框架角:"; value: imageSerial.imageData.pitchFrameAngle.toFixed(2) + "°" }
-                            DataLabel { label: "偏航框架角:"; value: imageSerial.imageData.yawFrameAngle.toFixed(2) + "°" }
-                            DataLabel { label: "方位主令:"; value: imageSerial.imageData.azimuthMasterCmd }
-                            DataLabel { label: "俯仰主令:"; value: imageSerial.imageData.pitchMasterCmd }
+                            DataLabel { label: "光轴方位角:"; value: laserSerial.laserData.opticalAzimuth.toFixed(2) + "°" }
+                            DataLabel { label: "光轴俯仰角:"; value: laserSerial.laserData.opticalPitch.toFixed(2) + "°" }
+                            DataLabel { label: "方位偏差角:"; value: laserSerial.laserData.deviationAzimuth.toFixed(3) + "°" }
+                            DataLabel { label: "俯仰偏差角:"; value: laserSerial.laserData.deviationPitch.toFixed(3) + "°" }
                         }
                         
                     }
                 }
 
-                
-            }
-            RowLayout {
-
-                spacing: 100
                 // ── 角速度信息 ──
                 GroupBox {
                     background: Rectangle {
@@ -174,31 +141,37 @@ Rectangle {
                         border.width: 1
                         radius: 2
                     }
-                    title: "角速度/陀螺信息"
+                    title: "角速度信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 150
+                    label: Label {
+                        text: parent.title
+                        font.pixelSize: 18
+                        leftPadding: 12
+                        topPadding: 6
+                    }
 
                     Row {
                         spacing: 40
+                        anchors.centerIn: parent
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "俯仰视线角速度:"; value: imageSerial.imageData.pitchLosAngVel.toFixed(2) + "°/s" }
-                            DataLabel { label: "偏航视线角速度:"; value: imageSerial.imageData.yawLosAngVel.toFixed(2) + "°/s" }
-                            DataLabel { label: "俯仰陀螺:"; value: imageSerial.imageData.pitchGyro.toFixed(2) + "°/s" }
+                            DataLabel { label: "方位陀螺:"; value: laserSerial.laserData.gyroAzimuthRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰陀螺:"; value: laserSerial.laserData.gyroPitchRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "方位视线:"; value: laserSerial.laserData.losAzimuthRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰视线:"; value: laserSerial.laserData.losPitchRate.toFixed(2) + "°/s" }
                         }
-                        Column {
-                            spacing: 6
-                            DataLabel { label: "偏航陀螺:"; value: imageSerial.imageData.yawGyro.toFixed(2) + "°/s" }
-                            DataLabel { label: "方位陀螺输出:"; value: imageSerial.imageData.azimuthGyroOutput.toFixed(2) + "°/s" }
-                            DataLabel { label: "俯仰陀螺输出:"; value: imageSerial.imageData.pitchGyroOutput.toFixed(2) + "°/s" }
-                        }
-                       
-                       
+
                     }
                 }
+            }
 
-                // ── 伺服/平台信息 ──
+            RowLayout {
+                spacing: 4
+
+                // ── 象限能量 ──
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
@@ -206,20 +179,28 @@ Rectangle {
                         border.width: 1
                         radius: 2
                     }
-                    title: "伺服/平台信息"
+                    title: "象限能量"
                     font.pixelSize: 18
                     Layout.fillWidth: true
+                    Layout.preferredHeight: groupHeight1
+                    label: Label {
+                        text: parent.title
+                        font.pixelSize: 18
+                        leftPadding: 12
+                        topPadding: 6
+                    }
 
                     Row {
                         spacing: 40
+                        anchors.centerIn: parent
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "平台自检结果:"; value: imageSerial.imageData.platformSelfCheck }
-                            DataLabel { label: "伺服运行时间:"; value: imageSerial.imageData.servoRunningTime + " s" }
-                            DataLabel { label: "伺服阶跃:"; value: imageSerial.imageData.servoStep }
+                            DataLabel { label: "第一象限:"; value: laserSerial.laserData.quadrant1Energy.toFixed(2) }
+                            DataLabel { label: "第二象限:"; value: laserSerial.laserData.quadrant2Energy.toFixed(2) }
+                            DataLabel { label: "第三象限:"; value: laserSerial.laserData.quadrant3Energy.toFixed(2) }
+                            DataLabel { label: "第四象限:"; value: laserSerial.laserData.quadrant4Energy.toFixed(2) }
                         }
-                       
                     }
                 }
 
@@ -234,44 +215,43 @@ Rectangle {
                     title: "其他信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
+                    Layout.preferredHeight: groupHeight1
+                    label: Label {
+                        text: parent.title
+                        font.pixelSize: 18
+                        leftPadding: 12
+                        topPadding: 6
+                    }
 
                     Row {
                         spacing: 40
+                        anchors.centerIn: parent
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "红外帧编号:"; value: imageSerial.imageData.infraredFrameNum }
-                            DataLabel { label: "红外帧频:"; value: imageSerial.imageData.infraredFrameRate + " Hz" }
-                            DataLabel { label: "电视帧频:"; value: imageSerial.imageData.tvFrameRate + " Hz" }
-                            DataLabel { label: "Cbh_tv4405:"; value: imageSerial.imageData.cbhTv4405 }
+                            DataLabel { label: "激光周期:"; value: (laserSerial.laserData.laserPeriod * 2).toFixed(0) + " us" }
+                            DataLabel { label: "增益状态:"; value: "0x" + laserSerial.laserData.gainStatus.toString(16).toUpperCase() }
+                            DataLabel { label: "软件版本1:"; value: laserSerial.laserData.softwareVersion1.toFixed(2) }
+                            DataLabel { label: "软件版本2:"; value: laserSerial.laserData.softwareVersion2.toFixed(2) }
                         }
-                        Column {
-                            spacing: 6
-                            
-                            DataLabel { label: "波门尺寸:"; value: imageSerial.imageData.gateSize }
-                            DataLabel { label: "软件版本1:"; value: imageSerial.imageData.softwareVersion1 }
-                             DataLabel { label: "软件版本2:"; value: imageSerial.imageData.softwareVersion2 }
-                            DataLabel { label: "软件版本3:"; value: imageSerial.imageData.softwareVersion3 }
-                        }
-                        
+                    
                     }
                 }
-            
             }
-    }
-    }
-    // 连接到 imageSerial 信号
-    Connections {
-        target: imageSerial
-        function onErrorOccurred(msg) {
-            console.log("Image serial error:", msg)
-        }
-        function onConnected() {
-            console.log("Image serial connected")
-        }
-        function onDisconnected() {
-            console.log("Image serial disconnected")
         }
     }
 
+    // 连接到 laserSerial 信号
+    Connections {
+        target: laserSerial
+        function onErrorOccurred(msg) {
+            console.log("Laser serial error:", msg)
+        }
+        function onConnected() {
+            console.log("Laser serial connected")
+        }
+        function onDisconnected() {
+            console.log("Laser serial disconnected")
+        }
+    }
 }

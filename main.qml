@@ -9,25 +9,77 @@ Window {
     visible: true
     width: Screen.width
     height: Screen.height
-    title: qsTr("Hello World")
-    
-    
-    // LaserSendArea{
-    //     x:0
-    //     y:0
-    // }
-    // Test{
-    //     id:sendArea 
-    //     x:0
-    //     y:0
-    // }
-    LaserRecvArea{
-        // anchors.top: sendArea.bottom    
-        x:0
-        y:0
+    title: qsTr("kylin-qt")
+
+    Item {
+    id:dyt
+    width: 1200
+    height: 800
+
+    Column {
+        anchors.fill: parent
+
+        // ===== TabBar =====
+        TabBar {
+            id: bar
+            width: parent.width
+
+            TabButton {
+                text: qsTr("图像导引头")
+                font.pixelSize: 20
+            }
+
+            TabButton {
+                text: qsTr("激光导引头")
+                font.pixelSize: 20
+            }
+        }
+        // ===== 页面区域 =====
+        StackLayout {
+            id: stack
+            width: parent.width
+            height: parent.height - bar.height
+            currentIndex: bar.currentIndex
+            // --- 第一个页面 ---
+            Item {
+                ImageArea {
+                    anchors.fill: parent   
+                }
+            }
+            // --- 第二个页面 ---
+            Item {
+                LaserArea{
+                    anchors.fill: parent
+                }
+            }
+        }
     }
-    // Myvideo{
-    //     anchors.right: parent.right
-    //     anchors.top: parent.top
-    // }
 }
+
+Myvideo {
+    id: myvideo
+    anchors.top:parent.top
+    anchors.left:dyt.right
+    anchors.leftMargin: 5
+}
+//    Mytextfield2 {
+//         x: 100
+//         y: 100
+//         id: mytextfield2
+//         myheight: 60
+//         mywidth: 120    
+//         title: "速度"
+//         labeltext:"m/s"
+//         placeholderText: "请输入速度"
+//     }
+//     MyTextField {
+//         x: 100
+//         y: 200
+//         myheight: 80
+//         mywidth: 100
+//         id: mytextfield
+//         title: "加速度"
+//     }
+
+}
+

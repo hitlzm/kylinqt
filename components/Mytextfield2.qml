@@ -21,7 +21,7 @@ Item {
         font.pixelSize: 14
         font.bold: true
         color: "#333333"
-    }
+        }
    RowLayout {
     id: rowLayout
     width: parent.width
@@ -32,17 +32,17 @@ Item {
     CusTextField {
         id: textField
         Layout.fillWidth: true
-        Layout.preferredHeight: textfieldheight
+        Layout.preferredHeight: myheight - titleText.height - rowLayout.spacing
         font.pixelSize: 16
         // 水平居中
         horizontalAlignment: TextInput.AlignHCenter
-    
-    // 垂直居中：设置垂直居中对齐和相同的上下内边距
+        // 垂直居中：设置垂直居中对齐和相同的上下内边距
         verticalAlignment: TextInput.AlignVCenter
     }
     Label {
         id: mylabel
         text: labeltext
+        font.bold: true
         font.pixelSize: textField.font.pixelSize
         color: '#060000'
         Layout.alignment: Qt.AlignVCenter

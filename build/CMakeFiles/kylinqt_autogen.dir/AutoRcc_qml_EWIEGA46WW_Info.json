@@ -10,12 +10,16 @@
 	"INPUTS" : 
 	[
 		"E:/QTproject/kylinqt/main.qml",
+		"E:/QTproject/kylinqt/components/ImageSendArea.qml",
 		"E:/QTproject/kylinqt/components/LaserSendArea.qml",
 		"E:/QTproject/kylinqt/components/MyTextField.qml",
 		"E:/QTproject/kylinqt/components/DataLabel.qml",
 		"E:/QTproject/kylinqt/components/Mytextfield2.qml",
+		"E:/QTproject/kylinqt/components/ImageArea.qml",
+		"E:/QTproject/kylinqt/components/LaserArea.qml",
 		"E:/QTproject/kylinqt/components/Myvideo.qml",
-		"E:/QTproject/kylinqt/components/Test.qml",
+		"E:/QTproject/kylinqt/components/MyTabar.qml",
+		"E:/QTproject/kylinqt/components/ImageRecvArea.qml",
 		"E:/QTproject/kylinqt/components/LaserRecvArea.qml"
 	],
 	"LOCK_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",

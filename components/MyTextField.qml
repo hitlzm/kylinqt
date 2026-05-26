@@ -32,10 +32,10 @@ Item {
         height: 40
         font.pixelSize: 16
         // 水平居中
-    horizontalAlignment: TextInput.AlignHCenter
+        horizontalAlignment: TextInput.AlignHCenter
     
-    // 垂直居中：设置垂直居中对齐和相同的上下内边距
-    verticalAlignment: TextInput.AlignVCenter
+        // 垂直居中：设置垂直居中对齐和相同的上下内边距
+        verticalAlignment: TextInput.AlignVCenter
     }
     
 }

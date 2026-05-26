@@ -5,22 +5,26 @@ import taoQuick 1.0
 import "./"
 Rectangle {
     id: root
-    width: 1100
-    height: 650
+    width: 1200
+    height: 540
     color: '#e9f0f9'
 
     property var commandList: [
         
         "无动作",
+        //以下指令发送三拍，三拍后恢复默认值
         "自检",
-        "锁定",
-        "参数装订",
-        "定轴搜索",
-        "矩形搜索",
-        "圆形搜索",
-        "定轴位置",
-        "矩形位置",
-        "圆形位置"
+        "射检",
+        "搜索",
+        "预置",
+        "发射指令",
+        "通讯检查",
+        "解锁",
+        "软件升级",
+        "软件升级结束",
+        "打开波门叠加",
+        "关闭波门叠加"
+    
     ]
 
     property int currentCmd: 0
@@ -41,16 +45,16 @@ Rectangle {
     // 左侧命令区
     Rectangle {
         id: commandArea
-        width: 140
-        height: 400
+        width: 160
+        height: 500
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
-        anchors.leftMargin: 10
-        // anchors.top: titleText.bottom
-        // anchors.topMargin: 20
-        anchors.verticalCenter: root.verticalCenter
+        anchors.leftMargin: 50
+        anchors.top: titleText.bottom
+        anchors.topMargin: 20
+        // anchors.verticalCenter: root.verticalCenter
 
         Column {
             spacing: 6
@@ -58,7 +62,7 @@ Rectangle {
             anchors.margins: 12
             
             Text {
-                text: "控制指令"
+                text: "导引头控制字"
                 font.pixelSize: 16
                 font.bold: true
                 color: "#000000"
@@ -88,18 +92,17 @@ Rectangle {
         }
     }
 
-    // 串口选择 - 绑定到 C++ laserSerial 对象
+    // 串口选择 - 绑定到 C++ imageSerial 对象
     CusComboBox {
         id: serialComboBox
         width: 220
         height: 42
 
-        anchors.top: titleText.bottom
-        anchors.topMargin: 20
-        anchors.left: commandArea.right
+        anchors.top: titleText.top
+        anchors.left: titleText.right
         anchors.leftMargin: 30
 
-        model: laserSerial.availablePorts
+        model: imageSerial.availablePorts
     }
 
     // 波特率
@@ -120,7 +123,7 @@ Rectangle {
         id: openButton
         width: 120
         height: 42
-        text: laserSerial.portOpen ? "关闭串口" : "打开串口"
+        text: imageSerial.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.top
         anchors.left: baudComboBox.right
@@ -128,10 +131,10 @@ Rectangle {
         // anchors.horizontalCenter: serialComboBox.horizontalCenter
 
         onClicked: {
-            if (laserSerial.portOpen) {
-                laserSerial.closePort()
+            if (imageSerial.portOpen) {
+                imageSerial.closePort()
             } else {
-                laserSerial.openPort(serialComboBox.currentText,
+                imageSerial.openPort(serialComboBox.currentText,
                                      parseInt(baudComboBox.currentText))
             }
         }
@@ -143,7 +146,7 @@ Rectangle {
         width: 120
         height: 42
         text: "发送数据"
-        enabled: laserSerial.portOpen
+        enabled: imageSerial.portOpen
 
         anchors.top: serialComboBox.top
         anchors.left: openButton.right
@@ -163,7 +166,8 @@ Rectangle {
 
         anchors.top: serialComboBox.bottom
         anchors.topMargin: 30
-        anchors.horizontalCenter: serialComboBox.horizontalCenter
+        anchors.left:commandArea.right
+        anchors.leftMargin: 30
 
         Repeater {
             model: [
@@ -174,7 +178,6 @@ Rectangle {
                 "搜索范围",
                 "预留参数 1",
                 "预留参数 2",
-                "预留参数 3",
                 
             ]
 
@@ -197,7 +200,7 @@ Rectangle {
         anchors.left: leftInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 8
+            model: 7
             
             delegate: MyTextField {
                 mywidth: 100
@@ -217,7 +220,7 @@ Rectangle {
         anchors.left: rightInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 8
+            model: 7
             
             delegate: MyTextField {
                 mywidth: 100
@@ -237,7 +240,7 @@ Rectangle {
         anchors.left: thirdInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 8
+            model: 7
             
             delegate: MyTextField {
                 mywidth: 100
@@ -256,7 +259,7 @@ Rectangle {
         anchors.left: fourthInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 8
+            model: 7
             
             delegate: MyTextField {
                 mywidth: 100
@@ -275,7 +278,7 @@ Rectangle {
         anchors.left: mInputColumn5.right
         anchors.leftMargin: 30
         Repeater {
-            model: 8
+            model: 7
             
             delegate: MyTextField {
                 mywidth: 100
@@ -287,9 +290,9 @@ Rectangle {
     // // 发送数据信号
     // signal sendData(string data)
 
-    // 连接到 laserSerial 信号
+    // 连接到 imageSerial 信号
     Connections {
-        target: laserSerial
+        target: imageSerial
         function onErrorOccurred(msg) {
             console.log("Serial error:", msg)
         }
