@@ -7,7 +7,7 @@ Rectangle {
     id: root
     width: 1200
     height: 540
-    color: '#eff3f6'
+    color: '#e9f0f9'
 
     property var commandList: [
 
@@ -47,7 +47,7 @@ Rectangle {
         radius: 4
 
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.leftMargin: 50
         anchors.top: titleText.bottom
         anchors.topMargin: 20
 
@@ -152,21 +152,18 @@ Rectangle {
 
     // 左侧输入框
     Column {
-        id: leftInputColumn
+        id: firstColumn
         spacing: 30
 
         anchors.top: serialComboBox.bottom
         anchors.topMargin: 30
         anchors.left:commandArea.right
-        anchors.leftMargin: 30
+        anchors.leftMargin: 120
 
         Repeater {
             model: [
                 "激光周期",
                 "方位角度",
-                "俯仰角度",
-                "搜索范围/半径 ",
-                "搜索范围"
             ]
 
             delegate: MyTextField {
@@ -179,22 +176,73 @@ Rectangle {
 
     // 右侧输入框
     Column {
-        id: rightInputColumn
+        id: secondColumn
         spacing: 30
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 30
         // anchors.horizontalCenter: sendButton.horizontalCenter
-        anchors.left: leftInputColumn.right
+        anchors.left: firstColumn.right
         anchors.leftMargin: 30
 
         Repeater {
-            model: 5
+            model: [
+                "俯仰角度",
+                "搜索中心方位角度",
+            ]
             
             delegate: MyTextField {
                 mywidth: 120
                 myheight: 40
-                title: "预留参数 " + (index + 1)
+                title: modelData
+            }
+        }
+    }
+
+    Column {
+        id: thirdColumn
+        spacing: 30
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 30
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: secondColumn.right
+        anchors.leftMargin: 30
+
+        Repeater {
+            model: [
+                "搜索中心俯仰角度",
+                "方位搜索范围",
+            ]
+            
+            delegate: MyTextField {
+                mywidth: 120
+                myheight: 40
+                title: modelData
+            }
+        }
+    }
+
+    Column {
+        id: fourthColumn
+        spacing: 30
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 30
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        anchors.left: thirdColumn.right
+        anchors.leftMargin: 30
+
+        Repeater {
+            model: [
+                "俯仰搜索范围",
+                "搜索半径",
+            ]
+            
+            delegate: MyTextField {
+                mywidth: 120
+                myheight: 40
+                title: modelData
             }
         }
     }

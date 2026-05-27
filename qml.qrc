@@ -6,11 +6,11 @@
         <file>components/MyTextField.qml</file>
         <file>components/DataLabel.qml</file>
         <file>components/Myvideo.qml</file>
-        <file>components/Mytextfield2.qml</file>
         <file>components/MyTabar.qml</file>
         <file>components/ImageArea.qml</file>
         <file>components/ImageRecvArea.qml</file>
         <file>components/ImageSendArea.qml</file>
         <file>components/LaserArea.qml</file>
+        <file>components/MySwitch.qml</file>
     </qresource>
 </RCC>

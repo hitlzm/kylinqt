@@ -62,24 +62,6 @@ Myvideo {
     anchors.left:dyt.right
     anchors.leftMargin: 5
 }
-//    Mytextfield2 {
-//         x: 100
-//         y: 100
-//         id: mytextfield2
-//         myheight: 60
-//         mywidth: 120    
-//         title: "速度"
-//         labeltext:"m/s"
-//         placeholderText: "请输入速度"
-//     }
-//     MyTextField {
-//         x: 100
-//         y: 200
-//         myheight: 80
-//         mywidth: 100
-//         id: mytextfield
-//         title: "加速度"
-//     }
+
 
 }
-

@@ -51,7 +51,7 @@ Rectangle {
         radius: 4
 
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 30
         anchors.top: titleText.bottom
         anchors.topMargin: 20
         // anchors.verticalCenter: root.verticalCenter
@@ -95,8 +95,8 @@ Rectangle {
     // 串口选择 - 绑定到 C++ imageSerial 对象
     CusComboBox {
         id: serialComboBox
-        width: 220
-        height: 42
+        width: 120
+        height: 32
 
         anchors.top: titleText.top
         anchors.left: titleText.right
@@ -108,8 +108,8 @@ Rectangle {
     // 波特率
     CusComboBox {
         id: baudComboBox
-        width: 220
-        height: 42
+        width: 120
+        height: 32
 
         anchors.top: serialComboBox.top
         anchors.left: serialComboBox.right
@@ -122,7 +122,7 @@ Rectangle {
     CusButton_Blue {
         id: openButton
         width: 120
-        height: 42
+        height: 32
         text: imageSerial.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.top
@@ -144,7 +144,7 @@ Rectangle {
     CusButton_Blue {
         id: sendButton
         width: 120
-        height: 42
+        height: 32
         text: "发送数据"
         enabled: imageSerial.portOpen
 
@@ -159,32 +159,58 @@ Rectangle {
         }
     }
 
+    CusButton_Blue {
+        id: photobutton
+        width: 120
+        height: 32
+        text: "拍摄参考图"
+        anchors.top: serialComboBox.top
+        anchors.left: sendButton.right
+        anchors.leftMargin: 30
+        // anchors.horizontalCenter: baudComboBox.horizontalCenter
+        onClicked: {
+            // var data = ""
+            // root.sendData(data)
+        }
+    }
+
+    MySwitch {
+        id: mySwitch
+        width: 120
+        height: 32
+        title: "字符叠加"
+        anchors.top: photobutton.top
+        anchors.left: photobutton.right
+        anchors.leftMargin: 30
+    }
+
     // 左侧输入框
     Column {
         id: leftInputColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: serialComboBox.bottom
-        anchors.topMargin: 30
-        anchors.left:commandArea.right
-        anchors.leftMargin: 30
+        anchors.topMargin: 10
+        anchors.left:serialComboBox.left
 
         Repeater {
+
             model: [
-                "激光周期",
-                "方位角度",
-                "俯仰角度",
-                "搜索范围/半径 ",
-                "搜索范围",
-                "预留参数 1",
-                "预留参数 2",
-                
+            { title: "弹目距离", unit: "m" },
+            { title: "导弹速度",  unit: "m/s" },
+            { title: "弹体俯仰角",  unit: "°" },
+            { title: "弹体方位角",  unit: "°" },
+            { title: "弹体滚转角",  unit: "°" },
+            { title: "弹体俯仰角速度",  unit: "°/s" },
+            { title: "修正图像帧序号",  unit: "" }
+            
             ]
 
             delegate: MyTextField {
-                mywidth: 100
-                myheight: 30
-                title: modelData
+                mywidth: 120
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
@@ -192,98 +218,139 @@ Rectangle {
     // 右侧输入框
     Column {
         id: rightInputColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: leftInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 7
+            model: [
+            { title: "弹体方位角速度",  unit: "°/s" },
+            { title: "弹体滚转角速度", unit: "m/s" },
+            { title: "弹体X向速度",  unit: "m/s" },
+            { title: "弹体Y向速度",  unit: "m/s" },
+            { title: "弹体Z向速度",  unit: "m/s" },
+            { title: "弹体X坐标",  unit: "m" }
             
+            ]
             delegate: MyTextField {
-                mywidth: 100
-                myheight: 30
-                title: "预留参数 " + (index + 1)
+                mywidth: 120
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
 
     Column {
         id: thirdInputColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: rightInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 7
+            model: [
+            { title: "弹体Y坐标",  unit: "m" },
+            { title: "弹体Z坐标",  unit: "m" },
+            { title: "俯仰框架角预装", unit: "°" },
+            { title: "偏航框架角预装",  unit: "°" },
+            { title: "红外积分时间",  unit: "ms" },
+            { title: "修正后俯仰跟踪位置",  unit: "" }
+            ]
             
             delegate: MyTextField {
-                mywidth: 100
-                myheight: 30
-                title: "预留参数 " + (index + 1)
+                mywidth: 120
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
 
     Column {
         id:fourthInputColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: thirdInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 7
             
+            model: [
+            { title: "修正后偏航跟踪位置",  unit: "" },
+            { title: "搜索俯仰角速度",  unit: "°/s" },
+            { title: "搜索方位角速度",  unit: "°/s" },
+            { title: "目标海拔高度",  unit: "m" },
+            { title: "飞机俯仰角",  unit: "°" },
+            { title: "飞机方位角",  unit: "°" },
+            ]
             delegate: MyTextField {
-                mywidth: 100
-                myheight: 30
-                title: "预留参数 " + (index + 1)
+                mywidth: 120
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
     Column {
         id:mInputColumn5
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: fourthInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            model: 7
+            model: [
+            { title: "飞机滚转角",  unit: "°" },
+            { title: "焦距",  unit: "mm" },
+            { title: "吊舱俯仰框架角",  unit: "°" },
+            { title: "吊舱方位框架角",  unit: "°" },
+            { title: "卫星图比例",  unit: "" },
+            { title: "吊舱类型",  unit: "" }
+            
+            ]
             
             delegate: MyTextField {
-                mywidth: 100
-                myheight: 30
-                title: "预留参数 " + (index + 1)
+                mywidth: 120
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
      Column {
         id:mInputColumn6
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: mInputColumn5.right
         anchors.leftMargin: 30
         Repeater {
-            model: 7
+            model: [
+            { title: "目标经度",  unit: "°" },
+            { title: "目标纬度",  unit: "°" },
+            { title: "飞机经度",  unit: "°" },
+            { title: "飞机纬度",  unit: "°" },
+            { title: "飞机海拔高度",  unit: "m" },
+            { title: "像元尺寸",  unit: "μm" }
+            ]
             
             delegate: MyTextField {
-                mywidth: 100
-                myheight: 30
-                title: "预留参数 " + (index + 1)
+                mywidth: 120
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
