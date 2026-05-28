@@ -33,8 +33,8 @@ Rectangle {
         anchors.topMargin: 16
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
-        color: '#eddada'
-
+        color: '#e1d8d8'
+        // #eddada
         ColumnLayout {
          anchors.fill: parent
          spacing: 1

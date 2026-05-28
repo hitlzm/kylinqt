@@ -109,7 +109,7 @@ Rectangle {
         anchors.left: serialComboBox.right
         anchors.leftMargin: 30
 
-        model: ["9600", "115200", "230400", "460800"]
+        model: ["9600", "115200"]
     }
 
     // 打开串口按钮
@@ -153,23 +153,23 @@ Rectangle {
     // 左侧输入框
     Column {
         id: firstColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: serialComboBox.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         anchors.left:commandArea.right
         anchors.leftMargin: 120
 
         Repeater {
             model: [
-                "激光周期",
-                "方位角度",
+                { title: "激光周期", unit: "ms" },
+                { title: "方位角度", unit: "°" }
             ]
-
             delegate: MyTextField {
                 mywidth: 120
-                myheight: 40
-                title: modelData
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
@@ -177,76 +177,87 @@ Rectangle {
     // 右侧输入框
     Column {
         id: secondColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: firstColumn.right
         anchors.leftMargin: 30
 
         Repeater {
             model: [
-                "俯仰角度",
-                "搜索中心方位角度",
+                { title: "俯仰角度", unit: "°" },
+                { title: "搜索中心方位角度", unit: "°" }
             ]
             
             delegate: MyTextField {
                 mywidth: 120
-                myheight: 40
-                title: modelData
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
 
     Column {
         id: thirdColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: secondColumn.right
         anchors.leftMargin: 30
 
         Repeater {
             model: [
-                "搜索中心俯仰角度",
-                "方位搜索范围",
+                { title: "搜索中心俯仰角度", unit: "°" },
+                { title: "方位搜索范围", unit: "°" }
             ]
             
             delegate: MyTextField {
                 mywidth: 120
-                myheight: 40
-                title: modelData
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
 
     Column {
         id: fourthColumn
-        spacing: 30
+        spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: thirdColumn.right
         anchors.leftMargin: 30
 
         Repeater {
             model: [
-                "俯仰搜索范围",
-                "搜索半径",
+                { title: "俯仰搜索范围", unit: "°" },
+                { title: "搜索半径", unit: "m" }
             ]
             
             delegate: MyTextField {
                 mywidth: 120
-                myheight: 40
-                title: modelData
+                myheight: 60
+                title: modelData.title
+                labeltext: modelData.unit
             }
         }
     }
-
+    LaserRecvArea{
+        myheight:360
+        mywidth:1000
+        anchors.top: firstColumn.bottom
+        anchors.topMargin: 5
+        anchors.left: commandArea.right
+        anchors.leftMargin: 10  
+        groupHeight1:120
+    }
     // 发送数据信号
     signal sendData(string data)
 

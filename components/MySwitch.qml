@@ -6,6 +6,7 @@ Item {
     id: root
     property alias title: titleText.text
     // property alias labeltext: mylabel.text
+    
     Text {
     id: titleText
     text: title + ":"

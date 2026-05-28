@@ -12,7 +12,7 @@ Item {
         anchors.right: parent.right
     }
 
-    LaserRecvArea {
+    ImageRecvArea {
         id: recvArea
         anchors.top: sendArea.bottom
         anchors.left: parent.left

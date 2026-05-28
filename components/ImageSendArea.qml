@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 540
+    height: 550
     color: '#e9f0f9'
 
     property var commandList: [
@@ -187,7 +187,7 @@ Rectangle {
     // 左侧输入框
     Column {
         id: leftInputColumn
-        spacing: 5
+        spacing: 3
 
         anchors.top: serialComboBox.bottom
         anchors.topMargin: 10
@@ -218,7 +218,7 @@ Rectangle {
     // 右侧输入框
     Column {
         id: rightInputColumn
-        spacing: 5
+        spacing: 3
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
@@ -242,11 +242,91 @@ Rectangle {
                 labeltext: modelData.unit
             }
         }
+         
     }
-
+     MyComboBox {
+            id: myCombox1
+            anchors.top: rightInputColumn.bottom
+            anchors.topMargin: 3
+            anchors.left: rightInputColumn.left
+            mywidth: 180
+            myheight: 55
+            title: "光学参数装订控制字"
+            model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正","红外非均匀校正","模板擦除","积分时间设置"]
+        }
+    MyComboBox {
+            id: myCombox2
+            anchors.top: myCombox1.top
+            anchors.left: myCombox1.right
+            anchors.leftMargin: 50
+            mywidth: 90
+            myheight: 55
+            title: "模板序号"
+            model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+        }
+    MyComboBox {
+            id: myCombox3
+            anchors.top: myCombox2.top
+            anchors.left: myCombox2.right
+            anchors.leftMargin: 50
+            mywidth: 140
+            myheight: 55
+            title: "预装目标类型"
+            model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
+        }
+    MyComboBox {
+            id: myCombox4
+            anchors.top: myCombox3.top
+            anchors.left: myCombox3.right
+            anchors.leftMargin: 50
+            mywidth: 100
+            myheight: 55
+            title: "背景类型"
+            model: ["沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
+        }
+     MyComboBox {
+            id: myCombox5
+            anchors.top: leftInputColumn.bottom
+            anchors.topMargin:3
+            anchors.left: leftInputColumn.left
+            mywidth: 120
+            myheight: 55
+            title: "目标灰度类型"
+            model: ["亮目标", "暗目标"]
+        }
+        MyComboBox {
+            id: myCombox6
+              anchors.top: myCombox5.top
+            anchors.left: myCombox5.right
+            anchors.leftMargin: 50
+            mywidth: 120
+            myheight: 55
+            title: "目标动静类型"
+            model: ["静目标","动目标" ]
+        }
+        MyComboBox {
+            id: myCombox7
+              anchors.top: myCombox6.top
+            anchors.left: myCombox6.right
+            anchors.leftMargin: 50
+            mywidth: 140
+            myheight: 55
+            title: "修正指令状态"
+            model: ["非修正状态","修正状态" ]
+        }
+        MyComboBox {
+            id: myCombox8
+              anchors.top: myCombox7.top
+            anchors.left: myCombox7.right
+            anchors.leftMargin: 50
+            mywidth: 120
+            myheight: 55
+            title: "波门大小"
+            model: ["大","小" ]
+        }
     Column {
         id: thirdInputColumn
-        spacing: 5
+        spacing: 3
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
@@ -270,11 +350,12 @@ Rectangle {
                 labeltext: modelData.unit
             }
         }
+       
     }
 
     Column {
         id:fourthInputColumn
-        spacing: 5
+        spacing: 3
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
@@ -301,7 +382,7 @@ Rectangle {
     }
     Column {
         id:mInputColumn5
-        spacing: 5
+        spacing: 3
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
@@ -329,7 +410,7 @@ Rectangle {
     }
      Column {
         id:mInputColumn6
-        spacing: 5
+        spacing: 3
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10

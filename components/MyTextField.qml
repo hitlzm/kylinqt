@@ -27,7 +27,7 @@ Item {
     width: parent.width
     spacing: 8
     anchors.top: titleText.bottom
-    anchors.topMargin: 4
+    anchors.topMargin: 2
     
     CusTextField {
         id: textField

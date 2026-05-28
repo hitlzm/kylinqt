@@ -6,8 +6,10 @@ import "./"
 
 Rectangle {
     id: root
-    width: 1200
-    height: 400
+    property int mywidth:1200
+    property int myheight:400
+    width: mywidth
+    height: myheight
     color: '#e9f0f9'
     property int groupHeight1: 150
 
@@ -34,7 +36,7 @@ Rectangle {
         anchors.topMargin: 16
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
-        color: '#eddada'
+        color: '#e1d8d8'
 
         ColumnLayout {
             anchors.fill: parent
@@ -240,7 +242,7 @@ Rectangle {
             }
         }
     }
-
+    
     // 连接到 laserSerial 信号
     Connections {
         target: laserSerial

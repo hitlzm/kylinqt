@@ -12,5 +12,6 @@
         <file>components/ImageSendArea.qml</file>
         <file>components/LaserArea.qml</file>
         <file>components/MySwitch.qml</file>
+        <file>components/MyComboBox.qml</file>
     </qresource>
 </RCC>
