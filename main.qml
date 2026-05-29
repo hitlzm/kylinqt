@@ -62,6 +62,22 @@ Myvideo {
     anchors.left:dyt.right
     anchors.leftMargin: 5
 }
-
+Modeselect {
+    id: modeselect
+    height:60
+    anchors.top: myvideo.bottom
+    anchors.left: dyt.right
+    anchors.leftMargin: 50
+    anchors.topMargin: 5    
+    anchors.right: myvideo.right
+}
+TurnTablestatus {
+    id: turntablestatus
+    anchors.top: modeselect.bottom
+    anchors.left: dyt.right
+    anchors.leftMargin: 5
+    anchors.topMargin: 5    
+    anchors.right: myvideo.right
+}
 
 }

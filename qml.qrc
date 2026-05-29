@@ -13,5 +13,7 @@
         <file>components/LaserArea.qml</file>
         <file>components/MySwitch.qml</file>
         <file>components/MyComboBox.qml</file>
+        <file>components/Modeselect.qml</file>
+        <file>components/TurnTablestatus.qml</file>
     </qresource>
 </RCC>

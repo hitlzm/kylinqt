@@ -8,7 +8,13 @@ Rectangle {
     width: 1200
     height: 540
     color: '#e9f0f9'
-
+//下边沿
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: "black"
+        anchors.bottom: parent.bottom   // 贴在主矩形下边沿
+    }
     property var commandList: [
 
         "无动作",
@@ -27,7 +33,7 @@ Rectangle {
 
     Text {
         id: titleText
-        text: "激光导引头发送区"
+        text: "激光导引头收发区"
         font.pixelSize: 24
         font.bold: true
         color: "#000000"
@@ -250,13 +256,13 @@ Rectangle {
         }
     }
     LaserRecvArea{
-        myheight:360
-        mywidth:1000
+        myheight:320
+        mywidth:800
         anchors.top: firstColumn.bottom
         anchors.topMargin: 5
         anchors.left: commandArea.right
-        anchors.leftMargin: 10  
-        groupHeight1:120
+        anchors.leftMargin: 100
+        groupHeight1:150
     }
     // 发送数据信号
     signal sendData(string data)

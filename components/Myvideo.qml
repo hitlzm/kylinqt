@@ -4,8 +4,8 @@ import QtMultimedia 5.12
 
 Rectangle {
     id: root
-    width: 640
-    height: 360
+    width: 700
+    height: 400
     color: "#202020"
 
     // =========================

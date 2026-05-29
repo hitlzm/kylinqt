@@ -48,8 +48,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "帧信息"
                     font.pixelSize: 18
@@ -87,8 +87,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "控制/状态信息"
                     font.pixelSize: 18
@@ -134,8 +134,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "跟踪信息"
                     font.pixelSize: 18
@@ -169,8 +169,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "角度信息"
                     font.pixelSize: 18
@@ -209,8 +209,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "角速度/陀螺信息"
                     font.pixelSize: 18
@@ -249,8 +249,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "伺服/平台信息"
                     font.pixelSize: 18
@@ -282,8 +282,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "其他信息"
                     font.pixelSize: 18

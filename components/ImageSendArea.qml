@@ -6,9 +6,15 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 550
+    height: 560
     color: '#e9f0f9'
-
+    //下边沿
+    Rectangle {
+        width: parent.width
+        height: 1
+        color: "black"
+        anchors.bottom: parent.bottom   // 贴在主矩形下边沿
+    }
     property var commandList: [
         
         "无动作",
@@ -46,7 +52,7 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 500
+        height: 460
         color: '#faf7f7'
         radius: 4
 

@@ -7,24 +7,24 @@ import "./"
 Rectangle {
     id: root
     property int mywidth:1200
-    property int myheight:400
+    property int myheight:320
     width: mywidth
     height: myheight
     color: '#e9f0f9'
     property int groupHeight1: 150
 
-    Text {
-        id: titleText
-        text: "激光导引头接收区"
-        font.pixelSize: 24
-        font.bold: true
-        color: "#000000"
+    // Text {
+    //     id: titleText
+    //     text: "激光导引头接收区"
+    //     font.pixelSize: 24
+    //     font.bold: true
+    //     color: "#000000"
 
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.top: parent.top
-        anchors.topMargin: 10
-    }
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 10
+    //     anchors.top: parent.top
+    //     anchors.topMargin: 10
+    // }
 
     // ═══ 数据显示区 ═══
     Rectangle {
@@ -32,10 +32,10 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        anchors.top: titleText.bottom
+        anchors.top: parent.top
         anchors.topMargin: 16
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        // anchors.bottom: parent.bottom
+        // anchors.bottomMargin: 10
         color: '#e1d8d8'
 
         ColumnLayout {
@@ -51,13 +51,13 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "状态信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 150
+                    Layout.preferredHeight: groupHeight1
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
@@ -106,13 +106,13 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "角度信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 150
+                    Layout.preferredHeight: groupHeight1
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
@@ -140,13 +140,13 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "角速度信息"
                     font.pixelSize: 18
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 150
+                    Layout.preferredHeight: groupHeight1
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
@@ -178,8 +178,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "象限能量"
                     font.pixelSize: 18
@@ -211,8 +211,8 @@ Rectangle {
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
-                        border.width: 1
-                        radius: 2
+                        border.width: 4
+                        radius: 8
                     }
                     title: "其他信息"
                     font.pixelSize: 18

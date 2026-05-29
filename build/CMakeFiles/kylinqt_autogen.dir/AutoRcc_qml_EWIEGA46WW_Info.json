@@ -13,6 +13,7 @@
 		"E:/QTproject/kylinqt/components/ImageSendArea.qml",
 		"E:/QTproject/kylinqt/components/LaserSendArea.qml",
 		"E:/QTproject/kylinqt/components/MyTextField.qml",
+		"E:/QTproject/kylinqt/components/TurnTablestatus.qml",
 		"E:/QTproject/kylinqt/components/DataLabel.qml",
 		"E:/QTproject/kylinqt/components/ImageArea.qml",
 		"E:/QTproject/kylinqt/components/LaserArea.qml",
@@ -20,6 +21,7 @@
 		"E:/QTproject/kylinqt/components/Myvideo.qml",
 		"E:/QTproject/kylinqt/components/MyTabar.qml",
 		"E:/QTproject/kylinqt/components/MyComboBox.qml",
+		"E:/QTproject/kylinqt/components/Modeselect.qml",
 		"E:/QTproject/kylinqt/components/ImageRecvArea.qml",
 		"E:/QTproject/kylinqt/components/LaserRecvArea.qml"
 	],
