@@ -510,7 +510,8 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
-  E:/QTproject/kylinqt/serialport/serialport_laser.h
+  E:/QTproject/kylinqt/serialport/serialport_laser.h \
+  E:/QTproject/kylinqt/serialport/serialport_turntable.h
 
 CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj: E:/QTproject/kylinqt/serialport/serialport.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \

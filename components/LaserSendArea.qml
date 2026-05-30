@@ -86,19 +86,62 @@ Rectangle {
                         leftPadding: 30
                     }
 
-                    onClicked: root.currentCmd = index
+                    onClicked: {root.currentCmd = index
+                         if (index === 0) {
+                            firstColumn.disabledIndices = [0,1]      // 都禁用
+                            secondColumn.disabledIndices = [0,1]
+                            thirdColumn.disabledIndices = [0,1]
+                            fourthColumn.disabledIndices = [0,1]
+                            } else if (index === 1) {
+                            firstColumn.disabledIndices = [0,1]      // 都禁用
+                            secondColumn.disabledIndices = [0,1]
+                            thirdColumn.disabledIndices = [0,1]
+                            fourthColumn.disabledIndices = [0,1]
+                            } else if (index === 2) {
+                            firstColumn.disabledIndices = [0]      
+                            secondColumn.disabledIndices = [1]
+                            thirdColumn.disabledIndices = [0,1]
+                            fourthColumn.disabledIndices = [0,1]
+                            } else if (index === 3) {
+                            firstColumn.disabledIndices = [1]      
+                            secondColumn.disabledIndices = [0,1]
+                            thirdColumn.disabledIndices = [0,1]
+                            fourthColumn.disabledIndices = [0,1]
+                            }
+                            else if (index === 4 || index === 7) {
+                            firstColumn.disabledIndices = [0]      
+                            secondColumn.disabledIndices = [1]
+                            thirdColumn.disabledIndices = [0,1]
+                            fourthColumn.disabledIndices = [0,1]
+                            }
+                            else if (index === 5 || index === 8) {
+                            firstColumn.disabledIndices = [0,1]      
+                            secondColumn.disabledIndices = [0]
+                            thirdColumn.disabledIndices = []
+                            fourthColumn.disabledIndices = [1]
+                            }
+                            else if (index === 6 || index === 9) {
+                            firstColumn.disabledIndices = [0,1]      
+                            secondColumn.disabledIndices = [0]
+                            thirdColumn.disabledIndices = [1]
+                            fourthColumn.disabledIndices = [0]
+                            }
                 }
             }
         }
     }
+    
+    }
 
-    // 串口选择 - 绑定到 C++ laserSerial 对象
+   //上部控制区，串口选择，波特率，按钮等
+   // 串口选择 - 绑定到 C++ laserSerial 对象
     CusComboBox {
         id: serialComboBox
         width: 220
         height: 42
 
         anchors.top: titleText.top
+        // anchors.topMargin: 10
         anchors.left: titleText.right
         anchors.leftMargin: 30
 
@@ -165,7 +208,7 @@ Rectangle {
         anchors.topMargin: 10
         anchors.left:commandArea.right
         anchors.leftMargin: 120
-
+        property var disabledIndices: []
         Repeater {
             model: [
                 { title: "激光周期", unit: "ms" },
@@ -176,10 +219,11 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                enabled: firstColumn.disabledIndices.indexOf(index) === -1
             }
         }
     }
-
+     
     // 右侧输入框
     Column {
         id: secondColumn
@@ -190,7 +234,7 @@ Rectangle {
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: firstColumn.right
         anchors.leftMargin: 30
-
+        property var disabledIndices: []
         Repeater {
             model: [
                 { title: "俯仰角度", unit: "°" },
@@ -202,6 +246,7 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                enabled: secondColumn.disabledIndices.indexOf(index) === -1
             }
         }
     }
@@ -215,7 +260,7 @@ Rectangle {
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: secondColumn.right
         anchors.leftMargin: 30
-
+        property var disabledIndices: []
         Repeater {
             model: [
                 { title: "搜索中心俯仰角度", unit: "°" },
@@ -227,6 +272,7 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                enabled: thirdColumn.disabledIndices.indexOf(index) === -1
             }
         }
     }
@@ -240,7 +286,7 @@ Rectangle {
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: thirdColumn.right
         anchors.leftMargin: 30
-
+        property var disabledIndices: []
         Repeater {
             model: [
                 { title: "俯仰搜索范围", unit: "°" },
@@ -252,6 +298,7 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                enabled: fourthColumn.disabledIndices.indexOf(index) === -1 
             }
         }
     }
