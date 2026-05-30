@@ -90,9 +90,9 @@ void SerialPort::onReadyRead()
 {
     QByteArray rawData = m_serialPort->readAll();
     QByteArray parsed = parseData(rawData);
-    if (!parsed.isEmpty()) {
-        emit dataReceived(parsed);
-    }
+    // if (!parsed.isEmpty()) {
+    //     emit dataReceived(parsed);
+    // }
 }
 
 void SerialPort::handleReadyRead()

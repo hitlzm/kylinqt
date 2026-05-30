@@ -194,8 +194,11 @@ Rectangle {
         anchors.leftMargin: 30
 
         onClicked: {
-            var data = ""
-            root.sendData(data)
+            // var data = ""      //打包数据
+            // root.sendData(data)
+            //直接调用对应串口里的发送函数就行，最后实现效果是固定周期的发送
+            laserSerial.sendData(laserSerial.laserSendData.buildFrame())
+            console.log("激光导引头数据已发送")
         }
     }
 
@@ -220,6 +223,14 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: firstColumn.disabledIndices.indexOf(index) === -1
+                onEditingFinished: {
+                    if (index === 0) {
+                        laserSerial.laserSendData.m_laserPeriod = Number(text)
+                        console.log(Number(text))
+                    } else if (index === 1) {
+                        laserSerial.laserSendData.m_azimuthAngle = Number(text)
+                    }
+                }
             }
         }
     }
@@ -247,6 +258,13 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: secondColumn.disabledIndices.indexOf(index) === -1
+                onEditingFinished: {
+                    if (index === 0) {
+                        laserSerial.laserSendData.m_elevationAngle = Number(text)
+                    } else if (index === 1) {
+                        laserSerial.laserSendData.m_searchCenterAzimuth = Number(text)
+                    }
+                }
             }
         }
     }
@@ -273,6 +291,13 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: thirdColumn.disabledIndices.indexOf(index) === -1
+                onEditingFinished: {
+                    if (index === 0) {
+                        laserSerial.laserSendData.m_searchCenterElevation = Number(text)
+                    } else if (index === 1) {
+                        laserSerial.laserSendData.m_azimuthSearchRange = Number(text)
+                    }
+                }
             }
         }
     }
@@ -299,6 +324,13 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: fourthColumn.disabledIndices.indexOf(index) === -1 
+                onEditingFinished: {
+                    if (index === 0) {
+                        laserSerial.laserSendData.m_elevationSearchRange = Number(text)
+                    } else if (index === 1) {
+                        laserSerial.laserSendData.m_searchRadius = Number(text)
+                    }
+                }
             }
         }
     }

@@ -16,7 +16,7 @@ Rectangle {
         anchors.bottom: parent.bottom   // 贴在主矩形下边沿
     }
     property var commandList: [
-        
+
         "无动作",
         //以下指令发送三拍，三拍后恢复默认值
         "自检",
@@ -30,7 +30,7 @@ Rectangle {
         "软件升级结束",
         "打开波门叠加",
         "关闭波门叠加"
-    
+
     ]
 
     property int currentCmd: 0
@@ -60,13 +60,12 @@ Rectangle {
         anchors.leftMargin: 30
         anchors.top: titleText.bottom
         anchors.topMargin: 20
-        // anchors.verticalCenter: root.verticalCenter
 
         Column {
             spacing: 6
             anchors.fill: parent
             anchors.margins: 12
-            
+
             Text {
                 text: "导引头控制字"
                 font.pixelSize: 16
@@ -121,7 +120,7 @@ Rectangle {
         anchors.left: serialComboBox.right
         anchors.leftMargin: 30
 
-        model: ["9600", "115200", "230400", "460800"]
+        model: ["9600", "115200"]
     }
 
     // 打开串口按钮
@@ -133,8 +132,7 @@ Rectangle {
 
         anchors.top: serialComboBox.top
         anchors.left: baudComboBox.right
-        anchors.leftMargin: 30 
-        // anchors.horizontalCenter: serialComboBox.horizontalCenter
+        anchors.leftMargin: 30
 
         onClicked: {
             if (imageSerial.portOpen) {
@@ -157,11 +155,10 @@ Rectangle {
         anchors.top: serialComboBox.top
         anchors.left: openButton.right
         anchors.leftMargin: 30
-        // anchors.horizontalCenter: baudComboBox.horizontalCenter
 
         onClicked: {
-            var data = ""
-            root.sendData(data)
+            imageSerial.sendData(imageSerial.imageSendData.buildFrame())
+            console.log("图像导引头数据已发送")
         }
     }
 
@@ -173,10 +170,8 @@ Rectangle {
         anchors.top: serialComboBox.top
         anchors.left: sendButton.right
         anchors.leftMargin: 30
-        // anchors.horizontalCenter: baudComboBox.horizontalCenter
         onClicked: {
-            // var data = ""
-            // root.sendData(data)
+
         }
     }
 
@@ -209,7 +204,7 @@ Rectangle {
             { title: "弹体滚转角",  unit: "°" },
             { title: "弹体俯仰角速度",  unit: "°/s" },
             { title: "修正图像帧序号",  unit: "" }
-            
+
             ]
 
             delegate: MyTextField {
@@ -217,6 +212,23 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                onEditingFinished: {
+                    if (index === 0) {
+                        imageSerial.imageSendData.m_missileTargetDistance = parseInt(text)
+                    } else if (index === 1) {
+                        imageSerial.imageSendData.m_missileSpeed = Number(text)
+                    } else if (index === 2) {
+                        imageSerial.imageSendData.m_bodyPitchAngle = Number(text)
+                    } else if (index === 3) {
+                        imageSerial.imageSendData.m_bodyYawAngle = Number(text)
+                    } else if (index === 4) {
+                        imageSerial.imageSendData.m_bodyRollAngle = Number(text)
+                    } else if (index === 5) {
+                        imageSerial.imageSendData.m_bodyPitchRate = Number(text)
+                    } else if (index === 6) {
+                        imageSerial.imageSendData.m_correctionFrameNum = parseInt(text)
+                    }
+                }
             }
         }
     }
@@ -228,7 +240,6 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
-        // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: leftInputColumn.right
         anchors.leftMargin: 30
         Repeater {
@@ -239,16 +250,31 @@ Rectangle {
             { title: "弹体Y向速度",  unit: "m/s" },
             { title: "弹体Z向速度",  unit: "m/s" },
             { title: "弹体X坐标",  unit: "m" }
-            
+
             ]
             delegate: MyTextField {
                 mywidth: 120
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                onEditingFinished: {
+                    if (index === 0) {
+                        imageSerial.imageSendData.m_bodyYawRate = Number(text)
+                    } else if (index === 1) {
+                        imageSerial.imageSendData.m_bodyRollRate = Number(text)
+                    } else if (index === 2) {
+                        imageSerial.imageSendData.m_bodyVelX = Number(text)
+                    } else if (index === 3) {
+                        imageSerial.imageSendData.m_bodyVelY = Number(text)
+                    } else if (index === 4) {
+                        imageSerial.imageSendData.m_bodyVelZ = Number(text)
+                    } else if (index === 5) {
+                        imageSerial.imageSendData.m_bodyPosX = parseInt(text)
+                    }
+                }
             }
         }
-         
+
     }
      MyComboBox {
             id: myCombox1
@@ -336,7 +362,6 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
-        // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: rightInputColumn.right
         anchors.leftMargin: 30
         Repeater {
@@ -348,15 +373,30 @@ Rectangle {
             { title: "红外积分时间",  unit: "ms" },
             { title: "修正后俯仰跟踪位置",  unit: "" }
             ]
-            
+
             delegate: MyTextField {
                 mywidth: 120
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                onEditingFinished: {
+                    if (index === 0) {
+                        imageSerial.imageSendData.m_bodyPosY = parseInt(text)
+                    } else if (index === 1) {
+                        imageSerial.imageSendData.m_bodyPosZ = parseInt(text)
+                    } else if (index === 2) {
+                        imageSerial.imageSendData.m_pitchGimbalPreset = Number(text)
+                    } else if (index === 3) {
+                        imageSerial.imageSendData.m_yawGimbalPreset = Number(text)
+                    } else if (index === 4) {
+                        imageSerial.imageSendData.m_irIntegrationTime = parseInt(text)
+                    } else if (index === 5) {
+                        imageSerial.imageSendData.m_correctedPitchPos = parseInt(text)
+                    }
+                }
             }
         }
-       
+
     }
 
     Column {
@@ -365,11 +405,10 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
-        // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: thirdInputColumn.right
         anchors.leftMargin: 30
         Repeater {
-            
+
             model: [
             { title: "修正后偏航跟踪位置",  unit: "" },
             { title: "搜索俯仰角速度",  unit: "°/s" },
@@ -383,6 +422,21 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                onEditingFinished: {
+                    if (index === 0) {
+                        imageSerial.imageSendData.m_correctedYawPos = parseInt(text)
+                    } else if (index === 1) {
+                        imageSerial.imageSendData.m_searchPitchRate = Number(text)
+                    } else if (index === 2) {
+                        imageSerial.imageSendData.m_searchYawRate = Number(text)
+                    } else if (index === 3) {
+                        imageSerial.imageSendData.m_targetAltitude = parseInt(text)
+                    } else if (index === 4) {
+                        imageSerial.imageSendData.m_aircraftPitch = Number(text)
+                    } else if (index === 5) {
+                        imageSerial.imageSendData.m_aircraftYaw = Number(text)
+                    }
+                }
             }
         }
     }
@@ -392,7 +446,6 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
-        // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: fourthInputColumn.right
         anchors.leftMargin: 30
         Repeater {
@@ -403,14 +456,29 @@ Rectangle {
             { title: "吊舱方位框架角",  unit: "°" },
             { title: "卫星图比例",  unit: "" },
             { title: "吊舱类型",  unit: "" }
-            
+
             ]
-            
+
             delegate: MyTextField {
                 mywidth: 120
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                onEditingFinished: {
+                    if (index === 0) {
+                        imageSerial.imageSendData.m_aircraftRoll = Number(text)
+                    } else if (index === 1) {
+                        imageSerial.imageSendData.m_focalLength = parseInt(text)
+                    } else if (index === 2) {
+                        imageSerial.imageSendData.m_podPitchAngle = Number(text)
+                    } else if (index === 3) {
+                        imageSerial.imageSendData.m_podYawAngle = Number(text)
+                    } else if (index === 4) {
+                        imageSerial.imageSendData.m_satelliteMapScale = parseInt(text)
+                    } else if (index === 5) {
+                        imageSerial.imageSendData.m_podType = parseInt(text)
+                    }
+                }
             }
         }
     }
@@ -420,7 +488,6 @@ Rectangle {
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 10
-        // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: mInputColumn5.right
         anchors.leftMargin: 30
         Repeater {
@@ -432,17 +499,30 @@ Rectangle {
             { title: "飞机海拔高度",  unit: "m" },
             { title: "像元尺寸",  unit: "μm" }
             ]
-            
+
             delegate: MyTextField {
                 mywidth: 120
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+                onEditingFinished: {
+                    if (index === 0) {
+                        imageSerial.imageSendData.m_targetLongitude = Number(text)
+                    } else if (index === 1) {
+                        imageSerial.imageSendData.m_targetLatitude = Number(text)
+                    } else if (index === 2) {
+                        imageSerial.imageSendData.m_aircraftLongitude = Number(text)
+                    } else if (index === 3) {
+                        imageSerial.imageSendData.m_aircraftLatitude = Number(text)
+                    } else if (index === 4) {
+                        imageSerial.imageSendData.m_aircraftAltitude = parseInt(text)
+                    } else if (index === 5) {
+                        imageSerial.imageSendData.m_pixelSize = parseInt(text)
+                    }
+                }
             }
         }
     }
-    // // 发送数据信号
-    // signal sendData(string data)
 
     // 连接到 imageSerial 信号
     Connections {
@@ -456,8 +536,6 @@ Rectangle {
         function onDisconnected() {
             console.log("Serial disconnected")
         }
-        
-    }
 
-    
+    }
 }

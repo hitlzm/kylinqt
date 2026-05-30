@@ -12,7 +12,6 @@ Rectangle {
     height: myheight
     color: '#e9f0f9'
     property int groupHeight1: 150
-
     // Text {
     //     id: titleText
     //     text: "激光导引头接收区"

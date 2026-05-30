@@ -97,8 +97,8 @@ void LaserData::updateFromFrame(const QByteArray &frame)
         emit deviationPitchChanged();
     }
 
-    if (m_laserPeriod != pFrame->laser_period) {
-        m_laserPeriod = pFrame->laser_period;
+    if (m_laserPeriod != pFrame->laser_period*0.002) {
+        m_laserPeriod = pFrame->laser_period*0.002;
         emit laserPeriodChanged();
     }
 
@@ -143,63 +143,6 @@ LaserSendData::LaserSendData(QObject *parent)
 {
 }
 
-int LaserSendData::frameStatus() const { return m_frameStatus; }
-void LaserSendData::setFrameStatus(int value) {
-    if (m_frameStatus != value) {
-        m_frameStatus = value;
-        emit frameStatusChanged();
-    }
-}
-int LaserSendData::frameId() const { return m_frameId; }
-void LaserSendData::setFrameId(int value) {
-    if (m_frameId != value) {
-        m_frameId = value;
-        emit frameIdChanged();
-    }
-}
-int LaserSendData::cmd() const { return m_cmd; }
-void LaserSendData::setCmd(int value) {
-    if (m_cmd != value) {
-        m_cmd = value;
-        emit cmdChanged();
-    }
-}
-int LaserSendData::laserPeriod() const { return m_laserPeriod; }
-void LaserSendData::setLaserPeriod(int value) {
-    if (m_laserPeriod != value) {
-        m_laserPeriod = value;
-        emit laserPeriodChanged();
-    }
-}
-float LaserSendData::param2() const { return m_param2; }
-void LaserSendData::setParam2(float value) {
-    if (m_param2 != value) {
-        m_param2 = value;
-        emit param2Changed();
-    }
-}
-float LaserSendData::param3() const { return m_param3; }
-void LaserSendData::setParam3(float value) {
-    if (m_param3 != value) {
-        m_param3 = value;
-        emit param3Changed();
-    }
-}
-float LaserSendData::param4() const { return m_param4; }
-void LaserSendData::setParam4(float value) {
-    if (m_param4 != value) {
-        m_param4 = value;
-        emit param4Changed();
-    }
-}
-float LaserSendData::param5() const { return m_param5; }
-void LaserSendData::setParam5(float value) {
-    if (m_param5 != value) {
-        m_param5 = value;
-        emit param5Changed();
-    }
-}
-
 QByteArray LaserSendData::buildFrame() const
 {
     laser_send_frame frame = {};
@@ -210,11 +153,39 @@ QByteArray LaserSendData::buildFrame() const
     frame.frame_status = static_cast<quint8>(m_frameStatus);
     frame.frame_ID = static_cast<quint8>(m_frameId);
     frame.cmd = static_cast<quint8>(m_cmd);
-    frame.laser_period = static_cast<quint16>(m_laserPeriod);
-    frame.param2 = static_cast<qint16>(toRawValue(m_param2));
-    frame.param3 = static_cast<qint16>(toRawValue(m_param3));
-    frame.param4 = static_cast<qint16>(toRawValue(m_param4));
-    frame.param5 = static_cast<qint16>(toRawValue(m_param5));
+    frame.laser_period = static_cast<quint16>(m_laserPeriod / 0.002);
+
+    // 根据命令字选择不同的参数映射
+    switch (m_cmd) {
+    case 0x02: // 锁定
+    case 0x06: // 定轴搜索
+    case 0x09: // 定轴搜索(位置回路)
+        frame.param2 = static_cast<qint16>(toRawValue(m_azimuthAngle));
+        frame.param3 = static_cast<qint16>(toRawValue(m_elevationAngle));
+        frame.param4 = 0;
+        frame.param5 = 0;
+        break;
+    case 0x07: // 矩形搜索
+    case 0x0A: // 矩形搜索(位置回路)
+        frame.param2 = static_cast<qint16>(toRawValue(m_searchCenterAzimuth));
+        frame.param3 = static_cast<qint16>(toRawValue(m_searchCenterElevation));
+        frame.param4 = static_cast<qint16>(toRawValue(m_azimuthSearchRange));
+        frame.param5 = static_cast<qint16>(toRawValue(m_elevationSearchRange));
+        break;
+    case 0x08: // 圆形搜索
+    case 0x0B: // 圆形搜索(位置回路)
+        frame.param2 = static_cast<qint16>(toRawValue(m_searchCenterAzimuth));
+        frame.param3 = static_cast<qint16>(toRawValue(m_searchCenterElevation));
+        frame.param4 = static_cast<qint16>(toRawValue(m_searchRadius));
+        frame.param5 = 0;
+        break;
+    default:
+        frame.param2 = static_cast<qint16>(toRawValue(m_azimuthAngle));
+        frame.param3 = static_cast<qint16>(toRawValue(m_elevationAngle));
+        frame.param4 = 0;
+        frame.param5 = 0;
+        break;
+    }
 
     const uint8_t* data = reinterpret_cast<const uint8_t*>(&frame);
     uint8_t checksum = 0;
@@ -251,19 +222,19 @@ LaserSendData* SerialPortLaser::laserSendData() const
 {
     return m_laserSendData;
 }
-
+//解析函数返回值可为void类型
 QByteArray SerialPortLaser::parseData(const QByteArray &rawData)
 {
     QByteArray checkdata;
     if (rawData.size() < static_cast<int>(sizeof(laser_recv_frame))) {
-        return QByteArray();
+        return QByteArray();//这里可以给出一个弹窗说明数据接收失败
     }
 
     const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(rawData.data());
     if (pFrame->frame_header1 != 0x55 || pFrame->frame_header2 != 0xAA || pFrame->frame_header3 != 0xDC) {
         return QByteArray();
     }
-
+    //截取需要校验的数据
     if (rawData.size() >= 4) {
         checkdata = rawData.mid(3, rawData.size() - 4);
     }
@@ -273,7 +244,7 @@ QByteArray SerialPortLaser::parseData(const QByteArray &rawData)
         return QByteArray();
     }
 
-    m_laserData->updateFromFrame(rawData);
+    m_laserData->updateFromFrame(rawData);     //检验无误后更新数据并刷新QML界面显示
     return rawData;
 }
 

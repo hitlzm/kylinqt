@@ -9,7 +9,8 @@ Item {
     property int textfieldheight
     width: mywidth
     height: myheight
-
+    //增加对编辑完成信号的支持
+    signal editingFinished()
     property alias title: titleText.text
     property alias text: textField.text
     property alias placeholderText: textField.placeholderText
@@ -39,6 +40,7 @@ Item {
         horizontalAlignment: TextInput.AlignHCenter
         // 垂直居中：设置垂直居中对齐和相同的上下内边距
         verticalAlignment: TextInput.AlignVCenter
+        onEditingFinished: root.editingFinished()
     }
     Label {
         id: mylabel

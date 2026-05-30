@@ -961,7 +961,7 @@ void ImageData::softwareVersion3Changed()
 }
 struct qt_meta_stringdata_ImageSendData_t {
     QByteArrayData data[96];
-    char stringdata0[1680];
+    char stringdata0[1774];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1019,53 +1019,53 @@ QT_MOC_LITERAL(45, 922, 24), // "aircraftLongitudeChanged"
 QT_MOC_LITERAL(46, 947, 23), // "aircraftLatitudeChanged"
 QT_MOC_LITERAL(47, 971, 23), // "aircraftAltitudeChanged"
 QT_MOC_LITERAL(48, 995, 16), // "pixelSizeChanged"
-QT_MOC_LITERAL(49, 1012, 11), // "frameLength"
-QT_MOC_LITERAL(50, 1024, 14), // "aFrameSequence"
-QT_MOC_LITERAL(51, 1039, 14), // "seekerCtrlWord"
-QT_MOC_LITERAL(52, 1054, 16), // "opticalParamCtrl"
-QT_MOC_LITERAL(53, 1071, 13), // "templateIndex"
-QT_MOC_LITERAL(54, 1085, 20), // "targetBackgroundType"
-QT_MOC_LITERAL(55, 1106, 21), // "missileTargetDistance"
-QT_MOC_LITERAL(56, 1128, 12), // "missileSpeed"
-QT_MOC_LITERAL(57, 1141, 14), // "bodyPitchAngle"
-QT_MOC_LITERAL(58, 1156, 12), // "bodyYawAngle"
-QT_MOC_LITERAL(59, 1169, 13), // "bodyRollAngle"
-QT_MOC_LITERAL(60, 1183, 13), // "bodyPitchRate"
-QT_MOC_LITERAL(61, 1197, 11), // "bodyYawRate"
-QT_MOC_LITERAL(62, 1209, 12), // "bodyRollRate"
-QT_MOC_LITERAL(63, 1222, 8), // "bodyVelX"
-QT_MOC_LITERAL(64, 1231, 8), // "bodyVelY"
-QT_MOC_LITERAL(65, 1240, 8), // "bodyVelZ"
-QT_MOC_LITERAL(66, 1249, 8), // "bodyPosX"
-QT_MOC_LITERAL(67, 1258, 8), // "bodyPosY"
-QT_MOC_LITERAL(68, 1267, 8), // "bodyPosZ"
-QT_MOC_LITERAL(69, 1276, 17), // "pitchGimbalPreset"
-QT_MOC_LITERAL(70, 1294, 15), // "yawGimbalPreset"
-QT_MOC_LITERAL(71, 1310, 17), // "irIntegrationTime"
-QT_MOC_LITERAL(72, 1328, 21), // "trackingCorrectionCmd"
-QT_MOC_LITERAL(73, 1350, 18), // "correctionFrameNum"
-QT_MOC_LITERAL(74, 1369, 17), // "correctedPitchPos"
-QT_MOC_LITERAL(75, 1387, 15), // "correctedYawPos"
-QT_MOC_LITERAL(76, 1403, 15), // "searchPitchRate"
-QT_MOC_LITERAL(77, 1419, 13), // "searchYawRate"
-QT_MOC_LITERAL(78, 1433, 8), // "gateSize"
-QT_MOC_LITERAL(79, 1442, 9), // "osdSwitch"
-QT_MOC_LITERAL(80, 1452, 16), // "captureRefImgCmd"
-QT_MOC_LITERAL(81, 1469, 14), // "targetAltitude"
-QT_MOC_LITERAL(82, 1484, 13), // "aircraftPitch"
-QT_MOC_LITERAL(83, 1498, 11), // "aircraftYaw"
-QT_MOC_LITERAL(84, 1510, 12), // "aircraftRoll"
-QT_MOC_LITERAL(85, 1523, 11), // "focalLength"
-QT_MOC_LITERAL(86, 1535, 13), // "podPitchAngle"
-QT_MOC_LITERAL(87, 1549, 11), // "podYawAngle"
-QT_MOC_LITERAL(88, 1561, 17), // "satelliteMapScale"
-QT_MOC_LITERAL(89, 1579, 7), // "podType"
-QT_MOC_LITERAL(90, 1587, 15), // "targetLongitude"
-QT_MOC_LITERAL(91, 1603, 14), // "targetLatitude"
-QT_MOC_LITERAL(92, 1618, 17), // "aircraftLongitude"
-QT_MOC_LITERAL(93, 1636, 16), // "aircraftLatitude"
-QT_MOC_LITERAL(94, 1653, 16), // "aircraftAltitude"
-QT_MOC_LITERAL(95, 1670, 9) // "pixelSize"
+QT_MOC_LITERAL(49, 1012, 13), // "m_frameLength"
+QT_MOC_LITERAL(50, 1026, 16), // "m_aFrameSequence"
+QT_MOC_LITERAL(51, 1043, 16), // "m_seekerCtrlWord"
+QT_MOC_LITERAL(52, 1060, 18), // "m_opticalParamCtrl"
+QT_MOC_LITERAL(53, 1079, 15), // "m_templateIndex"
+QT_MOC_LITERAL(54, 1095, 22), // "m_targetBackgroundType"
+QT_MOC_LITERAL(55, 1118, 23), // "m_missileTargetDistance"
+QT_MOC_LITERAL(56, 1142, 14), // "m_missileSpeed"
+QT_MOC_LITERAL(57, 1157, 16), // "m_bodyPitchAngle"
+QT_MOC_LITERAL(58, 1174, 14), // "m_bodyYawAngle"
+QT_MOC_LITERAL(59, 1189, 15), // "m_bodyRollAngle"
+QT_MOC_LITERAL(60, 1205, 15), // "m_bodyPitchRate"
+QT_MOC_LITERAL(61, 1221, 13), // "m_bodyYawRate"
+QT_MOC_LITERAL(62, 1235, 14), // "m_bodyRollRate"
+QT_MOC_LITERAL(63, 1250, 10), // "m_bodyVelX"
+QT_MOC_LITERAL(64, 1261, 10), // "m_bodyVelY"
+QT_MOC_LITERAL(65, 1272, 10), // "m_bodyVelZ"
+QT_MOC_LITERAL(66, 1283, 10), // "m_bodyPosX"
+QT_MOC_LITERAL(67, 1294, 10), // "m_bodyPosY"
+QT_MOC_LITERAL(68, 1305, 10), // "m_bodyPosZ"
+QT_MOC_LITERAL(69, 1316, 19), // "m_pitchGimbalPreset"
+QT_MOC_LITERAL(70, 1336, 17), // "m_yawGimbalPreset"
+QT_MOC_LITERAL(71, 1354, 19), // "m_irIntegrationTime"
+QT_MOC_LITERAL(72, 1374, 23), // "m_trackingCorrectionCmd"
+QT_MOC_LITERAL(73, 1398, 20), // "m_correctionFrameNum"
+QT_MOC_LITERAL(74, 1419, 19), // "m_correctedPitchPos"
+QT_MOC_LITERAL(75, 1439, 17), // "m_correctedYawPos"
+QT_MOC_LITERAL(76, 1457, 17), // "m_searchPitchRate"
+QT_MOC_LITERAL(77, 1475, 15), // "m_searchYawRate"
+QT_MOC_LITERAL(78, 1491, 10), // "m_gateSize"
+QT_MOC_LITERAL(79, 1502, 11), // "m_osdSwitch"
+QT_MOC_LITERAL(80, 1514, 18), // "m_captureRefImgCmd"
+QT_MOC_LITERAL(81, 1533, 16), // "m_targetAltitude"
+QT_MOC_LITERAL(82, 1550, 15), // "m_aircraftPitch"
+QT_MOC_LITERAL(83, 1566, 13), // "m_aircraftYaw"
+QT_MOC_LITERAL(84, 1580, 14), // "m_aircraftRoll"
+QT_MOC_LITERAL(85, 1595, 13), // "m_focalLength"
+QT_MOC_LITERAL(86, 1609, 15), // "m_podPitchAngle"
+QT_MOC_LITERAL(87, 1625, 13), // "m_podYawAngle"
+QT_MOC_LITERAL(88, 1639, 19), // "m_satelliteMapScale"
+QT_MOC_LITERAL(89, 1659, 9), // "m_podType"
+QT_MOC_LITERAL(90, 1669, 17), // "m_targetLongitude"
+QT_MOC_LITERAL(91, 1687, 16), // "m_targetLatitude"
+QT_MOC_LITERAL(92, 1704, 19), // "m_aircraftLongitude"
+QT_MOC_LITERAL(93, 1724, 18), // "m_aircraftLatitude"
+QT_MOC_LITERAL(94, 1743, 18), // "m_aircraftAltitude"
+QT_MOC_LITERAL(95, 1762, 11) // "m_pixelSize"
 
     },
     "ImageSendData\0frameLengthChanged\0\0"
@@ -1094,25 +1094,28 @@ QT_MOC_LITERAL(95, 1670, 9) // "pixelSize"
     "podTypeChanged\0targetLongitudeChanged\0"
     "targetLatitudeChanged\0aircraftLongitudeChanged\0"
     "aircraftLatitudeChanged\0aircraftAltitudeChanged\0"
-    "pixelSizeChanged\0frameLength\0"
-    "aFrameSequence\0seekerCtrlWord\0"
-    "opticalParamCtrl\0templateIndex\0"
-    "targetBackgroundType\0missileTargetDistance\0"
-    "missileSpeed\0bodyPitchAngle\0bodyYawAngle\0"
-    "bodyRollAngle\0bodyPitchRate\0bodyYawRate\0"
-    "bodyRollRate\0bodyVelX\0bodyVelY\0bodyVelZ\0"
-    "bodyPosX\0bodyPosY\0bodyPosZ\0pitchGimbalPreset\0"
-    "yawGimbalPreset\0irIntegrationTime\0"
-    "trackingCorrectionCmd\0correctionFrameNum\0"
-    "correctedPitchPos\0correctedYawPos\0"
-    "searchPitchRate\0searchYawRate\0gateSize\0"
-    "osdSwitch\0captureRefImgCmd\0targetAltitude\0"
-    "aircraftPitch\0aircraftYaw\0aircraftRoll\0"
-    "focalLength\0podPitchAngle\0podYawAngle\0"
-    "satelliteMapScale\0podType\0targetLongitude\0"
-    "targetLatitude\0aircraftLongitude\0"
-    "aircraftLatitude\0aircraftAltitude\0"
-    "pixelSize"
+    "pixelSizeChanged\0m_frameLength\0"
+    "m_aFrameSequence\0m_seekerCtrlWord\0"
+    "m_opticalParamCtrl\0m_templateIndex\0"
+    "m_targetBackgroundType\0m_missileTargetDistance\0"
+    "m_missileSpeed\0m_bodyPitchAngle\0"
+    "m_bodyYawAngle\0m_bodyRollAngle\0"
+    "m_bodyPitchRate\0m_bodyYawRate\0"
+    "m_bodyRollRate\0m_bodyVelX\0m_bodyVelY\0"
+    "m_bodyVelZ\0m_bodyPosX\0m_bodyPosY\0"
+    "m_bodyPosZ\0m_pitchGimbalPreset\0"
+    "m_yawGimbalPreset\0m_irIntegrationTime\0"
+    "m_trackingCorrectionCmd\0m_correctionFrameNum\0"
+    "m_correctedPitchPos\0m_correctedYawPos\0"
+    "m_searchPitchRate\0m_searchYawRate\0"
+    "m_gateSize\0m_osdSwitch\0m_captureRefImgCmd\0"
+    "m_targetAltitude\0m_aircraftPitch\0"
+    "m_aircraftYaw\0m_aircraftRoll\0m_focalLength\0"
+    "m_podPitchAngle\0m_podYawAngle\0"
+    "m_satelliteMapScale\0m_podType\0"
+    "m_targetLongitude\0m_targetLatitude\0"
+    "m_aircraftLongitude\0m_aircraftLatitude\0"
+    "m_aircraftAltitude\0m_pixelSize"
 };
 #undef QT_MOC_LITERAL
 
@@ -1228,53 +1231,53 @@ static const uint qt_meta_data_ImageSendData[] = {
     QMetaType::Void,
 
  // properties: name, type, flags
-      49, QMetaType::Int, 0x00495103,
-      50, QMetaType::Int, 0x00495103,
-      51, QMetaType::Int, 0x00495103,
-      52, QMetaType::Int, 0x00495103,
-      53, QMetaType::Int, 0x00495103,
-      54, QMetaType::Int, 0x00495103,
-      55, QMetaType::Int, 0x00495103,
-      56, QMetaType::Float, 0x00495103,
-      57, QMetaType::Float, 0x00495103,
-      58, QMetaType::Float, 0x00495103,
-      59, QMetaType::Float, 0x00495103,
-      60, QMetaType::Float, 0x00495103,
-      61, QMetaType::Float, 0x00495103,
-      62, QMetaType::Float, 0x00495103,
-      63, QMetaType::Float, 0x00495103,
-      64, QMetaType::Float, 0x00495103,
-      65, QMetaType::Float, 0x00495103,
-      66, QMetaType::Int, 0x00495103,
-      67, QMetaType::Int, 0x00495103,
-      68, QMetaType::Int, 0x00495103,
-      69, QMetaType::Float, 0x00495103,
-      70, QMetaType::Float, 0x00495103,
-      71, QMetaType::Int, 0x00495103,
-      72, QMetaType::Int, 0x00495103,
-      73, QMetaType::Int, 0x00495103,
-      74, QMetaType::Int, 0x00495103,
-      75, QMetaType::Int, 0x00495103,
-      76, QMetaType::Float, 0x00495103,
-      77, QMetaType::Float, 0x00495103,
-      78, QMetaType::Int, 0x00495103,
-      79, QMetaType::Int, 0x00495103,
-      80, QMetaType::Int, 0x00495103,
-      81, QMetaType::Int, 0x00495103,
-      82, QMetaType::Float, 0x00495103,
-      83, QMetaType::Float, 0x00495103,
-      84, QMetaType::Float, 0x00495103,
-      85, QMetaType::Int, 0x00495103,
-      86, QMetaType::Float, 0x00495103,
-      87, QMetaType::Float, 0x00495103,
-      88, QMetaType::Int, 0x00495103,
-      89, QMetaType::Int, 0x00495103,
-      90, QMetaType::Double, 0x00495103,
-      91, QMetaType::Double, 0x00495103,
-      92, QMetaType::Double, 0x00495103,
-      93, QMetaType::Double, 0x00495103,
-      94, QMetaType::Int, 0x00495103,
-      95, QMetaType::Int, 0x00495103,
+      49, QMetaType::Int, 0x00495003,
+      50, QMetaType::Int, 0x00495003,
+      51, QMetaType::Int, 0x00495003,
+      52, QMetaType::Int, 0x00495003,
+      53, QMetaType::Int, 0x00495003,
+      54, QMetaType::Int, 0x00495003,
+      55, QMetaType::Int, 0x00495003,
+      56, QMetaType::Float, 0x00495003,
+      57, QMetaType::Float, 0x00495003,
+      58, QMetaType::Float, 0x00495003,
+      59, QMetaType::Float, 0x00495003,
+      60, QMetaType::Float, 0x00495003,
+      61, QMetaType::Float, 0x00495003,
+      62, QMetaType::Float, 0x00495003,
+      63, QMetaType::Float, 0x00495003,
+      64, QMetaType::Float, 0x00495003,
+      65, QMetaType::Float, 0x00495003,
+      66, QMetaType::Int, 0x00495003,
+      67, QMetaType::Int, 0x00495003,
+      68, QMetaType::Int, 0x00495003,
+      69, QMetaType::Float, 0x00495003,
+      70, QMetaType::Float, 0x00495003,
+      71, QMetaType::Int, 0x00495003,
+      72, QMetaType::Int, 0x00495003,
+      73, QMetaType::Int, 0x00495003,
+      74, QMetaType::Int, 0x00495003,
+      75, QMetaType::Int, 0x00495003,
+      76, QMetaType::Float, 0x00495003,
+      77, QMetaType::Float, 0x00495003,
+      78, QMetaType::Int, 0x00495003,
+      79, QMetaType::Int, 0x00495003,
+      80, QMetaType::Int, 0x00495003,
+      81, QMetaType::Int, 0x00495003,
+      82, QMetaType::Float, 0x00495003,
+      83, QMetaType::Float, 0x00495003,
+      84, QMetaType::Float, 0x00495003,
+      85, QMetaType::Int, 0x00495003,
+      86, QMetaType::Float, 0x00495003,
+      87, QMetaType::Float, 0x00495003,
+      88, QMetaType::Int, 0x00495003,
+      89, QMetaType::Int, 0x00495003,
+      90, QMetaType::Double, 0x00495003,
+      91, QMetaType::Double, 0x00495003,
+      92, QMetaType::Double, 0x00495003,
+      93, QMetaType::Double, 0x00495003,
+      94, QMetaType::Int, 0x00495003,
+      95, QMetaType::Int, 0x00495003,
 
  // properties: notify_signal_id
        0,
@@ -1721,53 +1724,53 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         Q_UNUSED(_t)
         void *_v = _a[0];
         switch (_id) {
-        case 0: *reinterpret_cast< int*>(_v) = _t->frameLength(); break;
-        case 1: *reinterpret_cast< int*>(_v) = _t->aFrameSequence(); break;
-        case 2: *reinterpret_cast< int*>(_v) = _t->seekerCtrlWord(); break;
-        case 3: *reinterpret_cast< int*>(_v) = _t->opticalParamCtrl(); break;
-        case 4: *reinterpret_cast< int*>(_v) = _t->templateIndex(); break;
-        case 5: *reinterpret_cast< int*>(_v) = _t->targetBackgroundType(); break;
-        case 6: *reinterpret_cast< int*>(_v) = _t->missileTargetDistance(); break;
-        case 7: *reinterpret_cast< float*>(_v) = _t->missileSpeed(); break;
-        case 8: *reinterpret_cast< float*>(_v) = _t->bodyPitchAngle(); break;
-        case 9: *reinterpret_cast< float*>(_v) = _t->bodyYawAngle(); break;
-        case 10: *reinterpret_cast< float*>(_v) = _t->bodyRollAngle(); break;
-        case 11: *reinterpret_cast< float*>(_v) = _t->bodyPitchRate(); break;
-        case 12: *reinterpret_cast< float*>(_v) = _t->bodyYawRate(); break;
-        case 13: *reinterpret_cast< float*>(_v) = _t->bodyRollRate(); break;
-        case 14: *reinterpret_cast< float*>(_v) = _t->bodyVelX(); break;
-        case 15: *reinterpret_cast< float*>(_v) = _t->bodyVelY(); break;
-        case 16: *reinterpret_cast< float*>(_v) = _t->bodyVelZ(); break;
-        case 17: *reinterpret_cast< int*>(_v) = _t->bodyPosX(); break;
-        case 18: *reinterpret_cast< int*>(_v) = _t->bodyPosY(); break;
-        case 19: *reinterpret_cast< int*>(_v) = _t->bodyPosZ(); break;
-        case 20: *reinterpret_cast< float*>(_v) = _t->pitchGimbalPreset(); break;
-        case 21: *reinterpret_cast< float*>(_v) = _t->yawGimbalPreset(); break;
-        case 22: *reinterpret_cast< int*>(_v) = _t->irIntegrationTime(); break;
-        case 23: *reinterpret_cast< int*>(_v) = _t->trackingCorrectionCmd(); break;
-        case 24: *reinterpret_cast< int*>(_v) = _t->correctionFrameNum(); break;
-        case 25: *reinterpret_cast< int*>(_v) = _t->correctedPitchPos(); break;
-        case 26: *reinterpret_cast< int*>(_v) = _t->correctedYawPos(); break;
-        case 27: *reinterpret_cast< float*>(_v) = _t->searchPitchRate(); break;
-        case 28: *reinterpret_cast< float*>(_v) = _t->searchYawRate(); break;
-        case 29: *reinterpret_cast< int*>(_v) = _t->gateSize(); break;
-        case 30: *reinterpret_cast< int*>(_v) = _t->osdSwitch(); break;
-        case 31: *reinterpret_cast< int*>(_v) = _t->captureRefImgCmd(); break;
-        case 32: *reinterpret_cast< int*>(_v) = _t->targetAltitude(); break;
-        case 33: *reinterpret_cast< float*>(_v) = _t->aircraftPitch(); break;
-        case 34: *reinterpret_cast< float*>(_v) = _t->aircraftYaw(); break;
-        case 35: *reinterpret_cast< float*>(_v) = _t->aircraftRoll(); break;
-        case 36: *reinterpret_cast< int*>(_v) = _t->focalLength(); break;
-        case 37: *reinterpret_cast< float*>(_v) = _t->podPitchAngle(); break;
-        case 38: *reinterpret_cast< float*>(_v) = _t->podYawAngle(); break;
-        case 39: *reinterpret_cast< int*>(_v) = _t->satelliteMapScale(); break;
-        case 40: *reinterpret_cast< int*>(_v) = _t->podType(); break;
-        case 41: *reinterpret_cast< double*>(_v) = _t->targetLongitude(); break;
-        case 42: *reinterpret_cast< double*>(_v) = _t->targetLatitude(); break;
-        case 43: *reinterpret_cast< double*>(_v) = _t->aircraftLongitude(); break;
-        case 44: *reinterpret_cast< double*>(_v) = _t->aircraftLatitude(); break;
-        case 45: *reinterpret_cast< int*>(_v) = _t->aircraftAltitude(); break;
-        case 46: *reinterpret_cast< int*>(_v) = _t->pixelSize(); break;
+        case 0: *reinterpret_cast< int*>(_v) = _t->m_frameLength; break;
+        case 1: *reinterpret_cast< int*>(_v) = _t->m_aFrameSequence; break;
+        case 2: *reinterpret_cast< int*>(_v) = _t->m_seekerCtrlWord; break;
+        case 3: *reinterpret_cast< int*>(_v) = _t->m_opticalParamCtrl; break;
+        case 4: *reinterpret_cast< int*>(_v) = _t->m_templateIndex; break;
+        case 5: *reinterpret_cast< int*>(_v) = _t->m_targetBackgroundType; break;
+        case 6: *reinterpret_cast< int*>(_v) = _t->m_missileTargetDistance; break;
+        case 7: *reinterpret_cast< float*>(_v) = _t->m_missileSpeed; break;
+        case 8: *reinterpret_cast< float*>(_v) = _t->m_bodyPitchAngle; break;
+        case 9: *reinterpret_cast< float*>(_v) = _t->m_bodyYawAngle; break;
+        case 10: *reinterpret_cast< float*>(_v) = _t->m_bodyRollAngle; break;
+        case 11: *reinterpret_cast< float*>(_v) = _t->m_bodyPitchRate; break;
+        case 12: *reinterpret_cast< float*>(_v) = _t->m_bodyYawRate; break;
+        case 13: *reinterpret_cast< float*>(_v) = _t->m_bodyRollRate; break;
+        case 14: *reinterpret_cast< float*>(_v) = _t->m_bodyVelX; break;
+        case 15: *reinterpret_cast< float*>(_v) = _t->m_bodyVelY; break;
+        case 16: *reinterpret_cast< float*>(_v) = _t->m_bodyVelZ; break;
+        case 17: *reinterpret_cast< int*>(_v) = _t->m_bodyPosX; break;
+        case 18: *reinterpret_cast< int*>(_v) = _t->m_bodyPosY; break;
+        case 19: *reinterpret_cast< int*>(_v) = _t->m_bodyPosZ; break;
+        case 20: *reinterpret_cast< float*>(_v) = _t->m_pitchGimbalPreset; break;
+        case 21: *reinterpret_cast< float*>(_v) = _t->m_yawGimbalPreset; break;
+        case 22: *reinterpret_cast< int*>(_v) = _t->m_irIntegrationTime; break;
+        case 23: *reinterpret_cast< int*>(_v) = _t->m_trackingCorrectionCmd; break;
+        case 24: *reinterpret_cast< int*>(_v) = _t->m_correctionFrameNum; break;
+        case 25: *reinterpret_cast< int*>(_v) = _t->m_correctedPitchPos; break;
+        case 26: *reinterpret_cast< int*>(_v) = _t->m_correctedYawPos; break;
+        case 27: *reinterpret_cast< float*>(_v) = _t->m_searchPitchRate; break;
+        case 28: *reinterpret_cast< float*>(_v) = _t->m_searchYawRate; break;
+        case 29: *reinterpret_cast< int*>(_v) = _t->m_gateSize; break;
+        case 30: *reinterpret_cast< int*>(_v) = _t->m_osdSwitch; break;
+        case 31: *reinterpret_cast< int*>(_v) = _t->m_captureRefImgCmd; break;
+        case 32: *reinterpret_cast< int*>(_v) = _t->m_targetAltitude; break;
+        case 33: *reinterpret_cast< float*>(_v) = _t->m_aircraftPitch; break;
+        case 34: *reinterpret_cast< float*>(_v) = _t->m_aircraftYaw; break;
+        case 35: *reinterpret_cast< float*>(_v) = _t->m_aircraftRoll; break;
+        case 36: *reinterpret_cast< int*>(_v) = _t->m_focalLength; break;
+        case 37: *reinterpret_cast< float*>(_v) = _t->m_podPitchAngle; break;
+        case 38: *reinterpret_cast< float*>(_v) = _t->m_podYawAngle; break;
+        case 39: *reinterpret_cast< int*>(_v) = _t->m_satelliteMapScale; break;
+        case 40: *reinterpret_cast< int*>(_v) = _t->m_podType; break;
+        case 41: *reinterpret_cast< double*>(_v) = _t->m_targetLongitude; break;
+        case 42: *reinterpret_cast< double*>(_v) = _t->m_targetLatitude; break;
+        case 43: *reinterpret_cast< double*>(_v) = _t->m_aircraftLongitude; break;
+        case 44: *reinterpret_cast< double*>(_v) = _t->m_aircraftLatitude; break;
+        case 45: *reinterpret_cast< int*>(_v) = _t->m_aircraftAltitude; break;
+        case 46: *reinterpret_cast< int*>(_v) = _t->m_pixelSize; break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -1775,53 +1778,288 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         Q_UNUSED(_t)
         void *_v = _a[0];
         switch (_id) {
-        case 0: _t->setFrameLength(*reinterpret_cast< int*>(_v)); break;
-        case 1: _t->setAFrameSequence(*reinterpret_cast< int*>(_v)); break;
-        case 2: _t->setSeekerCtrlWord(*reinterpret_cast< int*>(_v)); break;
-        case 3: _t->setOpticalParamCtrl(*reinterpret_cast< int*>(_v)); break;
-        case 4: _t->setTemplateIndex(*reinterpret_cast< int*>(_v)); break;
-        case 5: _t->setTargetBackgroundType(*reinterpret_cast< int*>(_v)); break;
-        case 6: _t->setMissileTargetDistance(*reinterpret_cast< int*>(_v)); break;
-        case 7: _t->setMissileSpeed(*reinterpret_cast< float*>(_v)); break;
-        case 8: _t->setBodyPitchAngle(*reinterpret_cast< float*>(_v)); break;
-        case 9: _t->setBodyYawAngle(*reinterpret_cast< float*>(_v)); break;
-        case 10: _t->setBodyRollAngle(*reinterpret_cast< float*>(_v)); break;
-        case 11: _t->setBodyPitchRate(*reinterpret_cast< float*>(_v)); break;
-        case 12: _t->setBodyYawRate(*reinterpret_cast< float*>(_v)); break;
-        case 13: _t->setBodyRollRate(*reinterpret_cast< float*>(_v)); break;
-        case 14: _t->setBodyVelX(*reinterpret_cast< float*>(_v)); break;
-        case 15: _t->setBodyVelY(*reinterpret_cast< float*>(_v)); break;
-        case 16: _t->setBodyVelZ(*reinterpret_cast< float*>(_v)); break;
-        case 17: _t->setBodyPosX(*reinterpret_cast< int*>(_v)); break;
-        case 18: _t->setBodyPosY(*reinterpret_cast< int*>(_v)); break;
-        case 19: _t->setBodyPosZ(*reinterpret_cast< int*>(_v)); break;
-        case 20: _t->setPitchGimbalPreset(*reinterpret_cast< float*>(_v)); break;
-        case 21: _t->setYawGimbalPreset(*reinterpret_cast< float*>(_v)); break;
-        case 22: _t->setIrIntegrationTime(*reinterpret_cast< int*>(_v)); break;
-        case 23: _t->setTrackingCorrectionCmd(*reinterpret_cast< int*>(_v)); break;
-        case 24: _t->setCorrectionFrameNum(*reinterpret_cast< int*>(_v)); break;
-        case 25: _t->setCorrectedPitchPos(*reinterpret_cast< int*>(_v)); break;
-        case 26: _t->setCorrectedYawPos(*reinterpret_cast< int*>(_v)); break;
-        case 27: _t->setSearchPitchRate(*reinterpret_cast< float*>(_v)); break;
-        case 28: _t->setSearchYawRate(*reinterpret_cast< float*>(_v)); break;
-        case 29: _t->setGateSize(*reinterpret_cast< int*>(_v)); break;
-        case 30: _t->setOsdSwitch(*reinterpret_cast< int*>(_v)); break;
-        case 31: _t->setCaptureRefImgCmd(*reinterpret_cast< int*>(_v)); break;
-        case 32: _t->setTargetAltitude(*reinterpret_cast< int*>(_v)); break;
-        case 33: _t->setAircraftPitch(*reinterpret_cast< float*>(_v)); break;
-        case 34: _t->setAircraftYaw(*reinterpret_cast< float*>(_v)); break;
-        case 35: _t->setAircraftRoll(*reinterpret_cast< float*>(_v)); break;
-        case 36: _t->setFocalLength(*reinterpret_cast< int*>(_v)); break;
-        case 37: _t->setPodPitchAngle(*reinterpret_cast< float*>(_v)); break;
-        case 38: _t->setPodYawAngle(*reinterpret_cast< float*>(_v)); break;
-        case 39: _t->setSatelliteMapScale(*reinterpret_cast< int*>(_v)); break;
-        case 40: _t->setPodType(*reinterpret_cast< int*>(_v)); break;
-        case 41: _t->setTargetLongitude(*reinterpret_cast< double*>(_v)); break;
-        case 42: _t->setTargetLatitude(*reinterpret_cast< double*>(_v)); break;
-        case 43: _t->setAircraftLongitude(*reinterpret_cast< double*>(_v)); break;
-        case 44: _t->setAircraftLatitude(*reinterpret_cast< double*>(_v)); break;
-        case 45: _t->setAircraftAltitude(*reinterpret_cast< int*>(_v)); break;
-        case 46: _t->setPixelSize(*reinterpret_cast< int*>(_v)); break;
+        case 0:
+            if (_t->m_frameLength != *reinterpret_cast< int*>(_v)) {
+                _t->m_frameLength = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->frameLengthChanged();
+            }
+            break;
+        case 1:
+            if (_t->m_aFrameSequence != *reinterpret_cast< int*>(_v)) {
+                _t->m_aFrameSequence = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->aFrameSequenceChanged();
+            }
+            break;
+        case 2:
+            if (_t->m_seekerCtrlWord != *reinterpret_cast< int*>(_v)) {
+                _t->m_seekerCtrlWord = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->seekerCtrlWordChanged();
+            }
+            break;
+        case 3:
+            if (_t->m_opticalParamCtrl != *reinterpret_cast< int*>(_v)) {
+                _t->m_opticalParamCtrl = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->opticalParamCtrlChanged();
+            }
+            break;
+        case 4:
+            if (_t->m_templateIndex != *reinterpret_cast< int*>(_v)) {
+                _t->m_templateIndex = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->templateIndexChanged();
+            }
+            break;
+        case 5:
+            if (_t->m_targetBackgroundType != *reinterpret_cast< int*>(_v)) {
+                _t->m_targetBackgroundType = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->targetBackgroundTypeChanged();
+            }
+            break;
+        case 6:
+            if (_t->m_missileTargetDistance != *reinterpret_cast< int*>(_v)) {
+                _t->m_missileTargetDistance = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->missileTargetDistanceChanged();
+            }
+            break;
+        case 7:
+            if (_t->m_missileSpeed != *reinterpret_cast< float*>(_v)) {
+                _t->m_missileSpeed = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->missileSpeedChanged();
+            }
+            break;
+        case 8:
+            if (_t->m_bodyPitchAngle != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyPitchAngle = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyPitchAngleChanged();
+            }
+            break;
+        case 9:
+            if (_t->m_bodyYawAngle != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyYawAngle = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyYawAngleChanged();
+            }
+            break;
+        case 10:
+            if (_t->m_bodyRollAngle != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyRollAngle = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyRollAngleChanged();
+            }
+            break;
+        case 11:
+            if (_t->m_bodyPitchRate != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyPitchRate = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyPitchRateChanged();
+            }
+            break;
+        case 12:
+            if (_t->m_bodyYawRate != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyYawRate = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyYawRateChanged();
+            }
+            break;
+        case 13:
+            if (_t->m_bodyRollRate != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyRollRate = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyRollRateChanged();
+            }
+            break;
+        case 14:
+            if (_t->m_bodyVelX != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyVelX = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyVelXChanged();
+            }
+            break;
+        case 15:
+            if (_t->m_bodyVelY != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyVelY = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyVelYChanged();
+            }
+            break;
+        case 16:
+            if (_t->m_bodyVelZ != *reinterpret_cast< float*>(_v)) {
+                _t->m_bodyVelZ = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->bodyVelZChanged();
+            }
+            break;
+        case 17:
+            if (_t->m_bodyPosX != *reinterpret_cast< int*>(_v)) {
+                _t->m_bodyPosX = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->bodyPosXChanged();
+            }
+            break;
+        case 18:
+            if (_t->m_bodyPosY != *reinterpret_cast< int*>(_v)) {
+                _t->m_bodyPosY = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->bodyPosYChanged();
+            }
+            break;
+        case 19:
+            if (_t->m_bodyPosZ != *reinterpret_cast< int*>(_v)) {
+                _t->m_bodyPosZ = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->bodyPosZChanged();
+            }
+            break;
+        case 20:
+            if (_t->m_pitchGimbalPreset != *reinterpret_cast< float*>(_v)) {
+                _t->m_pitchGimbalPreset = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->pitchGimbalPresetChanged();
+            }
+            break;
+        case 21:
+            if (_t->m_yawGimbalPreset != *reinterpret_cast< float*>(_v)) {
+                _t->m_yawGimbalPreset = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->yawGimbalPresetChanged();
+            }
+            break;
+        case 22:
+            if (_t->m_irIntegrationTime != *reinterpret_cast< int*>(_v)) {
+                _t->m_irIntegrationTime = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->irIntegrationTimeChanged();
+            }
+            break;
+        case 23:
+            if (_t->m_trackingCorrectionCmd != *reinterpret_cast< int*>(_v)) {
+                _t->m_trackingCorrectionCmd = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->trackingCorrectionCmdChanged();
+            }
+            break;
+        case 24:
+            if (_t->m_correctionFrameNum != *reinterpret_cast< int*>(_v)) {
+                _t->m_correctionFrameNum = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->correctionFrameNumChanged();
+            }
+            break;
+        case 25:
+            if (_t->m_correctedPitchPos != *reinterpret_cast< int*>(_v)) {
+                _t->m_correctedPitchPos = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->correctedPitchPosChanged();
+            }
+            break;
+        case 26:
+            if (_t->m_correctedYawPos != *reinterpret_cast< int*>(_v)) {
+                _t->m_correctedYawPos = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->correctedYawPosChanged();
+            }
+            break;
+        case 27:
+            if (_t->m_searchPitchRate != *reinterpret_cast< float*>(_v)) {
+                _t->m_searchPitchRate = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->searchPitchRateChanged();
+            }
+            break;
+        case 28:
+            if (_t->m_searchYawRate != *reinterpret_cast< float*>(_v)) {
+                _t->m_searchYawRate = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->searchYawRateChanged();
+            }
+            break;
+        case 29:
+            if (_t->m_gateSize != *reinterpret_cast< int*>(_v)) {
+                _t->m_gateSize = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->gateSizeChanged();
+            }
+            break;
+        case 30:
+            if (_t->m_osdSwitch != *reinterpret_cast< int*>(_v)) {
+                _t->m_osdSwitch = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->osdSwitchChanged();
+            }
+            break;
+        case 31:
+            if (_t->m_captureRefImgCmd != *reinterpret_cast< int*>(_v)) {
+                _t->m_captureRefImgCmd = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->captureRefImgCmdChanged();
+            }
+            break;
+        case 32:
+            if (_t->m_targetAltitude != *reinterpret_cast< int*>(_v)) {
+                _t->m_targetAltitude = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->targetAltitudeChanged();
+            }
+            break;
+        case 33:
+            if (_t->m_aircraftPitch != *reinterpret_cast< float*>(_v)) {
+                _t->m_aircraftPitch = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->aircraftPitchChanged();
+            }
+            break;
+        case 34:
+            if (_t->m_aircraftYaw != *reinterpret_cast< float*>(_v)) {
+                _t->m_aircraftYaw = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->aircraftYawChanged();
+            }
+            break;
+        case 35:
+            if (_t->m_aircraftRoll != *reinterpret_cast< float*>(_v)) {
+                _t->m_aircraftRoll = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->aircraftRollChanged();
+            }
+            break;
+        case 36:
+            if (_t->m_focalLength != *reinterpret_cast< int*>(_v)) {
+                _t->m_focalLength = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->focalLengthChanged();
+            }
+            break;
+        case 37:
+            if (_t->m_podPitchAngle != *reinterpret_cast< float*>(_v)) {
+                _t->m_podPitchAngle = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->podPitchAngleChanged();
+            }
+            break;
+        case 38:
+            if (_t->m_podYawAngle != *reinterpret_cast< float*>(_v)) {
+                _t->m_podYawAngle = *reinterpret_cast< float*>(_v);
+                Q_EMIT _t->podYawAngleChanged();
+            }
+            break;
+        case 39:
+            if (_t->m_satelliteMapScale != *reinterpret_cast< int*>(_v)) {
+                _t->m_satelliteMapScale = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->satelliteMapScaleChanged();
+            }
+            break;
+        case 40:
+            if (_t->m_podType != *reinterpret_cast< int*>(_v)) {
+                _t->m_podType = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->podTypeChanged();
+            }
+            break;
+        case 41:
+            if (_t->m_targetLongitude != *reinterpret_cast< double*>(_v)) {
+                _t->m_targetLongitude = *reinterpret_cast< double*>(_v);
+                Q_EMIT _t->targetLongitudeChanged();
+            }
+            break;
+        case 42:
+            if (_t->m_targetLatitude != *reinterpret_cast< double*>(_v)) {
+                _t->m_targetLatitude = *reinterpret_cast< double*>(_v);
+                Q_EMIT _t->targetLatitudeChanged();
+            }
+            break;
+        case 43:
+            if (_t->m_aircraftLongitude != *reinterpret_cast< double*>(_v)) {
+                _t->m_aircraftLongitude = *reinterpret_cast< double*>(_v);
+                Q_EMIT _t->aircraftLongitudeChanged();
+            }
+            break;
+        case 44:
+            if (_t->m_aircraftLatitude != *reinterpret_cast< double*>(_v)) {
+                _t->m_aircraftLatitude = *reinterpret_cast< double*>(_v);
+                Q_EMIT _t->aircraftLatitudeChanged();
+            }
+            break;
+        case 45:
+            if (_t->m_aircraftAltitude != *reinterpret_cast< int*>(_v)) {
+                _t->m_aircraftAltitude = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->aircraftAltitudeChanged();
+            }
+            break;
+        case 46:
+            if (_t->m_pixelSize != *reinterpret_cast< int*>(_v)) {
+                _t->m_pixelSize = *reinterpret_cast< int*>(_v);
+                Q_EMIT _t->pixelSizeChanged();
+            }
+            break;
         default: break;
         }
     } else if (_c == QMetaObject::ResetProperty) {
@@ -2169,8 +2407,8 @@ void ImageSendData::pixelSizeChanged()
     QMetaObject::activate(this, &staticMetaObject, 46, nullptr);
 }
 struct qt_meta_stringdata_SerialPortImage_t {
-    QByteArrayData data[3];
-    char stringdata0[37];
+    QByteArrayData data[5];
+    char stringdata0[66];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2181,10 +2419,13 @@ static const qt_meta_stringdata_SerialPortImage_t qt_meta_stringdata_SerialPortI
     {
 QT_MOC_LITERAL(0, 0, 15), // "SerialPortImage"
 QT_MOC_LITERAL(1, 16, 9), // "imageData"
-QT_MOC_LITERAL(2, 26, 10) // "ImageData*"
+QT_MOC_LITERAL(2, 26, 10), // "ImageData*"
+QT_MOC_LITERAL(3, 37, 13), // "imageSendData"
+QT_MOC_LITERAL(4, 51, 14) // "ImageSendData*"
 
     },
-    "SerialPortImage\0imageData\0ImageData*"
+    "SerialPortImage\0imageData\0ImageData*\0"
+    "imageSendData\0ImageSendData*"
 };
 #undef QT_MOC_LITERAL
 
@@ -2195,7 +2436,7 @@ static const uint qt_meta_data_SerialPortImage[] = {
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
-       1,   14, // properties
+       2,   14, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
@@ -2203,6 +2444,7 @@ static const uint qt_meta_data_SerialPortImage[] = {
 
  // properties: name, type, flags
        1, 0x80000000 | 2, 0x00095409,
+       3, 0x80000000 | 4, 0x00095409,
 
        0        // eod
 };
@@ -2214,6 +2456,8 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         default: *reinterpret_cast<int*>(_a[0]) = -1; break;
         case 0:
             *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< ImageData* >(); break;
+        case 1:
+            *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< ImageSendData* >(); break;
         }
     }
 
@@ -2224,6 +2468,7 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         void *_v = _a[0];
         switch (_id) {
         case 0: *reinterpret_cast< ImageData**>(_v) = _t->imageData(); break;
+        case 1: *reinterpret_cast< ImageSendData**>(_v) = _t->imageSendData(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -2266,17 +2511,17 @@ int SerialPortImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     } else if (_c == QMetaObject::QueryPropertyDesignable) {
-        _id -= 1;
+        _id -= 2;
     } else if (_c == QMetaObject::QueryPropertyScriptable) {
-        _id -= 1;
+        _id -= 2;
     } else if (_c == QMetaObject::QueryPropertyStored) {
-        _id -= 1;
+        _id -= 2;
     } else if (_c == QMetaObject::QueryPropertyEditable) {
-        _id -= 1;
+        _id -= 2;
     } else if (_c == QMetaObject::QueryPropertyUser) {
-        _id -= 1;
+        _id -= 2;
     }
 #endif // QT_NO_PROPERTIES
     return _id;

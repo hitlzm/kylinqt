@@ -181,151 +181,56 @@ class ImageSendData : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int frameLength READ frameLength WRITE setFrameLength NOTIFY frameLengthChanged)
-    Q_PROPERTY(int aFrameSequence READ aFrameSequence WRITE setAFrameSequence NOTIFY aFrameSequenceChanged)
-    Q_PROPERTY(int seekerCtrlWord READ seekerCtrlWord WRITE setSeekerCtrlWord NOTIFY seekerCtrlWordChanged)
-    Q_PROPERTY(int opticalParamCtrl READ opticalParamCtrl WRITE setOpticalParamCtrl NOTIFY opticalParamCtrlChanged)
-    Q_PROPERTY(int templateIndex READ templateIndex WRITE setTemplateIndex NOTIFY templateIndexChanged)
-    Q_PROPERTY(int targetBackgroundType READ targetBackgroundType WRITE setTargetBackgroundType NOTIFY targetBackgroundTypeChanged)
-    Q_PROPERTY(int missileTargetDistance READ missileTargetDistance WRITE setMissileTargetDistance NOTIFY missileTargetDistanceChanged)
-    Q_PROPERTY(float missileSpeed READ missileSpeed WRITE setMissileSpeed NOTIFY missileSpeedChanged)
-    Q_PROPERTY(float bodyPitchAngle READ bodyPitchAngle WRITE setBodyPitchAngle NOTIFY bodyPitchAngleChanged)
-    Q_PROPERTY(float bodyYawAngle READ bodyYawAngle WRITE setBodyYawAngle NOTIFY bodyYawAngleChanged)
-    Q_PROPERTY(float bodyRollAngle READ bodyRollAngle WRITE setBodyRollAngle NOTIFY bodyRollAngleChanged)
-    Q_PROPERTY(float bodyPitchRate READ bodyPitchRate WRITE setBodyPitchRate NOTIFY bodyPitchRateChanged)
-    Q_PROPERTY(float bodyYawRate READ bodyYawRate WRITE setBodyYawRate NOTIFY bodyYawRateChanged)
-    Q_PROPERTY(float bodyRollRate READ bodyRollRate WRITE setBodyRollRate NOTIFY bodyRollRateChanged)
-    Q_PROPERTY(float bodyVelX READ bodyVelX WRITE setBodyVelX NOTIFY bodyVelXChanged)
-    Q_PROPERTY(float bodyVelY READ bodyVelY WRITE setBodyVelY NOTIFY bodyVelYChanged)
-    Q_PROPERTY(float bodyVelZ READ bodyVelZ WRITE setBodyVelZ NOTIFY bodyVelZChanged)
-    Q_PROPERTY(int bodyPosX READ bodyPosX WRITE setBodyPosX NOTIFY bodyPosXChanged)
-    Q_PROPERTY(int bodyPosY READ bodyPosY WRITE setBodyPosY NOTIFY bodyPosYChanged)
-    Q_PROPERTY(int bodyPosZ READ bodyPosZ WRITE setBodyPosZ NOTIFY bodyPosZChanged)
-    Q_PROPERTY(float pitchGimbalPreset READ pitchGimbalPreset WRITE setPitchGimbalPreset NOTIFY pitchGimbalPresetChanged)
-    Q_PROPERTY(float yawGimbalPreset READ yawGimbalPreset WRITE setYawGimbalPreset NOTIFY yawGimbalPresetChanged)
-    Q_PROPERTY(int irIntegrationTime READ irIntegrationTime WRITE setIrIntegrationTime NOTIFY irIntegrationTimeChanged)
-    Q_PROPERTY(int trackingCorrectionCmd READ trackingCorrectionCmd WRITE setTrackingCorrectionCmd NOTIFY trackingCorrectionCmdChanged)
-    Q_PROPERTY(int correctionFrameNum READ correctionFrameNum WRITE setCorrectionFrameNum NOTIFY correctionFrameNumChanged)
-    Q_PROPERTY(int correctedPitchPos READ correctedPitchPos WRITE setCorrectedPitchPos NOTIFY correctedPitchPosChanged)
-    Q_PROPERTY(int correctedYawPos READ correctedYawPos WRITE setCorrectedYawPos NOTIFY correctedYawPosChanged)
-    Q_PROPERTY(float searchPitchRate READ searchPitchRate WRITE setSearchPitchRate NOTIFY searchPitchRateChanged)
-    Q_PROPERTY(float searchYawRate READ searchYawRate WRITE setSearchYawRate NOTIFY searchYawRateChanged)
-    Q_PROPERTY(int gateSize READ gateSize WRITE setGateSize NOTIFY gateSizeChanged)
-    Q_PROPERTY(int osdSwitch READ osdSwitch WRITE setOsdSwitch NOTIFY osdSwitchChanged)
-    Q_PROPERTY(int captureRefImgCmd READ captureRefImgCmd WRITE setCaptureRefImgCmd NOTIFY captureRefImgCmdChanged)
-    Q_PROPERTY(int targetAltitude READ targetAltitude WRITE setTargetAltitude NOTIFY targetAltitudeChanged)
-    Q_PROPERTY(float aircraftPitch READ aircraftPitch WRITE setAircraftPitch NOTIFY aircraftPitchChanged)
-    Q_PROPERTY(float aircraftYaw READ aircraftYaw WRITE setAircraftYaw NOTIFY aircraftYawChanged)
-    Q_PROPERTY(float aircraftRoll READ aircraftRoll WRITE setAircraftRoll NOTIFY aircraftRollChanged)
-    Q_PROPERTY(int focalLength READ focalLength WRITE setFocalLength NOTIFY focalLengthChanged)
-    Q_PROPERTY(float podPitchAngle READ podPitchAngle WRITE setPodPitchAngle NOTIFY podPitchAngleChanged)
-    Q_PROPERTY(float podYawAngle READ podYawAngle WRITE setPodYawAngle NOTIFY podYawAngleChanged)
-    Q_PROPERTY(int satelliteMapScale READ satelliteMapScale WRITE setSatelliteMapScale NOTIFY satelliteMapScaleChanged)
-    Q_PROPERTY(int podType READ podType WRITE setPodType NOTIFY podTypeChanged)
-    Q_PROPERTY(double targetLongitude READ targetLongitude WRITE setTargetLongitude NOTIFY targetLongitudeChanged)
-    Q_PROPERTY(double targetLatitude READ targetLatitude WRITE setTargetLatitude NOTIFY targetLatitudeChanged)
-    Q_PROPERTY(double aircraftLongitude READ aircraftLongitude WRITE setAircraftLongitude NOTIFY aircraftLongitudeChanged)
-    Q_PROPERTY(double aircraftLatitude READ aircraftLatitude WRITE setAircraftLatitude NOTIFY aircraftLatitudeChanged)
-    Q_PROPERTY(int aircraftAltitude READ aircraftAltitude WRITE setAircraftAltitude NOTIFY aircraftAltitudeChanged)
-    Q_PROPERTY(int pixelSize READ pixelSize WRITE setPixelSize NOTIFY pixelSizeChanged)
+    Q_PROPERTY(int m_frameLength MEMBER m_frameLength NOTIFY frameLengthChanged)
+    Q_PROPERTY(int m_aFrameSequence MEMBER m_aFrameSequence NOTIFY aFrameSequenceChanged)
+    Q_PROPERTY(int m_seekerCtrlWord MEMBER m_seekerCtrlWord NOTIFY seekerCtrlWordChanged)
+    Q_PROPERTY(int m_opticalParamCtrl MEMBER m_opticalParamCtrl NOTIFY opticalParamCtrlChanged)
+    Q_PROPERTY(int m_templateIndex MEMBER m_templateIndex NOTIFY templateIndexChanged)
+    Q_PROPERTY(int m_targetBackgroundType MEMBER m_targetBackgroundType NOTIFY targetBackgroundTypeChanged)
+    Q_PROPERTY(int m_missileTargetDistance MEMBER m_missileTargetDistance NOTIFY missileTargetDistanceChanged)
+    Q_PROPERTY(float m_missileSpeed MEMBER m_missileSpeed NOTIFY missileSpeedChanged)
+    Q_PROPERTY(float m_bodyPitchAngle MEMBER m_bodyPitchAngle NOTIFY bodyPitchAngleChanged)
+    Q_PROPERTY(float m_bodyYawAngle MEMBER m_bodyYawAngle NOTIFY bodyYawAngleChanged)
+    Q_PROPERTY(float m_bodyRollAngle MEMBER m_bodyRollAngle NOTIFY bodyRollAngleChanged)
+    Q_PROPERTY(float m_bodyPitchRate MEMBER m_bodyPitchRate NOTIFY bodyPitchRateChanged)
+    Q_PROPERTY(float m_bodyYawRate MEMBER m_bodyYawRate NOTIFY bodyYawRateChanged)
+    Q_PROPERTY(float m_bodyRollRate MEMBER m_bodyRollRate NOTIFY bodyRollRateChanged)
+    Q_PROPERTY(float m_bodyVelX MEMBER m_bodyVelX NOTIFY bodyVelXChanged)
+    Q_PROPERTY(float m_bodyVelY MEMBER m_bodyVelY NOTIFY bodyVelYChanged)
+    Q_PROPERTY(float m_bodyVelZ MEMBER m_bodyVelZ NOTIFY bodyVelZChanged)
+    Q_PROPERTY(int m_bodyPosX MEMBER m_bodyPosX NOTIFY bodyPosXChanged)
+    Q_PROPERTY(int m_bodyPosY MEMBER m_bodyPosY NOTIFY bodyPosYChanged)
+    Q_PROPERTY(int m_bodyPosZ MEMBER m_bodyPosZ NOTIFY bodyPosZChanged)
+    Q_PROPERTY(float m_pitchGimbalPreset MEMBER m_pitchGimbalPreset NOTIFY pitchGimbalPresetChanged)
+    Q_PROPERTY(float m_yawGimbalPreset MEMBER m_yawGimbalPreset NOTIFY yawGimbalPresetChanged)
+    Q_PROPERTY(int m_irIntegrationTime MEMBER m_irIntegrationTime NOTIFY irIntegrationTimeChanged)
+    Q_PROPERTY(int m_trackingCorrectionCmd MEMBER m_trackingCorrectionCmd NOTIFY trackingCorrectionCmdChanged)
+    Q_PROPERTY(int m_correctionFrameNum MEMBER m_correctionFrameNum NOTIFY correctionFrameNumChanged)
+    Q_PROPERTY(int m_correctedPitchPos MEMBER m_correctedPitchPos NOTIFY correctedPitchPosChanged)
+    Q_PROPERTY(int m_correctedYawPos MEMBER m_correctedYawPos NOTIFY correctedYawPosChanged)
+    Q_PROPERTY(float m_searchPitchRate MEMBER m_searchPitchRate NOTIFY searchPitchRateChanged)
+    Q_PROPERTY(float m_searchYawRate MEMBER m_searchYawRate NOTIFY searchYawRateChanged)
+    Q_PROPERTY(int m_gateSize MEMBER m_gateSize NOTIFY gateSizeChanged)
+    Q_PROPERTY(int m_osdSwitch MEMBER m_osdSwitch NOTIFY osdSwitchChanged)
+    Q_PROPERTY(int m_captureRefImgCmd MEMBER m_captureRefImgCmd NOTIFY captureRefImgCmdChanged)
+    Q_PROPERTY(int m_targetAltitude MEMBER m_targetAltitude NOTIFY targetAltitudeChanged)
+    Q_PROPERTY(float m_aircraftPitch MEMBER m_aircraftPitch NOTIFY aircraftPitchChanged)
+    Q_PROPERTY(float m_aircraftYaw MEMBER m_aircraftYaw NOTIFY aircraftYawChanged)
+    Q_PROPERTY(float m_aircraftRoll MEMBER m_aircraftRoll NOTIFY aircraftRollChanged)
+    Q_PROPERTY(int m_focalLength MEMBER m_focalLength NOTIFY focalLengthChanged)
+    Q_PROPERTY(float m_podPitchAngle MEMBER m_podPitchAngle NOTIFY podPitchAngleChanged)
+    Q_PROPERTY(float m_podYawAngle MEMBER m_podYawAngle NOTIFY podYawAngleChanged)
+    Q_PROPERTY(int m_satelliteMapScale MEMBER m_satelliteMapScale NOTIFY satelliteMapScaleChanged)
+    Q_PROPERTY(int m_podType MEMBER m_podType NOTIFY podTypeChanged)
+    Q_PROPERTY(double m_targetLongitude MEMBER m_targetLongitude NOTIFY targetLongitudeChanged)
+    Q_PROPERTY(double m_targetLatitude MEMBER m_targetLatitude NOTIFY targetLatitudeChanged)
+    Q_PROPERTY(double m_aircraftLongitude MEMBER m_aircraftLongitude NOTIFY aircraftLongitudeChanged)
+    Q_PROPERTY(double m_aircraftLatitude MEMBER m_aircraftLatitude NOTIFY aircraftLatitudeChanged)
+    Q_PROPERTY(int m_aircraftAltitude MEMBER m_aircraftAltitude NOTIFY aircraftAltitudeChanged)
+    Q_PROPERTY(int m_pixelSize MEMBER m_pixelSize NOTIFY pixelSizeChanged)
 
 public:
     explicit ImageSendData(QObject *parent = nullptr);
-
-    int frameLength() const;
-    void setFrameLength(int value);
-    int aFrameSequence() const;
-    void setAFrameSequence(int value);
-    int seekerCtrlWord() const;
-    void setSeekerCtrlWord(int value);
-    int opticalParamCtrl() const;
-    void setOpticalParamCtrl(int value);
-    int templateIndex() const;
-    void setTemplateIndex(int value);
-    int targetBackgroundType() const;
-    void setTargetBackgroundType(int value);
-    int missileTargetDistance() const;
-    void setMissileTargetDistance(int value);
-    float missileSpeed() const;
-    void setMissileSpeed(float value);
-    float bodyPitchAngle() const;
-    void setBodyPitchAngle(float value);
-    float bodyYawAngle() const;
-    void setBodyYawAngle(float value);
-    float bodyRollAngle() const;
-    void setBodyRollAngle(float value);
-    float bodyPitchRate() const;
-    void setBodyPitchRate(float value);
-    float bodyYawRate() const;
-    void setBodyYawRate(float value);
-    float bodyRollRate() const;
-    void setBodyRollRate(float value);
-    float bodyVelX() const;
-    void setBodyVelX(float value);
-    float bodyVelY() const;
-    void setBodyVelY(float value);
-    float bodyVelZ() const;
-    void setBodyVelZ(float value);
-    int bodyPosX() const;
-    void setBodyPosX(int value);
-    int bodyPosY() const;
-    void setBodyPosY(int value);
-    int bodyPosZ() const;
-    void setBodyPosZ(int value);
-    float pitchGimbalPreset() const;
-    void setPitchGimbalPreset(float value);
-    float yawGimbalPreset() const;
-    void setYawGimbalPreset(float value);
-    int irIntegrationTime() const;
-    void setIrIntegrationTime(int value);
-    int trackingCorrectionCmd() const;
-    void setTrackingCorrectionCmd(int value);
-    int correctionFrameNum() const;
-    void setCorrectionFrameNum(int value);
-    int correctedPitchPos() const;
-    void setCorrectedPitchPos(int value);
-    int correctedYawPos() const;
-    void setCorrectedYawPos(int value);
-    float searchPitchRate() const;
-    void setSearchPitchRate(float value);
-    float searchYawRate() const;
-    void setSearchYawRate(float value);
-    int gateSize() const;
-    void setGateSize(int value);
-    int osdSwitch() const;
-    void setOsdSwitch(int value);
-    int captureRefImgCmd() const;
-    void setCaptureRefImgCmd(int value);
-    int targetAltitude() const;
-    void setTargetAltitude(int value);
-    float aircraftPitch() const;
-    void setAircraftPitch(float value);
-    float aircraftYaw() const;
-    void setAircraftYaw(float value);
-    float aircraftRoll() const;
-    void setAircraftRoll(float value);
-    int focalLength() const;
-    void setFocalLength(int value);
-    float podPitchAngle() const;
-    void setPodPitchAngle(float value);
-    float podYawAngle() const;
-    void setPodYawAngle(float value);
-    int satelliteMapScale() const;
-    void setSatelliteMapScale(int value);
-    int podType() const;
-    void setPodType(int value);
-    double targetLongitude() const;
-    void setTargetLongitude(double value);
-    double targetLatitude() const;
-    void setTargetLatitude(double value);
-    double aircraftLongitude() const;
-    void setAircraftLongitude(double value);
-    double aircraftLatitude() const;
-    void setAircraftLatitude(double value);
-    int aircraftAltitude() const;
-    void setAircraftAltitude(int value);
-    int pixelSize() const;
-    void setPixelSize(int value);
 
     QByteArray buildFrame() const;
 
@@ -449,6 +354,7 @@ class SerialPortImage : public SerialPort
 {
     Q_OBJECT
     Q_PROPERTY(ImageData* imageData READ imageData CONSTANT)
+    Q_PROPERTY(ImageSendData* imageSendData READ imageSendData CONSTANT)
 public:
     explicit SerialPortImage(QObject *parent = nullptr);
     ~SerialPortImage() override;

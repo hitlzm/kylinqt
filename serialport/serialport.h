@@ -39,7 +39,7 @@ protected:
     QStringList m_availablePorts;
 
 signals:
-    void dataReceived(const QByteArray &parsedData);
+    // void dataReceived(const QByteArray &parsedData);
     void errorOccurred(const QString &errorMsg);
     void connected();
     void disconnected();

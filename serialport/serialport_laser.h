@@ -117,34 +117,20 @@ class LaserSendData : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int frameStatus READ frameStatus WRITE setFrameStatus NOTIFY frameStatusChanged)
-    Q_PROPERTY(int frameId READ frameId WRITE setFrameId NOTIFY frameIdChanged)
-    Q_PROPERTY(int cmd READ cmd WRITE setCmd NOTIFY cmdChanged)
-    Q_PROPERTY(int laserPeriod READ laserPeriod WRITE setLaserPeriod NOTIFY laserPeriodChanged)
-    Q_PROPERTY(float param2 READ param2 WRITE setParam2 NOTIFY param2Changed)
-    Q_PROPERTY(float param3 READ param3 WRITE setParam3 NOTIFY param3Changed)
-    Q_PROPERTY(float param4 READ param4 WRITE setParam4 NOTIFY param4Changed)
-    Q_PROPERTY(float param5 READ param5 WRITE setParam5 NOTIFY param5Changed)
+    Q_PROPERTY(int m_frameStatus MEMBER m_frameStatus NOTIFY frameStatusChanged)
+    Q_PROPERTY(int m_frameId MEMBER m_frameId NOTIFY frameIdChanged)
+    Q_PROPERTY(int m_cmd MEMBER m_cmd NOTIFY cmdChanged)
+    Q_PROPERTY(int m_laserPeriod MEMBER m_laserPeriod NOTIFY laserPeriodChanged)
+    Q_PROPERTY(float m_azimuthAngle MEMBER m_azimuthAngle NOTIFY azimuthAngleChanged)
+    Q_PROPERTY(float m_elevationAngle MEMBER m_elevationAngle NOTIFY elevationAngleChanged)
+    Q_PROPERTY(float m_searchCenterAzimuth MEMBER m_searchCenterAzimuth NOTIFY searchCenterAzimuthChanged)
+    Q_PROPERTY(float m_searchCenterElevation MEMBER m_searchCenterElevation NOTIFY searchCenterElevationChanged)
+    Q_PROPERTY(float m_azimuthSearchRange MEMBER m_azimuthSearchRange NOTIFY azimuthSearchRangeChanged)
+    Q_PROPERTY(float m_elevationSearchRange MEMBER m_elevationSearchRange NOTIFY elevationSearchRangeChanged)
+    Q_PROPERTY(float m_searchRadius MEMBER m_searchRadius NOTIFY searchRadiusChanged)
 
 public:
     explicit LaserSendData(QObject *parent = nullptr);
-
-    int frameStatus() const;
-    void setFrameStatus(int value);
-    int frameId() const;
-    void setFrameId(int value);
-    int cmd() const;
-    void setCmd(int value);
-    int laserPeriod() const;
-    void setLaserPeriod(int value);
-    float param2() const;
-    void setParam2(float value);
-    float param3() const;
-    void setParam3(float value);
-    float param4() const;
-    void setParam4(float value);
-    float param5() const;
-    void setParam5(float value);
 
     QByteArray buildFrame() const;
 
@@ -153,10 +139,13 @@ signals:
     void frameIdChanged();
     void cmdChanged();
     void laserPeriodChanged();
-    void param2Changed();
-    void param3Changed();
-    void param4Changed();
-    void param5Changed();
+    void azimuthAngleChanged();
+    void elevationAngleChanged();
+    void searchCenterAzimuthChanged();
+    void searchCenterElevationChanged();
+    void azimuthSearchRangeChanged();
+    void elevationSearchRangeChanged();
+    void searchRadiusChanged();
 
 private:
     inline qint16 toRawValue(float value) const
@@ -165,20 +154,24 @@ private:
                 qRound(value / 0.01f));
     }
 
-    int m_frameStatus = 0;
-    int m_frameId = 1;
+    int m_frameStatus = 0; //帧长与帧计数器
+    int m_frameId = 0;     //M或S
     int m_cmd = 0;
     int m_laserPeriod = 0;
-    float m_param2 = 0;
-    float m_param3 = 0;
-    float m_param4 = 0;
-    float m_param5 = 0;
+    float m_azimuthAngle = 0.0f;              // 方位角度
+    float m_elevationAngle = 0.0f;            // 俯仰角度
+    float m_searchCenterAzimuth = 0.0f;       // 搜索中心方位角度
+    float m_searchCenterElevation = 0.0f;     // 搜索中心俯仰角度
+    float m_azimuthSearchRange = 0.0f;        // 方位搜索范围
+    float m_elevationSearchRange = 0.0f;      // 俯仰搜索范围
+    float m_searchRadius = 0.0f;              // 搜索半径
 };
 
 class SerialPortLaser : public SerialPort
 {
     Q_OBJECT
     Q_PROPERTY(LaserData* laserData READ laserData CONSTANT)
+    Q_PROPERTY(LaserSendData* laserSendData READ laserSendData CONSTANT)
 public:
     explicit SerialPortLaser(QObject *parent = nullptr);
     ~SerialPortLaser() override;

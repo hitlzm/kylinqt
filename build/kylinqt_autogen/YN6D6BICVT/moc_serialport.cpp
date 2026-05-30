@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_SerialPort_t {
-    QByteArrayData data[23];
-    char stringdata0[268];
+    QByteArrayData data[21];
+    char stringdata0[244];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,33 +32,30 @@ struct qt_meta_stringdata_SerialPort_t {
 static const qt_meta_stringdata_SerialPort_t qt_meta_stringdata_SerialPort = {
     {
 QT_MOC_LITERAL(0, 0, 10), // "SerialPort"
-QT_MOC_LITERAL(1, 11, 12), // "dataReceived"
-QT_MOC_LITERAL(2, 24, 0), // ""
-QT_MOC_LITERAL(3, 25, 10), // "parsedData"
-QT_MOC_LITERAL(4, 36, 13), // "errorOccurred"
-QT_MOC_LITERAL(5, 50, 8), // "errorMsg"
-QT_MOC_LITERAL(6, 59, 9), // "connected"
-QT_MOC_LITERAL(7, 69, 12), // "disconnected"
-QT_MOC_LITERAL(8, 82, 15), // "portOpenChanged"
-QT_MOC_LITERAL(9, 98, 21), // "availablePortsChanged"
-QT_MOC_LITERAL(10, 120, 15), // "handleReadyRead"
-QT_MOC_LITERAL(11, 136, 11), // "handleError"
-QT_MOC_LITERAL(12, 148, 28), // "QSerialPort::SerialPortError"
-QT_MOC_LITERAL(13, 177, 5), // "error"
-QT_MOC_LITERAL(14, 183, 8), // "openPort"
-QT_MOC_LITERAL(15, 192, 8), // "portName"
-QT_MOC_LITERAL(16, 201, 8), // "baudRate"
-QT_MOC_LITERAL(17, 210, 9), // "closePort"
-QT_MOC_LITERAL(18, 220, 9), // "scanPorts"
-QT_MOC_LITERAL(19, 230, 8), // "sendData"
-QT_MOC_LITERAL(20, 239, 4), // "data"
-QT_MOC_LITERAL(21, 244, 14), // "availablePorts"
-QT_MOC_LITERAL(22, 259, 8) // "portOpen"
+QT_MOC_LITERAL(1, 11, 13), // "errorOccurred"
+QT_MOC_LITERAL(2, 25, 0), // ""
+QT_MOC_LITERAL(3, 26, 8), // "errorMsg"
+QT_MOC_LITERAL(4, 35, 9), // "connected"
+QT_MOC_LITERAL(5, 45, 12), // "disconnected"
+QT_MOC_LITERAL(6, 58, 15), // "portOpenChanged"
+QT_MOC_LITERAL(7, 74, 21), // "availablePortsChanged"
+QT_MOC_LITERAL(8, 96, 15), // "handleReadyRead"
+QT_MOC_LITERAL(9, 112, 11), // "handleError"
+QT_MOC_LITERAL(10, 124, 28), // "QSerialPort::SerialPortError"
+QT_MOC_LITERAL(11, 153, 5), // "error"
+QT_MOC_LITERAL(12, 159, 8), // "openPort"
+QT_MOC_LITERAL(13, 168, 8), // "portName"
+QT_MOC_LITERAL(14, 177, 8), // "baudRate"
+QT_MOC_LITERAL(15, 186, 9), // "closePort"
+QT_MOC_LITERAL(16, 196, 9), // "scanPorts"
+QT_MOC_LITERAL(17, 206, 8), // "sendData"
+QT_MOC_LITERAL(18, 215, 4), // "data"
+QT_MOC_LITERAL(19, 220, 14), // "availablePorts"
+QT_MOC_LITERAL(20, 235, 8) // "portOpen"
 
     },
-    "SerialPort\0dataReceived\0\0parsedData\0"
-    "errorOccurred\0errorMsg\0connected\0"
-    "disconnected\0portOpenChanged\0"
+    "SerialPort\0errorOccurred\0\0errorMsg\0"
+    "connected\0disconnected\0portOpenChanged\0"
     "availablePortsChanged\0handleReadyRead\0"
     "handleError\0QSerialPort::SerialPortError\0"
     "error\0openPort\0portName\0baudRate\0"
@@ -73,34 +70,32 @@ static const uint qt_meta_data_SerialPort[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
-       2,   98, // properties
+      11,   14, // methods
+       2,   90, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       6,       // signalCount
+       5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   74,    2, 0x06 /* Public */,
-       4,    1,   77,    2, 0x06 /* Public */,
-       6,    0,   80,    2, 0x06 /* Public */,
-       7,    0,   81,    2, 0x06 /* Public */,
-       8,    0,   82,    2, 0x06 /* Public */,
-       9,    0,   83,    2, 0x06 /* Public */,
+       1,    1,   69,    2, 0x06 /* Public */,
+       4,    0,   72,    2, 0x06 /* Public */,
+       5,    0,   73,    2, 0x06 /* Public */,
+       6,    0,   74,    2, 0x06 /* Public */,
+       7,    0,   75,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      10,    0,   84,    2, 0x08 /* Private */,
-      11,    1,   85,    2, 0x08 /* Private */,
+       8,    0,   76,    2, 0x08 /* Private */,
+       9,    1,   77,    2, 0x08 /* Private */,
 
  // methods: name, argc, parameters, tag, flags
-      14,    2,   88,    2, 0x02 /* Public */,
-      17,    0,   93,    2, 0x02 /* Public */,
-      18,    0,   94,    2, 0x02 /* Public */,
-      19,    1,   95,    2, 0x02 /* Public */,
+      12,    2,   80,    2, 0x02 /* Public */,
+      15,    0,   85,    2, 0x02 /* Public */,
+      16,    0,   86,    2, 0x02 /* Public */,
+      17,    1,   87,    2, 0x02 /* Public */,
 
  // signals: parameters
-    QMetaType::Void, QMetaType::QByteArray,    3,
-    QMetaType::Void, QMetaType::QString,    5,
+    QMetaType::Void, QMetaType::QString,    3,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -108,21 +103,21 @@ static const uint qt_meta_data_SerialPort[] = {
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 12,   13,
+    QMetaType::Void, 0x80000000 | 10,   11,
 
  // methods: parameters
-    QMetaType::Bool, QMetaType::QString, QMetaType::Int,   15,   16,
+    QMetaType::Bool, QMetaType::QString, QMetaType::Int,   13,   14,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Bool, QMetaType::QByteArray,   20,
+    QMetaType::Bool, QMetaType::QByteArray,   18,
 
  // properties: name, type, flags
-      21, QMetaType::QStringList, 0x00495001,
-      22, QMetaType::Bool, 0x00495001,
+      19, QMetaType::QStringList, 0x00495001,
+      20, QMetaType::Bool, 0x00495001,
 
  // properties: notify_signal_id
-       5,
        4,
+       3,
 
        0        // eod
 };
@@ -133,63 +128,55 @@ void SerialPort::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<SerialPort *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->dataReceived((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
-        case 1: _t->errorOccurred((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 2: _t->connected(); break;
-        case 3: _t->disconnected(); break;
-        case 4: _t->portOpenChanged(); break;
-        case 5: _t->availablePortsChanged(); break;
-        case 6: _t->handleReadyRead(); break;
-        case 7: _t->handleError((*reinterpret_cast< QSerialPort::SerialPortError(*)>(_a[1]))); break;
-        case 8: { bool _r = _t->openPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
+        case 0: _t->errorOccurred((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 1: _t->connected(); break;
+        case 2: _t->disconnected(); break;
+        case 3: _t->portOpenChanged(); break;
+        case 4: _t->availablePortsChanged(); break;
+        case 5: _t->handleReadyRead(); break;
+        case 6: _t->handleError((*reinterpret_cast< QSerialPort::SerialPortError(*)>(_a[1]))); break;
+        case 7: { bool _r = _t->openPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
-        case 9: _t->closePort(); break;
-        case 10: _t->scanPorts(); break;
-        case 11: { bool _r = _t->sendData((*reinterpret_cast< const QByteArray(*)>(_a[1])));
+        case 8: _t->closePort(); break;
+        case 9: _t->scanPorts(); break;
+        case 10: { bool _r = _t->sendData((*reinterpret_cast< const QByteArray(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _t = void (SerialPort::*)(const QByteArray & );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::dataReceived)) {
-                *result = 0;
-                return;
-            }
-        }
-        {
             using _t = void (SerialPort::*)(const QString & );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::errorOccurred)) {
-                *result = 1;
+                *result = 0;
                 return;
             }
         }
         {
             using _t = void (SerialPort::*)();
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::connected)) {
-                *result = 2;
+                *result = 1;
                 return;
             }
         }
         {
             using _t = void (SerialPort::*)();
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::disconnected)) {
-                *result = 3;
+                *result = 2;
                 return;
             }
         }
         {
             using _t = void (SerialPort::*)();
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::portOpenChanged)) {
-                *result = 4;
+                *result = 3;
                 return;
             }
         }
         {
             using _t = void (SerialPort::*)();
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPort::availablePortsChanged)) {
-                *result = 5;
+                *result = 4;
                 return;
             }
         }
@@ -239,13 +226,13 @@ int SerialPort::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 11)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 12;
+        _id -= 11;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
@@ -268,41 +255,34 @@ int SerialPort::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void SerialPort::dataReceived(const QByteArray & _t1)
+void SerialPort::errorOccurred(const QString & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
-void SerialPort::errorOccurred(const QString & _t1)
+void SerialPort::connected()
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
-    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 
 // SIGNAL 2
-void SerialPort::connected()
+void SerialPort::disconnected()
 {
     QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
 }
 
 // SIGNAL 3
-void SerialPort::disconnected()
+void SerialPort::portOpenChanged()
 {
     QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
 }
 
 // SIGNAL 4
-void SerialPort::portOpenChanged()
-{
-    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
-}
-
-// SIGNAL 5
 void SerialPort::availablePortsChanged()
 {
-    QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
+    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE
