@@ -343,8 +343,9 @@ Rectangle {
         anchors.leftMargin: 100
         groupHeight1:150
     }
-    // 发送数据信号
-    signal sendData(string data)
+    
+    // // 发送数据信号
+    // signal sendData(string data)
 
     // 连接到 laserSerial 信号
     Connections {
