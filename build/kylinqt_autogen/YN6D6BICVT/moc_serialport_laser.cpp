@@ -606,8 +606,8 @@ void LaserData::softwareVersion2Changed()
     QMetaObject::activate(this, &staticMetaObject, 20, nullptr);
 }
 struct qt_meta_stringdata_LaserSendData_t {
-    QByteArrayData data[24];
-    char stringdata0[432];
+    QByteArrayData data[25];
+    char stringdata0[443];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -629,17 +629,18 @@ QT_MOC_LITERAL(9, 148, 28), // "searchCenterElevationChanged"
 QT_MOC_LITERAL(10, 177, 25), // "azimuthSearchRangeChanged"
 QT_MOC_LITERAL(11, 203, 27), // "elevationSearchRangeChanged"
 QT_MOC_LITERAL(12, 231, 19), // "searchRadiusChanged"
-QT_MOC_LITERAL(13, 251, 13), // "m_frameStatus"
-QT_MOC_LITERAL(14, 265, 9), // "m_frameId"
-QT_MOC_LITERAL(15, 275, 5), // "m_cmd"
-QT_MOC_LITERAL(16, 281, 13), // "m_laserPeriod"
-QT_MOC_LITERAL(17, 295, 14), // "m_azimuthAngle"
-QT_MOC_LITERAL(18, 310, 16), // "m_elevationAngle"
-QT_MOC_LITERAL(19, 327, 21), // "m_searchCenterAzimuth"
-QT_MOC_LITERAL(20, 349, 23), // "m_searchCenterElevation"
-QT_MOC_LITERAL(21, 373, 20), // "m_azimuthSearchRange"
-QT_MOC_LITERAL(22, 394, 22), // "m_elevationSearchRange"
-QT_MOC_LITERAL(23, 417, 14) // "m_searchRadius"
+QT_MOC_LITERAL(13, 251, 10), // "buildFrame"
+QT_MOC_LITERAL(14, 262, 13), // "m_frameStatus"
+QT_MOC_LITERAL(15, 276, 9), // "m_frameId"
+QT_MOC_LITERAL(16, 286, 5), // "m_cmd"
+QT_MOC_LITERAL(17, 292, 13), // "m_laserPeriod"
+QT_MOC_LITERAL(18, 306, 14), // "m_azimuthAngle"
+QT_MOC_LITERAL(19, 321, 16), // "m_elevationAngle"
+QT_MOC_LITERAL(20, 338, 21), // "m_searchCenterAzimuth"
+QT_MOC_LITERAL(21, 360, 23), // "m_searchCenterElevation"
+QT_MOC_LITERAL(22, 384, 20), // "m_azimuthSearchRange"
+QT_MOC_LITERAL(23, 405, 22), // "m_elevationSearchRange"
+QT_MOC_LITERAL(24, 428, 14) // "m_searchRadius"
 
     },
     "LaserSendData\0frameStatusChanged\0\0"
@@ -649,12 +650,12 @@ QT_MOC_LITERAL(23, 417, 14) // "m_searchRadius"
     "searchCenterElevationChanged\0"
     "azimuthSearchRangeChanged\0"
     "elevationSearchRangeChanged\0"
-    "searchRadiusChanged\0m_frameStatus\0"
-    "m_frameId\0m_cmd\0m_laserPeriod\0"
-    "m_azimuthAngle\0m_elevationAngle\0"
-    "m_searchCenterAzimuth\0m_searchCenterElevation\0"
-    "m_azimuthSearchRange\0m_elevationSearchRange\0"
-    "m_searchRadius"
+    "searchRadiusChanged\0buildFrame\0"
+    "m_frameStatus\0m_frameId\0m_cmd\0"
+    "m_laserPeriod\0m_azimuthAngle\0"
+    "m_elevationAngle\0m_searchCenterAzimuth\0"
+    "m_searchCenterElevation\0m_azimuthSearchRange\0"
+    "m_elevationSearchRange\0m_searchRadius"
 };
 #undef QT_MOC_LITERAL
 
@@ -664,25 +665,28 @@ static const uint qt_meta_data_LaserSendData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
-      11,   80, // properties
+      12,   14, // methods
+      11,   86, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
       11,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   69,    2, 0x06 /* Public */,
-       3,    0,   70,    2, 0x06 /* Public */,
-       4,    0,   71,    2, 0x06 /* Public */,
-       5,    0,   72,    2, 0x06 /* Public */,
-       6,    0,   73,    2, 0x06 /* Public */,
-       7,    0,   74,    2, 0x06 /* Public */,
-       8,    0,   75,    2, 0x06 /* Public */,
-       9,    0,   76,    2, 0x06 /* Public */,
-      10,    0,   77,    2, 0x06 /* Public */,
-      11,    0,   78,    2, 0x06 /* Public */,
-      12,    0,   79,    2, 0x06 /* Public */,
+       1,    0,   74,    2, 0x06 /* Public */,
+       3,    0,   75,    2, 0x06 /* Public */,
+       4,    0,   76,    2, 0x06 /* Public */,
+       5,    0,   77,    2, 0x06 /* Public */,
+       6,    0,   78,    2, 0x06 /* Public */,
+       7,    0,   79,    2, 0x06 /* Public */,
+       8,    0,   80,    2, 0x06 /* Public */,
+       9,    0,   81,    2, 0x06 /* Public */,
+      10,    0,   82,    2, 0x06 /* Public */,
+      11,    0,   83,    2, 0x06 /* Public */,
+      12,    0,   84,    2, 0x06 /* Public */,
+
+ // methods: name, argc, parameters, tag, flags
+      13,    0,   85,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -697,18 +701,21 @@ static const uint qt_meta_data_LaserSendData[] = {
     QMetaType::Void,
     QMetaType::Void,
 
+ // methods: parameters
+    QMetaType::QByteArray,
+
  // properties: name, type, flags
-      13, QMetaType::Int, 0x00495003,
       14, QMetaType::Int, 0x00495003,
       15, QMetaType::Int, 0x00495003,
       16, QMetaType::Int, 0x00495003,
-      17, QMetaType::Float, 0x00495003,
+      17, QMetaType::Int, 0x00495003,
       18, QMetaType::Float, 0x00495003,
       19, QMetaType::Float, 0x00495003,
       20, QMetaType::Float, 0x00495003,
       21, QMetaType::Float, 0x00495003,
       22, QMetaType::Float, 0x00495003,
       23, QMetaType::Float, 0x00495003,
+      24, QMetaType::Float, 0x00495003,
 
  // properties: notify_signal_id
        0,
@@ -743,6 +750,8 @@ void LaserSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 8: _t->azimuthSearchRangeChanged(); break;
         case 9: _t->elevationSearchRangeChanged(); break;
         case 10: _t->searchRadiusChanged(); break;
+        case 11: { QByteArray _r = _t->buildFrame();
+            if (_a[0]) *reinterpret_cast< QByteArray*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -920,7 +929,6 @@ void LaserSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
     } else if (_c == QMetaObject::ResetProperty) {
     }
 #endif // QT_NO_PROPERTIES
-    Q_UNUSED(_a);
 }
 
 QT_INIT_METAOBJECT const QMetaObject LaserSendData::staticMetaObject = { {
@@ -952,13 +960,13 @@ int LaserSendData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 12)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 12;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 12)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 11;
+        _id -= 12;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty

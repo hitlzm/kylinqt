@@ -232,7 +232,7 @@ class ImageSendData : public QObject
 public:
     explicit ImageSendData(QObject *parent = nullptr);
 
-    QByteArray buildFrame() const;
+    Q_INVOKABLE QByteArray buildFrame() const;
 
 signals:
     void frameLengthChanged();

@@ -960,8 +960,8 @@ void ImageData::softwareVersion3Changed()
     QMetaObject::activate(this, &staticMetaObject, 36, nullptr);
 }
 struct qt_meta_stringdata_ImageSendData_t {
-    QByteArrayData data[96];
-    char stringdata0[1774];
+    QByteArrayData data[97];
+    char stringdata0[1785];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1019,53 +1019,54 @@ QT_MOC_LITERAL(45, 922, 24), // "aircraftLongitudeChanged"
 QT_MOC_LITERAL(46, 947, 23), // "aircraftLatitudeChanged"
 QT_MOC_LITERAL(47, 971, 23), // "aircraftAltitudeChanged"
 QT_MOC_LITERAL(48, 995, 16), // "pixelSizeChanged"
-QT_MOC_LITERAL(49, 1012, 13), // "m_frameLength"
-QT_MOC_LITERAL(50, 1026, 16), // "m_aFrameSequence"
-QT_MOC_LITERAL(51, 1043, 16), // "m_seekerCtrlWord"
-QT_MOC_LITERAL(52, 1060, 18), // "m_opticalParamCtrl"
-QT_MOC_LITERAL(53, 1079, 15), // "m_templateIndex"
-QT_MOC_LITERAL(54, 1095, 22), // "m_targetBackgroundType"
-QT_MOC_LITERAL(55, 1118, 23), // "m_missileTargetDistance"
-QT_MOC_LITERAL(56, 1142, 14), // "m_missileSpeed"
-QT_MOC_LITERAL(57, 1157, 16), // "m_bodyPitchAngle"
-QT_MOC_LITERAL(58, 1174, 14), // "m_bodyYawAngle"
-QT_MOC_LITERAL(59, 1189, 15), // "m_bodyRollAngle"
-QT_MOC_LITERAL(60, 1205, 15), // "m_bodyPitchRate"
-QT_MOC_LITERAL(61, 1221, 13), // "m_bodyYawRate"
-QT_MOC_LITERAL(62, 1235, 14), // "m_bodyRollRate"
-QT_MOC_LITERAL(63, 1250, 10), // "m_bodyVelX"
-QT_MOC_LITERAL(64, 1261, 10), // "m_bodyVelY"
-QT_MOC_LITERAL(65, 1272, 10), // "m_bodyVelZ"
-QT_MOC_LITERAL(66, 1283, 10), // "m_bodyPosX"
-QT_MOC_LITERAL(67, 1294, 10), // "m_bodyPosY"
-QT_MOC_LITERAL(68, 1305, 10), // "m_bodyPosZ"
-QT_MOC_LITERAL(69, 1316, 19), // "m_pitchGimbalPreset"
-QT_MOC_LITERAL(70, 1336, 17), // "m_yawGimbalPreset"
-QT_MOC_LITERAL(71, 1354, 19), // "m_irIntegrationTime"
-QT_MOC_LITERAL(72, 1374, 23), // "m_trackingCorrectionCmd"
-QT_MOC_LITERAL(73, 1398, 20), // "m_correctionFrameNum"
-QT_MOC_LITERAL(74, 1419, 19), // "m_correctedPitchPos"
-QT_MOC_LITERAL(75, 1439, 17), // "m_correctedYawPos"
-QT_MOC_LITERAL(76, 1457, 17), // "m_searchPitchRate"
-QT_MOC_LITERAL(77, 1475, 15), // "m_searchYawRate"
-QT_MOC_LITERAL(78, 1491, 10), // "m_gateSize"
-QT_MOC_LITERAL(79, 1502, 11), // "m_osdSwitch"
-QT_MOC_LITERAL(80, 1514, 18), // "m_captureRefImgCmd"
-QT_MOC_LITERAL(81, 1533, 16), // "m_targetAltitude"
-QT_MOC_LITERAL(82, 1550, 15), // "m_aircraftPitch"
-QT_MOC_LITERAL(83, 1566, 13), // "m_aircraftYaw"
-QT_MOC_LITERAL(84, 1580, 14), // "m_aircraftRoll"
-QT_MOC_LITERAL(85, 1595, 13), // "m_focalLength"
-QT_MOC_LITERAL(86, 1609, 15), // "m_podPitchAngle"
-QT_MOC_LITERAL(87, 1625, 13), // "m_podYawAngle"
-QT_MOC_LITERAL(88, 1639, 19), // "m_satelliteMapScale"
-QT_MOC_LITERAL(89, 1659, 9), // "m_podType"
-QT_MOC_LITERAL(90, 1669, 17), // "m_targetLongitude"
-QT_MOC_LITERAL(91, 1687, 16), // "m_targetLatitude"
-QT_MOC_LITERAL(92, 1704, 19), // "m_aircraftLongitude"
-QT_MOC_LITERAL(93, 1724, 18), // "m_aircraftLatitude"
-QT_MOC_LITERAL(94, 1743, 18), // "m_aircraftAltitude"
-QT_MOC_LITERAL(95, 1762, 11) // "m_pixelSize"
+QT_MOC_LITERAL(49, 1012, 10), // "buildFrame"
+QT_MOC_LITERAL(50, 1023, 13), // "m_frameLength"
+QT_MOC_LITERAL(51, 1037, 16), // "m_aFrameSequence"
+QT_MOC_LITERAL(52, 1054, 16), // "m_seekerCtrlWord"
+QT_MOC_LITERAL(53, 1071, 18), // "m_opticalParamCtrl"
+QT_MOC_LITERAL(54, 1090, 15), // "m_templateIndex"
+QT_MOC_LITERAL(55, 1106, 22), // "m_targetBackgroundType"
+QT_MOC_LITERAL(56, 1129, 23), // "m_missileTargetDistance"
+QT_MOC_LITERAL(57, 1153, 14), // "m_missileSpeed"
+QT_MOC_LITERAL(58, 1168, 16), // "m_bodyPitchAngle"
+QT_MOC_LITERAL(59, 1185, 14), // "m_bodyYawAngle"
+QT_MOC_LITERAL(60, 1200, 15), // "m_bodyRollAngle"
+QT_MOC_LITERAL(61, 1216, 15), // "m_bodyPitchRate"
+QT_MOC_LITERAL(62, 1232, 13), // "m_bodyYawRate"
+QT_MOC_LITERAL(63, 1246, 14), // "m_bodyRollRate"
+QT_MOC_LITERAL(64, 1261, 10), // "m_bodyVelX"
+QT_MOC_LITERAL(65, 1272, 10), // "m_bodyVelY"
+QT_MOC_LITERAL(66, 1283, 10), // "m_bodyVelZ"
+QT_MOC_LITERAL(67, 1294, 10), // "m_bodyPosX"
+QT_MOC_LITERAL(68, 1305, 10), // "m_bodyPosY"
+QT_MOC_LITERAL(69, 1316, 10), // "m_bodyPosZ"
+QT_MOC_LITERAL(70, 1327, 19), // "m_pitchGimbalPreset"
+QT_MOC_LITERAL(71, 1347, 17), // "m_yawGimbalPreset"
+QT_MOC_LITERAL(72, 1365, 19), // "m_irIntegrationTime"
+QT_MOC_LITERAL(73, 1385, 23), // "m_trackingCorrectionCmd"
+QT_MOC_LITERAL(74, 1409, 20), // "m_correctionFrameNum"
+QT_MOC_LITERAL(75, 1430, 19), // "m_correctedPitchPos"
+QT_MOC_LITERAL(76, 1450, 17), // "m_correctedYawPos"
+QT_MOC_LITERAL(77, 1468, 17), // "m_searchPitchRate"
+QT_MOC_LITERAL(78, 1486, 15), // "m_searchYawRate"
+QT_MOC_LITERAL(79, 1502, 10), // "m_gateSize"
+QT_MOC_LITERAL(80, 1513, 11), // "m_osdSwitch"
+QT_MOC_LITERAL(81, 1525, 18), // "m_captureRefImgCmd"
+QT_MOC_LITERAL(82, 1544, 16), // "m_targetAltitude"
+QT_MOC_LITERAL(83, 1561, 15), // "m_aircraftPitch"
+QT_MOC_LITERAL(84, 1577, 13), // "m_aircraftYaw"
+QT_MOC_LITERAL(85, 1591, 14), // "m_aircraftRoll"
+QT_MOC_LITERAL(86, 1606, 13), // "m_focalLength"
+QT_MOC_LITERAL(87, 1620, 15), // "m_podPitchAngle"
+QT_MOC_LITERAL(88, 1636, 13), // "m_podYawAngle"
+QT_MOC_LITERAL(89, 1650, 19), // "m_satelliteMapScale"
+QT_MOC_LITERAL(90, 1670, 9), // "m_podType"
+QT_MOC_LITERAL(91, 1680, 17), // "m_targetLongitude"
+QT_MOC_LITERAL(92, 1698, 16), // "m_targetLatitude"
+QT_MOC_LITERAL(93, 1715, 19), // "m_aircraftLongitude"
+QT_MOC_LITERAL(94, 1735, 18), // "m_aircraftLatitude"
+QT_MOC_LITERAL(95, 1754, 18), // "m_aircraftAltitude"
+QT_MOC_LITERAL(96, 1773, 11) // "m_pixelSize"
 
     },
     "ImageSendData\0frameLengthChanged\0\0"
@@ -1094,7 +1095,7 @@ QT_MOC_LITERAL(95, 1762, 11) // "m_pixelSize"
     "podTypeChanged\0targetLongitudeChanged\0"
     "targetLatitudeChanged\0aircraftLongitudeChanged\0"
     "aircraftLatitudeChanged\0aircraftAltitudeChanged\0"
-    "pixelSizeChanged\0m_frameLength\0"
+    "pixelSizeChanged\0buildFrame\0m_frameLength\0"
     "m_aFrameSequence\0m_seekerCtrlWord\0"
     "m_opticalParamCtrl\0m_templateIndex\0"
     "m_targetBackgroundType\0m_missileTargetDistance\0"
@@ -1125,61 +1126,64 @@ static const uint qt_meta_data_ImageSendData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      47,   14, // methods
-      47,  296, // properties
+      48,   14, // methods
+      47,  302, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
       47,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  249,    2, 0x06 /* Public */,
-       3,    0,  250,    2, 0x06 /* Public */,
-       4,    0,  251,    2, 0x06 /* Public */,
-       5,    0,  252,    2, 0x06 /* Public */,
-       6,    0,  253,    2, 0x06 /* Public */,
-       7,    0,  254,    2, 0x06 /* Public */,
-       8,    0,  255,    2, 0x06 /* Public */,
-       9,    0,  256,    2, 0x06 /* Public */,
-      10,    0,  257,    2, 0x06 /* Public */,
-      11,    0,  258,    2, 0x06 /* Public */,
-      12,    0,  259,    2, 0x06 /* Public */,
-      13,    0,  260,    2, 0x06 /* Public */,
-      14,    0,  261,    2, 0x06 /* Public */,
-      15,    0,  262,    2, 0x06 /* Public */,
-      16,    0,  263,    2, 0x06 /* Public */,
-      17,    0,  264,    2, 0x06 /* Public */,
-      18,    0,  265,    2, 0x06 /* Public */,
-      19,    0,  266,    2, 0x06 /* Public */,
-      20,    0,  267,    2, 0x06 /* Public */,
-      21,    0,  268,    2, 0x06 /* Public */,
-      22,    0,  269,    2, 0x06 /* Public */,
-      23,    0,  270,    2, 0x06 /* Public */,
-      24,    0,  271,    2, 0x06 /* Public */,
-      25,    0,  272,    2, 0x06 /* Public */,
-      26,    0,  273,    2, 0x06 /* Public */,
-      27,    0,  274,    2, 0x06 /* Public */,
-      28,    0,  275,    2, 0x06 /* Public */,
-      29,    0,  276,    2, 0x06 /* Public */,
-      30,    0,  277,    2, 0x06 /* Public */,
-      31,    0,  278,    2, 0x06 /* Public */,
-      32,    0,  279,    2, 0x06 /* Public */,
-      33,    0,  280,    2, 0x06 /* Public */,
-      34,    0,  281,    2, 0x06 /* Public */,
-      35,    0,  282,    2, 0x06 /* Public */,
-      36,    0,  283,    2, 0x06 /* Public */,
-      37,    0,  284,    2, 0x06 /* Public */,
-      38,    0,  285,    2, 0x06 /* Public */,
-      39,    0,  286,    2, 0x06 /* Public */,
-      40,    0,  287,    2, 0x06 /* Public */,
-      41,    0,  288,    2, 0x06 /* Public */,
-      42,    0,  289,    2, 0x06 /* Public */,
-      43,    0,  290,    2, 0x06 /* Public */,
-      44,    0,  291,    2, 0x06 /* Public */,
-      45,    0,  292,    2, 0x06 /* Public */,
-      46,    0,  293,    2, 0x06 /* Public */,
-      47,    0,  294,    2, 0x06 /* Public */,
-      48,    0,  295,    2, 0x06 /* Public */,
+       1,    0,  254,    2, 0x06 /* Public */,
+       3,    0,  255,    2, 0x06 /* Public */,
+       4,    0,  256,    2, 0x06 /* Public */,
+       5,    0,  257,    2, 0x06 /* Public */,
+       6,    0,  258,    2, 0x06 /* Public */,
+       7,    0,  259,    2, 0x06 /* Public */,
+       8,    0,  260,    2, 0x06 /* Public */,
+       9,    0,  261,    2, 0x06 /* Public */,
+      10,    0,  262,    2, 0x06 /* Public */,
+      11,    0,  263,    2, 0x06 /* Public */,
+      12,    0,  264,    2, 0x06 /* Public */,
+      13,    0,  265,    2, 0x06 /* Public */,
+      14,    0,  266,    2, 0x06 /* Public */,
+      15,    0,  267,    2, 0x06 /* Public */,
+      16,    0,  268,    2, 0x06 /* Public */,
+      17,    0,  269,    2, 0x06 /* Public */,
+      18,    0,  270,    2, 0x06 /* Public */,
+      19,    0,  271,    2, 0x06 /* Public */,
+      20,    0,  272,    2, 0x06 /* Public */,
+      21,    0,  273,    2, 0x06 /* Public */,
+      22,    0,  274,    2, 0x06 /* Public */,
+      23,    0,  275,    2, 0x06 /* Public */,
+      24,    0,  276,    2, 0x06 /* Public */,
+      25,    0,  277,    2, 0x06 /* Public */,
+      26,    0,  278,    2, 0x06 /* Public */,
+      27,    0,  279,    2, 0x06 /* Public */,
+      28,    0,  280,    2, 0x06 /* Public */,
+      29,    0,  281,    2, 0x06 /* Public */,
+      30,    0,  282,    2, 0x06 /* Public */,
+      31,    0,  283,    2, 0x06 /* Public */,
+      32,    0,  284,    2, 0x06 /* Public */,
+      33,    0,  285,    2, 0x06 /* Public */,
+      34,    0,  286,    2, 0x06 /* Public */,
+      35,    0,  287,    2, 0x06 /* Public */,
+      36,    0,  288,    2, 0x06 /* Public */,
+      37,    0,  289,    2, 0x06 /* Public */,
+      38,    0,  290,    2, 0x06 /* Public */,
+      39,    0,  291,    2, 0x06 /* Public */,
+      40,    0,  292,    2, 0x06 /* Public */,
+      41,    0,  293,    2, 0x06 /* Public */,
+      42,    0,  294,    2, 0x06 /* Public */,
+      43,    0,  295,    2, 0x06 /* Public */,
+      44,    0,  296,    2, 0x06 /* Public */,
+      45,    0,  297,    2, 0x06 /* Public */,
+      46,    0,  298,    2, 0x06 /* Public */,
+      47,    0,  299,    2, 0x06 /* Public */,
+      48,    0,  300,    2, 0x06 /* Public */,
+
+ // methods: name, argc, parameters, tag, flags
+      49,    0,  301,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -1230,15 +1234,17 @@ static const uint qt_meta_data_ImageSendData[] = {
     QMetaType::Void,
     QMetaType::Void,
 
+ // methods: parameters
+    QMetaType::QByteArray,
+
  // properties: name, type, flags
-      49, QMetaType::Int, 0x00495003,
       50, QMetaType::Int, 0x00495003,
       51, QMetaType::Int, 0x00495003,
       52, QMetaType::Int, 0x00495003,
       53, QMetaType::Int, 0x00495003,
       54, QMetaType::Int, 0x00495003,
       55, QMetaType::Int, 0x00495003,
-      56, QMetaType::Float, 0x00495003,
+      56, QMetaType::Int, 0x00495003,
       57, QMetaType::Float, 0x00495003,
       58, QMetaType::Float, 0x00495003,
       59, QMetaType::Float, 0x00495003,
@@ -1248,36 +1254,37 @@ static const uint qt_meta_data_ImageSendData[] = {
       63, QMetaType::Float, 0x00495003,
       64, QMetaType::Float, 0x00495003,
       65, QMetaType::Float, 0x00495003,
-      66, QMetaType::Int, 0x00495003,
+      66, QMetaType::Float, 0x00495003,
       67, QMetaType::Int, 0x00495003,
       68, QMetaType::Int, 0x00495003,
-      69, QMetaType::Float, 0x00495003,
+      69, QMetaType::Int, 0x00495003,
       70, QMetaType::Float, 0x00495003,
-      71, QMetaType::Int, 0x00495003,
+      71, QMetaType::Float, 0x00495003,
       72, QMetaType::Int, 0x00495003,
       73, QMetaType::Int, 0x00495003,
       74, QMetaType::Int, 0x00495003,
       75, QMetaType::Int, 0x00495003,
-      76, QMetaType::Float, 0x00495003,
+      76, QMetaType::Int, 0x00495003,
       77, QMetaType::Float, 0x00495003,
-      78, QMetaType::Int, 0x00495003,
+      78, QMetaType::Float, 0x00495003,
       79, QMetaType::Int, 0x00495003,
       80, QMetaType::Int, 0x00495003,
       81, QMetaType::Int, 0x00495003,
-      82, QMetaType::Float, 0x00495003,
+      82, QMetaType::Int, 0x00495003,
       83, QMetaType::Float, 0x00495003,
       84, QMetaType::Float, 0x00495003,
-      85, QMetaType::Int, 0x00495003,
-      86, QMetaType::Float, 0x00495003,
+      85, QMetaType::Float, 0x00495003,
+      86, QMetaType::Int, 0x00495003,
       87, QMetaType::Float, 0x00495003,
-      88, QMetaType::Int, 0x00495003,
+      88, QMetaType::Float, 0x00495003,
       89, QMetaType::Int, 0x00495003,
-      90, QMetaType::Double, 0x00495003,
+      90, QMetaType::Int, 0x00495003,
       91, QMetaType::Double, 0x00495003,
       92, QMetaType::Double, 0x00495003,
       93, QMetaType::Double, 0x00495003,
-      94, QMetaType::Int, 0x00495003,
+      94, QMetaType::Double, 0x00495003,
       95, QMetaType::Int, 0x00495003,
+      96, QMetaType::Int, 0x00495003,
 
  // properties: notify_signal_id
        0,
@@ -1384,6 +1391,8 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 44: _t->aircraftLatitudeChanged(); break;
         case 45: _t->aircraftAltitudeChanged(); break;
         case 46: _t->pixelSizeChanged(); break;
+        case 47: { QByteArray _r = _t->buildFrame();
+            if (_a[0]) *reinterpret_cast< QByteArray*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -2065,7 +2074,6 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
     } else if (_c == QMetaObject::ResetProperty) {
     }
 #endif // QT_NO_PROPERTIES
-    Q_UNUSED(_a);
 }
 
 QT_INIT_METAOBJECT const QMetaObject ImageSendData::staticMetaObject = { {
@@ -2097,13 +2105,13 @@ int ImageSendData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 47)
+        if (_id < 48)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 47;
+        _id -= 48;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 47)
+        if (_id < 48)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 47;
+        _id -= 48;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty

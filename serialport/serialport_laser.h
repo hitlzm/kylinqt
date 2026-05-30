@@ -132,7 +132,7 @@ class LaserSendData : public QObject
 public:
     explicit LaserSendData(QObject *parent = nullptr);
 
-    QByteArray buildFrame() const;
+    Q_INVOKABLE QByteArray buildFrame() const;
 
 signals:
     void frameStatusChanged();
