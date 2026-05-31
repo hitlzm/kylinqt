@@ -12,7 +12,7 @@ public:
     ~SerialPortTurntable() override;
 
 protected:
-    QByteArray parseData(const QByteArray &rawData) override;
+    void parseData(const QByteArray &rawData) override;
 };
 
 #pragma pack(push,1)

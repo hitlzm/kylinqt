@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<SerialPortLaser>("SerialPort", 1, 0, "SerialPortLaser");
+    // qmlRegisterType<SerialPortLaser>("SerialPort", 1, 0, "SerialPortLaser");
 
     SerialPortLaser laserPort;
     SerialPortImage imagePort;

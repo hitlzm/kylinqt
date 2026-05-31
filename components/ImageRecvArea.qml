@@ -109,8 +109,61 @@ Rectangle {
                         Column {
                             spacing: 6
                             
-                            DataLabel { label: "导引头控制字回告:"; value: "0x" + imageSerial.imageData.seekerCtrlReply.toString(16).toUpperCase() }
-                            DataLabel { label: "光学参数装订回告:"; value: "0x" + imageSerial.imageData.opticalParamReply.toString(16).toUpperCase() }
+                            DataLabel {
+                                label: "导引头控制字回告:"
+                                value: {
+                                    var v = imageSerial.imageData.seekerCtrlReply
+                                    switch(v) {
+                                        case 0x00: return "默认值"
+                                        case 0x01: return "自检通过"
+                                        case 0x02: return "射检通过"
+                                        case 0x04: return "搜索回告"
+                                        case 0x06: return "发射指令回告"
+                                        case 0x41: return "解锁回告"
+                                        case 0x42: return "软件升级成功回告"
+                                        case 0x43: return "软件升级失败回告"
+                                        case 0x44: return "软件升级中"
+                                        case 0x55: return "通讯检查通过"
+                                        case 0xE1: return "自检中"
+                                        case 0xE2: return "射检中"
+                                        case 0xF1: return "自检不通过"
+                                        case 0xF2: return "射检不通过"
+                                        case 0xF4: return "通讯检查不通过"
+                                        default: return "0x" + v.toString(16).toUpperCase()
+                                    }
+                                }
+                                valueColor: {
+                                    var v = imageSerial.imageData.seekerCtrlReply
+                                    if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
+                                    if (v >= 0xF0 || v === 0x43) return "#d93025"
+                                    return "#1a73e8"
+                                }
+                            }
+                            DataLabel {
+                                label: "光学参数装订回告:"
+                                value: {
+                                    var v = imageSerial.imageData.opticalParamReply
+                                    switch(v) {
+                                        case 0x00: return "默认值"
+                                        case 0xE1: return "非卫星图模板装订成功"
+                                        case 0xE2: return "卫星图模板装订成功"
+                                        case 0xE3: return "模板装订中"
+                                        case 0xE4: return "红外非均匀校正成功"
+                                        case 0xE5: return "模板正在擦除"
+                                        case 0xE6: return "模板擦除成功"
+                                        case 0xE7: return "非卫星图模板装订失败"
+                                        case 0xE8: return "卫星图模板装订失败"
+                                        case 0xE9: return "盲元校正成功"
+                                        default: return "0x" + v.toString(16).toUpperCase()
+                                    }
+                                }
+                                valueColor: {
+                                    var v = imageSerial.imageData.opticalParamReply
+                                    if (v === 0xE3 || v === 0xE5) return "#e68a00"
+                                    if (v === 0xE7 || v === 0xE8) return "#d93025"
+                                    return "#1a73e8"
+                                }
+                            }
                             DataLabel {
                                 label: "当前工作通道:"
                                 value: imageSerial.imageData.currentWorkChannel === 0x02 ? "红外" : (imageSerial.imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
@@ -122,8 +175,20 @@ Rectangle {
                         Column {
                             spacing: 6
                             DataLabel { label: "目标/背景类型:"; value: imageSerial.imageData.targetBackgroundType }
-                            DataLabel { label: "光学工作状态:"; value: imageSerial.imageData.opticalWorkState }
-                            DataLabel { label: "修正指令状态:"; value: "" }
+                            DataLabel {
+                                label: "光学工作状态:"
+                                value: {
+                                    switch(imageSerial.imageData.opticalWorkState) {
+                                        case 0x02: return "搜索状态"
+                                        case 0x03: return "跟踪状态"
+                                        case 0x04: return "框架角电锁零位状态"
+                                        case 0x05: return "记忆状态"
+                                        case 0x06: return "解锁状态"
+                                        default: return "未知(0x" + imageSerial.imageData.opticalWorkState.toString(16) + ")"
+                                    }
+                                }
+                            }
+                            DataLabel { label: "修正指令状态:"; value: imageSerial.imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态" }
                             DataLabel { label: "修正指令次数:"; value: imageSerial.imageData.correctionCmdCount }
                         }
                     }
@@ -155,8 +220,32 @@ Rectangle {
                         Column {
                             spacing: 6
                             
-                            DataLabel { label: "跟踪状态:"; value: imageSerial.imageData.trackingState }
-                            DataLabel { label: "跟踪器状态:"; value: imageSerial.imageData.trackerState }
+                            DataLabel {
+                                label: "跟踪状态:"
+                                value: {
+                                    switch(imageSerial.imageData.trackingState) {
+                                        case 0x00: return "默认"
+                                        case 0x11: return "搜索中"
+                                        case 0x22: return "目标丢失"
+                                        case 0x33: return "目标锁定"
+                                        case 0x44: return "记忆状态"
+                                        default: return "0x" + imageSerial.imageData.trackingState.toString(16).toUpperCase()
+                                    }
+                                }
+                                valueColor: imageSerial.imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
+                            }
+                            DataLabel {
+                                label: "跟踪器状态:"
+                                value: {
+                                    switch(imageSerial.imageData.trackerState) {
+                                        case 0x00: return "空闲状态"
+                                        case 0x01: return "跟踪状态"
+                                        case 0x02: return "识别状态"
+                                        case 0x03: return "匹配状态"
+                                        default: return "0x" + imageSerial.imageData.trackerState.toString(16).toUpperCase()
+                                    }
+                                }
+                            }
                             DataLabel { label: "方位偏差像素:"; value: imageSerial.imageData.azimuthDeviationPixel }
                             DataLabel { label: "俯仰偏差像素:"; value: imageSerial.imageData.pitchDeviationPixel }
                         }

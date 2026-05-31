@@ -7,8 +7,9 @@ SerialPortTurntable::SerialPortTurntable(QObject *parent)
 
 SerialPortTurntable::~SerialPortTurntable() = default;
 
-QByteArray SerialPortTurntable::parseData(const QByteArray &rawData)
+void SerialPortTurntable::parseData(const QByteArray &rawData)
 {
     // TODO: implement turntable-specific data parsing
-    return rawData;
+    // return rawData;
+    return;
 }

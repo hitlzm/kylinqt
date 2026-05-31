@@ -89,7 +89,8 @@ qint64 SerialPort::send(const QByteArray &data)
 void SerialPort::onReadyRead()
 {
     QByteArray rawData = m_serialPort->readAll();
-    QByteArray parsed = parseData(rawData);
+    // QByteArray parsed = parseData(rawData);
+    parseData(rawData);
     // if (!parsed.isEmpty()) {
     //     emit dataReceived(parsed);
     // }

@@ -26,20 +26,21 @@ Row {
     CusRadioButton {
         id: radio1
         width: 160
-        text: qsTr("外引导")
-        font.pixelSize: 14
+        text: qsTr("外引导模式")
+        font.pixelSize: 20
+        
     }
     CusRadioButton {
         id: radio2
         width: 160
-        text: qsTr("程控")
-        font.pixelSize: 14
+        text: qsTr("程控模式")
+        font.pixelSize: 20
     }
     CusRadioButton {
         id: radio3
         width: 160
-        text: qsTr("遥控")
-        font.pixelSize: 14
+        text: qsTr("遥控模式")
+        font.pixelSize: 20
     }
 }
 

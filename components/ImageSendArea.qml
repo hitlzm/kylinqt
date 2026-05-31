@@ -34,7 +34,7 @@ Rectangle {
     ]
 
     property int currentCmd: 0
-
+    property int opticalParamCtrlCmd: 0
     Text {
         id: titleText
         text: "图像导引头发送区"
@@ -91,7 +91,49 @@ Rectangle {
                         leftPadding: 30
                     }
 
-                    onClicked: root.currentCmd = index
+                    onClicked: {
+                    root.currentCmd = index
+                    if(currentCmd===0)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x00
+                    } else if (currentCmd===1)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x01
+                    }
+                    else if (currentCmd===2)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x02
+                    }else if (currentCmd===3)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x03
+                    }else if (currentCmd===4)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x04
+                    }else if (currentCmd===5)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x06
+                    }else if (currentCmd===6)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x55
+                    }else if (currentCmd===7)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0x40
+                    }else if (currentCmd===8)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0xA1
+                    }else if (currentCmd===9)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0xB1
+                    }else if (currentCmd===10)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0xED
+                    }
+                    else if (currentCmd===11)
+                    {
+                            imageSerial.imageSendData.m_seekerCtrlWord=0xEE
+                    }
+
+                    }
                 }
             }
         }
@@ -285,6 +327,26 @@ Rectangle {
             myheight: 55
             title: "光学参数装订控制字"
             model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正","红外非均匀校正","模板擦除","积分时间设置"]
+            onCurrentIndexChanged:{
+
+                root.opticalParamCtrlCmd=currentIndex
+
+                if(opticalParamCtrlCmd===0){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0x00
+                }else if(opticalParamCtrlCmd===1){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0xE1
+                }else if(opticalParamCtrlCmd===2){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0xE2
+                }else if(opticalParamCtrlCmd===3){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0xE3
+                }else if(opticalParamCtrlCmd===4){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0xE4
+                }else if(opticalParamCtrlCmd===5){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0xE5
+                }else if(opticalParamCtrlCmd===6){
+                    imageSerial.imageSendData.m_opticalParamCtrl=0xE6
+                }
+            }
         }
     MyComboBox {
             id: myCombox2
@@ -295,6 +357,11 @@ Rectangle {
             myheight: 55
             title: "模板序号"
             model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+            onCurrentIndexChanged: {
+               if (currentIndex !== -1) {
+               imageSerial.imageSendData.m_templateIndex = currentIndex + 1;
+             }
+            }
         }
     MyComboBox {
             id: myCombox3
@@ -305,6 +372,19 @@ Rectangle {
             myheight: 55
             title: "预装目标类型"
             model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
+            onCurrentIndexChanged: {
+               if (currentIndex === 0) {
+               imageSerial.imageSendData.m_targetBackgroundType1 = 0x00;
+             }else if(currentIndex === 1){
+                imageSerial.imageSendData.m_targetBackgroundType1 = 0x01;
+             }else if(currentIndex === 2){
+                imageSerial.imageSendData.m_targetBackgroundType1 = 0x02;
+             }else if(currentIndex === 3){
+                imageSerial.imageSendData.m_targetBackgroundType1 = 0x04;
+             }else if(currentIndex === 4){
+                imageSerial.imageSendData.m_targetBackgroundType1 = 0x07;
+             }
+            }
         }
     MyComboBox {
             id: myCombox4
@@ -314,7 +394,26 @@ Rectangle {
             mywidth: 100
             myheight: 55
             title: "背景类型"
-            model: ["沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
+            model: ["平原","沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
+            onCurrentIndexChanged: {
+               if (currentIndex === 0) {
+               imageSerial.imageSendData.m_targetBackgroundType4 = 0x00;
+             }else if(currentIndex === 1){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x01;
+             }else if(currentIndex === 2){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x02;
+             }else if(currentIndex === 3){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x03;
+             }else if(currentIndex === 4){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x04;
+             }else if(currentIndex === 5){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x05;
+             }else if(currentIndex === 6){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x06;
+             }else if(currentIndex === 7){
+                imageSerial.imageSendData.m_targetBackgroundType4 = 0x07;
+             }
+            }
         }
      MyComboBox {
             id: myCombox5
@@ -325,16 +424,27 @@ Rectangle {
             myheight: 55
             title: "目标灰度类型"
             model: ["亮目标", "暗目标"]
+            onCurrentIndexChanged: {
+               if (currentIndex !== -1) {
+               imageSerial.imageSendData.m_targetBackgroundType2 = currentIndex;
+               }
+            }
         }
         MyComboBox {
             id: myCombox6
-              anchors.top: myCombox5.top
+            anchors.top: myCombox5.top
             anchors.left: myCombox5.right
             anchors.leftMargin: 50
             mywidth: 120
             myheight: 55
             title: "目标动静类型"
             model: ["静目标","动目标" ]
+            onCurrentIndexChanged: {
+               if (currentIndex !== -1) {
+               imageSerial.imageSendData.m_targetBackgroundType3 = currentIndex;
+               }
+             
+            }
         }
         MyComboBox {
             id: myCombox7
@@ -345,6 +455,11 @@ Rectangle {
             myheight: 55
             title: "修正指令状态"
             model: ["非修正状态","修正状态" ]
+             onCurrentIndexChanged: {
+               if (currentIndex !== -1) {
+               imageSerial.imageSendData.m_trackingCorrectionCmd = currentIndex;
+               }
+            }
         }
         MyComboBox {
             id: myCombox8
@@ -355,6 +470,13 @@ Rectangle {
             myheight: 55
             title: "波门大小"
             model: ["大","小" ]
+            onCurrentIndexChanged: {
+               if (currentIndex === 0) {
+               imageSerial.imageSendData.m_gateSize = 0xaa;
+             }else if(currentIndex === 1){
+                imageSerial.imageSendData.m_gateSize = 0x55;
+             }
+            }
         }
     Column {
         id: thirdInputColumn

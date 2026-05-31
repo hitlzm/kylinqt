@@ -11,7 +11,12 @@ class LaserData : public QObject
     Q_PROPERTY(int frameId READ frameId NOTIFY frameIdChanged)
     Q_PROPERTY(int dytStatus READ dytStatus NOTIFY dytStatusChanged)
     Q_PROPERTY(int detectorStatus READ detectorStatus NOTIFY detectorStatusChanged)
+    Q_PROPERTY(int detectorStatus1 READ detectorStatus1 NOTIFY detectorStatus1Changed)
+    Q_PROPERTY(int detectorStatus2 READ detectorStatus2 NOTIFY detectorStatus2Changed)
+    Q_PROPERTY(int detectorStatus3 READ detectorStatus3 NOTIFY detectorStatus3Changed)
     Q_PROPERTY(int faultInfo READ faultInfo NOTIFY faultInfoChanged)
+    Q_PROPERTY(int faultInfo1 READ faultInfo1 NOTIFY faultInfo1Changed)
+    Q_PROPERTY(int faultInfo2 READ faultInfo2 NOTIFY faultInfo2Changed)
     Q_PROPERTY(float opticalAzimuth READ opticalAzimuth NOTIFY opticalAzimuthChanged)
     Q_PROPERTY(float opticalPitch READ opticalPitch NOTIFY opticalPitchChanged)
     Q_PROPERTY(float gyroAzimuthRate READ gyroAzimuthRate NOTIFY gyroAzimuthRateChanged)
@@ -36,7 +41,12 @@ public:
     int frameId() const;
     int dytStatus() const;
     int detectorStatus() const;
+    int detectorStatus1() const;
+    int detectorStatus2() const;
+    int detectorStatus3() const;
     int faultInfo() const;
+    int faultInfo1() const;
+    int faultInfo2() const;
     float opticalAzimuth() const;
     float opticalPitch() const;
     float gyroAzimuthRate() const;
@@ -61,7 +71,12 @@ signals:
     void frameIdChanged();
     void dytStatusChanged();
     void detectorStatusChanged();
+    void detectorStatus1Changed();
+    void detectorStatus2Changed();
+    void detectorStatus3Changed();
     void faultInfoChanged();
+    void faultInfo1Changed();
+    void faultInfo2Changed();
     void opticalAzimuthChanged();
     void opticalPitchChanged();
     void gyroAzimuthRateChanged();
@@ -90,11 +105,35 @@ private:
     return static_cast<float>(raw)
             * 0.001f;
     }
+    //int转qint8
+    qint8 intToQint8Saturated(int value)
+    {
+    if (value > 127) return 127;
+    if (value < -128) return -128;
+    return static_cast<qint8>(value);
+    }
+    //取出一个字节对应位置的函数
+    int getBitsFromQint8(qint8 value, int startBit, int endBit);
+    //做转换并取出对应位
+    int convertAndGetBit(int value, int startPos,int endPos)
+    {
+    qint8 converted = intToQint8Saturated(value);
+    return getBitsFromQint8(converted, startPos,endPos);
+    }
+
     int m_frameStatus = 0;
+    int m_frameStatus1 = 0;//帧长
+    int m_frameStatus2 = 0; //帧计数器
     int m_frameId = 0;
     int m_dytStatus = 0;
-    int m_detectorStatus = 0;
-    int m_faultInfo = 0;
+    int m_detectorStatus = 0;  //细分为三种
+    int m_detectorStatus1 = 0;
+    int m_detectorStatus2 = 0;
+    int m_detectorStatus3 = 0;
+
+    int m_faultInfo = 0;  //细分为2种
+    int m_faultInfo1 = 0;  
+    int m_faultInfo2 = 0;  
     float m_opticalAzimuth = 0;
     float m_opticalPitch = 0;
     float m_gyroAzimuthRate = 0;
@@ -157,7 +196,7 @@ private:
     int m_frameStatus = 0; //帧长与帧计数器
     int m_frameId = 0;     //M或S
     int m_cmd = 0;
-    int m_laserPeriod = 0;
+    int m_laserPeriod = 0;                    
     float m_azimuthAngle = 0.0f;              // 方位角度
     float m_elevationAngle = 0.0f;            // 俯仰角度
     float m_searchCenterAzimuth = 0.0f;       // 搜索中心方位角度
@@ -180,7 +219,7 @@ public:
     LaserSendData* laserSendData() const;
 
 protected:
-    QByteArray parseData(const QByteArray &rawData) override;
+    void parseData(const QByteArray &rawData) override;
 
 private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);

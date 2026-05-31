@@ -15,9 +15,19 @@ class ImageData : public QObject
     Q_PROPERTY(int opticalParamReply READ opticalParamReply NOTIFY opticalParamReplyChanged)
     Q_PROPERTY(int currentWorkChannel READ currentWorkChannel NOTIFY currentWorkChannelChanged)
     Q_PROPERTY(int selfCheckFlag READ selfCheckFlag NOTIFY selfCheckFlagChanged)
+    Q_PROPERTY(int selfCheckFlag1 READ selfCheckFlag1 NOTIFY selfCheckFlag1Changed)
+    Q_PROPERTY(int selfCheckFlag2 READ selfCheckFlag2 NOTIFY selfCheckFlag2Changed)
+    Q_PROPERTY(int selfCheckFlag3 READ selfCheckFlag3 NOTIFY selfCheckFlag3Changed)
+    Q_PROPERTY(int selfCheckFlag4 READ selfCheckFlag4 NOTIFY selfCheckFlag4Changed)
+    Q_PROPERTY(int selfCheckFlag5 READ selfCheckFlag5 NOTIFY selfCheckFlag5Changed)
+    Q_PROPERTY(int selfCheckFlag6 READ selfCheckFlag6 NOTIFY selfCheckFlag6Changed)
     Q_PROPERTY(float pitchLosAngVel READ pitchLosAngVel NOTIFY pitchLosAngVelChanged)
     Q_PROPERTY(float yawLosAngVel READ yawLosAngVel NOTIFY yawLosAngVelChanged)
     Q_PROPERTY(int targetBackgroundType READ targetBackgroundType NOTIFY targetBackgroundTypeChanged)
+    Q_PROPERTY(int targetBackgroundType1 READ targetBackgroundType1 NOTIFY targetBackgroundType1Changed)
+    Q_PROPERTY(int targetBackgroundType2 READ targetBackgroundType2 NOTIFY targetBackgroundType2Changed)
+    Q_PROPERTY(int targetBackgroundType3 READ targetBackgroundType3 NOTIFY targetBackgroundType3Changed)
+    Q_PROPERTY(int targetBackgroundType4 READ targetBackgroundType4 NOTIFY targetBackgroundType4Changed)
     Q_PROPERTY(int opticalWorkState READ opticalWorkState NOTIFY opticalWorkStateChanged)
     Q_PROPERTY(float pitchFrameAngle READ pitchFrameAngle NOTIFY pitchFrameAngleChanged)
     Q_PROPERTY(float yawFrameAngle READ yawFrameAngle NOTIFY yawFrameAngleChanged)
@@ -56,9 +66,19 @@ public:
     int opticalParamReply() const;
     int currentWorkChannel() const;
     int selfCheckFlag() const;
+    int selfCheckFlag1() const;
+    int selfCheckFlag2() const;
+    int selfCheckFlag3() const;
+    int selfCheckFlag4() const;
+    int selfCheckFlag5() const;
+    int selfCheckFlag6() const;
     float pitchLosAngVel() const;
     float yawLosAngVel() const;
     int targetBackgroundType() const;
+    int targetBackgroundType1() const;
+    int targetBackgroundType2() const;
+    int targetBackgroundType3() const;
+    int targetBackgroundType4() const;
     int opticalWorkState() const;
     float pitchFrameAngle() const;
     float yawFrameAngle() const;
@@ -97,9 +117,19 @@ signals:
     void opticalParamReplyChanged();
     void currentWorkChannelChanged();
     void selfCheckFlagChanged();
+    void selfCheckFlag1Changed();
+    void selfCheckFlag2Changed();
+    void selfCheckFlag3Changed();
+    void selfCheckFlag4Changed();
+    void selfCheckFlag5Changed();
+    void selfCheckFlag6Changed();
     void pitchLosAngVelChanged();
     void yawLosAngVelChanged();
     void targetBackgroundTypeChanged();
+    void targetBackgroundType1Changed();
+    void targetBackgroundType2Changed();
+    void targetBackgroundType3Changed();
+    void targetBackgroundType4Changed();
     void opticalWorkStateChanged();
     void pitchFrameAngleChanged();
     void yawFrameAngleChanged();
@@ -138,6 +168,22 @@ private:
     return static_cast<float>(raw)
             * 0.002f;
     }
+    //int转qint8
+    qint8 intToQint8Saturated(int value)
+    {
+    if (value > 127) return 127;
+    if (value < -128) return -128;
+    return static_cast<qint8>(value);
+    }
+    //取出一个字节对应位置的函数
+    int getBitsFromQint8(qint8 value, int startBit, int endBit);
+    //做转换并取出对应位
+    int convertAndGetBit(int value, int startPos,int endPos)
+    {
+    qint8 converted = intToQint8Saturated(value);
+    return getBitsFromQint8(converted, startPos,endPos);
+    }
+
     int m_frameLength = 0;
     int m_bFrameSequence = 0;
     int m_aFrameSequenceReply = 0;
@@ -145,10 +191,24 @@ private:
     int m_seekerCtrlReply = 0;
     int m_opticalParamReply = 0;
     int m_currentWorkChannel = 0;
-    int m_selfCheckFlag = 0;
+
+    int m_selfCheckFlag = 0;  //细分为很多种，按位解析接收
+    int m_selfCheckFlag1 = 0;
+    int m_selfCheckFlag2 = 0;
+    int m_selfCheckFlag3 = 0;
+    int m_selfCheckFlag4 = 0;
+    int m_selfCheckFlag5 = 0;
+    int m_selfCheckFlag6 = 0;
+
     float m_pitchLosAngVel = 0;
     float m_yawLosAngVel = 0;
-    int m_targetBackgroundType = 0;
+
+    int m_targetBackgroundType = 0;//细分为很多种，按位解析接收
+    int m_targetBackgroundType1 = 0;
+    int m_targetBackgroundType2 = 0;
+    int m_targetBackgroundType3 = 0;
+    int m_targetBackgroundType4 = 0;
+
     int m_opticalWorkState = 0;
     float m_pitchFrameAngle = 0;
     float m_yawFrameAngle = 0;
@@ -186,7 +246,10 @@ class ImageSendData : public QObject
     Q_PROPERTY(int m_seekerCtrlWord MEMBER m_seekerCtrlWord NOTIFY seekerCtrlWordChanged)
     Q_PROPERTY(int m_opticalParamCtrl MEMBER m_opticalParamCtrl NOTIFY opticalParamCtrlChanged)
     Q_PROPERTY(int m_templateIndex MEMBER m_templateIndex NOTIFY templateIndexChanged)
-    Q_PROPERTY(int m_targetBackgroundType MEMBER m_targetBackgroundType NOTIFY targetBackgroundTypeChanged)
+    Q_PROPERTY(int m_targetBackgroundType1 MEMBER m_targetBackgroundType1 NOTIFY targetBackgroundType1Changed)
+    Q_PROPERTY(int m_targetBackgroundType2 MEMBER m_targetBackgroundType2 NOTIFY targetBackgroundType2Changed)
+    Q_PROPERTY(int m_targetBackgroundType3 MEMBER m_targetBackgroundType3 NOTIFY targetBackgroundType3Changed)
+    Q_PROPERTY(int m_targetBackgroundType4 MEMBER m_targetBackgroundType4 NOTIFY targetBackgroundType4Changed)
     Q_PROPERTY(int m_missileTargetDistance MEMBER m_missileTargetDistance NOTIFY missileTargetDistanceChanged)
     Q_PROPERTY(float m_missileSpeed MEMBER m_missileSpeed NOTIFY missileSpeedChanged)
     Q_PROPERTY(float m_bodyPitchAngle MEMBER m_bodyPitchAngle NOTIFY bodyPitchAngleChanged)
@@ -241,6 +304,10 @@ signals:
     void opticalParamCtrlChanged();
     void templateIndexChanged();
     void targetBackgroundTypeChanged();
+    void targetBackgroundType1Changed();
+    void targetBackgroundType2Changed();
+    void targetBackgroundType3Changed();
+    void targetBackgroundType4Changed();
     void missileTargetDistanceChanged();
     void missileSpeedChanged();
     void bodyPitchAngleChanged();
@@ -301,12 +368,35 @@ private:
     return static_cast<qint16>(
                 qRound(value / 0.002f));
     }
+    // //int转qint8
+    // qint8 intToQint8Saturated(int value)
+    // {
+    // if (value > 127) return 127;
+    // if (value < -128) return -128;
+    // return static_cast<qint8>(value);
+    // }
+    // //组合多个qint8
+    // quint8 combineqint8(int one,int two,int three,int four){
+    //     qint8 first=intToQint8Saturated(one);
+    //     qint8 second=intToQint8Saturated(two);
+    //     qint8 third=intToQint8Saturated(three);
+    //     qint8 fourth=intToQint8Saturated(four);
+    //     quint8 result = (first & 0x07) |
+    //            ((second << 3) & 0x08) |
+    //            ((third << 4) & 0x10) |
+    //            ((fourth << 5) & 0xE0);
+    //     return result;
+    // }
     int m_frameLength = 0;
     int m_aFrameSequence = 0;
     int m_seekerCtrlWord = 0;
     int m_opticalParamCtrl = 0;
     int m_templateIndex = 0;
-    int m_targetBackgroundType = 0;
+    // int m_targetBackgroundType = 0;//细分为很多种
+    int m_targetBackgroundType1 = 0;
+    int m_targetBackgroundType2 = 0;
+    int m_targetBackgroundType3 = 0;
+    int m_targetBackgroundType4 = 0;
     int m_missileTargetDistance = 0;
     float m_missileSpeed = 0;
     float m_bodyPitchAngle = 0;
@@ -324,7 +414,7 @@ private:
     float m_pitchGimbalPreset = 0;
     float m_yawGimbalPreset = 0;
     int m_irIntegrationTime = 0;
-    int m_trackingCorrectionCmd = 0;
+    int m_trackingCorrectionCmd = 0;//只关注第一位即可
     int m_correctionFrameNum = 0;
     int m_correctedPitchPos = 0;
     int m_correctedYawPos = 0;
@@ -366,7 +456,7 @@ public:
     static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
     
 protected:
-    QByteArray parseData(const QByteArray &rawData) override;
+    void parseData(const QByteArray &rawData) override;
 
 private:
     static uint16_t crc16_table[256];

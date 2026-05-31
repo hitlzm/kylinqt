@@ -13,7 +13,12 @@ int LaserData::frameStatus() const { return m_frameStatus; }
 int LaserData::frameId() const { return m_frameId; }
 int LaserData::dytStatus() const { return m_dytStatus; }
 int LaserData::detectorStatus() const { return m_detectorStatus; }
+int LaserData::detectorStatus1() const { return m_detectorStatus1; }
+int LaserData::detectorStatus2() const { return m_detectorStatus2; }
+int LaserData::detectorStatus3() const { return m_detectorStatus3; }
 int LaserData::faultInfo() const { return m_faultInfo; }
+int LaserData::faultInfo1() const { return m_faultInfo1; }
+int LaserData::faultInfo2() const { return m_faultInfo2; }
 float LaserData::opticalAzimuth() const { return m_opticalAzimuth; }
 float LaserData::opticalPitch() const { return m_opticalPitch; }
 float LaserData::gyroAzimuthRate() const { return m_gyroAzimuthRate; }
@@ -53,12 +58,23 @@ void LaserData::updateFromFrame(const QByteArray &frame)
         emit dytStatusChanged();
     }
     if (m_detectorStatus != pFrame->detector_status) {
-        m_detectorStatus = pFrame->detector_status;
+        m_detectorStatus = pFrame->detector_status;   //写位操作函数细分，qml端判断应该显示什么
+        //单独定义几个变量并使用位操作赋值
+        m_detectorStatus1 = convertAndGetBit(m_detectorStatus,4,4);
+        m_detectorStatus2 = convertAndGetBit(m_detectorStatus,2,3);
+        m_detectorStatus3 = convertAndGetBit(m_detectorStatus,0,1);
         emit detectorStatusChanged();
+        emit detectorStatus1Changed();
+        emit detectorStatus2Changed();
+        emit detectorStatus3Changed();
     }
     if (m_faultInfo != pFrame->fault_info) {
-        m_faultInfo = pFrame->fault_info;
+        m_faultInfo = pFrame->fault_info;             //写位操作函数细分，qml端判断应该显示什么
+        m_faultInfo1 = convertAndGetBit(m_faultInfo,6,7);
+        m_faultInfo2 = convertAndGetBit(m_faultInfo,0,5);
         emit faultInfoChanged();
+        emit faultInfo1Changed();
+        emit faultInfo2Changed();
     }
 
     if (m_opticalAzimuth != fromRawValue_a( pFrame->optical_azimuth)) {
@@ -134,6 +150,22 @@ void LaserData::updateFromFrame(const QByteArray &frame)
     }
 }
 
+int LaserData::getBitsFromQint8(qint8 value, int startBit, int endBit)
+{
+    // 检查位索引范围（0~7）
+    if (startBit < 0 || startBit > 7 || endBit < 0 || endBit > 7) {
+        return -1;
+    }
+    // 确保 startBit <= endBit（低位小，高位大）
+    if (startBit > endBit) {
+        std::swap(startBit, endBit);  // 允许用户乱序，自动交换
+    }
+
+    int width = endBit - startBit + 1;          // 位段的宽度
+    int mask = (1 << width) - 1;                // 低 width 位全1
+    int shifted = value >> startBit;            // 右移，使位段对齐到最低位
+    return shifted & mask;                      // 提取位段
+}
 // ─────────────────────────────────────────────
 // LaserSendData
 // ─────────────────────────────────────────────
@@ -150,7 +182,7 @@ QByteArray LaserSendData::buildFrame() const
     frame.frame_header1 = 0x55;
     frame.frame_header2 = 0xAA;
     frame.frame_header3 = 0xDC;
-    frame.frame_status = static_cast<quint8>(m_frameStatus);
+    frame.frame_status = static_cast<quint8>(m_frameStatus);   //帧长为固定值
     frame.frame_ID = static_cast<quint8>(m_frameId);
     frame.cmd = static_cast<quint8>(m_cmd);
     frame.laser_period = static_cast<quint16>(m_laserPeriod / 0.002);
@@ -223,16 +255,19 @@ LaserSendData* SerialPortLaser::laserSendData() const
     return m_laserSendData;
 }
 //解析函数返回值可为void类型
-QByteArray SerialPortLaser::parseData(const QByteArray &rawData)
+void SerialPortLaser::parseData(const QByteArray &rawData)
 {
     QByteArray checkdata;
     if (rawData.size() < static_cast<int>(sizeof(laser_recv_frame))) {
-        return QByteArray();//这里可以给出一个弹窗说明数据接收失败
+        //这里可以给出一个弹窗说明数据接收失败
+        return;
+        
     }
 
     const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(rawData.data());
     if (pFrame->frame_header1 != 0x55 || pFrame->frame_header2 != 0xAA || pFrame->frame_header3 != 0xDC) {
-        return QByteArray();
+        // return QByteArray();     //数据帧错误
+        return;
     }
     //截取需要校验的数据
     if (rawData.size() >= 4) {
@@ -241,11 +276,13 @@ QByteArray SerialPortLaser::parseData(const QByteArray &rawData)
 
     uint8_t calculatedChecksum = xorChecksum(checkdata);
     if (calculatedChecksum != pFrame->XOR_result) {
-        return QByteArray();
+        // return QByteArray();
+        return;
     }
-
-    m_laserData->updateFromFrame(rawData);     //检验无误后更新数据并刷新QML界面显示
-    return rawData;
+    
+     //检验无误后更新数据并刷新QML界面显示
+    m_laserData->updateFromFrame(rawData);    
+    // return rawData;
 }
 
 uint8_t SerialPortLaser::xorChecksumcore(const uint8_t* data, size_t len)

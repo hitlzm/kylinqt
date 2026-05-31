@@ -20,9 +20,19 @@ int ImageData::seekerCtrlReply() const { return m_seekerCtrlReply; }
 int ImageData::opticalParamReply() const { return m_opticalParamReply; }
 int ImageData::currentWorkChannel() const { return m_currentWorkChannel; }
 int ImageData::selfCheckFlag() const { return m_selfCheckFlag; }
+int ImageData::selfCheckFlag1() const { return m_selfCheckFlag1; }
+int ImageData::selfCheckFlag2() const { return m_selfCheckFlag2; }
+int ImageData::selfCheckFlag3() const { return m_selfCheckFlag3; }
+int ImageData::selfCheckFlag4() const { return m_selfCheckFlag4; }
+int ImageData::selfCheckFlag5() const { return m_selfCheckFlag5; }
+int ImageData::selfCheckFlag6() const { return m_selfCheckFlag6; }
 float ImageData::pitchLosAngVel() const { return m_pitchLosAngVel; }
 float ImageData::yawLosAngVel() const { return m_yawLosAngVel; }
 int ImageData::targetBackgroundType() const { return m_targetBackgroundType; }
+int ImageData::targetBackgroundType1() const { return m_targetBackgroundType1; }
+int ImageData::targetBackgroundType2() const { return m_targetBackgroundType2; }
+int ImageData::targetBackgroundType3() const { return m_targetBackgroundType3; }
+int ImageData::targetBackgroundType4() const { return m_targetBackgroundType4; }
 int ImageData::opticalWorkState() const { return m_opticalWorkState; }
 float ImageData::pitchFrameAngle() const { return m_pitchFrameAngle; }
 float ImageData::yawFrameAngle() const { return m_yawFrameAngle; }
@@ -88,7 +98,19 @@ void ImageData::updateFromFrame(const QByteArray &frame)
     }
     if (m_selfCheckFlag != pFrame->self_check_flag) {
         m_selfCheckFlag = pFrame->self_check_flag;
+        m_selfCheckFlag1 = convertAndGetBit(m_selfCheckFlag, 0,0);
+        m_selfCheckFlag2 = convertAndGetBit(m_selfCheckFlag, 1,1);
+        m_selfCheckFlag3 = convertAndGetBit(m_selfCheckFlag, 2,2);
+        m_selfCheckFlag4 = convertAndGetBit(m_selfCheckFlag, 3,3);
+        m_selfCheckFlag5 = convertAndGetBit(m_selfCheckFlag, 4,4);
+        m_selfCheckFlag6 = convertAndGetBit(m_selfCheckFlag, 5,5);
         emit selfCheckFlagChanged();
+        emit selfCheckFlag1Changed();
+        emit selfCheckFlag2Changed();
+        emit selfCheckFlag3Changed();
+        emit selfCheckFlag4Changed();
+        emit selfCheckFlag5Changed();
+        emit selfCheckFlag6Changed();
     }
 
     if (m_pitchLosAngVel != fromRawValue_a(pFrame->pitch_line_of_sight_ang_vel) ){
@@ -102,7 +124,15 @@ void ImageData::updateFromFrame(const QByteArray &frame)
 
     if (m_targetBackgroundType != pFrame->target_background_type) {
         m_targetBackgroundType = pFrame->target_background_type;
+        m_targetBackgroundType1=convertAndGetBit(m_targetBackgroundType, 0,2);
+        m_targetBackgroundType2=convertAndGetBit(m_targetBackgroundType, 3,3);
+        m_targetBackgroundType3=convertAndGetBit(m_targetBackgroundType, 4,4);
+        m_targetBackgroundType4=convertAndGetBit(m_targetBackgroundType, 5,7);
         emit targetBackgroundTypeChanged();
+        emit targetBackgroundType1Changed();
+        emit targetBackgroundType2Changed();
+        emit targetBackgroundType3Changed();
+        emit targetBackgroundType4Changed();
     }
     if (m_opticalWorkState != pFrame->optical_work_state) {
         m_opticalWorkState = pFrame->optical_work_state;
@@ -221,6 +251,22 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit softwareVersion3Changed();
     }
 }
+int ImageData::getBitsFromQint8(qint8 value, int startBit, int endBit)
+{
+    // 检查位索引范围（0~7）
+    if (startBit < 0 || startBit > 7 || endBit < 0 || endBit > 7) {
+        return -1;
+    }
+    // 确保 startBit <= endBit（低位小，高位大）
+    if (startBit > endBit) {
+        std::swap(startBit, endBit);  // 允许用户乱序，自动交换
+    }
+
+    int width = endBit - startBit + 1;          // 位段的宽度
+    int mask = (1 << width) - 1;                // 低 width 位全1
+    int shifted = value >> startBit;            // 右移，使位段对齐到最低位
+    return shifted & mask;                      // 提取位段
+}
 
 // ─────────────────────────────────────────────
 // ImageSendData
@@ -242,7 +288,10 @@ QByteArray ImageSendData::buildFrame() const
     frame.seeker_ctrl_word = static_cast<quint8>(m_seekerCtrlWord);
     frame.optical_param_ctrl = static_cast<quint8>(m_opticalParamCtrl);
     frame.template_index = static_cast<quint8>(m_templateIndex);
-    frame.target_background_type = static_cast<quint8>(m_targetBackgroundType);
+    // frame.target_background_type = static_cast<quint8>(m_targetBackgroundType);
+    frame.target_background_type = static_cast<quint8>(
+        (m_targetBackgroundType4 << 5) | (m_targetBackgroundType3 << 4) |
+        (m_targetBackgroundType2 << 3) | m_targetBackgroundType1);
     frame.missile_target_distance = static_cast<quint16>(m_missileTargetDistance);
     frame.missile_speed = static_cast<quint16>(toRawValue_a(m_missileSpeed));
     frame.body_pitch_angle = static_cast<qint16>(toRawValue_b(m_bodyPitchAngle));
@@ -323,27 +372,27 @@ ImageSendData* SerialPortImage::imageSendData() const
 }
 
 //数据解析
-QByteArray SerialPortImage::parseData(const QByteArray &rawData)
+void SerialPortImage::parseData(const QByteArray &rawData)
 {
     if (rawData.size() < static_cast<int>(sizeof(image_recv_frame))) {
-        return QByteArray();
+        // return QByteArray();
     }
 
     const image_recv_frame* pFrame = reinterpret_cast<const image_recv_frame*>(rawData.data());
 
     if (pFrame->frame_header1 != 0x77 || pFrame->frame_header2 != 0xAB) {
-        return QByteArray();
+        // return QByteArray();
     }
 
     size_t dataLen = sizeof(image_recv_frame) - sizeof(uint16_t);
     uint16_t calculatedCrc = crc16_ccitt_fast(
         reinterpret_cast<const uint8_t*>(rawData.data()), dataLen);
     if (calculatedCrc != pFrame->crc16) {
-        return QByteArray();
+        // return QByteArray();
     }
 
     m_imageData->updateFromFrame(rawData);
-    return rawData;
+    // return rawData;
 }
 
 void SerialPortImage::init_crc16_table(uint16_t poly)

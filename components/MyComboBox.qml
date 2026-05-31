@@ -10,6 +10,8 @@ Item {
     property alias model: myCombox.model
     width:mywidth
     height:myheight
+    signal currentIndexChanged(int index)
+    signal activated(int index)
     // property alias labeltext: mylabel.text
     Text {
     id: titleText
@@ -28,6 +30,12 @@ Item {
         anchors.top: titleText.bottom
         width: mywidth
         height: myheight-titleText.height
+        onCurrentIndexChanged: (index) => {
+            root.currentIndexChanged(index)
+        }
+        onActivated: (index) => {
+            root.activated(index)
+        }
     }
     
 }

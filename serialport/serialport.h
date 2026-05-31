@@ -33,7 +33,7 @@ public:
 
 protected:
     virtual void onReadyRead();
-    virtual QByteArray parseData(const QByteArray &rawData) = 0;
+    virtual void parseData(const QByteArray &rawData) = 0;
 
     QSerialPort *m_serialPort;
     QStringList m_availablePorts;

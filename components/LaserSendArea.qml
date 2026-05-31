@@ -85,46 +85,68 @@ Rectangle {
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: 30
                     }
+                    
 
+                    //在一种模式下只有特定的输入框可以使用，被禁用的输入框发送内容应为全0
+                    //加上在不同模式下，对激光导引头发送变量的设置
                     onClicked: {root.currentCmd = index
                          if (index === 0) {
                             firstColumn.disabledIndices = [0,1]      // 都禁用
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
+                            laserSerial.laserSendData.m_cmd= 0x00
                             } else if (index === 1) {
                             firstColumn.disabledIndices = [0,1]      // 都禁用
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
+                            laserSerial.laserSendData.m_cmd= 0x01
                             } else if (index === 2) {
                             firstColumn.disabledIndices = [0]      
                             secondColumn.disabledIndices = [1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
+                            laserSerial.laserSendData.m_cmd= 0x02
                             } else if (index === 3) {
                             firstColumn.disabledIndices = [1]      
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
+                            laserSerial.laserSendData.m_cmd= 0x03
                             }
                             else if (index === 4 || index === 7) {
                             firstColumn.disabledIndices = [0]      
                             secondColumn.disabledIndices = [1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
+                            if(index === 4){
+                                laserSerial.laserSendData.m_cmd= 0x06
+                            }else{
+                                laserSerial.laserSendData.m_cmd= 0x09
+                            }
                             }
                             else if (index === 5 || index === 8) {
                             firstColumn.disabledIndices = [0,1]      
                             secondColumn.disabledIndices = [0]
                             thirdColumn.disabledIndices = []
                             fourthColumn.disabledIndices = [1]
+                            if(index === 5){
+                                laserSerial.laserSendData.m_cmd= 0x07
+                            }else{
+                                laserSerial.laserSendData.m_cmd= 0x0A
+                            }
                             }
                             else if (index === 6 || index === 9) {
                             firstColumn.disabledIndices = [0,1]      
                             secondColumn.disabledIndices = [0]
                             thirdColumn.disabledIndices = [1]
                             fourthColumn.disabledIndices = [0]
+                            if(index === 6){
+                                laserSerial.laserSendData.m_cmd= 0x08
+                            }else{
+                                laserSerial.laserSendData.m_cmd= 0x0B
+                            }
                             }
                 }
             }
