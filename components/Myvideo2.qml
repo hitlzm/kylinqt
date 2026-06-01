@@ -8,7 +8,7 @@ import "./"
 Rectangle {
     id: root
     width: 700
-    height: 500
+    height: 430
     color: "#e9f0f9"
 
     // ========== VLC 状态常量（Vlc::State 枚举值） ==========
@@ -16,16 +16,9 @@ Rectangle {
 
     // ========== 内部状态 ==========
     property bool _connected: false   // 用户已点击"连接"设置了视频源
+    property bool _stopped: false     // 用户点击了停止，显示黑屏
 
     // ========== 辅助函数 ==========
-    function formatTime(ms) {
-        if (ms <= 0 || isNaN(ms)) return "00:00"
-        var totalSec = Math.floor(ms / 1000)
-        var min = Math.floor(totalSec / 60)
-        var sec = totalSec % 60
-        return (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec)
-    }
-
     function isPlaying() {
         return mediaPlayer.state === 3  // Vlc::Playing
     }
@@ -60,10 +53,11 @@ Rectangle {
                 width: 12; height: 12; radius: 6
                 anchors.verticalCenter: parent.verticalCenter
                 color: {
+                    if (_stopped) return "#F44336"    // 停止 → 红色
                     switch (mediaPlayer.state) {
-                        case 3: return "#4CAF50"   // Playing → 绿色
-                        case 4: return "#FF9800"   // Paused  → 橙色
-                        case 1: case 2: return "#2196F3"  // Opening/Buffering → 蓝色
+                        case 3: return "#4CAF50"      // Playing → 绿色
+                        case 4: return "#FF9800"      // Paused  → 橙色
+                        case 1: case 2: return "#2196F3" // Opening/Buffering → 蓝色
                         default: return _connected ? "#FF9800" : "#F44336"
                     }
                 }
@@ -73,11 +67,11 @@ Rectangle {
                 font.pixelSize: 16
                 color: "#333333"
                 text: {
+                    if (_stopped) return "已停止"
                     switch (mediaPlayer.state) {
                         case 3: return "播放中"
                         case 4: return "已暂停"
                         case 1: case 2: return "加载中"
-                        case 5: return "已停止"
                         case 6: return "播放完毕"
                         case 7: return "播放错误"
                         default: return _connected ? "已就绪" : "未连接"
@@ -88,8 +82,6 @@ Rectangle {
     }
 
     // ========== 视频区域 ==========
-    // VlcVideoPlayer 是 QQuickPaintedItem 的子类，行内渲染，不弹窗
-    // 必须作为 videoBorder 的兄弟节点（不能嵌套在 clip:true 的容器里）
     Rectangle {
         id: videoBorder
         anchors.left: parent.left
@@ -107,7 +99,6 @@ Rectangle {
 
     VlcVideoPlayer {
         id: mediaPlayer
-        // 锚定到 videoBorder 内部，留出边框
         anchors.left: videoBorder.left
         anchors.leftMargin: 2
         anchors.right: videoBorder.right
@@ -115,13 +106,12 @@ Rectangle {
         anchors.top: videoBorder.top
         anchors.topMargin: 2
         anchors.bottom: videoBorder.bottom
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 2
 
-        // 关键：禁止自动播放，也不预绑 URL
         autoplay: false
     }
 
-    // 未连接时的提示文字
+    // 未连接时提示
     Text {
         anchors.centerIn: videoBorder
         text: _connected ? "" : "请设置视频源并点击「连接」"
@@ -129,46 +119,12 @@ Rectangle {
         color: "#888888"
     }
 
-    // ========== 进度条 + 时间显示 ==========
-    // 所有属性从 mediaPlayer（QML VlcVideoPlayer）读取，保证与渲染同步
-    RowLayout {
-        id: progressRow
-        anchors.left: parent.left
-        anchors.leftMargin: 12
-        anchors.right: parent.right
-        anchors.rightMargin: 12
-        anchors.top: videoBorder.bottom
-        anchors.topMargin: 8
-        spacing: 10
-
-        CusLabel {
-            text: formatTime(mediaPlayer.time)
-            font.pixelSize: 14
-            Layout.preferredWidth: 50
-            horizontalAlignment: Text.AlignRight
-        }
-
-        CusSlider {
-            id: progressSlider
-            Layout.fillWidth: true
-            showNumber: false
-            from: 0
-            to: mediaPlayer.length > 0 ? mediaPlayer.length : 1
-            value: mediaPlayer.time
-            enabled: _connected && mediaPlayer.seekable && mediaPlayer.length > 0
-
-            onMoved: {
-                // 用户拖拽进度条 → seek QML 侧播放器
-                mediaPlayer.setTime(value)
-            }
-        }
-
-        CusLabel {
-            text: formatTime(mediaPlayer.length)
-            font.pixelSize: 14
-            Layout.preferredWidth: 50
-            horizontalAlignment: Text.AlignLeft
-        }
+    // 停止时黑屏遮罩（覆盖在视频上方，点击停止后立即黑屏）
+    Rectangle {
+        id: stopOverlay
+        anchors.fill: videoBorder
+        color: "black"
+        visible: _stopped
     }
 
     // ========== 控制按钮栏 ==========
@@ -178,18 +134,24 @@ Rectangle {
         anchors.leftMargin: 12
         anchors.right: parent.right
         anchors.rightMargin: 12
-        anchors.top: progressRow.bottom
+        anchors.top: videoBorder.bottom
         anchors.topMargin: 10
         spacing: 12
 
-        // 播放/暂停 切换按钮（根据 mediaPlayer.state 动态切换）
+        // 播放/暂停 切换按钮
         CusButton_Blue {
-            text: isPlaying() ? "暂停" : "播放"
+            text: _stopped ? "播放" : (isPlaying() ? "暂停" : "播放")
             Layout.fillWidth: true
             height: 40
             onClicked: {
+                if (_stopped) {
+                    // 停止后重新播放：先把 URL 设回去再播
+                    _stopped = false
+                    mediaPlayer.url = vlcplayer.url
+                    mediaPlayer.play()
+                    return
+                }
                 if (!_connected) {
-                    // 首次点击：先用输入框的 URL 连接
                     connectToUrl(urlInput.text.trim())
                 }
                 if (isPlaying()) {
@@ -200,12 +162,16 @@ Rectangle {
             }
         }
 
-        // 停止按钮
+        // 停止按钮 — 清除 URL 让视频黑屏
         CusButton_Blue {
             text: "停止"
             Layout.fillWidth: true
             height: 40
-            onClicked: mediaPlayer.stop()
+            onClicked: {
+                _stopped = true
+                mediaPlayer.stop()
+                mediaPlayer.url = ""   // 清空视频源 → 画面变黑
+            }
         }
 
         // 音量图标
@@ -215,7 +181,7 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter
         }
 
-        // 音量滑块（直接从 mediaPlayer 读写音量）
+        // 音量滑块
         CusSlider {
             id: volumeSlider
             Layout.preferredWidth: 120
@@ -257,7 +223,7 @@ Rectangle {
         CusTextField {
             id: urlInput
             Layout.fillWidth: true
-            text: vlcplayer.url.toString()   // 仅用于显示 C++ 侧记录的 URL
+            text: vlcplayer.url.toString()
             font.pixelSize: 14
             onAccepted: connectToUrl(text.trim())
         }
@@ -270,16 +236,13 @@ Rectangle {
         }
     }
 
-    // ========== 连接函数（唯一会同时操作两边的入口） ==========
+    // ========== 连接函数 ==========
     function connectToUrl(newUrl) {
         if (newUrl === "") return
-        // 1. 停止当前播放
+        _stopped = false
         mediaPlayer.stop()
-        // 2. 设置 QML 侧 URL（不会自动播放，因为 autoplay: false）
         mediaPlayer.url = newUrl
-        // 3. 同步 C++ 侧 URL（vlcplayer.openUrl 现在只 setUrl，不 play）
         vlcplayer.openUrl(newUrl)
-        // 4. 标记已连接
         _connected = true
     }
 
@@ -288,9 +251,13 @@ Rectangle {
         target: mediaPlayer
 
         function onStateChanged() {
-            // state 变化通过属性绑定自动更新 UI，这里仅做日志
             var stateNames = ["空闲", "打开中", "缓冲中", "播放中", "已暂停", "已停止", "播放完毕", "错误"]
             console.log("VlcVideoPlayer state:", stateNames[mediaPlayer.state] || mediaPlayer.state)
+
+            // 播放完毕也黑屏
+            if (mediaPlayer.state === 6) {  // Vlc::Ended
+                _stopped = true
+            }
         }
     }
 }
