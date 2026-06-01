@@ -15,6 +15,7 @@
 		"E:/QTproject/kylinqt/components/MyTextField.qml",
 		"E:/QTproject/kylinqt/components/TurnTablestatus.qml",
 		"E:/QTproject/kylinqt/components/DataLabel.qml",
+		"E:/QTproject/kylinqt/components/Myvideo2.qml",
 		"E:/QTproject/kylinqt/components/ImageArea.qml",
 		"E:/QTproject/kylinqt/components/LaserArea.qml",
 		"E:/QTproject/kylinqt/components/MySwitch.qml",
@@ -23,7 +24,8 @@
 		"E:/QTproject/kylinqt/components/MyComboBox.qml",
 		"E:/QTproject/kylinqt/components/Modeselect.qml",
 		"E:/QTproject/kylinqt/components/ImageRecvArea.qml",
-		"E:/QTproject/kylinqt/components/LaserRecvArea.qml"
+		"E:/QTproject/kylinqt/components/LaserRecvArea.qml",
+		"E:/QTproject/kylinqt/components/Myvideo3.qml"
 	],
 	"LOCK_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,

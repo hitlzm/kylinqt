@@ -12,3 +12,6 @@ E:/QTproject/kylinqt/main.cpp
 E:/QTproject/kylinqt/serialport/serialport.cpp
 E:/QTproject/kylinqt/serialport/serialport_image.cpp
 E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
+E:/QTproject/kylinqt/video/vlcplayer.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/video/vlcplayer.cpp

@@ -310,6 +310,30 @@ serialport/serialport_turntable.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s
 .PHONY : serialport/serialport_turntable.cpp.s
 
+video/vlcplayer.obj: video/vlcplayer.cpp.obj
+.PHONY : video/vlcplayer.obj
+
+# target to build an object file
+video/vlcplayer.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj
+.PHONY : video/vlcplayer.cpp.obj
+
+video/vlcplayer.i: video/vlcplayer.cpp.i
+.PHONY : video/vlcplayer.i
+
+# target to preprocess a source file
+video/vlcplayer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.i
+.PHONY : video/vlcplayer.cpp.i
+
+video/vlcplayer.s: video/vlcplayer.cpp.s
+.PHONY : video/vlcplayer.s
+
+# target to generate assembly for a file
+video/vlcplayer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.s
+.PHONY : video/vlcplayer.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -341,6 +365,9 @@ help:
 	@echo "... serialport/serialport_turntable.obj"
 	@echo "... serialport/serialport_turntable.i"
 	@echo "... serialport/serialport_turntable.s"
+	@echo "... video/vlcplayer.obj"
+	@echo "... video/vlcplayer.i"
+	@echo "... video/vlcplayer.s"
 .PHONY : help
 
 

@@ -77,6 +77,7 @@ kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserSen
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyTextField.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/TurnTablestatus.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/DataLabel.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo2.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MySwitch.qml
@@ -86,6 +87,7 @@ kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyComboB
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Modeselect.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageRecvArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserRecvArea.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo3.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=E:/QTproject/kylinqt/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Automatic RCC for qml.qrc"
@@ -184,11 +186,26 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s"
 	E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:/QTproject/kylinqt/serialport/serialport_turntable.cpp -o CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s
 
+CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
+CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
+CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj: E:/QTproject/kylinqt/video/vlcplayer.cpp
+CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj: CMakeFiles/kylinqt.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:/QTproject/kylinqt/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj"
+	E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj -MF CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj.d -o CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj -c E:/QTproject/kylinqt/video/vlcplayer.cpp
+
+CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.i"
+	E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:/QTproject/kylinqt/video/vlcplayer.cpp > CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.i
+
+CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.s"
+	E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:/QTproject/kylinqt/video/vlcplayer.cpp -o CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.s
+
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/kylinqt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:/QTproject/kylinqt/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:/QTproject/kylinqt/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 	E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj -MF CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d -o CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj -c E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp
 
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.i: cmake_force
@@ -207,6 +224,7 @@ kylinqt_OBJECTS = \
 "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj" \
 "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj" \
 "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj" \
+"CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj" \
 "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 
 # External object files for target kylinqt
@@ -218,20 +236,27 @@ kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj
+kylinqt.exe: CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/build.make
-kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5SerialPortd.a
+kylinqt.exe: E:/QTproject/vlc-qt/install/lib/libVLCQtQmld.dll.a
+kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Qmld.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Networkd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Guid.a
+kylinqt.exe: E:/QTproject/vlc-qt/install/lib/libVLCQtCored.dll.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Cored.a
 kylinqt.exe: CMakeFiles/kylinqt.dir/linkLibs.rsp
 kylinqt.exe: CMakeFiles/kylinqt.dir/objects1.rsp
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:/QTproject/kylinqt/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable kylinqt.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:/QTproject/kylinqt/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable kylinqt.exe"
 	F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E rm -f CMakeFiles/kylinqt.dir/objects.a
 	E:/QT5.12.8/Tools/mingw730_64/bin/ar.exe qc CMakeFiles/kylinqt.dir/objects.a @CMakeFiles/kylinqt.dir/objects1.rsp
 	E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -Wl,--whole-archive CMakeFiles/kylinqt.dir/objects.a -Wl,--no-whole-archive -o kylinqt.exe -Wl,--out-implib,libkylinqt.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/kylinqt.dir/linkLibs.rsp
+	F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E copy_if_different E:/QTproject/vlc-qt/install/bin/libVLCQtCored.dll E:/QTproject/vlc-qt/install/bin/libVLCQtQmld.dll E:/QTproject/vlc-qt/install/bin/libVLCQtWidgetsd.dll E:/QTproject/vlclib/libvlc.dll E:/QTproject/vlclib/libvlccore.dll E:/QTproject/kylinqt/build
+	F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E copy_if_different E:/QTproject/vlclib/axvlc.dll E:/QTproject/vlclib/npvlc.dll E:/QTproject/kylinqt/build
+	F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E copy_directory E:/QTproject/vlclib/plugins E:/QTproject/kylinqt/build/plugins
+	F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin/cmake.exe -E copy_directory E:/QTproject/vlc-qt/install/qml/VLCQt E:/QTproject/kylinqt/build/VLCQt
 
 # Rule to build all files generated by this target.
 CMakeFiles/kylinqt.dir/build: kylinqt.exe

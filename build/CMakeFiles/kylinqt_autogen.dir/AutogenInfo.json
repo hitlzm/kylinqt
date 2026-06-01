@@ -84,6 +84,18 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfigVersion.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfig.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreTargets.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreTargets-debug.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlConfigVersion.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlConfig.cmake",
+		"F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfigVersion.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfig.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreTargets.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlTargets.cmake",
+		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlTargets-debug.cmake",
 		"E:/QTproject/kylinqt/qml.qrc"
 	],
 	"CMAKE_SOURCE_DIR" : "E:/QTproject/kylinqt",
@@ -115,6 +127,12 @@
 			"MU",
 			"YN6D6BICVT/moc_serialport_turntable.cpp",
 			null
+		],
+		[
+			"E:/QTproject/kylinqt/video/vlcplayer.h",
+			"MU",
+			"CWRUQVFSPE/moc_vlcplayer.cpp",
+			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -142,6 +160,8 @@
 	[
 		"E:/QTproject/kylinqt/build",
 		"E:/QTproject/kylinqt",
+		"E:/QTproject/vlclib/sdk/include",
+		"E:/QTproject/vlc-qt/install/include",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore",
 		"E:/QT5.12.8/5.12.8/mingw73_64/mkspecs/win32-g++",
@@ -191,7 +211,8 @@
 			"E:/QTproject/kylinqt/serialport/serialport_turntable.cpp",
 			"MU",
 			null
-		]
+		],
+		[ "E:/QTproject/kylinqt/video/vlcplayer.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

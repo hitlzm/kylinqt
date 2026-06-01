@@ -15,6 +15,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "E:/QTproject/kylinqt/serialport/serialport_image.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport_laser.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport_turntable.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj.d"
+  "E:/QTproject/kylinqt/video/vlcplayer.cpp" "CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

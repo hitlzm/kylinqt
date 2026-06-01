@@ -15,5 +15,7 @@
         <file>components/MyComboBox.qml</file>
         <file>components/Modeselect.qml</file>
         <file>components/TurnTablestatus.qml</file>
+        <file>components/Myvideo2.qml</file>
+        <file>components/Myvideo3.qml</file>
     </qresource>
 </RCC>

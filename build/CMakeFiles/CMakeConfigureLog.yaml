@@ -3971,3 +3971,783 @@ events:
         - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
         - "C:/Program Files (x86)/kylinqt"
 ...
+
+---
+events:
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake:78 (find_package)"
+      - "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlConfig.cmake:2 (FIND_DEPENDENCY)"
+      - "E:/QTproject/vlc-qt/install/lib/cmake/VLCQt/VLCQtConfig.cmake:25 (FIND_PACKAGE)"
+      - "CMakeLists.txt:27 (find_package)"
+    name: "VLCQtCore"
+    configs:
+      -
+        filename: "VLCQtCoreConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "vlcqtcore-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "VLCQtCore"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: true
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/VLCQtCoreConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/vlcqtcore-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/VLCQtCoreConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/vlcqtcore-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfig.cmake"
+      mode: "config"
+      version: "1.2.0"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "E:/QTproject/vlc-qt/install"
+      ENV{PATH}:
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:/FFmpeg/FFmpeg4.2.1_install/bin"
+        - "E:\\ubantu\\vnwaredownload\\bin\\"
+        - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:/windows/system32"
+        - "C:\\windows"
+        - "C:/windows/System32/Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/windows/System32/OpenSSH/"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR"
+        - "C:/WINDOWS/system32"
+        - "C:/WINDOWS"
+        - "C:/WINDOWS/System32/Wbem"
+        - "C:/WINDOWS/System32/WindowsPowerShell/v1.0/"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2\\"
+        - "C:/Program Files/dotnet/"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:/matlab2/runtime/win64"
+        - "E:\\matlab2\\bin"
+        - "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:/VScode/mingw64/bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/WINDOWS/System32/OpenSSH/"
+        - "E:\\Git\\Git\\cmd"
+        - "E:/MSYS2/mingw64/bin"
+        - "E:\\ninja-win"
+        - "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps"
+        - "C:\\Program Files\\Bandizip\\"
+        - "C:/Users/hitlz/AppData/Local/Programs/Microsoft VS Code/bin"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:/Users/hitlz/anaconda3"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:/Users/hitlz/anaconda3/Library/bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:/texlive/2022/bin/win32"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
+        - "C:/Program Files (x86)/kylinqt"
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "E:/QTproject/vlc-qt/install/lib/cmake/VLCQt/VLCQtConfig.cmake:25 (FIND_PACKAGE)"
+      - "CMakeLists.txt:27 (find_package)"
+    name: "VLCQtQml"
+    configs:
+      -
+        filename: "VLCQtQmlConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "vlcqtqml-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "VLCQtQml"
+      search_paths:
+        - "E:/QTproject/vlc-qt/install/lib/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/VLCQtQmlConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/vlcqtqml-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQmlConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/lib/cmake/vlcqtqml-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlConfig.cmake"
+      mode: "config"
+      version: "1.2.0"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "E:/QTproject/vlc-qt/install"
+      ENV{PATH}:
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:/FFmpeg/FFmpeg4.2.1_install/bin"
+        - "E:\\ubantu\\vnwaredownload\\bin\\"
+        - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:/windows/system32"
+        - "C:\\windows"
+        - "C:/windows/System32/Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/windows/System32/OpenSSH/"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR"
+        - "C:/WINDOWS/system32"
+        - "C:/WINDOWS"
+        - "C:/WINDOWS/System32/Wbem"
+        - "C:/WINDOWS/System32/WindowsPowerShell/v1.0/"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2\\"
+        - "C:/Program Files/dotnet/"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:/matlab2/runtime/win64"
+        - "E:\\matlab2\\bin"
+        - "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:/VScode/mingw64/bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/WINDOWS/System32/OpenSSH/"
+        - "E:\\Git\\Git\\cmd"
+        - "E:/MSYS2/mingw64/bin"
+        - "E:\\ninja-win"
+        - "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps"
+        - "C:\\Program Files\\Bandizip\\"
+        - "C:/Users/hitlz/AppData/Local/Programs/Microsoft VS Code/bin"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:/Users/hitlz/anaconda3"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:/Users/hitlz/anaconda3/Library/bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:/texlive/2022/bin/win32"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
+        - "C:/Program Files (x86)/kylinqt"
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "CMakeLists.txt:27 (find_package)"
+    name: "VLCQt"
+    components:
+      -
+        name: "Qml"
+        required: true
+        found: false
+    configs:
+      -
+        filename: "VLCQtConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "vlcqt-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "VLCQt"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: true
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/VLCQtConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/vlcqt-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/VLCQtConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/vlcqt-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "E:/QTproject/vlc-qt/install/lib/cmake/VLCQt/VLCQtConfig.cmake"
+      mode: "config"
+      version: "1.2.0"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "E:/QTproject/vlc-qt/install"
+      ENV{PATH}:
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:/FFmpeg/FFmpeg4.2.1_install/bin"
+        - "E:\\ubantu\\vnwaredownload\\bin\\"
+        - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:/windows/system32"
+        - "C:\\windows"
+        - "C:/windows/System32/Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/windows/System32/OpenSSH/"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR"
+        - "C:/WINDOWS/system32"
+        - "C:/WINDOWS"
+        - "C:/WINDOWS/System32/Wbem"
+        - "C:/WINDOWS/System32/WindowsPowerShell/v1.0/"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2\\"
+        - "C:/Program Files/dotnet/"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:/matlab2/runtime/win64"
+        - "E:\\matlab2\\bin"
+        - "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:/VScode/mingw64/bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/WINDOWS/System32/OpenSSH/"
+        - "E:\\Git\\Git\\cmd"
+        - "E:/MSYS2/mingw64/bin"
+        - "E:\\ninja-win"
+        - "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps"
+        - "C:\\Program Files\\Bandizip\\"
+        - "C:/Users/hitlz/AppData/Local/Programs/Microsoft VS Code/bin"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:/Users/hitlz/anaconda3"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:/Users/hitlz/anaconda3/Library/bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:/texlive/2022/bin/win32"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
+        - "C:/Program Files (x86)/kylinqt"
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "CMakeLists.txt:28 (find_package)"
+    name: "LIBVLC"
+    configs:
+      -
+        filename: "LIBVLCConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "libvlc-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "LIBVLC"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: true
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/kylinqt/build/CMakeFiles/pkgRedirects/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QTproject/vlc-qt/install/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/Tools/mingw730_64/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/Tools/mingw730_64/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/5.12.8/mingw73_64/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/QT5.12.8/5.12.8/mingw73_64/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/FFmpeg/FFmpeg4.2.1_install/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/FFmpeg/FFmpeg4.2.1_install/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/wbem/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/wbem/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/WindowsPowerShell/v1.0/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/WindowsPowerShell/v1.0/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/OpenSSH/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Windows/System32/OpenSSH/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA Corporation/Nsight Compute 2020.1.2/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/NVIDIA Corporation/Nsight Compute 2020.1.2/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/dotnet/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/dotnet/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "D:/Shared/LabVIEW CLI/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "D:/Shared/LabVIEW CLI/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/matlab2/runtime/win64/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/matlab2/runtime/win64/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/matlab2/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/matlab2/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/@maven/apache-maven-3.9.9-bin/apache-maven-3.9.9/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/@maven/apache-maven-3.9.9-bin/apache-maven-3.9.9/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "F:/VScode/mingw64/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "F:/VScode/mingw64/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/@keil project/VSCODEGCC/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/@keil project/VSCODEGCC/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/@keil project/openocd-20250710/OpenOCD-20250710-0.12.0/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/@keil project/openocd-20250710/OpenOCD-20250710-0.12.0/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/Git/Git/cmd/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/Git/Git/cmd/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/MSYS2/mingw64/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/MSYS2/mingw64/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/ninja-win/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "E:/ninja-win/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/Bandizip/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/Bandizip/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/Scripts/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/Scripts/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/Library/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/Library/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/Library/cmake/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/hitlz/anaconda3/Library/cmake/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/JetBrains/PyCharm Community Edition 2021.2.1/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/JetBrains/PyCharm Community Edition 2021.2.1/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "D:/texlive/2022/bin/win32/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "D:/texlive/2022/bin/win32/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/LIBVLCConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Program Files (x86)/libvlc-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found: null
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "E:/QTproject/vlc-qt/install"
+      ENV{PATH}:
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "E:/FFmpeg/FFmpeg4.2.1_install/bin"
+        - "E:\\ubantu\\vnwaredownload\\bin\\"
+        - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:/windows/system32"
+        - "C:\\windows"
+        - "C:/windows/System32/Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/windows/System32/OpenSSH/"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR"
+        - "C:/WINDOWS/system32"
+        - "C:/WINDOWS"
+        - "C:/WINDOWS/System32/Wbem"
+        - "C:/WINDOWS/System32/WindowsPowerShell/v1.0/"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2\\"
+        - "C:/Program Files/dotnet/"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:/matlab2/runtime/win64"
+        - "E:\\matlab2\\bin"
+        - "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:/VScode/mingw64/bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/WINDOWS/System32/OpenSSH/"
+        - "E:\\Git\\Git\\cmd"
+        - "E:/MSYS2/mingw64/bin"
+        - "E:\\ninja-win"
+        - "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps"
+        - "C:\\Program Files\\Bandizip\\"
+        - "C:/Users/hitlz/AppData/Local/Programs/Microsoft VS Code/bin"
+        - "C:\\Users\\hitlz\\Downloads\\Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:/Users/hitlz/anaconda3"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:/Users/hitlz/anaconda3/Library/bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:/texlive/2022/bin/win32"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64"
+        - "C:/Program Files (x86)/kylinqt"
+...

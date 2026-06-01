@@ -273,4 +273,59 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
  E:/QTproject/kylinqt/serialport/serialport_image.h \
- E:/QTproject/kylinqt/serialport/serialport_turntable.h
+ E:/QTproject/kylinqt/serialport/serialport_turntable.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtCore/Common.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+ E:/QTproject/vlc-qt/install/include/VLCQtCore/SharedExportCore.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtQml/QmlVideoPlayer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtQml/QmlVideoObject.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMap \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtCore/Enums.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QSizeF \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoFrame.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+ E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoMemoryStream.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtQml/SharedExportQml.h \
+ E:/QTproject/vlc-qt/install/include/VLCQtCore/TrackModel.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QAbstractListModel \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qabstractitemmodel.h \
+ E:/QTproject/kylinqt/video/vlcplayer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h
