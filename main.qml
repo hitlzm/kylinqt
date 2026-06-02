@@ -11,11 +11,12 @@ Window {
     height: Screen.height
     title: qsTr("kylin-qt")
 
+
     Item {
     id:dyt
     width: 1200
     height: 800
-
+   
     Column {
         anchors.fill: parent
 
