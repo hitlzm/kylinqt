@@ -1,14 +1,13 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-// 自检指示灯：正常 = 绿色圆点，异常 = 红色圆点
 Item {
     id: root
-    height: 40
+    height: 24
     width: rowLayout.implicitWidth
 
-    property bool normal: true          // true=正常(绿), false=异常(红)
-    property string label: ""           // 标签文字
+    property bool normal: true
+    property string label: ""
     property int fontSize: 18
 
     Row {
@@ -17,10 +16,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 
         Rectangle {
-            id: statusDot
-            width: 10
-            height: 10
-            radius: 5
+            width: 10; height: 10; radius: 5
             color: root.normal ? "#4CAF50" : "#F44336"
             anchors.verticalCenter: parent.verticalCenter
         }
