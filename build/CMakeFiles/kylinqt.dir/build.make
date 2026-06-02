@@ -78,14 +78,15 @@ kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyTextFi
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/TurnTablestatus.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/DataLabel.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo2.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ProgramMode.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MySwitch.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo.qml
-kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyTabar.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyComboBox.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Modeselect.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageRecvArea.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Indicator.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserRecvArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo3.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe

@@ -8,24 +8,11 @@ import "./"
 Rectangle {
     id: root
     width: 700
-    height: 500
+    height: 430
     color: "#e9f0f9"
 
     // ========== 内部状态 ==========
     property bool _connected: false
-
-    // ========== 辅助函数 ==========
-    function formatTime(ms) {
-        if (ms <= 0 || isNaN(ms)) return "00:00"
-        var totalSec = Math.floor(ms / 1000)
-        var min = Math.floor(totalSec / 60)
-        var sec = totalSec % 60
-        return (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec)
-    }
-
-    function currentTimeMs() {
-        return vlcplayer.position * vlcplayer.length
-    }
 
     // ========== 顶部标题栏 ==========
     RowLayout {
@@ -106,49 +93,6 @@ Rectangle {
         color: "#888888"
     }
 
-    // ========== 进度条 + 时间显示（全部读 vlcplayer 属性） ==========
-    RowLayout {
-        id: progressRow
-        anchors.left: parent.left
-        anchors.leftMargin: 12
-        anchors.right: parent.right
-        anchors.rightMargin: 12
-        anchors.top: videoBorder.bottom
-        anchors.topMargin: 8
-        spacing: 10
-
-        CusLabel {
-            text: formatTime(currentTimeMs())
-            font.pixelSize: 14
-            Layout.preferredWidth: 50
-            horizontalAlignment: Text.AlignRight
-        }
-
-        CusSlider {
-            id: progressSlider
-            Layout.fillWidth: true
-            showNumber: false
-            from: 0
-            to: vlcplayer.length > 0 ? vlcplayer.length : 1
-            value: currentTimeMs()
-            enabled: _connected && vlcplayer.seekable && vlcplayer.length > 0
-
-            onMoved: {
-                // 拖拽进度 → 调用 vlcplayer.setPosition (0.0~1.0)
-                if (vlcplayer.length > 0) {
-                    vlcplayer.setPosition(value / vlcplayer.length)
-                }
-            }
-        }
-
-        CusLabel {
-            text: formatTime(vlcplayer.length)
-            font.pixelSize: 14
-            Layout.preferredWidth: 50
-            horizontalAlignment: Text.AlignLeft
-        }
-    }
-
     // ========== 控制按钮栏（全部调用 vlcplayer 方法） ==========
     RowLayout {
         id: controlRow
@@ -156,7 +100,7 @@ Rectangle {
         anchors.leftMargin: 12
         anchors.right: parent.right
         anchors.rightMargin: 12
-        anchors.top: progressRow.bottom
+        anchors.top: videoBorder.bottom
         anchors.topMargin: 10
         spacing: 12
 

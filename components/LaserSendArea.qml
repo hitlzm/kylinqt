@@ -62,7 +62,7 @@ Rectangle {
             anchors.fill: parent
             anchors.margins: 12
             Text {
-                text: "控制指令"
+                text: "激光导引头控制字"
                 font.pixelSize: 16
                 font.bold: true
                 color: "#000000"

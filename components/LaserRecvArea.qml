@@ -93,8 +93,23 @@ Rectangle {
                             DataLabel { label: "探测器状态:"; value: "0x" + laserSerial.laserData.detectorStatus.toString(16).toUpperCase() }
                             DataLabel {
                                 label: "故障信息:"
-                                value: laserSerial.laserData.faultInfo === 0 ? "无故障" : "故障码: 0x" + laserSerial.laserData.faultInfo.toString(16).toUpperCase()
-                                valueColor: laserSerial.laserData.faultInfo === 0 ? "#1a73e8" : "#d93025"
+                                value: switch(laserSerial.laserData.faultInfo1) {
+                                        case 0x00: return "NA"
+                                        case 0x01: return "无故障"
+                                        case 0x02: return "有故障"
+                                        default: return "NA"
+                                    }
+                                valueColor: laserSerial.laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
+                            }
+                             DataLabel {
+                                label: "故障码:"
+                                value: switch(laserSerial.laserData.faultInfo1) {
+                                        case 0x00: return "NA"
+                                        case 0x01: return "NA"
+                                        case 0x02: return "0x" + laserSerial.laserData.faultInfo2.toString(16).toUpperCase()
+                                        default: return "NA"
+                                    }
+                                valueColor:"#d93025"
                             }
                         }
                     }

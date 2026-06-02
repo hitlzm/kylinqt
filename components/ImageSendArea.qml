@@ -67,7 +67,7 @@ Rectangle {
             anchors.margins: 12
 
             Text {
-                text: "导引头控制字"
+                text: "图像导引头控制字"
                 font.pixelSize: 16
                 font.bold: true
                 color: "#000000"

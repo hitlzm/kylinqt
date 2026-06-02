@@ -99,6 +99,7 @@ Rectangle {
 
     VlcVideoPlayer {
         id: mediaPlayer
+        // 内嵌于 videoBorder，各边留 2px 让边框可见
         anchors.left: videoBorder.left
         anchors.leftMargin: 2
         anchors.right: videoBorder.right

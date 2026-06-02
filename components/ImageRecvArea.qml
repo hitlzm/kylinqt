@@ -23,6 +23,21 @@ Rectangle {
         anchors.topMargin: 10
     }
 
+    // ═══ 自检状态行（右侧）═══
+    // 数据来源：imageSerial.imageData.selfCheckFlag1~5，0=正常, 非0=故障
+    Flow {
+        anchors.left: titleText.right
+        anchors.leftMargin: 120
+        anchors.verticalCenter: titleText.verticalCenter
+        spacing: 20
+
+        Indicator { label: "红外视频接收"; normal: imageSerial.imageData.selfCheckFlag2 === 1 }
+        Indicator { label: "电视视频接收"; normal: imageSerial.imageData.selfCheckFlag3 === 1 }
+        Indicator { label: "视频输出";     normal: imageSerial.imageData.selfCheckFlag4 === 1 }
+        Indicator { label: "通讯";         normal: imageSerial.imageData.selfCheckFlag5 === 1 }
+        Indicator { label: "伺服自检";     normal: imageSerial.imageData.selfCheckFlag6 === 1 }
+    }
+
     // ═══ 数据显示区 ═══
     Rectangle {
         anchors.left: parent.left
@@ -103,14 +118,14 @@ Rectangle {
                     }
 
                     Row {
-                        spacing: 40
+                        spacing: 10
                         
 
                         Column {
                             spacing: 6
                             
                             DataLabel {
-                                label: "导引头控制字回告:"
+                                label: "导引头控制字:"
                                 value: {
                                     var v = imageSerial.imageData.seekerCtrlReply
                                     switch(v) {
@@ -140,7 +155,7 @@ Rectangle {
                                 }
                             }
                             DataLabel {
-                                label: "光学参数装订回告:"
+                                label: "光学参数装订:"
                                 value: {
                                     var v = imageSerial.imageData.opticalParamReply
                                     switch(v) {
@@ -174,8 +189,40 @@ Rectangle {
                        
                         Column {
                             spacing: 6
-                            DataLabel { label: "目标/背景类型:"; value: imageSerial.imageData.targetBackgroundType }
-                            DataLabel {
+                            DataLabel { label: "目标类型:"; value: switch(imageSerial.imageData.m_targetBackgroundType1) {
+                                        case 0x00: return "车辆"
+                                        case 0x01: return "小型建筑物"
+                                        case 0x02: return "坦克"
+                                        case 0x04: return "舰船"
+                                        case 0x07: return "靶标"
+                                        default: return "未知"
+                                    } }
+                            DataLabel { label: "目标灰度类型:"; value: switch(imageSerial.imageData.m_targetBackgroundType2) {
+                                        case 0x00: return "亮目标"
+                                        case 0x01: return "暗目标"
+                                        default: return "未知"
+                                    } }
+                            DataLabel { label: "目标动/静:"; value: switch(imageSerial.imageData.m_targetBackgroundType3) {
+                                        case 0x00: return "静目标"
+                                        case 0x01: return "动目标"
+                                        default: return "未知"
+                                    } }
+                            DataLabel { label: "背景类型:"; value: switch(imageSerial.imageData.m_targetBackgroundType4) {
+                                        case 0x00: return "平原"
+                                        case 0x01: return "沙漠"
+                                        case 0x02: return "岛岸"
+                                        case 0x03: return "山地"
+                                        case 0x04: return "丛林"
+                                        case 0x05: return "公路"
+                                        case 0x06: return "城市"
+                                        case 0x07: return "湖泊"
+                                        default: return "未知"
+                                    }  }
+                           
+                        }
+                        Column {
+                            spacing: 6
+                             DataLabel {
                                 label: "光学工作状态:"
                                 value: {
                                     switch(imageSerial.imageData.opticalWorkState) {
@@ -184,7 +231,7 @@ Rectangle {
                                         case 0x04: return "框架角电锁零位状态"
                                         case 0x05: return "记忆状态"
                                         case 0x06: return "解锁状态"
-                                        default: return "未知(0x" + imageSerial.imageData.opticalWorkState.toString(16) + ")"
+                                        default: return "未知状态"
                                     }
                                 }
                             }
@@ -229,7 +276,7 @@ Rectangle {
                                         case 0x22: return "目标丢失"
                                         case 0x33: return "目标锁定"
                                         case 0x44: return "记忆状态"
-                                        default: return "0x" + imageSerial.imageData.trackingState.toString(16).toUpperCase()
+                                        default: return "未知状态"
                                     }
                                 }
                                 valueColor: imageSerial.imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
@@ -242,7 +289,7 @@ Rectangle {
                                         case 0x01: return "跟踪状态"
                                         case 0x02: return "识别状态"
                                         case 0x03: return "匹配状态"
-                                        default: return "0x" + imageSerial.imageData.trackerState.toString(16).toUpperCase()
+                                        default: return "未知状态" 
                                     }
                                 }
                             }

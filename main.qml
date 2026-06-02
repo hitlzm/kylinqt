@@ -64,10 +64,10 @@ Myvideo2 {
 }
 Modeselect {
     id: modeselect
-    height:60
+    height:50
     anchors.top: myvideo.bottom
     anchors.left: dyt.right
-    anchors.leftMargin: 50
+    anchors.leftMargin: 40
     anchors.topMargin: 5    
     anchors.right: myvideo.right
 }
