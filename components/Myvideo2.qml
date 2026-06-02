@@ -14,6 +14,7 @@ Rectangle {
 
     property bool _connected: false
     property bool _stopped: false
+    property string _currentUrl: ""   // 记录当前 URL，不再依赖 vlcplayer
     function isPlaying() { return mediaPlayer.state === 3 }
 
     // ========== 顶部标题栏 ==========
@@ -75,7 +76,7 @@ Rectangle {
             text: _stopped ? "播放" : (isPlaying() ? "暂停" : "播放")
             Layout.fillWidth: true; height: 40
             onClicked: {
-                if (_stopped) { _stopped = false; mediaPlayer.url = vlcplayer.url; mediaPlayer.play(); return }
+                if (_stopped) { _stopped = false; mediaPlayer.url = _currentUrl; mediaPlayer.play(); return }
                 if (!_connected) connectToUrl(urlInput.text.trim())
                 if (isPlaying()) mediaPlayer.pause(); else mediaPlayer.play()
             }
@@ -96,10 +97,10 @@ Rectangle {
         anchors.top: controlRow.bottom; anchors.topMargin: 10
         spacing: 10
         Text { text: "RTSP:"; font.pixelSize: 16; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
-        CusTextField { id: urlInput; Layout.fillWidth: true; text: vlcplayer.url.toString(); font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
+        CusTextField { id: urlInput; Layout.fillWidth: true; text: _currentUrl; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
         CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; height: 36; onClicked: connectToUrl(urlInput.text.trim()) }
     }
 
-    function connectToUrl(newUrl) { if (newUrl === "") return; _stopped = false; mediaPlayer.stop(); mediaPlayer.url = newUrl; vlcplayer.openUrl(newUrl); _connected = true }
+    function connectToUrl(newUrl) { if (newUrl === "") return; _stopped = false; mediaPlayer.stop(); mediaPlayer.url = newUrl; _currentUrl = newUrl; _connected = true }
     Connections { target: mediaPlayer; function onStateChanged() { if (mediaPlayer.state === 6) _stopped = true } }
 }
