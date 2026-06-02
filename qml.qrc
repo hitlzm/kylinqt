@@ -18,5 +18,7 @@
         <file>components/Myvideo3.qml</file>
         <file>components/Indicator.qml</file>
         <file>components/ProgramMode.qml</file>
+        <file>components/Myvideo4.qml</file>
+        <file>components/Myvideo5.qml</file>
     </qresource>
 </RCC>

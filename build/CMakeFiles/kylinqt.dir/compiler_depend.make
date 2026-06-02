@@ -5,6 +5,8 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: kylinqt_autog
 
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen/mocs_compilation.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
@@ -19,16 +21,31 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcompilerdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qconfig.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
@@ -36,10 +53,17 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs_impl.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpair.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrefcount.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qregexp.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qscopedpointer.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
@@ -49,10 +73,52 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsysinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qimage.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpaintdevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtransform.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs_win.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsvalue.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqml.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmllist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqml-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqmlglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
@@ -63,6 +129,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/binders.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/algorithmfwd.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/alloc_traits.h \
@@ -104,7 +171,12 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/predefined_ops.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h \
@@ -119,6 +191,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_multimap.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_numeric.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_relops.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tempbuf.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tree.h \
@@ -129,6 +202,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf_iterator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uses_allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/vector.tcc \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cctype \
@@ -148,10 +222,12 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/aligned_buffer.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/alloc_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/atomicity.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/new_allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/numeric_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/string_conversions.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/type_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
@@ -160,6 +236,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/map \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/new \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ostream \
@@ -233,6 +310,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
   kylinqt_autogen/CWRUQVFSPE/moc_vlcplayer.cpp \
+  kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp \
   kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp \
   kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp \
   kylinqt_autogen/YN6D6BICVT/moc_serialport_laser.cpp \
@@ -241,7 +319,8 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
   E:/QTproject/kylinqt/serialport/serialport_turntable.h \
-  E:/QTproject/kylinqt/video/vlcplayer.h
+  E:/QTproject/kylinqt/video/vlcplayer.h \
+  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h
 
 CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QAbstractListModel \
@@ -282,6 +361,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h \
@@ -325,19 +405,27 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QGuiApplication \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qimage.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qinputmethod.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpaintdevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtransform.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs_win.h \
@@ -376,6 +464,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/binders.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/algorithmfwd.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/alloc_traits.h \
@@ -418,6 +507,9 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h \
@@ -434,6 +526,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_multimap.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_numeric.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_relops.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tempbuf.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tree.h \
@@ -444,6 +537,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf_iterator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uses_allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/vector.tcc \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cctype \
@@ -463,6 +557,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/aligned_buffer.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/alloc_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/atomicity.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/new_allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/numeric_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/string_conversions.h \
@@ -476,6 +571,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/map \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/new \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ostream \
@@ -553,8 +649,11 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
   E:/QTproject/kylinqt/serialport/serialport_turntable.h \
   E:/QTproject/kylinqt/video/vlcplayer.h \
+  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
   E:/QTproject/vlc-qt/install/include/VLCQtCore/Common.h \
   E:/QTproject/vlc-qt/install/include/VLCQtCore/Enums.h \
+  E:/QTproject/vlc-qt/install/include/VLCQtCore/Instance.h \
+  E:/QTproject/vlc-qt/install/include/VLCQtCore/Media.h \
   E:/QTproject/vlc-qt/install/include/VLCQtCore/SharedExportCore.h \
   E:/QTproject/vlc-qt/install/include/VLCQtCore/TrackModel.h \
   E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoFrame.h \
@@ -1745,6 +1844,333 @@ CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj: E:/QTproject/kylinqt/video/vlcpl
   E:/QTproject/vlc-qt/install/include/VLCQtCore/MediaPlayer.h \
   E:/QTproject/vlc-qt/install/include/VLCQtCore/SharedExportCore.h
 
+CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearraylist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcompilerdetection.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qconfig.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject_impl.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs_impl.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpair.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrefcount.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qregexp.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qscopedpointer.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringalgorithms.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringliteral.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringmatcher.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringview.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsysinfo.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QPainter \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qbrush.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfontinfo.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfontmetrics.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qimage.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpaintdevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainter.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpen.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixmap.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtextoption.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtransform.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs_win.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetwork-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsvalue.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqml.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmllist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqml-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqmlglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/limits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/syslimits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/binders.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/algorithmfwd.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/alloc_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocated_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_base.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_lockfree_defines.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_ios.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_ios.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_string.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_string.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/char_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/concept_check.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/cpp_type_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/cxxabi_forced.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/cxxabi_init_exception.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/exception.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/exception_defines.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/exception_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/functexcept.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/functional_hash.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/hash_bytes.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/invoke.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ios_base.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/istream.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/list.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/locale_classes.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/locale_classes.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/locale_facets.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/locale_facets.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/localefwd.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/memoryfwd.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/move.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/nested_exception.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ostream.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ostream_insert.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/postypes.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/predefined_ops.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_construct.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_function.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_heap.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_iterator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_iterator_base_funcs.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_iterator_base_types.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_list.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_map.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_multimap.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_numeric.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_relops.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tempbuf.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tree.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_uninitialized.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_vector.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stream_iterator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf_iterator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uses_allocator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/vector.tcc \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cctype \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdio \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdlib \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ctime \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cwchar \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cwctype \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/debug/assertions.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/debug/debug.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/exception \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/aligned_buffer.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/alloc_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/atomicity.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/new_allocator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/numeric_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/string_conversions.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/type_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iterator \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/list \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/map \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/new \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ostream \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ratio \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/stdexcept \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/stdlib.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/streambuf \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/string \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/system_error \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/tuple \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/type_traits \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/typeinfo \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/utility \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/vector \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/atomic_word.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++allocator.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++locale.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/ctype_base.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/error_constants.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/gthr-default.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/gthr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/os_defines.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdarg.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdbool.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stddef.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdint.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_mac.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_off_t.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_print_pop.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_print_push.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_secapi.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stat64.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stdarg.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/assert.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/corecrt_startup.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/crtdefs.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/ctype.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/errno.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/process.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_compat.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_signal.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_time.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_unistd.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sdks/_mingw_directx.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/string_s.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/signal.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdarg.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stddef.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdint.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdio.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdlib.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/string.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/swprintf.inl \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sys/timeb.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sys/types.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/time.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
+  E:/QTproject/vlclib/sdk/include/vlc/deprecated.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_dialog.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_events.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_media.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_discoverer.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_library.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_list.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_list_player.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_player.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_renderer_discoverer.h \
+  E:/QTproject/vlclib/sdk/include/vlc/libvlc_vlm.h \
+  E:/QTproject/vlclib/sdk/include/vlc/vlc.h
+
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sdks/_mingw_directx.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h:
 
 E:/QTproject/kylinqt/serialport/serialport_laser.cpp:
 
@@ -1752,17 +2178,17 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h:
 
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringliteral.h:
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_list_player.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/process.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h:
+
 kylinqt_autogen/mocs_compilation.cpp:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h:
 
@@ -1770,27 +2196,27 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qscopedpointer.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/algorithmfwd.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringmatcher.h:
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdlib.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stream_iterator.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/syslimits.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h:
 
@@ -1806,79 +2232,47 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsvalue.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qregexp.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h:
+kylinqt_autogen/YN6D6BICVT/moc_serialport_laser.cpp:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocated_ptr.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h:
 
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdint.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_string.tcc:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs_win.h:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/invoke.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs_win.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearraylist.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/nested_exception.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h:
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/nested_exception.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcompilerdetection.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qconfig.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_unistd.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdlib:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/binders.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/alloc_traits.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qinputmethod.h:
 
@@ -1886,7 +2280,19 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject_impl.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h:
 
 E:/QTproject/vlc-qt/install/include/VLCQtCore/Enums.h:
 
@@ -1894,13 +2300,209 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrefcount.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs_impl.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qbrush.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_unistd.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdlib:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stdarg.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/binders.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/alloc_traits.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject_impl.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpair.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/debug/assertions.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringalgorithms.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_media.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QSizeF:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringliteral.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringmatcher.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringview.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QAbstractListModel:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsysinfo.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_events.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainter.h:
+
+E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qimage.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmldebug.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/istream.tcc:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpaintdevice.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/stdlib.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/ctype.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/type_traits:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtransform.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetwork-config.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqml.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/atomic_word.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmllist.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqml-config.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqmlglobal.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ostream:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h:
 
@@ -1908,39 +2510,33 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/debug/assertions.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringalgorithms.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QSizeF:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringview.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QAbstractListModel:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsysinfo.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/limits.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stream_iterator.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/syslimits.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdint.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_string.tcc:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic:
+
+E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/alloc_traits.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h:
-
-kylinqt_autogen/YN6D6BICVT/moc_serialport_laser.cpp:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocated_ptr.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocator.h:
 
@@ -1984,8 +2580,6 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ios_base.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/istream.tcc:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/list.tcc:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/locale_facets.tcc:
@@ -2012,19 +2606,17 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/predefined_ops.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h:
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h:
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/stdlib.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_function.h:
 
@@ -2044,6 +2636,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_list.h:
 
+E:/QTproject/vlclib/sdk/include/vlc/vlc.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_map.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_multimap.h:
@@ -2051,10 +2645,6 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/tuple:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_numeric.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_relops.h:
 
@@ -2078,6 +2668,10 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uses_allocator.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/vector.tcc:
@@ -2087,6 +2681,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cctyp
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfontinfo.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale:
 
@@ -2118,6 +2714,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/s
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/type_traits.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list:
 
 E:/QTproject/kylinqt/serialport/serialport_turntable.h:
@@ -2144,10 +2742,6 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/new:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ostream:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ratio:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stddef.h:
@@ -2160,21 +2754,19 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/strin
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/system_error:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/type_traits:
-
 E:/QTproject/vlc-qt/install/include/VLCQtCore/SharedExportCore.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/typeinfo:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/vector:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmllist.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/atomic_word.h:
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdbool.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++allocator.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_list.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qabstractitemmodel.h:
 
@@ -2193,6 +2785,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdarg.h:
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/gthr-default.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/gthr.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfontmetrics.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/os_defines.h:
 
@@ -2214,23 +2808,11 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_secapi.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stat64.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stdarg.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/assert.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/corecrt_startup.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/crtdefs.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/ctype.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/errno.h:
 
@@ -2240,19 +2822,7 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_compat.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_signal.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sdks/_mingw_directx.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/stdio_s.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/string_s.h:
 
@@ -2263,10 +2833,6 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/signal.h:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMap:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdio.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdlib.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/string.h:
 
@@ -2280,15 +2846,21 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sys/types.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/time.h:
 
+E:/QTproject/vlclib/sdk/include/vlc/libvlc.h:
+
 E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoMemoryStream.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h:
 
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_library.h:
+
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h:
 
 kylinqt_autogen/CWRUQVFSPE/moc_vlcplayer.cpp:
+
+kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp:
 
 kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp:
 
@@ -2302,69 +2874,11 @@ E:/QTproject/kylinqt/main.cpp:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h:
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_renderer_discoverer.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QGuiApplication:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h:
-
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmldebug.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetwork-config.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/QQmlApplicationEngine:
 
@@ -2372,37 +2886,15 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/QQmlContext:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsengine.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqml.h:
-
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlapplicationengine.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcontext.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlengine.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqml-config.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqmlglobal.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional:
-
 E:/QTproject/vlc-qt/install/include/VLCQtCore/Common.h:
+
+E:/QTproject/vlc-qt/install/include/VLCQtCore/Media.h:
 
 E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoFrame.h:
 
@@ -2414,8 +2906,6 @@ E:/QTproject/vlc-qt/install/include/VLCQtQml/SharedExportQml.h:
 
 E:/QTproject/kylinqt/serialport/serialport.cpp:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug:
-
 E:/QTproject/kylinqt/serialport/serialport_image.cpp:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer:
@@ -2424,4 +2914,20 @@ E:/QTproject/vlc-qt/install/include/VLCQtCore/Audio.h:
 
 E:/QTproject/vlc-qt/install/include/VLCQtCore/Config.h:
 
-E:/QTproject/vlc-qt/install/include/VLCQtCore/Media.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QPainter:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_dialog.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpen.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixmap.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtextoption.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/deprecated.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_discoverer.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_player.h:
+
+E:/QTproject/vlclib/sdk/include/vlc/libvlc_vlm.h:

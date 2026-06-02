@@ -334,6 +334,30 @@ video/vlcplayer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.s
 .PHONY : video/vlcplayer.cpp.s
 
+vlcvideo/VlcVideoItem.obj: vlcvideo/VlcVideoItem.cpp.obj
+.PHONY : vlcvideo/VlcVideoItem.obj
+
+# target to build an object file
+vlcvideo/VlcVideoItem.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
+.PHONY : vlcvideo/VlcVideoItem.cpp.obj
+
+vlcvideo/VlcVideoItem.i: vlcvideo/VlcVideoItem.cpp.i
+.PHONY : vlcvideo/VlcVideoItem.i
+
+# target to preprocess a source file
+vlcvideo/VlcVideoItem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.i
+.PHONY : vlcvideo/VlcVideoItem.cpp.i
+
+vlcvideo/VlcVideoItem.s: vlcvideo/VlcVideoItem.cpp.s
+.PHONY : vlcvideo/VlcVideoItem.s
+
+# target to generate assembly for a file
+vlcvideo/VlcVideoItem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kylinqt.dir/build.make CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.s
+.PHONY : vlcvideo/VlcVideoItem.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -368,6 +392,9 @@ help:
 	@echo "... video/vlcplayer.obj"
 	@echo "... video/vlcplayer.i"
 	@echo "... video/vlcplayer.s"
+	@echo "... vlcvideo/VlcVideoItem.obj"
+	@echo "... vlcvideo/VlcVideoItem.i"
+	@echo "... vlcvideo/VlcVideoItem.s"
 .PHONY : help
 
 

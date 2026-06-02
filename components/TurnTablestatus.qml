@@ -127,7 +127,7 @@ Rectangle {
                             case 0x26: return "编码器数据故障报警"
                             case 0x29: return "瞬态电流报警"
                             case 0x2A: return "连续电流报警"
-                            default: return "未知位置为止为之"
+                            default: return "未知"
                         }
                     }
                 }

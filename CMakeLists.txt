@@ -35,7 +35,7 @@ set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
 # 将 VLC-QT cmake 模块加入搜索路径
 list(APPEND CMAKE_PREFIX_PATH "${VLCQT_ROOT}/lib/cmake")
 
-find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Gui SerialPort REQUIRED)
 find_package(VLCQtCore REQUIRED)
 find_package(VLCQtQml REQUIRED)
 
@@ -58,6 +58,7 @@ else()
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
       video/vlcplayer.cpp
+      vlcvideo/VlcVideoItem.cpp
       ${TaoQuickRes}
     )
 endif()
@@ -77,7 +78,7 @@ target_compile_definitions(kylinqt
 
 target_link_libraries(kylinqt
   PRIVATE
-    Qt5::Core Qt5::Quick Qt5::SerialPort
+    Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort
     VLCQt::Core VLCQt::Qml
     libvlc libvlccore
 )

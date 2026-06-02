@@ -82,6 +82,8 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsIntegrationPlugin.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5Gui_QXdgDesktopPortalThemePlugin.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake",
 		"E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfigVersion.cmake",
@@ -132,6 +134,12 @@
 			"E:/QTproject/kylinqt/video/vlcplayer.h",
 			"MU",
 			"CWRUQVFSPE/moc_vlcplayer.cpp",
+			null
+		],
+		[
+			"E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h",
+			"MU",
+			"DPWVDNBJWW/moc_VlcVideoItem.cpp",
 			null
 		]
 	],
@@ -212,7 +220,8 @@
 			"MU",
 			null
 		],
-		[ "E:/QTproject/kylinqt/video/vlcplayer.cpp", "MU", null ]
+		[ "E:/QTproject/kylinqt/video/vlcplayer.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],
