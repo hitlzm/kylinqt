@@ -15,19 +15,13 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    // qmlRegisterType<SerialPortLaser>("SerialPort", 1, 0, "SerialPortLaser");
 
     SerialPortLaser laserPort;
     SerialPortImage imagePort;
     SerialPortTurntable turntablePort;
     VLCPlayer myvlcplayer;
 
-    // VlcCommon::setPluginPath(app.applicationDirPath() + "/plugins");
-    // VlcQmlVideoPlayer::registerPlugin();
-    // qputenv(
-    // "E:/QTproject/vlclib/plugins",
-    // "E:/QTproject/vlc-qt/install/bin/plugins"
-    // );
+    
 
     QQmlApplicationEngine engine;
 
@@ -38,7 +32,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("laserSerial", &laserPort);
     engine.rootContext()->setContextProperty("imageSerial", &imagePort);
     engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
-    engine.rootContext()->setContextProperty("vlcplayer", &myvlcplayer);
+    engine.rootContext()->setContextProperty("vlcplayer", &myvlcplayer);//
     
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
