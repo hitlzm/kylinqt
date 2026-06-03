@@ -292,14 +292,6 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
  E:/QTproject/vlclib/sdk/include/vlc/vlc.h \
  E:/QTproject/vlclib/sdk/include/vlc/libvlc.h \
  E:/QTproject/vlclib/sdk/include/vlc/libvlc_renderer_discoverer.h \

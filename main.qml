@@ -57,7 +57,7 @@ Window {
     }
 }
 
-Myvideo4 {
+Myvideo5 {
     id: myvideo
     anchors.top:parent.top
     anchors.left:dyt.right

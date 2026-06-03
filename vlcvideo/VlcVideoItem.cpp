@@ -6,11 +6,10 @@
 VlcVideoItem::VlcVideoItem(QQuickItem *parent)
     : QQuickPaintedItem(parent)
 {
-    // 准备 libvlc 实例（通常整个应用一个即可，这里简单示例）
     const char *args[] = {
-        "--intf", "dummy",        // 无界面
+        "--intf", "dummy",
         "--no-video-title-show",
-        "--no-xlib"               // Linux 避免 X11 依赖（如不需要）
+        "--no-xlib"
     };
     m_vlcInstance = libvlc_new(sizeof(args)/sizeof(args[0]), args);
 }
@@ -22,20 +21,81 @@ VlcVideoItem::~VlcVideoItem()
         libvlc_release(m_vlcInstance);
 }
 
-QString VlcVideoItem::source() const
+// ===== 属性访问 =====
+QString VlcVideoItem::source() const { return m_source; }
+
+bool VlcVideoItem::isPlaying() const { return m_playing; }
+
+int VlcVideoItem::volume() const { return m_volume; }
+
+void VlcVideoItem::setVolume(int vol)
 {
-    return m_source;
+    vol = qBound(0, vol, 200);
+    if (m_volume != vol) {
+        m_volume = vol;
+        if (m_player) {
+            libvlc_audio_set_volume(m_player, vol);
+        }
+        emit volumeChanged();
+    }
 }
 
+float VlcVideoItem::position() const
+{
+    if (!m_player) return 0.0f;
+    return libvlc_media_player_get_position(m_player);
+}
+
+void VlcVideoItem::setPosition(float pos)
+{
+    if (m_player)
+        libvlc_media_player_set_position(m_player, pos);
+}
+
+qint64 VlcVideoItem::length() const
+{
+    if (!m_player) return 0;
+    return libvlc_media_player_get_length(m_player);
+}
+
+bool VlcVideoItem::isSeekable() const { return m_seekable; }
+
+// ===== 播放控制 =====
 void VlcVideoItem::setSource(const QString &url)
 {
     if (m_source != url) {
         m_source = url;
         emit sourceChanged();
-        setupPlayer();
+        setupPlayer();  // 创建 player 但不自动播放
     }
 }
 
+void VlcVideoItem::play()
+{
+    if (!m_player) {
+        if (m_source.isEmpty()) return;
+        setupPlayer();
+    }
+    if (m_player) {
+        libvlc_media_player_play(m_player);
+    }
+}
+
+void VlcVideoItem::pause()
+{
+    if (m_player)
+        libvlc_media_player_pause(m_player);
+}
+
+void VlcVideoItem::stop()
+{
+    releasePlayer();
+    m_playing = false;
+    emit playingChanged();
+    emit stopped();
+}
+
+// ===== 内部 =====
 void VlcVideoItem::setupPlayer()
 {
     releasePlayer();
@@ -44,51 +104,133 @@ void VlcVideoItem::setupPlayer()
         return;
 
     m_media = libvlc_media_new_location(m_vlcInstance, m_source.toUtf8().constData());
-    if (!m_media)
-        return;
+    if (!m_media) return;
 
     m_player = libvlc_media_player_new_from_media(m_media);
-    libvlc_media_release(m_media); // player 持有引用，可以安全释放
+    libvlc_media_release(m_media);
 
-    // 禁用内置视频输出，走回调
     libvlc_video_set_callbacks(m_player, lockCallback, unlockCallback, displayCallback, this);
-    // 注册格式协商回调 → setupFormatCallback 里根据视频尺寸创建 m_frame
     libvlc_video_set_format_callbacks(m_player, setupFormatCallback, nullptr);
-    libvlc_media_player_play(m_player);
+    libvlc_audio_set_volume(m_player, m_volume);
+
+    attachEvents();
+    // 不自动 play() — 等待 QML 侧调用
 }
 
 void VlcVideoItem::releasePlayer()
 {
     if (m_player) {
+        detachEvents();
         libvlc_media_player_stop(m_player);
         libvlc_media_player_release(m_player);
         m_player = nullptr;
+        m_eventManager = nullptr;
     }
 }
 
-// 静态回调：锁帧缓冲区，VLC 会在这里分配 planes
+// ===== libvlc 事件回调（自由函数，C 调用约定兼容 libvlc_callback_t）=====
+void onLibVlcEvent(const libvlc_event_t *event, void *opaque)
+{
+    auto *self = static_cast<VlcVideoItem*>(opaque);
+    switch (event->type) {
+    case libvlc_MediaPlayerPlaying: {
+        bool was = self->m_playing;
+        self->m_playing = true;
+        if (!was) self->playingChanged();
+        break;
+    }
+    case libvlc_MediaPlayerPaused:
+        self->m_playing = false;
+        self->playingChanged();
+        break;
+    case libvlc_MediaPlayerStopped:
+        self->m_playing = false;
+        self->playingChanged();
+        self->stopped();
+        break;
+    case libvlc_MediaPlayerEndReached:
+        self->m_playing = false;
+        self->playingChanged();
+        self->ended();
+        break;
+    case libvlc_MediaPlayerEncounteredError:
+        self->m_playing = false;
+        self->playingChanged();
+        self->error("Playback error");
+        break;
+    case libvlc_MediaPlayerLengthChanged:
+        self->lengthChanged();
+        break;
+    case libvlc_MediaPlayerSeekableChanged:
+        self->m_seekable = libvlc_media_player_is_seekable(self->m_player);
+        self->seekableChanged();
+        break;
+    default: break;
+    }
+}
+
+// ===== libvlc 事件绑定 =====
+void VlcVideoItem::attachEvents()
+{
+    if (!m_player) return;
+    m_eventManager = libvlc_media_player_event_manager(m_player);
+    if (!m_eventManager) return;
+
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerPlaying,       onLibVlcEvent, this);
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerPaused,        onLibVlcEvent, this);
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerStopped,       onLibVlcEvent, this);
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerEndReached,    onLibVlcEvent, this);
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerEncounteredError, onLibVlcEvent, this);
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerLengthChanged, onLibVlcEvent, this);
+    libvlc_event_attach(m_eventManager, libvlc_MediaPlayerSeekableChanged, onLibVlcEvent, this);
+}
+
+void VlcVideoItem::detachEvents()
+{
+    if (!m_eventManager) return;
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerPlaying,       onLibVlcEvent, this);
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerPaused,        onLibVlcEvent, this);
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerStopped,       onLibVlcEvent, this);
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerEndReached,    onLibVlcEvent, this);
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerEncounteredError, onLibVlcEvent, this);
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerLengthChanged, onLibVlcEvent, this);
+    libvlc_event_detach(m_eventManager, libvlc_MediaPlayerSeekableChanged, onLibVlcEvent, this);
+}
+
+// ===== 视频帧回调 =====
 void* VlcVideoItem::lockCallback(void *opaque, void **planes)
 {
     auto *self = static_cast<VlcVideoItem*>(opaque);
     self->m_frameMutex.lock();
-
-    // 返回一个足够大的缓冲区，用 QImage 管理
     *planes = self->m_frame.bits();
-    return nullptr; // 用于 unlock 的不透明对象，这里不需要
+    return nullptr;
 }
 
-void VlcVideoItem::unlockCallback(void *opaque, void *picture, void *const *planes)
+void VlcVideoItem::unlockCallback(void *opaque, void *, void *const *)
 {
     auto *self = static_cast<VlcVideoItem*>(opaque);
     self->m_frameMutex.unlock();
 }
 
-void VlcVideoItem::displayCallback(void *opaque, void *picture)
+void VlcVideoItem::displayCallback(void *opaque, void *)
 {
     auto *self = static_cast<VlcVideoItem*>(opaque);
-    // 数据已写入 planes[0]，直接触发重绘
     QMetaObject::invokeMethod(self, "update", Qt::QueuedConnection);
-    // 或者使用信号槽，确保 UI 线程刷新
+}
+
+unsigned VlcVideoItem::setupFormatCallback(void **opaque, char * chroma, unsigned *width, unsigned *height,
+                                           unsigned *pitches, unsigned *lines)
+{
+    auto *self = static_cast<VlcVideoItem*>(*opaque);
+    self->m_width = *width;
+    self->m_height = *height;
+    memcpy(chroma, "RGBA", 4);
+    QMutexLocker lock(&self->m_frameMutex);
+    // self->m_frame = QImage(*width, *height, QImage::Format_ARGB32_Premultiplied);
+    self->m_frame = QImage(*width, *height, QImage::Format_RGBA8888);
+    *pitches = self->m_frame.bytesPerLine();
+    *lines = *height;
+    return 1;
 }
 
 void VlcVideoItem::paint(QPainter *painter)
@@ -97,22 +239,4 @@ void VlcVideoItem::paint(QPainter *painter)
     if (!m_frame.isNull()) {
         painter->drawImage(boundingRect(), m_frame);
     }
-}
-
-// 额外：在格式协商时动态调整缓冲区大小
-unsigned VlcVideoItem::setupFormatCallback(void **opaque, char *chroma,
-                                    unsigned *width, unsigned *height,
-                                    unsigned *pitches,
-                                    unsigned *lines)
-{
-    auto *self = static_cast<VlcVideoItem*>(*opaque);
-    self->m_width = *width;
-    self->m_height = *height;
-
-    // 重新创建 QImage
-    QMutexLocker lock(&self->m_frameMutex);
-    self->m_frame = QImage(*width, *height, QImage::Format_ARGB32_Premultiplied);
-    *pitches = self->m_frame.bytesPerLine();
-    *lines = *height;
-    return 1; // 返回分配的缓冲区个数
 }
