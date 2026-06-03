@@ -164,7 +164,15 @@ Rectangle {
 
         model: ["9600", "115200"]
     }
-
+    CusPopup {
+        id: tip
+        backgroundWidth: 100
+        backgroundHeight: 40
+        barColor:"lightgray"
+        contentItem: Text { text: "串口已打开！" }
+        // Button { text: "确定"; onClicked: tip.hide() }
+    
+    }
     // 打开串口按钮
     CusButton_Blue {
         id: openButton
@@ -182,6 +190,7 @@ Rectangle {
             } else {
                 imageSerial.openPort(serialComboBox.currentText,
                                      parseInt(baudComboBox.currentText))
+                                 tip.myshow();
             }
         }
     }

@@ -76,12 +76,14 @@ kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageSen
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserSendArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyTextField.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/TurnTablestatus.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Remotectlmode.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/DataLabel.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ProgramMode.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MySwitch.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo5.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ExGuide.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyComboBox.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Modeselect.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageRecvArea.qml

@@ -16,5 +16,7 @@
         <file>components/Indicator.qml</file>
         <file>components/ProgramMode.qml</file>
         <file>components/Myvideo5.qml</file>
+        <file>components/ExGuide.qml</file>
+        <file>components/Remotectlmode.qml</file>
     </qresource>
 </RCC>

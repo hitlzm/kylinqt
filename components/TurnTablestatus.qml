@@ -12,7 +12,7 @@ Rectangle {
     height: myheight
     color: '#e9f0f9'
     property int groupHeight1: 150
-
+    property int stacklayoutindex: 0
     // 顶部栏：标题 + 按钮行
     RowLayout {
         id: ctrlrow
@@ -164,15 +164,65 @@ Rectangle {
             }
         }
     }
-    ProgramMode {
-        id: programMode
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        anchors.top: statusGroup.bottom
-        anchors.topMargin: 5
-    }
+    // ProgramMode {
+    //     id: programMode
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 10
+    //     anchors.right: parent.right
+    //     anchors.rightMargin: 10
+    //     anchors.top: statusGroup.bottom
+    //     anchors.topMargin: 30
+    // }
+    // ExGuide {
+    //     id: exGuide
+    //     width: parent.width - 20
+    //     height: 250
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 10
+    //     anchors.right: parent.right
+    //     anchors.rightMargin: 10
+    //     anchors.top: statusGroup.bottom
+    //     anchors.topMargin: 10
+    // }
+    // Remotectlmode {
+    //     id: remoteCtlMode
+    //     // anchors.left: parent.left
+    //     // anchors.leftMargin: 10
+    //     // anchors.right: parent.right
+    //     // anchors.rightMargin: 10
+    //     anchors.horizontalCenter: parent.horizontalCenter
+    //     anchors.top: statusGroup.bottom
+    //     anchors.topMargin: 100
+    // }
+    StackLayout {
+            id: stack
+            width: root.width - 20
+            height: 280
+            currentIndex: stacklayoutindex
+            anchors.top: statusGroup.bottom
+            anchors.topMargin: 5
+            anchors.left:root.left
+            anchors.leftMargin: 10
+            anchors.right: root.right
+            anchors.rightMargin: 10 
+            // --- 第一个页面 ---
+            Item {
+                ProgramMode {
+                    anchors.fill: parent   
+                }
+            }
+            // --- 第二个页面 ---
+            Item {
+                ExGuide{
+                    anchors.fill: parent
+                }
+            }
+            Item {
+                Remotectlmode{
+                    anchors.fill: parent
+                }
+            }
+        }
   
 }
 

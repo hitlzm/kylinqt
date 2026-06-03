@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 540
+    height: 560
     color: '#e9f0f9'
 //下边沿
     Rectangle {

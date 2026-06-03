@@ -76,10 +76,11 @@ Modeselect {
 TurnTablestatus {
     id: turntablestatus
     anchors.top: modeselect.bottom
+    anchors.topMargin: 5
     anchors.left: dyt.right
-    anchors.leftMargin: 5
-    anchors.topMargin: 5    
+    anchors.leftMargin: 5   
     anchors.right: myvideo.right
+    stacklayoutindex: modeselect.myindex
 }
 
 }

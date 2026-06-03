@@ -42,6 +42,14 @@ Item {
             border.width: borderWidth
         }
     }
+    Timer {
+        id: timer
+        interval: 1500        // 1.5秒
+        repeat: false         // 只执行一次
+        onTriggered: {
+            tip.hide()
+        }
+    }
     function show() {
         popup.x = (root.width - popup.width) / 2
         popup.y = root.height + verticalOffset
@@ -49,5 +57,9 @@ Item {
     }
     function hide() {
         popupVisible = false
+    }
+    function myshow() {
+        show()
+        timer.start() // 启动定时器,到时间自动消失
     }
 }

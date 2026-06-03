@@ -6,6 +6,7 @@ import "./"
 
 Item{
     id: root
+    property int myindex: 0
  GroupBox {
                 background: Rectangle {
                 color: "transparent"
@@ -28,19 +29,33 @@ Row {
         width: 160
         text: qsTr("外引导模式")
         font.pixelSize: 20
-        
+        onCheckedChanged: {
+            if (checked) {
+                root.myindex = 0
+            }
+        }
     }
     CusRadioButton {
         id: radio2
         width: 160
         text: qsTr("程控模式")
         font.pixelSize: 20
+        onCheckedChanged: {
+            if (checked) {
+                root.myindex = 1
+            }
+        }
     }
     CusRadioButton {
         id: radio3
         width: 160
         text: qsTr("遥控模式")
         font.pixelSize: 20
+        onCheckedChanged: {
+            if (checked) {
+                root.myindex = 2
+            }
+        }
     }
 }
 

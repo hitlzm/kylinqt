@@ -237,6 +237,11 @@ void VlcVideoItem::paint(QPainter *painter)
 {
     QMutexLocker lock(&m_frameMutex);
     if (!m_frame.isNull()) {
-        painter->drawImage(boundingRect(), m_frame);
+        // painter->drawImage(boundingRect(), m_frame);
+        QSize videoSize = m_frame.size().scaled(width(), height(), Qt::KeepAspectRatio);
+        QRect targetRect((width() - videoSize.width()) / 2,
+                 (height() - videoSize.height()) / 2,
+                 videoSize.width(), videoSize.height());
+        painter->drawImage(targetRect, m_frame);
     }
 }

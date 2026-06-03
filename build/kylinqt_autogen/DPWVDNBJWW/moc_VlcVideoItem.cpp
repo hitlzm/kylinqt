@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_VlcVideoItem_t {
-    QByteArrayData data[21];
-    char stringdata0[195];
+    QByteArrayData data[23];
+    char stringdata0[209];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -43,23 +43,25 @@ QT_MOC_LITERAL(8, 103, 7), // "stopped"
 QT_MOC_LITERAL(9, 111, 5), // "ended"
 QT_MOC_LITERAL(10, 117, 5), // "error"
 QT_MOC_LITERAL(11, 123, 8), // "errorMsg"
-QT_MOC_LITERAL(12, 132, 4), // "play"
-QT_MOC_LITERAL(13, 137, 5), // "pause"
-QT_MOC_LITERAL(14, 143, 4), // "stop"
-QT_MOC_LITERAL(15, 148, 6), // "source"
-QT_MOC_LITERAL(16, 155, 7), // "playing"
-QT_MOC_LITERAL(17, 163, 6), // "volume"
-QT_MOC_LITERAL(18, 170, 8), // "position"
-QT_MOC_LITERAL(19, 179, 6), // "length"
-QT_MOC_LITERAL(20, 186, 8) // "seekable"
+QT_MOC_LITERAL(12, 132, 9), // "setVolume"
+QT_MOC_LITERAL(13, 142, 3), // "vol"
+QT_MOC_LITERAL(14, 146, 4), // "play"
+QT_MOC_LITERAL(15, 151, 5), // "pause"
+QT_MOC_LITERAL(16, 157, 4), // "stop"
+QT_MOC_LITERAL(17, 162, 6), // "source"
+QT_MOC_LITERAL(18, 169, 7), // "playing"
+QT_MOC_LITERAL(19, 177, 6), // "volume"
+QT_MOC_LITERAL(20, 184, 8), // "position"
+QT_MOC_LITERAL(21, 193, 6), // "length"
+QT_MOC_LITERAL(22, 200, 8) // "seekable"
 
     },
     "VlcVideoItem\0sourceChanged\0\0playingChanged\0"
     "volumeChanged\0positionChanged\0"
     "lengthChanged\0seekableChanged\0stopped\0"
-    "ended\0error\0errorMsg\0play\0pause\0stop\0"
-    "source\0playing\0volume\0position\0length\0"
-    "seekable"
+    "ended\0error\0errorMsg\0setVolume\0vol\0"
+    "play\0pause\0stop\0source\0playing\0volume\0"
+    "position\0length\0seekable"
 };
 #undef QT_MOC_LITERAL
 
@@ -69,28 +71,29 @@ static const uint qt_meta_data_VlcVideoItem[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
-       6,   88, // properties
+      13,   14, // methods
+       6,   96, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        9,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   74,    2, 0x06 /* Public */,
-       3,    0,   75,    2, 0x06 /* Public */,
-       4,    0,   76,    2, 0x06 /* Public */,
-       5,    0,   77,    2, 0x06 /* Public */,
-       6,    0,   78,    2, 0x06 /* Public */,
-       7,    0,   79,    2, 0x06 /* Public */,
-       8,    0,   80,    2, 0x06 /* Public */,
-       9,    0,   81,    2, 0x06 /* Public */,
-      10,    1,   82,    2, 0x06 /* Public */,
+       1,    0,   79,    2, 0x06 /* Public */,
+       3,    0,   80,    2, 0x06 /* Public */,
+       4,    0,   81,    2, 0x06 /* Public */,
+       5,    0,   82,    2, 0x06 /* Public */,
+       6,    0,   83,    2, 0x06 /* Public */,
+       7,    0,   84,    2, 0x06 /* Public */,
+       8,    0,   85,    2, 0x06 /* Public */,
+       9,    0,   86,    2, 0x06 /* Public */,
+      10,    1,   87,    2, 0x06 /* Public */,
 
  // methods: name, argc, parameters, tag, flags
-      12,    0,   85,    2, 0x02 /* Public */,
-      13,    0,   86,    2, 0x02 /* Public */,
-      14,    0,   87,    2, 0x02 /* Public */,
+      12,    1,   90,    2, 0x02 /* Public */,
+      14,    0,   93,    2, 0x02 /* Public */,
+      15,    0,   94,    2, 0x02 /* Public */,
+      16,    0,   95,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -104,17 +107,18 @@ static const uint qt_meta_data_VlcVideoItem[] = {
     QMetaType::Void, QMetaType::QString,   11,
 
  // methods: parameters
+    QMetaType::Void, QMetaType::Int,   13,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
  // properties: name, type, flags
-      15, QMetaType::QString, 0x00495103,
-      16, QMetaType::Bool, 0x00495001,
-      17, QMetaType::Int, 0x00495103,
-      18, QMetaType::Float, 0x00495103,
-      19, QMetaType::LongLong, 0x00495001,
-      20, QMetaType::Bool, 0x00495001,
+      17, QMetaType::QString, 0x00495103,
+      18, QMetaType::Bool, 0x00495001,
+      19, QMetaType::Int, 0x00495103,
+      20, QMetaType::Float, 0x00495103,
+      21, QMetaType::LongLong, 0x00495001,
+      22, QMetaType::Bool, 0x00495001,
 
  // properties: notify_signal_id
        0,
@@ -142,9 +146,10 @@ void VlcVideoItem::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 6: _t->stopped(); break;
         case 7: _t->ended(); break;
         case 8: _t->error((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 9: _t->play(); break;
-        case 10: _t->pause(); break;
-        case 11: _t->stop(); break;
+        case 9: _t->setVolume((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 10: _t->play(); break;
+        case 11: _t->pause(); break;
+        case 12: _t->stop(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -271,13 +276,13 @@ int VlcVideoItem::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 12)
+        if (_id < 13)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 12;
+        _id -= 13;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 12)
+        if (_id < 13)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 12;
+        _id -= 13;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty

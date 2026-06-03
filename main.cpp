@@ -8,7 +8,6 @@
 //使用VLC-QT
 // #include <VLCQtCore/Common.h>
 // #include <VLCQtQml/QmlVideoPlayer.h>
-#include "video/vlcplayer.h"
 // #include <VLCQtCore/Common.h>
 // #include <VLCQtCore/Instance.h>
 // #include <VLCQtCore/Media.h>

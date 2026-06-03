@@ -30,9 +30,9 @@ public:
 
     bool isPlaying() const;
     int volume() const;
-    void setVolume(int vol);
+    Q_INVOKABLE void setVolume(int vol);
     float position() const;
-    void setPosition(float pos);
+    void setPosition(float pos);  //设置视频进度
     qint64 length() const;
     bool isSeekable() const;
 
@@ -84,7 +84,7 @@ private:
 
     bool m_playing = false;
     int m_volume = 100;
-    bool m_seekable = false;
+    bool m_seekable = false;  //视频是否可跳转或拖动进度条的信息
 };
 
 #endif
