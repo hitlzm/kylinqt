@@ -315,32 +315,6 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/Common.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/SharedExportCore.h \
- E:/QTproject/vlc-qt/install/include/VLCQtQml/QmlVideoPlayer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
- E:/QTproject/vlc-qt/install/include/VLCQtQml/QmlVideoObject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMap \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/Enums.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QSizeF \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoFrame.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/VideoMemoryStream.h \
- E:/QTproject/vlc-qt/install/include/VLCQtQml/SharedExportQml.h \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/TrackModel.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QAbstractListModel \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qabstractitemmodel.h \
  E:/QTproject/kylinqt/video/vlcplayer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/Instance.h \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/Enums.h \
- E:/QTproject/vlc-qt/install/include/VLCQtCore/Media.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h

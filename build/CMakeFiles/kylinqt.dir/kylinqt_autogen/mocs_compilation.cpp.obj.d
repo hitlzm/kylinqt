@@ -238,10 +238,6 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QTproject/kylinqt/serialport/serialport_laser.h \
  E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_turntable.cpp \
  E:/QTproject/kylinqt/serialport/serialport_turntable.h \
- E:/QTproject/kylinqt/build/kylinqt_autogen/CWRUQVFSPE/moc_vlcplayer.cpp \
- E:/QTproject/kylinqt/video/vlcplayer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
  E:/QTproject/kylinqt/build/kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp \
  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \

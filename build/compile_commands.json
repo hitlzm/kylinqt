@@ -37,12 +37,6 @@
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
-  "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj -c E:/QTproject/kylinqt/video/vlcplayer.cpp",
-  "file": "E:/QTproject/kylinqt/video/vlcplayer.cpp",
-  "output": "CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj"
-},
-{
-  "directory": "E:/QTproject/kylinqt/build",
   "command": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj -c E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp",
   "file": "E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp",
   "output": "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj"

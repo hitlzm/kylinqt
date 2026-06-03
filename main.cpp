@@ -6,12 +6,12 @@
 #include "serialport/serialport_turntable.h"
 #include "vlcvideo/VlcVideoItem.h"
 //使用VLC-QT
-#include <VLCQtCore/Common.h>
-#include <VLCQtQml/QmlVideoPlayer.h>
+// #include <VLCQtCore/Common.h>
+// #include <VLCQtQml/QmlVideoPlayer.h>
 #include "video/vlcplayer.h"
-#include <VLCQtCore/Common.h>
-#include <VLCQtCore/Instance.h>
-#include <VLCQtCore/Media.h>
+// #include <VLCQtCore/Common.h>
+// #include <VLCQtCore/Instance.h>
+// #include <VLCQtCore/Media.h>
 
 
 int main(int argc, char *argv[])

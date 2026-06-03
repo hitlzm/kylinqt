@@ -13,8 +13,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj"
   "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj.d"
-  "CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj"
-  "CMakeFiles/kylinqt.dir/video/vlcplayer.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj"
   "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj.d"
   "CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt"

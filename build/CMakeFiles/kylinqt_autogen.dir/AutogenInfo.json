@@ -131,12 +131,6 @@
 			null
 		],
 		[
-			"E:/QTproject/kylinqt/video/vlcplayer.h",
-			"MU",
-			"CWRUQVFSPE/moc_vlcplayer.cpp",
-			null
-		],
-		[
 			"E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h",
 			"MU",
 			"DPWVDNBJWW/moc_VlcVideoItem.cpp",
@@ -169,7 +163,6 @@
 		"E:/QTproject/kylinqt/build",
 		"E:/QTproject/kylinqt",
 		"E:/QTproject/vlclib/sdk/include",
-		"E:/QTproject/vlc-qt/install/include",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore",
 		"E:/QT5.12.8/5.12.8/mingw73_64/mkspecs/win32-g++",
@@ -220,7 +213,6 @@
 			"MU",
 			null
 		],
-		[ "E:/QTproject/kylinqt/video/vlcplayer.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],

@@ -26,14 +26,14 @@ include(taoQuick.cmake)
 
 # VLC & VLC-QT 库路径
 set(VLC_ROOT "E:/QTproject/vlclib")
-set(VLCQT_ROOT "E:/QTproject/vlc-qt/install")
+# set(VLCQT_ROOT "E:/QTproject/vlc-qt/install")
 
 # VLC SDK 头文件和库
 set(VLC_INCLUDE_DIR "${VLC_ROOT}/sdk/include")
 set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
 
 # 将 VLC-QT cmake 模块加入搜索路径
-list(APPEND CMAKE_PREFIX_PATH "${VLCQT_ROOT}/lib/cmake")
+# list(APPEND CMAKE_PREFIX_PATH "${VLCQT_ROOT}/lib/cmake")
 
 find_package(Qt5 COMPONENTS Core Quick Gui SerialPort REQUIRED)
 find_package(VLCQtCore REQUIRED)
@@ -57,7 +57,7 @@ else()
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
-      video/vlcplayer.cpp
+    #   video/vlcplayer.cpp
       vlcvideo/VlcVideoItem.cpp
       ${TaoQuickRes}
     )
@@ -65,7 +65,7 @@ endif()
 
 target_include_directories(kylinqt PRIVATE
     ${VLC_INCLUDE_DIR}
-    ${VLCQT_ROOT}/include
+    # ${VLCQT_ROOT}/include
 )
 
 target_link_directories(kylinqt PRIVATE
@@ -79,16 +79,16 @@ target_compile_definitions(kylinqt
 target_link_libraries(kylinqt
   PRIVATE
     Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort
-    VLCQt::Core VLCQt::Qml
+    # VLCQt::Core VLCQt::Qml
     libvlc libvlccore
 )
 
 # ── 编译后自动复制 DLL 到 exe 目录 ──
 add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${VLCQT_ROOT}/bin/libVLCQtCored.dll"
-        "${VLCQT_ROOT}/bin/libVLCQtQmld.dll"
-        "${VLCQT_ROOT}/bin/libVLCQtWidgetsd.dll"
+        # "${VLCQT_ROOT}/bin/libVLCQtCored.dll"
+        # "${VLCQT_ROOT}/bin/libVLCQtQmld.dll"
+        # "${VLCQT_ROOT}/bin/libVLCQtWidgetsd.dll"
         "${VLC_ROOT}/libvlc.dll"
         "${VLC_ROOT}/libvlccore.dll"
         "$<TARGET_FILE_DIR:kylinqt>"
@@ -99,7 +99,7 @@ add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${VLC_ROOT}/plugins"
         "$<TARGET_FILE_DIR:kylinqt>/plugins"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${VLCQT_ROOT}/qml/VLCQt"
-        "$<TARGET_FILE_DIR:kylinqt>/VLCQt"
+    # COMMAND ${CMAKE_COMMAND} -E copy_directory
+    #     "${VLCQT_ROOT}/qml/VLCQt"
+    #     "$<TARGET_FILE_DIR:kylinqt>/VLCQt"
 )

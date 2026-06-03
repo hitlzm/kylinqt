@@ -5,7 +5,6 @@
         <file>components/LaserRecvArea.qml</file>
         <file>components/MyTextField.qml</file>
         <file>components/DataLabel.qml</file>
-        <file>components/Myvideo.qml</file>
         <file>components/ImageArea.qml</file>
         <file>components/ImageRecvArea.qml</file>
         <file>components/ImageSendArea.qml</file>
@@ -14,11 +13,8 @@
         <file>components/MyComboBox.qml</file>
         <file>components/Modeselect.qml</file>
         <file>components/TurnTablestatus.qml</file>
-        <file>components/Myvideo2.qml</file>
-        <file>components/Myvideo3.qml</file>
         <file>components/Indicator.qml</file>
         <file>components/ProgramMode.qml</file>
-        <file>components/Myvideo4.qml</file>
         <file>components/Myvideo5.qml</file>
     </qresource>
 </RCC>

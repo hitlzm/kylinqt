@@ -201,11 +201,6 @@
 					"path" : "E:/QTproject/vlclib/sdk/include"
 				},
 				{
-					"backtrace" : 18,
-					"isSystem" : true,
-					"path" : "E:/QTproject/vlc-qt/install/include"
-				},
-				{
 					"backtrace" : 3,
 					"isSystem" : true,
 					"path" : "E:/QT5.12.8/5.12.8/mingw73_64/include"
@@ -269,8 +264,7 @@
 				5,
 				6,
 				7,
-				8,
-				9
+				8
 			]
 		}
 	],
@@ -302,12 +296,17 @@
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5SerialPortd.a",
+				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:/QTproject/vlc-qt/install/lib/libVLCQtQmld.dll.a",
+				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Guid.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5SerialPortd.a",
 				"role" : "libraries"
 			},
 			{
@@ -321,16 +320,6 @@
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Guid.a",
-				"role" : "libraries"
-			},
-			{
 				"backtrace" : 9,
 				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Qmld.a",
 				"role" : "libraries"
@@ -338,11 +327,6 @@
 			{
 				"backtrace" : 13,
 				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Networkd.a",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
-				"fragment" : "E:/QTproject/vlc-qt/install/lib/libVLCQtCored.dll.a",
 				"role" : "libraries"
 			},
 			{
@@ -377,8 +361,7 @@
 				5,
 				6,
 				7,
-				8,
-				9
+				8
 			]
 		},
 		{
@@ -392,7 +375,7 @@
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				10
+				9
 			]
 		}
 	],
@@ -438,12 +421,6 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "serialport/serialport_turntable.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "video/vlcplayer.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

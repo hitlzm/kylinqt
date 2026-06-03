@@ -20,7 +20,7 @@ Rectangle {
         anchors.top: parent.top;     anchors.topMargin: 10
         spacing: 12
 
-        Text { text: "导引头视频(VlcVideo)"; font.pixelSize: 22; font.bold: true; color: "#000000"; Layout.alignment: Qt.AlignVCenter }
+        Text { text: "导引头视频"; font.pixelSize: 22; font.bold: true; color: "#000000"; Layout.alignment: Qt.AlignVCenter }
         Item { Layout.fillWidth: true }
 
         Row {
