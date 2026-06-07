@@ -376,12 +376,14 @@ void SerialPortImage::parseData(const QByteArray &rawData)
 {
     if (rawData.size() < static_cast<int>(sizeof(image_recv_frame))) {
         // return QByteArray();
+        return;
     }
 
     const image_recv_frame* pFrame = reinterpret_cast<const image_recv_frame*>(rawData.data());
 
     if (pFrame->frame_header1 != 0x77 || pFrame->frame_header2 != 0xAB) {
         // return QByteArray();
+        return;
     }
 
     size_t dataLen = sizeof(image_recv_frame) - sizeof(uint16_t);
@@ -389,6 +391,7 @@ void SerialPortImage::parseData(const QByteArray &rawData)
         reinterpret_cast<const uint8_t*>(rawData.data()), dataLen);
     if (calculatedCrc != pFrame->crc16) {
         // return QByteArray();
+        return;
     }
 
     m_imageData->updateFromFrame(rawData);

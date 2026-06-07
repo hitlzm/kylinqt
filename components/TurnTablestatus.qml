@@ -207,13 +207,13 @@ Rectangle {
             anchors.rightMargin: 10 
             // --- 第一个页面 ---
             Item {
-                ProgramMode {
+                ExGuide {
                     anchors.fill: parent   
                 }
             }
             // --- 第二个页面 ---
             Item {
-                ExGuide{
+                ProgramMode{
                     anchors.fill: parent
                 }
             }

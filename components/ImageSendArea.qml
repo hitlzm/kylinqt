@@ -367,8 +367,8 @@ Rectangle {
             title: "模板序号"
             model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
             onCurrentIndexChanged: {
-               if (currentIndex !== -1) {
-               imageSerial.imageSendData.m_templateIndex = currentIndex + 1;
+               if (mycurrentIndex !== -1) {
+               imageSerial.imageSendData.m_templateIndex = mycurrentIndex + 1;
              }
             }
         }
@@ -382,15 +382,15 @@ Rectangle {
             title: "预装目标类型"
             model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
             onCurrentIndexChanged: {
-               if (currentIndex === 0) {
+               if (mycurrentIndex === 0) {
                imageSerial.imageSendData.m_targetBackgroundType1 = 0x00;
-             }else if(currentIndex === 1){
+             }else if(mycurrentIndex === 1){
                 imageSerial.imageSendData.m_targetBackgroundType1 = 0x01;
-             }else if(currentIndex === 2){
+             }else if(mycurrentIndex === 2){
                 imageSerial.imageSendData.m_targetBackgroundType1 = 0x02;
-             }else if(currentIndex === 3){
+             }else if(mycurrentIndex === 3){
                 imageSerial.imageSendData.m_targetBackgroundType1 = 0x04;
-             }else if(currentIndex === 4){
+             }else if(mycurrentIndex === 4){
                 imageSerial.imageSendData.m_targetBackgroundType1 = 0x07;
              }
             }
@@ -405,21 +405,21 @@ Rectangle {
             title: "背景类型"
             model: ["平原","沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
             onCurrentIndexChanged: {
-               if (currentIndex === 0) {
+               if (mycurrentIndex === 0) {
                imageSerial.imageSendData.m_targetBackgroundType4 = 0x00;
-             }else if(currentIndex === 1){
+             }else if(mycurrentIndex === 1){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x01;
-             }else if(currentIndex === 2){
+             }else if(mycurrentIndex === 2){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x02;
-             }else if(currentIndex === 3){
+             }else if(mycurrentIndex === 3){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x03;
-             }else if(currentIndex === 4){
+             }else if(mycurrentIndex === 4){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x04;
-             }else if(currentIndex === 5){
+             }else if(mycurrentIndex === 5){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x05;
-             }else if(currentIndex === 6){
+             }else if(mycurrentIndex === 6){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x06;
-             }else if(currentIndex === 7){
+             }else if(mycurrentIndex === 7){
                 imageSerial.imageSendData.m_targetBackgroundType4 = 0x07;
              }
             }
@@ -434,8 +434,8 @@ Rectangle {
             title: "目标灰度类型"
             model: ["亮目标", "暗目标"]
             onCurrentIndexChanged: {
-               if (currentIndex !== -1) {
-               imageSerial.imageSendData.m_targetBackgroundType2 = currentIndex;
+               if (mycurrentIndex !== -1) {
+               imageSerial.imageSendData.m_targetBackgroundType2 = mycurrentIndex;
                }
             }
         }
@@ -449,8 +449,8 @@ Rectangle {
             title: "目标动静类型"
             model: ["静目标","动目标" ]
             onCurrentIndexChanged: {
-               if (currentIndex !== -1) {
-               imageSerial.imageSendData.m_targetBackgroundType3 = currentIndex;
+               if (mycurrentIndex !== -1) {
+               imageSerial.imageSendData.m_targetBackgroundType3 = mycurrentIndex;
                }
              
             }
@@ -465,8 +465,8 @@ Rectangle {
             title: "修正指令状态"
             model: ["非修正状态","修正状态" ]
              onCurrentIndexChanged: {
-               if (currentIndex !== -1) {
-               imageSerial.imageSendData.m_trackingCorrectionCmd = currentIndex;
+               if (mycurrentIndex !== -1) {
+               imageSerial.imageSendData.m_trackingCorrectionCmd = mycurrentIndex;
                }
             }
         }
@@ -480,9 +480,9 @@ Rectangle {
             title: "波门大小"
             model: ["大","小" ]
             onCurrentIndexChanged: {
-               if (currentIndex === 0) {
+               if (mycurrentIndex === 0) {
                imageSerial.imageSendData.m_gateSize = 0xaa;
-             }else if(currentIndex === 1){
+             }else if(mycurrentIndex === 1){
                 imageSerial.imageSendData.m_gateSize = 0x55;
              }
             }

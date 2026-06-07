@@ -8,6 +8,7 @@ Item {
     property int mywidth
     property int myheight
     property alias model: myCombox.model
+    property alias mycurrentIndex: myCombox.currentIndex
     width:mywidth
     height:myheight
     signal currentIndexChanged(int index)
