@@ -17,6 +17,9 @@ SerialPort::~SerialPort()
 {
     close();
 }
+void SerialPort::dowork()
+{
+}
 
 QStringList SerialPort::availablePorts() const
 {
@@ -69,7 +72,7 @@ bool SerialPort::open(const QString &portName, qint32 baudRate)
 
 void SerialPort::close()
 {
-    if (m_serialPort->isOpen()) {
+    if (m_serialPort && m_serialPort->isOpen()) {
         m_serialPort->close();
         emit disconnected();
         emit portOpenChanged();
@@ -78,16 +81,17 @@ void SerialPort::close()
 
 bool SerialPort::isOpen() const
 {
-    return m_serialPort->isOpen();
+    return m_serialPort ? m_serialPort->isOpen() : false;
 }
 
 qint64 SerialPort::send(const QByteArray &data)
 {
-    return m_serialPort->write(data);
+    return m_serialPort ? m_serialPort->write(data) : -1;
 }
 
 void SerialPort::onReadyRead()
 {
+    if (!m_serialPort) return;
     QByteArray rawData = m_serialPort->readAll();
     // QByteArray parsed = parseData(rawData);
     parseData(rawData);
@@ -103,7 +107,7 @@ void SerialPort::handleReadyRead()
 
 void SerialPort::handleError(QSerialPort::SerialPortError error)
 {
-    if (error == QSerialPort::NoError)
+    if (error == QSerialPort::NoError || !m_serialPort)
         return;
 
     emit errorOccurred(m_serialPort->errorString());

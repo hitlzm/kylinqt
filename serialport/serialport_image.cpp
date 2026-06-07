@@ -350,8 +350,8 @@ QByteArray ImageSendData::buildFrame() const
 
 SerialPortImage::SerialPortImage(QObject *parent)
     : SerialPort(parent)
-    , m_imageData(new ImageData(this))
-    , m_imageSendData(new ImageSendData(this))
+    , m_imageData(new ImageData(nullptr))        // 无父对象，不随 moveToThread 迁移
+    , m_imageSendData(new ImageSendData(nullptr))
 {
     init_crc16_table();
 }

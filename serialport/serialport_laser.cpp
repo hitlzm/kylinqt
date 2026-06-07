@@ -7,6 +7,7 @@
 LaserData::LaserData(QObject *parent)
     : QObject(parent)
 {
+
 }
 
 int LaserData::frameStatus() const { return m_frameStatus; }
@@ -224,7 +225,7 @@ QByteArray LaserSendData::buildFrame() const
     for (size_t i = 0; i < sizeof(frame) - 1; ++i) {
         checksum ^= data[i];
     }
-    frame.XOR_result = checksum;
+    frame.XOR_result = checksum; //按字节校验结果不太对
 
     return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 }
@@ -235,14 +236,20 @@ QByteArray LaserSendData::buildFrame() const
 
 SerialPortLaser::SerialPortLaser(QObject *parent)
     : SerialPort(parent)
-    , m_laserData(new LaserData(this))
-    , m_laserSendData(new LaserSendData(this))
+    , m_laserData(new LaserData(nullptr))        // 无父对象，不随 moveToThread 迁移
+    , m_laserSendData(new LaserSendData(nullptr))
 {
 }
 
 SerialPortLaser::~SerialPortLaser() {
     delete m_laserData;
     delete m_laserSendData;
+}
+
+void SerialPortLaser::dowork()
+{
+    // LaserData 和 LaserSendData 已在构造函数初始化列表中创建
+    // 此处不再重新 new，避免 QML 持有的 CONSTANT 属性指针悬空
 }
 
 LaserData* SerialPortLaser::laserData() const

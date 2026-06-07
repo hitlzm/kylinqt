@@ -31,6 +31,9 @@ public:
 
     qint64 send(const QByteArray &data);
 
+public slots:
+virtual void dowork();
+
 protected:
     virtual void onReadyRead();
     virtual void parseData(const QByteArray &rawData) = 0;

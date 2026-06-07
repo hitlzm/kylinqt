@@ -5,12 +5,6 @@
 #include "serialport/serialport_image.h"
 #include "serialport/serialport_turntable.h"
 #include "vlcvideo/VlcVideoItem.h"
-//使用VLC-QT
-// #include <VLCQtCore/Common.h>
-// #include <VLCQtQml/QmlVideoPlayer.h>
-// #include <VLCQtCore/Common.h>
-// #include <VLCQtCore/Instance.h>
-// #include <VLCQtCore/Media.h>
 
 
 int main(int argc, char *argv[])
@@ -19,20 +13,11 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-
+    // 串口对象留在主线程——QSerialPort 本身是异步事件驱动，不需要 worker 线程
+    // Windows 上 QSerialPort 依赖 I/O 完成端口，内部有独立线程，跨线程父子对象会崩溃
     SerialPortLaser laserPort;
     SerialPortImage imagePort;
     SerialPortTurntable turntablePort;
-    // VLCPlayer myvlcplayer;
-    //"file:///E:/QTproject/vlclib/plugins"
-    // VlcCommon::setPluginPath("file:///E:/QTproject/vlclib/plugins");
-//     QStringList args = VlcCommon::args();
-//     args << "--vout=dummy" << "--no-osd" ;
-//     VlcInstance *instance = new VlcInstance(args, &app);
-//     if (!instance->status()) {
-//     qCritical() << "VLC instance creation failed!";
-//     return -1;
-//    }
 
     QQmlApplicationEngine engine;
 
@@ -44,10 +29,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageSerial", &imagePort);
     engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
-    // engine.rootContext()->setContextProperty("vlcplayer", &myvlcplayer);//
-    // engine.addImportPath(app.applicationDirPath() + "/qml");
-    // engine.rootContext()->setContextProperty("vlcInstance", instance);
-    
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {

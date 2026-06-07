@@ -336,9 +336,9 @@ Rectangle {
             myheight: 55
             title: "光学参数装订控制字"
             model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正","红外非均匀校正","模板擦除","积分时间设置"]
-            onCurrentIndexChanged:{
+            onComboIndexChanged:{
 
-                root.opticalParamCtrlCmd=currentIndex
+                root.opticalParamCtrlCmd=mycurrentIndex
 
                 if(opticalParamCtrlCmd===0){
                     imageSerial.imageSendData.m_opticalParamCtrl=0x00
@@ -366,7 +366,7 @@ Rectangle {
             myheight: 55
             title: "模板序号"
             model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-            onCurrentIndexChanged: {
+            onComboIndexChanged: {
                if (mycurrentIndex !== -1) {
                imageSerial.imageSendData.m_templateIndex = mycurrentIndex + 1;
              }
@@ -381,7 +381,7 @@ Rectangle {
             myheight: 55
             title: "预装目标类型"
             model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
-            onCurrentIndexChanged: {
+            onComboIndexChanged: {
                if (mycurrentIndex === 0) {
                imageSerial.imageSendData.m_targetBackgroundType1 = 0x00;
              }else if(mycurrentIndex === 1){
@@ -404,7 +404,7 @@ Rectangle {
             myheight: 55
             title: "背景类型"
             model: ["平原","沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
-            onCurrentIndexChanged: {
+            onComboIndexChanged: {
                if (mycurrentIndex === 0) {
                imageSerial.imageSendData.m_targetBackgroundType4 = 0x00;
              }else if(mycurrentIndex === 1){
@@ -433,7 +433,7 @@ Rectangle {
             myheight: 55
             title: "目标灰度类型"
             model: ["亮目标", "暗目标"]
-            onCurrentIndexChanged: {
+            onComboIndexChanged: {
                if (mycurrentIndex !== -1) {
                imageSerial.imageSendData.m_targetBackgroundType2 = mycurrentIndex;
                }
@@ -448,7 +448,7 @@ Rectangle {
             myheight: 55
             title: "目标动静类型"
             model: ["静目标","动目标" ]
-            onCurrentIndexChanged: {
+            onComboIndexChanged: {
                if (mycurrentIndex !== -1) {
                imageSerial.imageSendData.m_targetBackgroundType3 = mycurrentIndex;
                }
@@ -464,7 +464,7 @@ Rectangle {
             myheight: 55
             title: "修正指令状态"
             model: ["非修正状态","修正状态" ]
-             onCurrentIndexChanged: {
+             onComboIndexChanged: {
                if (mycurrentIndex !== -1) {
                imageSerial.imageSendData.m_trackingCorrectionCmd = mycurrentIndex;
                }
@@ -479,7 +479,7 @@ Rectangle {
             myheight: 55
             title: "波门大小"
             model: ["大","小" ]
-            onCurrentIndexChanged: {
+            onComboIndexChanged: {
                if (mycurrentIndex === 0) {
                imageSerial.imageSendData.m_gateSize = 0xaa;
              }else if(mycurrentIndex === 1){

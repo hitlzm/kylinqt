@@ -11,8 +11,8 @@ Item {
     property alias mycurrentIndex: myCombox.currentIndex
     width:mywidth
     height:myheight
-    signal currentIndexChanged(int index)
-    signal activated(int index)
+    signal comboIndexChanged(int index)
+    signal comboActivated(int index)
     // property alias labeltext: mylabel.text
     Text {
     id: titleText
@@ -32,10 +32,10 @@ Item {
         width: mywidth
         height: myheight-titleText.height
         onCurrentIndexChanged: (index) => {
-            root.currentIndexChanged(index)
+            root.comboIndexChanged(index)
         }
         onActivated: (index) => {
-            root.activated(index)
+            root.comboActivated(index)
         }
     }
     

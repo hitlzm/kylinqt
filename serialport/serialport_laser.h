@@ -64,7 +64,7 @@ public:
     float softwareVersion1() const;
     float softwareVersion2() const;
 
-    void updateFromFrame(const QByteArray &frame);
+    Q_INVOKABLE void updateFromFrame(const QByteArray &frame);
 
 signals:
     void frameStatusChanged();
@@ -217,9 +217,11 @@ public:
 
     LaserData* laserData() const;
     LaserSendData* laserSendData() const;
+    void dowork() override;
 
 protected:
     void parseData(const QByteArray &rawData) override;
+    
 
 private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);

@@ -106,7 +106,7 @@ public:
     int softwareVersion2() const;
     int softwareVersion3() const;
 
-    void updateFromFrame(const QByteArray &frame);
+    Q_INVOKABLE void updateFromFrame(const QByteArray &frame);
 
 signals:
     void frameLengthChanged();
@@ -451,7 +451,7 @@ public:
 
     ImageData* imageData() const ;
     ImageSendData* imageSendData() const;
-
+    // void dowork();
     static void init_crc16_table(uint16_t poly = 0x1021);
     static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
     
