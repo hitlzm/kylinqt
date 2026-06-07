@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_LaserData_t {
-    QByteArrayData data[54];
-    char stringdata0[921];
+    QByteArrayData data[56];
+    char stringdata0[943];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -59,32 +59,34 @@ QT_MOC_LITERAL(24, 463, 22), // "quadrant3EnergyChanged"
 QT_MOC_LITERAL(25, 486, 22), // "quadrant4EnergyChanged"
 QT_MOC_LITERAL(26, 509, 23), // "softwareVersion1Changed"
 QT_MOC_LITERAL(27, 533, 23), // "softwareVersion2Changed"
-QT_MOC_LITERAL(28, 557, 11), // "frameStatus"
-QT_MOC_LITERAL(29, 569, 7), // "frameId"
-QT_MOC_LITERAL(30, 577, 9), // "dytStatus"
-QT_MOC_LITERAL(31, 587, 14), // "detectorStatus"
-QT_MOC_LITERAL(32, 602, 15), // "detectorStatus1"
-QT_MOC_LITERAL(33, 618, 15), // "detectorStatus2"
-QT_MOC_LITERAL(34, 634, 15), // "detectorStatus3"
-QT_MOC_LITERAL(35, 650, 9), // "faultInfo"
-QT_MOC_LITERAL(36, 660, 10), // "faultInfo1"
-QT_MOC_LITERAL(37, 671, 10), // "faultInfo2"
-QT_MOC_LITERAL(38, 682, 14), // "opticalAzimuth"
-QT_MOC_LITERAL(39, 697, 12), // "opticalPitch"
-QT_MOC_LITERAL(40, 710, 15), // "gyroAzimuthRate"
-QT_MOC_LITERAL(41, 726, 13), // "gyroPitchRate"
-QT_MOC_LITERAL(42, 740, 14), // "losAzimuthRate"
-QT_MOC_LITERAL(43, 755, 12), // "losPitchRate"
-QT_MOC_LITERAL(44, 768, 16), // "deviationAzimuth"
-QT_MOC_LITERAL(45, 785, 14), // "deviationPitch"
-QT_MOC_LITERAL(46, 800, 11), // "laserPeriod"
-QT_MOC_LITERAL(47, 812, 10), // "gainStatus"
-QT_MOC_LITERAL(48, 823, 15), // "quadrant1Energy"
-QT_MOC_LITERAL(49, 839, 15), // "quadrant2Energy"
-QT_MOC_LITERAL(50, 855, 15), // "quadrant3Energy"
-QT_MOC_LITERAL(51, 871, 15), // "quadrant4Energy"
-QT_MOC_LITERAL(52, 887, 16), // "softwareVersion1"
-QT_MOC_LITERAL(53, 904, 16) // "softwareVersion2"
+QT_MOC_LITERAL(28, 557, 15), // "updateFromFrame"
+QT_MOC_LITERAL(29, 573, 5), // "frame"
+QT_MOC_LITERAL(30, 579, 11), // "frameStatus"
+QT_MOC_LITERAL(31, 591, 7), // "frameId"
+QT_MOC_LITERAL(32, 599, 9), // "dytStatus"
+QT_MOC_LITERAL(33, 609, 14), // "detectorStatus"
+QT_MOC_LITERAL(34, 624, 15), // "detectorStatus1"
+QT_MOC_LITERAL(35, 640, 15), // "detectorStatus2"
+QT_MOC_LITERAL(36, 656, 15), // "detectorStatus3"
+QT_MOC_LITERAL(37, 672, 9), // "faultInfo"
+QT_MOC_LITERAL(38, 682, 10), // "faultInfo1"
+QT_MOC_LITERAL(39, 693, 10), // "faultInfo2"
+QT_MOC_LITERAL(40, 704, 14), // "opticalAzimuth"
+QT_MOC_LITERAL(41, 719, 12), // "opticalPitch"
+QT_MOC_LITERAL(42, 732, 15), // "gyroAzimuthRate"
+QT_MOC_LITERAL(43, 748, 13), // "gyroPitchRate"
+QT_MOC_LITERAL(44, 762, 14), // "losAzimuthRate"
+QT_MOC_LITERAL(45, 777, 12), // "losPitchRate"
+QT_MOC_LITERAL(46, 790, 16), // "deviationAzimuth"
+QT_MOC_LITERAL(47, 807, 14), // "deviationPitch"
+QT_MOC_LITERAL(48, 822, 11), // "laserPeriod"
+QT_MOC_LITERAL(49, 834, 10), // "gainStatus"
+QT_MOC_LITERAL(50, 845, 15), // "quadrant1Energy"
+QT_MOC_LITERAL(51, 861, 15), // "quadrant2Energy"
+QT_MOC_LITERAL(52, 877, 15), // "quadrant3Energy"
+QT_MOC_LITERAL(53, 893, 15), // "quadrant4Energy"
+QT_MOC_LITERAL(54, 909, 16), // "softwareVersion1"
+QT_MOC_LITERAL(55, 926, 16) // "softwareVersion2"
 
     },
     "LaserData\0frameStatusChanged\0\0"
@@ -100,13 +102,13 @@ QT_MOC_LITERAL(53, 904, 16) // "softwareVersion2"
     "gainStatusChanged\0quadrant1EnergyChanged\0"
     "quadrant2EnergyChanged\0quadrant3EnergyChanged\0"
     "quadrant4EnergyChanged\0softwareVersion1Changed\0"
-    "softwareVersion2Changed\0frameStatus\0"
-    "frameId\0dytStatus\0detectorStatus\0"
-    "detectorStatus1\0detectorStatus2\0"
-    "detectorStatus3\0faultInfo\0faultInfo1\0"
-    "faultInfo2\0opticalAzimuth\0opticalPitch\0"
-    "gyroAzimuthRate\0gyroPitchRate\0"
-    "losAzimuthRate\0losPitchRate\0"
+    "softwareVersion2Changed\0updateFromFrame\0"
+    "frame\0frameStatus\0frameId\0dytStatus\0"
+    "detectorStatus\0detectorStatus1\0"
+    "detectorStatus2\0detectorStatus3\0"
+    "faultInfo\0faultInfo1\0faultInfo2\0"
+    "opticalAzimuth\0opticalPitch\0gyroAzimuthRate\0"
+    "gyroPitchRate\0losAzimuthRate\0losPitchRate\0"
     "deviationAzimuth\0deviationPitch\0"
     "laserPeriod\0gainStatus\0quadrant1Energy\0"
     "quadrant2Energy\0quadrant3Energy\0"
@@ -121,40 +123,43 @@ static const uint qt_meta_data_LaserData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      26,   14, // methods
-      26,  170, // properties
+      27,   14, // methods
+      26,  178, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
       26,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  144,    2, 0x06 /* Public */,
-       3,    0,  145,    2, 0x06 /* Public */,
-       4,    0,  146,    2, 0x06 /* Public */,
-       5,    0,  147,    2, 0x06 /* Public */,
-       6,    0,  148,    2, 0x06 /* Public */,
-       7,    0,  149,    2, 0x06 /* Public */,
-       8,    0,  150,    2, 0x06 /* Public */,
-       9,    0,  151,    2, 0x06 /* Public */,
-      10,    0,  152,    2, 0x06 /* Public */,
-      11,    0,  153,    2, 0x06 /* Public */,
-      12,    0,  154,    2, 0x06 /* Public */,
-      13,    0,  155,    2, 0x06 /* Public */,
-      14,    0,  156,    2, 0x06 /* Public */,
-      15,    0,  157,    2, 0x06 /* Public */,
-      16,    0,  158,    2, 0x06 /* Public */,
-      17,    0,  159,    2, 0x06 /* Public */,
-      18,    0,  160,    2, 0x06 /* Public */,
-      19,    0,  161,    2, 0x06 /* Public */,
-      20,    0,  162,    2, 0x06 /* Public */,
-      21,    0,  163,    2, 0x06 /* Public */,
-      22,    0,  164,    2, 0x06 /* Public */,
-      23,    0,  165,    2, 0x06 /* Public */,
-      24,    0,  166,    2, 0x06 /* Public */,
-      25,    0,  167,    2, 0x06 /* Public */,
-      26,    0,  168,    2, 0x06 /* Public */,
-      27,    0,  169,    2, 0x06 /* Public */,
+       1,    0,  149,    2, 0x06 /* Public */,
+       3,    0,  150,    2, 0x06 /* Public */,
+       4,    0,  151,    2, 0x06 /* Public */,
+       5,    0,  152,    2, 0x06 /* Public */,
+       6,    0,  153,    2, 0x06 /* Public */,
+       7,    0,  154,    2, 0x06 /* Public */,
+       8,    0,  155,    2, 0x06 /* Public */,
+       9,    0,  156,    2, 0x06 /* Public */,
+      10,    0,  157,    2, 0x06 /* Public */,
+      11,    0,  158,    2, 0x06 /* Public */,
+      12,    0,  159,    2, 0x06 /* Public */,
+      13,    0,  160,    2, 0x06 /* Public */,
+      14,    0,  161,    2, 0x06 /* Public */,
+      15,    0,  162,    2, 0x06 /* Public */,
+      16,    0,  163,    2, 0x06 /* Public */,
+      17,    0,  164,    2, 0x06 /* Public */,
+      18,    0,  165,    2, 0x06 /* Public */,
+      19,    0,  166,    2, 0x06 /* Public */,
+      20,    0,  167,    2, 0x06 /* Public */,
+      21,    0,  168,    2, 0x06 /* Public */,
+      22,    0,  169,    2, 0x06 /* Public */,
+      23,    0,  170,    2, 0x06 /* Public */,
+      24,    0,  171,    2, 0x06 /* Public */,
+      25,    0,  172,    2, 0x06 /* Public */,
+      26,    0,  173,    2, 0x06 /* Public */,
+      27,    0,  174,    2, 0x06 /* Public */,
+
+ // methods: name, argc, parameters, tag, flags
+      28,    1,  175,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -184,9 +189,10 @@ static const uint qt_meta_data_LaserData[] = {
     QMetaType::Void,
     QMetaType::Void,
 
+ // methods: parameters
+    QMetaType::Void, QMetaType::QByteArray,   29,
+
  // properties: name, type, flags
-      28, QMetaType::Int, 0x00495001,
-      29, QMetaType::Int, 0x00495001,
       30, QMetaType::Int, 0x00495001,
       31, QMetaType::Int, 0x00495001,
       32, QMetaType::Int, 0x00495001,
@@ -195,22 +201,24 @@ static const uint qt_meta_data_LaserData[] = {
       35, QMetaType::Int, 0x00495001,
       36, QMetaType::Int, 0x00495001,
       37, QMetaType::Int, 0x00495001,
-      38, QMetaType::Float, 0x00495001,
-      39, QMetaType::Float, 0x00495001,
+      38, QMetaType::Int, 0x00495001,
+      39, QMetaType::Int, 0x00495001,
       40, QMetaType::Float, 0x00495001,
       41, QMetaType::Float, 0x00495001,
       42, QMetaType::Float, 0x00495001,
       43, QMetaType::Float, 0x00495001,
       44, QMetaType::Float, 0x00495001,
       45, QMetaType::Float, 0x00495001,
-      46, QMetaType::Int, 0x00495001,
-      47, QMetaType::Int, 0x00495001,
-      48, QMetaType::Float, 0x00495001,
-      49, QMetaType::Float, 0x00495001,
+      46, QMetaType::Float, 0x00495001,
+      47, QMetaType::Float, 0x00495001,
+      48, QMetaType::Int, 0x00495001,
+      49, QMetaType::Int, 0x00495001,
       50, QMetaType::Float, 0x00495001,
       51, QMetaType::Float, 0x00495001,
       52, QMetaType::Float, 0x00495001,
       53, QMetaType::Float, 0x00495001,
+      54, QMetaType::Float, 0x00495001,
+      55, QMetaType::Float, 0x00495001,
 
  // properties: notify_signal_id
        0,
@@ -275,6 +283,7 @@ void LaserData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 23: _t->quadrant4EnergyChanged(); break;
         case 24: _t->softwareVersion1Changed(); break;
         case 25: _t->softwareVersion2Changed(); break;
+        case 26: _t->updateFromFrame((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -500,7 +509,6 @@ void LaserData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
     } else if (_c == QMetaObject::ResetProperty) {
     }
 #endif // QT_NO_PROPERTIES
-    Q_UNUSED(_a);
 }
 
 QT_INIT_METAOBJECT const QMetaObject LaserData::staticMetaObject = { {
@@ -532,13 +540,13 @@ int LaserData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 26)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 26;
+        _id -= 27;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 26)
+        if (_id < 27)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 26;
+        _id -= 27;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
