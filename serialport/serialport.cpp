@@ -3,13 +3,8 @@
 
 SerialPort::SerialPort(QObject *parent)
     : QObject(parent)
-    , m_serialPort(new QSerialPort(this))
+    
 {
-    connect(m_serialPort, &QSerialPort::readyRead,
-            this, &SerialPort::handleReadyRead);
-    connect(m_serialPort, &QSerialPort::errorOccurred,
-            this, &SerialPort::handleError);
-
     scanPorts();
 }
 
@@ -19,6 +14,11 @@ SerialPort::~SerialPort()
 }
 void SerialPort::dowork()
 {
+QSerialPort*  m_serialPort(new QSerialPort(this));
+connect(m_serialPort, &QSerialPort::readyRead,
+            this, &SerialPort::handleReadyRead);
+    connect(m_serialPort, &QSerialPort::errorOccurred,
+            this, &SerialPort::handleError);
 }
 
 QStringList SerialPort::availablePorts() const

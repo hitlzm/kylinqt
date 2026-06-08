@@ -246,11 +246,11 @@ SerialPortLaser::~SerialPortLaser() {
     delete m_laserSendData;
 }
 
-void SerialPortLaser::dowork()
-{
-    // LaserData 和 LaserSendData 已在构造函数初始化列表中创建
-    // 此处不再重新 new，避免 QML 持有的 CONSTANT 属性指针悬空
-}
+// void SerialPortLaser::dowork()
+// {
+//     // LaserData 和 LaserSendData 已在构造函数初始化列表中创建
+//     // 此处不再重新 new，避免 QML 持有的 CONSTANT 属性指针悬空
+// }
 
 LaserData* SerialPortLaser::laserData() const
 {

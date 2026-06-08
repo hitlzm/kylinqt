@@ -54,6 +54,6 @@ int main(int argc, char *argv[])
     Laserthread->start();
     Imagethread->start();
     // Turntablethread->start();
-
+    
     return app.exec();
 }

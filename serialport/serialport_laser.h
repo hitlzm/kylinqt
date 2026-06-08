@@ -217,7 +217,7 @@ public:
 
     LaserData* laserData() const;
     LaserSendData* laserSendData() const;
-    void dowork() override;
+    // void dowork() override;
 
 protected:
     void parseData(const QByteArray &rawData) override;
