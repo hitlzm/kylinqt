@@ -17,7 +17,7 @@ void SerialPort::dowork()
 QSerialPort*  m_serialPort(new QSerialPort(this));
 connect(m_serialPort, &QSerialPort::readyRead,
             this, &SerialPort::handleReadyRead);
-    connect(m_serialPort, &QSerialPort::errorOccurred,
+connect(m_serialPort, &QSerialPort::errorOccurred,
             this, &SerialPort::handleError);
 }
 

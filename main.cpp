@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     SerialPortLaser laserPort;
     SerialPortImage imagePort;
-    SerialPortTurntable turntablePort;
+    // SerialPortTurntable turntablePort;
 
     // 1) 先加载 QML，在 moveToThread 之前建立所有信号连接
     QQmlApplicationEngine engine;
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
     engine.rootContext()->setContextProperty("laserSerial", &laserPort);
     engine.rootContext()->setContextProperty("imageSerial", &imagePort);
-    engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
+    // engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -39,20 +39,20 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     // 2) QML 连接建立完毕，创建线程并迁移
-    QThread *Laserthread = new QThread;
-    QThread *Imagethread = new QThread;
-    // QThread *Turntablethread = new QThread;
-    laserPort.moveToThread(Laserthread);
-    imagePort.moveToThread(Imagethread);
-    // turntablePort.moveToThread(Turntablethread);
+    // QThread *Laserthread = new QThread;
+    // QThread *Imagethread = new QThread;
+    // // QThread *Turntablethread = new QThread;
+    // laserPort.moveToThread(Laserthread);
+    // imagePort.moveToThread(Imagethread);
+    // // turntablePort.moveToThread(Turntablethread);
 
-    QObject::connect(Laserthread, &QThread::started, &laserPort, &SerialPortLaser::dowork);
-    QObject::connect(Imagethread, &QThread::started, &imagePort, &SerialPortImage::dowork);
-    // QObject::connect(Turntablethread, &QThread::started, &turntablePort, &SerialPortTurntable::dowork);
+    // QObject::connect(Laserthread, &QThread::started, &laserPort, &SerialPortLaser::dowork);
+    // QObject::connect(Imagethread, &QThread::started, &imagePort, &SerialPortImage::dowork);
+    // // QObject::connect(Turntablethread, &QThread::started, &turntablePort, &SerialPortTurntable::dowork);
 
-    // 3) 启动工作线程
-    Laserthread->start();
-    Imagethread->start();
+    // // 3) 启动工作线程
+    // Laserthread->start();
+    // Imagethread->start();
     // Turntablethread->start();
     
     return app.exec();
