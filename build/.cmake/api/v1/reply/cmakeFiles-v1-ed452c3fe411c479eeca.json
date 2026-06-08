@@ -342,55 +342,6 @@
 			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
 		},
 		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfigVersion.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfig.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreTargets.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreTargets-debug.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlConfigVersion.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlConfig.cmake"
-		},
-		{
-			"isCMake" : true,
-			"isExternal" : true,
-			"path" : "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfigVersion.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreConfig.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore/VLCQtCoreTargets.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlTargets.cmake"
-		},
-		{
-			"isExternal" : true,
-			"path" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml/VLCQtQmlTargets-debug.cmake"
-		},
-		{
 			"path" : "qml.qrc"
 		}
 	],

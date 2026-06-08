@@ -454,9 +454,11 @@ public:
 
     static void init_crc16_table(uint16_t poly = 0x1021);
     static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
+    // void dowork() override;
     
 protected:
     void parseData(const QByteArray &rawData) override;
+    
 
 private:
     static uint16_t crc16_table[256];

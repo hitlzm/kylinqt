@@ -235,8 +235,8 @@ QByteArray LaserSendData::buildFrame() const
 
 SerialPortLaser::SerialPortLaser(QObject *parent)
     : SerialPort(parent)
-    , m_laserData(new LaserData(this))
-    , m_laserSendData(new LaserSendData(this))
+    , m_laserData(new LaserData(nullptr))        // 留在主线程，不随 moveToThread 迁移
+    , m_laserSendData(new LaserSendData(nullptr))
 {
 }
 

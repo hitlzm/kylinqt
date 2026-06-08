@@ -36,8 +36,8 @@ set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
 # list(APPEND CMAKE_PREFIX_PATH "${VLCQT_ROOT}/lib/cmake")
 
 find_package(Qt5 COMPONENTS Core Quick Gui SerialPort REQUIRED)
-find_package(VLCQtCore REQUIRED)
-find_package(VLCQtQml REQUIRED)
+# find_package(VLCQtCore REQUIRED)    # 不再使用 VLCQt，改用直接 libvlc
+# find_package(VLCQtQml REQUIRED)
 
 if(ANDROID)
     add_library(kylinqt SHARED

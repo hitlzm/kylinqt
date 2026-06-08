@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_ImageData_t {
-    QByteArrayData data[98];
-    char stringdata0[1878];
+    QByteArrayData data[96];
+    char stringdata0[1856];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -80,55 +80,53 @@ QT_MOC_LITERAL(45, 1010, 15), // "gateSizeChanged"
 QT_MOC_LITERAL(46, 1026, 23), // "softwareVersion1Changed"
 QT_MOC_LITERAL(47, 1050, 23), // "softwareVersion2Changed"
 QT_MOC_LITERAL(48, 1074, 23), // "softwareVersion3Changed"
-QT_MOC_LITERAL(49, 1098, 15), // "updateFromFrame"
-QT_MOC_LITERAL(50, 1114, 5), // "frame"
-QT_MOC_LITERAL(51, 1120, 11), // "frameLength"
-QT_MOC_LITERAL(52, 1132, 14), // "bFrameSequence"
-QT_MOC_LITERAL(53, 1147, 19), // "aFrameSequenceReply"
-QT_MOC_LITERAL(54, 1167, 15), // "aFrameValidFlag"
-QT_MOC_LITERAL(55, 1183, 15), // "seekerCtrlReply"
-QT_MOC_LITERAL(56, 1199, 17), // "opticalParamReply"
-QT_MOC_LITERAL(57, 1217, 18), // "currentWorkChannel"
-QT_MOC_LITERAL(58, 1236, 13), // "selfCheckFlag"
-QT_MOC_LITERAL(59, 1250, 14), // "selfCheckFlag1"
-QT_MOC_LITERAL(60, 1265, 14), // "selfCheckFlag2"
-QT_MOC_LITERAL(61, 1280, 14), // "selfCheckFlag3"
-QT_MOC_LITERAL(62, 1295, 14), // "selfCheckFlag4"
-QT_MOC_LITERAL(63, 1310, 14), // "selfCheckFlag5"
-QT_MOC_LITERAL(64, 1325, 14), // "selfCheckFlag6"
-QT_MOC_LITERAL(65, 1340, 14), // "pitchLosAngVel"
-QT_MOC_LITERAL(66, 1355, 12), // "yawLosAngVel"
-QT_MOC_LITERAL(67, 1368, 20), // "targetBackgroundType"
-QT_MOC_LITERAL(68, 1389, 21), // "targetBackgroundType1"
-QT_MOC_LITERAL(69, 1411, 21), // "targetBackgroundType2"
-QT_MOC_LITERAL(70, 1433, 21), // "targetBackgroundType3"
-QT_MOC_LITERAL(71, 1455, 21), // "targetBackgroundType4"
-QT_MOC_LITERAL(72, 1477, 16), // "opticalWorkState"
-QT_MOC_LITERAL(73, 1494, 15), // "pitchFrameAngle"
-QT_MOC_LITERAL(74, 1510, 13), // "yawFrameAngle"
-QT_MOC_LITERAL(75, 1524, 19), // "correctionCmdStatus"
-QT_MOC_LITERAL(76, 1544, 18), // "correctionCmdCount"
-QT_MOC_LITERAL(77, 1563, 9), // "pitchGyro"
-QT_MOC_LITERAL(78, 1573, 7), // "yawGyro"
-QT_MOC_LITERAL(79, 1581, 13), // "trackingState"
-QT_MOC_LITERAL(80, 1595, 12), // "trackerState"
-QT_MOC_LITERAL(81, 1608, 21), // "azimuthDeviationPixel"
-QT_MOC_LITERAL(82, 1630, 19), // "pitchDeviationPixel"
-QT_MOC_LITERAL(83, 1650, 17), // "azimuthGyroOutput"
-QT_MOC_LITERAL(84, 1668, 15), // "pitchGyroOutput"
-QT_MOC_LITERAL(85, 1684, 16), // "azimuthMasterCmd"
-QT_MOC_LITERAL(86, 1701, 14), // "pitchMasterCmd"
-QT_MOC_LITERAL(87, 1716, 17), // "platformSelfCheck"
-QT_MOC_LITERAL(88, 1734, 16), // "servoRunningTime"
-QT_MOC_LITERAL(89, 1751, 9), // "servoStep"
-QT_MOC_LITERAL(90, 1761, 16), // "infraredFrameNum"
-QT_MOC_LITERAL(91, 1778, 9), // "cbhTv4405"
-QT_MOC_LITERAL(92, 1788, 17), // "infraredFrameRate"
-QT_MOC_LITERAL(93, 1806, 11), // "tvFrameRate"
-QT_MOC_LITERAL(94, 1818, 8), // "gateSize"
-QT_MOC_LITERAL(95, 1827, 16), // "softwareVersion1"
-QT_MOC_LITERAL(96, 1844, 16), // "softwareVersion2"
-QT_MOC_LITERAL(97, 1861, 16) // "softwareVersion3"
+QT_MOC_LITERAL(49, 1098, 11), // "frameLength"
+QT_MOC_LITERAL(50, 1110, 14), // "bFrameSequence"
+QT_MOC_LITERAL(51, 1125, 19), // "aFrameSequenceReply"
+QT_MOC_LITERAL(52, 1145, 15), // "aFrameValidFlag"
+QT_MOC_LITERAL(53, 1161, 15), // "seekerCtrlReply"
+QT_MOC_LITERAL(54, 1177, 17), // "opticalParamReply"
+QT_MOC_LITERAL(55, 1195, 18), // "currentWorkChannel"
+QT_MOC_LITERAL(56, 1214, 13), // "selfCheckFlag"
+QT_MOC_LITERAL(57, 1228, 14), // "selfCheckFlag1"
+QT_MOC_LITERAL(58, 1243, 14), // "selfCheckFlag2"
+QT_MOC_LITERAL(59, 1258, 14), // "selfCheckFlag3"
+QT_MOC_LITERAL(60, 1273, 14), // "selfCheckFlag4"
+QT_MOC_LITERAL(61, 1288, 14), // "selfCheckFlag5"
+QT_MOC_LITERAL(62, 1303, 14), // "selfCheckFlag6"
+QT_MOC_LITERAL(63, 1318, 14), // "pitchLosAngVel"
+QT_MOC_LITERAL(64, 1333, 12), // "yawLosAngVel"
+QT_MOC_LITERAL(65, 1346, 20), // "targetBackgroundType"
+QT_MOC_LITERAL(66, 1367, 21), // "targetBackgroundType1"
+QT_MOC_LITERAL(67, 1389, 21), // "targetBackgroundType2"
+QT_MOC_LITERAL(68, 1411, 21), // "targetBackgroundType3"
+QT_MOC_LITERAL(69, 1433, 21), // "targetBackgroundType4"
+QT_MOC_LITERAL(70, 1455, 16), // "opticalWorkState"
+QT_MOC_LITERAL(71, 1472, 15), // "pitchFrameAngle"
+QT_MOC_LITERAL(72, 1488, 13), // "yawFrameAngle"
+QT_MOC_LITERAL(73, 1502, 19), // "correctionCmdStatus"
+QT_MOC_LITERAL(74, 1522, 18), // "correctionCmdCount"
+QT_MOC_LITERAL(75, 1541, 9), // "pitchGyro"
+QT_MOC_LITERAL(76, 1551, 7), // "yawGyro"
+QT_MOC_LITERAL(77, 1559, 13), // "trackingState"
+QT_MOC_LITERAL(78, 1573, 12), // "trackerState"
+QT_MOC_LITERAL(79, 1586, 21), // "azimuthDeviationPixel"
+QT_MOC_LITERAL(80, 1608, 19), // "pitchDeviationPixel"
+QT_MOC_LITERAL(81, 1628, 17), // "azimuthGyroOutput"
+QT_MOC_LITERAL(82, 1646, 15), // "pitchGyroOutput"
+QT_MOC_LITERAL(83, 1662, 16), // "azimuthMasterCmd"
+QT_MOC_LITERAL(84, 1679, 14), // "pitchMasterCmd"
+QT_MOC_LITERAL(85, 1694, 17), // "platformSelfCheck"
+QT_MOC_LITERAL(86, 1712, 16), // "servoRunningTime"
+QT_MOC_LITERAL(87, 1729, 9), // "servoStep"
+QT_MOC_LITERAL(88, 1739, 16), // "infraredFrameNum"
+QT_MOC_LITERAL(89, 1756, 9), // "cbhTv4405"
+QT_MOC_LITERAL(90, 1766, 17), // "infraredFrameRate"
+QT_MOC_LITERAL(91, 1784, 11), // "tvFrameRate"
+QT_MOC_LITERAL(92, 1796, 8), // "gateSize"
+QT_MOC_LITERAL(93, 1805, 16), // "softwareVersion1"
+QT_MOC_LITERAL(94, 1822, 16), // "softwareVersion2"
+QT_MOC_LITERAL(95, 1839, 16) // "softwareVersion3"
 
     },
     "ImageData\0frameLengthChanged\0\0"
@@ -159,28 +157,27 @@ QT_MOC_LITERAL(97, 1861, 16) // "softwareVersion3"
     "infraredFrameRateChanged\0tvFrameRateChanged\0"
     "gateSizeChanged\0softwareVersion1Changed\0"
     "softwareVersion2Changed\0softwareVersion3Changed\0"
-    "updateFromFrame\0frame\0frameLength\0"
-    "bFrameSequence\0aFrameSequenceReply\0"
-    "aFrameValidFlag\0seekerCtrlReply\0"
-    "opticalParamReply\0currentWorkChannel\0"
-    "selfCheckFlag\0selfCheckFlag1\0"
-    "selfCheckFlag2\0selfCheckFlag3\0"
-    "selfCheckFlag4\0selfCheckFlag5\0"
-    "selfCheckFlag6\0pitchLosAngVel\0"
-    "yawLosAngVel\0targetBackgroundType\0"
-    "targetBackgroundType1\0targetBackgroundType2\0"
-    "targetBackgroundType3\0targetBackgroundType4\0"
-    "opticalWorkState\0pitchFrameAngle\0"
-    "yawFrameAngle\0correctionCmdStatus\0"
-    "correctionCmdCount\0pitchGyro\0yawGyro\0"
-    "trackingState\0trackerState\0"
-    "azimuthDeviationPixel\0pitchDeviationPixel\0"
-    "azimuthGyroOutput\0pitchGyroOutput\0"
-    "azimuthMasterCmd\0pitchMasterCmd\0"
-    "platformSelfCheck\0servoRunningTime\0"
-    "servoStep\0infraredFrameNum\0cbhTv4405\0"
-    "infraredFrameRate\0tvFrameRate\0gateSize\0"
-    "softwareVersion1\0softwareVersion2\0"
+    "frameLength\0bFrameSequence\0"
+    "aFrameSequenceReply\0aFrameValidFlag\0"
+    "seekerCtrlReply\0opticalParamReply\0"
+    "currentWorkChannel\0selfCheckFlag\0"
+    "selfCheckFlag1\0selfCheckFlag2\0"
+    "selfCheckFlag3\0selfCheckFlag4\0"
+    "selfCheckFlag5\0selfCheckFlag6\0"
+    "pitchLosAngVel\0yawLosAngVel\0"
+    "targetBackgroundType\0targetBackgroundType1\0"
+    "targetBackgroundType2\0targetBackgroundType3\0"
+    "targetBackgroundType4\0opticalWorkState\0"
+    "pitchFrameAngle\0yawFrameAngle\0"
+    "correctionCmdStatus\0correctionCmdCount\0"
+    "pitchGyro\0yawGyro\0trackingState\0"
+    "trackerState\0azimuthDeviationPixel\0"
+    "pitchDeviationPixel\0azimuthGyroOutput\0"
+    "pitchGyroOutput\0azimuthMasterCmd\0"
+    "pitchMasterCmd\0platformSelfCheck\0"
+    "servoRunningTime\0servoStep\0infraredFrameNum\0"
+    "cbhTv4405\0infraredFrameRate\0tvFrameRate\0"
+    "gateSize\0softwareVersion1\0softwareVersion2\0"
     "softwareVersion3"
 };
 #undef QT_MOC_LITERAL
@@ -191,64 +188,61 @@ static const uint qt_meta_data_ImageData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      48,   14, // methods
-      47,  304, // properties
+      47,   14, // methods
+      47,  296, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
       47,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  254,    2, 0x06 /* Public */,
-       3,    0,  255,    2, 0x06 /* Public */,
-       4,    0,  256,    2, 0x06 /* Public */,
-       5,    0,  257,    2, 0x06 /* Public */,
-       6,    0,  258,    2, 0x06 /* Public */,
-       7,    0,  259,    2, 0x06 /* Public */,
-       8,    0,  260,    2, 0x06 /* Public */,
-       9,    0,  261,    2, 0x06 /* Public */,
-      10,    0,  262,    2, 0x06 /* Public */,
-      11,    0,  263,    2, 0x06 /* Public */,
-      12,    0,  264,    2, 0x06 /* Public */,
-      13,    0,  265,    2, 0x06 /* Public */,
-      14,    0,  266,    2, 0x06 /* Public */,
-      15,    0,  267,    2, 0x06 /* Public */,
-      16,    0,  268,    2, 0x06 /* Public */,
-      17,    0,  269,    2, 0x06 /* Public */,
-      18,    0,  270,    2, 0x06 /* Public */,
-      19,    0,  271,    2, 0x06 /* Public */,
-      20,    0,  272,    2, 0x06 /* Public */,
-      21,    0,  273,    2, 0x06 /* Public */,
-      22,    0,  274,    2, 0x06 /* Public */,
-      23,    0,  275,    2, 0x06 /* Public */,
-      24,    0,  276,    2, 0x06 /* Public */,
-      25,    0,  277,    2, 0x06 /* Public */,
-      26,    0,  278,    2, 0x06 /* Public */,
-      27,    0,  279,    2, 0x06 /* Public */,
-      28,    0,  280,    2, 0x06 /* Public */,
-      29,    0,  281,    2, 0x06 /* Public */,
-      30,    0,  282,    2, 0x06 /* Public */,
-      31,    0,  283,    2, 0x06 /* Public */,
-      32,    0,  284,    2, 0x06 /* Public */,
-      33,    0,  285,    2, 0x06 /* Public */,
-      34,    0,  286,    2, 0x06 /* Public */,
-      35,    0,  287,    2, 0x06 /* Public */,
-      36,    0,  288,    2, 0x06 /* Public */,
-      37,    0,  289,    2, 0x06 /* Public */,
-      38,    0,  290,    2, 0x06 /* Public */,
-      39,    0,  291,    2, 0x06 /* Public */,
-      40,    0,  292,    2, 0x06 /* Public */,
-      41,    0,  293,    2, 0x06 /* Public */,
-      42,    0,  294,    2, 0x06 /* Public */,
-      43,    0,  295,    2, 0x06 /* Public */,
-      44,    0,  296,    2, 0x06 /* Public */,
-      45,    0,  297,    2, 0x06 /* Public */,
-      46,    0,  298,    2, 0x06 /* Public */,
-      47,    0,  299,    2, 0x06 /* Public */,
-      48,    0,  300,    2, 0x06 /* Public */,
-
- // methods: name, argc, parameters, tag, flags
-      49,    1,  301,    2, 0x02 /* Public */,
+       1,    0,  249,    2, 0x06 /* Public */,
+       3,    0,  250,    2, 0x06 /* Public */,
+       4,    0,  251,    2, 0x06 /* Public */,
+       5,    0,  252,    2, 0x06 /* Public */,
+       6,    0,  253,    2, 0x06 /* Public */,
+       7,    0,  254,    2, 0x06 /* Public */,
+       8,    0,  255,    2, 0x06 /* Public */,
+       9,    0,  256,    2, 0x06 /* Public */,
+      10,    0,  257,    2, 0x06 /* Public */,
+      11,    0,  258,    2, 0x06 /* Public */,
+      12,    0,  259,    2, 0x06 /* Public */,
+      13,    0,  260,    2, 0x06 /* Public */,
+      14,    0,  261,    2, 0x06 /* Public */,
+      15,    0,  262,    2, 0x06 /* Public */,
+      16,    0,  263,    2, 0x06 /* Public */,
+      17,    0,  264,    2, 0x06 /* Public */,
+      18,    0,  265,    2, 0x06 /* Public */,
+      19,    0,  266,    2, 0x06 /* Public */,
+      20,    0,  267,    2, 0x06 /* Public */,
+      21,    0,  268,    2, 0x06 /* Public */,
+      22,    0,  269,    2, 0x06 /* Public */,
+      23,    0,  270,    2, 0x06 /* Public */,
+      24,    0,  271,    2, 0x06 /* Public */,
+      25,    0,  272,    2, 0x06 /* Public */,
+      26,    0,  273,    2, 0x06 /* Public */,
+      27,    0,  274,    2, 0x06 /* Public */,
+      28,    0,  275,    2, 0x06 /* Public */,
+      29,    0,  276,    2, 0x06 /* Public */,
+      30,    0,  277,    2, 0x06 /* Public */,
+      31,    0,  278,    2, 0x06 /* Public */,
+      32,    0,  279,    2, 0x06 /* Public */,
+      33,    0,  280,    2, 0x06 /* Public */,
+      34,    0,  281,    2, 0x06 /* Public */,
+      35,    0,  282,    2, 0x06 /* Public */,
+      36,    0,  283,    2, 0x06 /* Public */,
+      37,    0,  284,    2, 0x06 /* Public */,
+      38,    0,  285,    2, 0x06 /* Public */,
+      39,    0,  286,    2, 0x06 /* Public */,
+      40,    0,  287,    2, 0x06 /* Public */,
+      41,    0,  288,    2, 0x06 /* Public */,
+      42,    0,  289,    2, 0x06 /* Public */,
+      43,    0,  290,    2, 0x06 /* Public */,
+      44,    0,  291,    2, 0x06 /* Public */,
+      45,    0,  292,    2, 0x06 /* Public */,
+      46,    0,  293,    2, 0x06 /* Public */,
+      47,    0,  294,    2, 0x06 /* Public */,
+      48,    0,  295,    2, 0x06 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -299,10 +293,9 @@ static const uint qt_meta_data_ImageData[] = {
     QMetaType::Void,
     QMetaType::Void,
 
- // methods: parameters
-    QMetaType::Void, QMetaType::QByteArray,   50,
-
  // properties: name, type, flags
+      49, QMetaType::Int, 0x00495001,
+      50, QMetaType::Int, 0x00495001,
       51, QMetaType::Int, 0x00495001,
       52, QMetaType::Int, 0x00495001,
       53, QMetaType::Int, 0x00495001,
@@ -315,30 +308,30 @@ static const uint qt_meta_data_ImageData[] = {
       60, QMetaType::Int, 0x00495001,
       61, QMetaType::Int, 0x00495001,
       62, QMetaType::Int, 0x00495001,
-      63, QMetaType::Int, 0x00495001,
-      64, QMetaType::Int, 0x00495001,
-      65, QMetaType::Float, 0x00495001,
-      66, QMetaType::Float, 0x00495001,
+      63, QMetaType::Float, 0x00495001,
+      64, QMetaType::Float, 0x00495001,
+      65, QMetaType::Int, 0x00495001,
+      66, QMetaType::Int, 0x00495001,
       67, QMetaType::Int, 0x00495001,
       68, QMetaType::Int, 0x00495001,
       69, QMetaType::Int, 0x00495001,
       70, QMetaType::Int, 0x00495001,
-      71, QMetaType::Int, 0x00495001,
-      72, QMetaType::Int, 0x00495001,
-      73, QMetaType::Float, 0x00495001,
-      74, QMetaType::Float, 0x00495001,
-      75, QMetaType::Int, 0x00495001,
-      76, QMetaType::Int, 0x00495001,
-      77, QMetaType::Float, 0x00495001,
-      78, QMetaType::Float, 0x00495001,
+      71, QMetaType::Float, 0x00495001,
+      72, QMetaType::Float, 0x00495001,
+      73, QMetaType::Int, 0x00495001,
+      74, QMetaType::Int, 0x00495001,
+      75, QMetaType::Float, 0x00495001,
+      76, QMetaType::Float, 0x00495001,
+      77, QMetaType::Int, 0x00495001,
+      78, QMetaType::Int, 0x00495001,
       79, QMetaType::Int, 0x00495001,
       80, QMetaType::Int, 0x00495001,
-      81, QMetaType::Int, 0x00495001,
-      82, QMetaType::Int, 0x00495001,
+      81, QMetaType::Float, 0x00495001,
+      82, QMetaType::Float, 0x00495001,
       83, QMetaType::Float, 0x00495001,
       84, QMetaType::Float, 0x00495001,
-      85, QMetaType::Float, 0x00495001,
-      86, QMetaType::Float, 0x00495001,
+      85, QMetaType::Int, 0x00495001,
+      86, QMetaType::Int, 0x00495001,
       87, QMetaType::Int, 0x00495001,
       88, QMetaType::Int, 0x00495001,
       89, QMetaType::Int, 0x00495001,
@@ -348,8 +341,6 @@ static const uint qt_meta_data_ImageData[] = {
       93, QMetaType::Int, 0x00495001,
       94, QMetaType::Int, 0x00495001,
       95, QMetaType::Int, 0x00495001,
-      96, QMetaType::Int, 0x00495001,
-      97, QMetaType::Int, 0x00495001,
 
  // properties: notify_signal_id
        0,
@@ -456,7 +447,6 @@ void ImageData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 44: _t->softwareVersion1Changed(); break;
         case 45: _t->softwareVersion2Changed(); break;
         case 46: _t->softwareVersion3Changed(); break;
-        case 47: _t->updateFromFrame((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -850,6 +840,7 @@ void ImageData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
     } else if (_c == QMetaObject::ResetProperty) {
     }
 #endif // QT_NO_PROPERTIES
+    Q_UNUSED(_a);
 }
 
 QT_INIT_METAOBJECT const QMetaObject ImageData::staticMetaObject = { {
@@ -881,13 +872,13 @@ int ImageData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 48)
+        if (_id < 47)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 48;
+        _id -= 47;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 48)
+        if (_id < 47)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 48;
+        _id -= 47;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty

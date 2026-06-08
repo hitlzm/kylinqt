@@ -1,0 +1,4 @@
+{
+    // 核心：告诉C/C++插件，所有配置都由CMake Tools插件提供
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools" 
+}

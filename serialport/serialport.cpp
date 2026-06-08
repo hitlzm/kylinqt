@@ -3,19 +3,24 @@
 
 SerialPort::SerialPort(QObject *parent)
     : QObject(parent)
-    , m_serialPort(new QSerialPort(this))
+    , m_serialPort(nullptr)   // 延迟到 dowork() 在目标线程中创建
 {
-    connect(m_serialPort, &QSerialPort::readyRead,
-            this, &SerialPort::handleReadyRead);
-    connect(m_serialPort, &QSerialPort::errorOccurred,
-            this, &SerialPort::handleError);
-
     scanPorts();
 }
 
 SerialPort::~SerialPort()
 {
     close();
+}
+
+void SerialPort::dowork()
+{
+    // QSerialPort 在工作线程中创建，避免主线程创建后被 moveToThread 迁移
+    m_serialPort = new QSerialPort(this);
+    connect(m_serialPort, &QSerialPort::readyRead,
+            this, &SerialPort::handleReadyRead);
+    connect(m_serialPort, &QSerialPort::errorOccurred,
+            this, &SerialPort::handleError);
 }
 
 QStringList SerialPort::availablePorts() const

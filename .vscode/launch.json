@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug kylinqt",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/kylinqt.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${env:PATH};E:/QTproject/vlclib;E:/QT5.12.8/5.12.8/mingw73_64/bin"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "E:/QT5.12.8/Tools/mingw730_64/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "cmake build"
+        }
+    ]
+}

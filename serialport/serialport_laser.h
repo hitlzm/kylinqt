@@ -217,9 +217,11 @@ public:
 
     LaserData* laserData() const;
     LaserSendData* laserSendData() const;
+    // void dowork() override;
 
 protected:
     void parseData(const QByteArray &rawData) override;
+    
 
 private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
