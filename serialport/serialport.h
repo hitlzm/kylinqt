@@ -31,8 +31,8 @@ public:
 
     qint64 send(const QByteArray &data);
 
-public slots:
-virtual void dowork();
+
+    virtual void dowork();
 
 protected:
     virtual void onReadyRead();
