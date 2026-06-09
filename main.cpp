@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     SerialPortLaser laserPort;
     SerialPortImage imagePort;
-    SerialPortTurntable turntablePort;
+    // SerialPortTurntable turntablePort;
 
     // 1) 先加载 QML，在 moveToThread 之前建立所有信号连接
     QQmlApplicationEngine engine;
@@ -24,18 +24,20 @@ int main(int argc, char *argv[])
     engine.addImportPath(TaoQuickImportPath);
     engine.addImportPath(app.applicationDirPath());
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
-    engine.rootContext()->setContextProperty("laserSerial", &laserPort);
-    engine.rootContext()->setContextProperty("imageSerial", &imagePort);
-    engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
+    // engine.rootContext()->setContextProperty("laserSerial", &laserPort);
+    // engine.rootContext()->setContextProperty("imageSerial", &imagePort);
+    // engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
+    // DirectConnection：同步检测加载结果，立刻知道 QML 是否出错
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
+        if (!obj && url == objUrl) {
             qCritical() << "Failed to load QML file";
             QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
+        }
+    }, Qt::DirectConnection);
     engine.load(url);
 
     // 2) QML 连接建立完毕，创建线程并迁移
