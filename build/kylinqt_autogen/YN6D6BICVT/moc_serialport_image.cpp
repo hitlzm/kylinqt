@@ -2740,8 +2740,8 @@ void ImageSendData::pixelSizeChanged()
     QMetaObject::activate(this, &staticMetaObject, 50, nullptr);
 }
 struct qt_meta_stringdata_SerialPortImage_t {
-    QByteArrayData data[5];
-    char stringdata0[66];
+    QByteArrayData data[3];
+    char stringdata0[41];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2751,14 +2751,11 @@ struct qt_meta_stringdata_SerialPortImage_t {
 static const qt_meta_stringdata_SerialPortImage_t qt_meta_stringdata_SerialPortImage = {
     {
 QT_MOC_LITERAL(0, 0, 15), // "SerialPortImage"
-QT_MOC_LITERAL(1, 16, 9), // "imageData"
-QT_MOC_LITERAL(2, 26, 10), // "ImageData*"
-QT_MOC_LITERAL(3, 37, 13), // "imageSendData"
-QT_MOC_LITERAL(4, 51, 14) // "ImageSendData*"
+QT_MOC_LITERAL(1, 16, 11), // "imageSerial"
+QT_MOC_LITERAL(2, 28, 12) // "QSerialPort*"
 
     },
-    "SerialPortImage\0imageData\0ImageData*\0"
-    "imageSendData\0ImageSendData*"
+    "SerialPortImage\0imageSerial\0QSerialPort*"
 };
 #undef QT_MOC_LITERAL
 
@@ -2769,7 +2766,7 @@ static const uint qt_meta_data_SerialPortImage[] = {
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
-       2,   14, // properties
+       1,   14, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
@@ -2777,7 +2774,6 @@ static const uint qt_meta_data_SerialPortImage[] = {
 
  // properties: name, type, flags
        1, 0x80000000 | 2, 0x00095409,
-       3, 0x80000000 | 4, 0x00095409,
 
        0        // eod
 };
@@ -2788,9 +2784,7 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         switch (_id) {
         default: *reinterpret_cast<int*>(_a[0]) = -1; break;
         case 0:
-            *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< ImageData* >(); break;
-        case 1:
-            *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< ImageSendData* >(); break;
+            *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QSerialPort* >(); break;
         }
     }
 
@@ -2800,8 +2794,7 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         Q_UNUSED(_t)
         void *_v = _a[0];
         switch (_id) {
-        case 0: *reinterpret_cast< ImageData**>(_v) = _t->imageData(); break;
-        case 1: *reinterpret_cast< ImageSendData**>(_v) = _t->imageSendData(); break;
+        case 0: *reinterpret_cast< QSerialPort**>(_v) = _t->imageSerial(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -2844,17 +2837,17 @@ int SerialPortImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 1;
     } else if (_c == QMetaObject::QueryPropertyDesignable) {
-        _id -= 2;
+        _id -= 1;
     } else if (_c == QMetaObject::QueryPropertyScriptable) {
-        _id -= 2;
+        _id -= 1;
     } else if (_c == QMetaObject::QueryPropertyStored) {
-        _id -= 2;
+        _id -= 1;
     } else if (_c == QMetaObject::QueryPropertyEditable) {
-        _id -= 2;
+        _id -= 1;
     } else if (_c == QMetaObject::QueryPropertyUser) {
-        _id -= 2;
+        _id -= 1;
     }
 #endif // QT_NO_PROPERTIES
     return _id;

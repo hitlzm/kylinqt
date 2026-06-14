@@ -12,18 +12,7 @@ Rectangle {
     height: myheight
     color: '#e9f0f9'
     property int groupHeight1: 150
-    // Text {
-    //     id: titleText
-    //     text: "激光导引头接收区"
-    //     font.pixelSize: 24
-    //     font.bold: true
-    //     color: "#000000"
-
-    //     anchors.left: parent.left
-    //     anchors.leftMargin: 10
-    //     anchors.top: parent.top
-    //     anchors.topMargin: 10
-    // }
+   
 
     // ═══ 数据显示区 ═══
     Rectangle {
@@ -74,7 +63,7 @@ Rectangle {
                             DataLabel {
                                 label: "DYT状态:"
                                 value: {
-                                    switch(laserSerial.laserData.dytStatus) {
+                                    switch(laserData.dytStatus) {
                                         case 0x00: return "待机"
                                         case 0x01: return "自检中"
                                         case 0x04: return "定轴搜索"
@@ -86,27 +75,27 @@ Rectangle {
                                         case 0x0A: return "定轴搜索(位置)"
                                         case 0x0B: return "矩形搜索(位置)"
                                         case 0x0C: return "圆形搜索(位置)"
-                                        default: return "未知(0x" + laserSerial.laserData.dytStatus.toString(16) + ")"
+                                        default: return "未知(0x" + laserData.dytStatus.toString(16) + ")"
                                     }
                                 }
                             }
-                            DataLabel { label: "探测器状态:"; value: "0x" + laserSerial.laserData.detectorStatus.toString(16).toUpperCase() }
+                            DataLabel { label: "探测器状态:"; value: "0x" + laserData.detectorStatus.toString(16).toUpperCase() }
                             DataLabel {
                                 label: "故障信息:"
-                                value: switch(laserSerial.laserData.faultInfo1) {
+                                value: switch(laserData.faultInfo1) {
                                         case 0x00: return "NA"
                                         case 0x01: return "无故障"
                                         case 0x02: return "有故障"
                                         default: return "NA"
                                     }
-                                valueColor: laserSerial.laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
+                                valueColor: laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
                             }
                              DataLabel {
                                 label: "故障码:"
-                                value: switch(laserSerial.laserData.faultInfo1) {
+                                value: switch(laserData.faultInfo1) {
                                         case 0x00: return "NA"
                                         case 0x01: return "NA"
-                                        case 0x02: return "0x" + laserSerial.laserData.faultInfo2.toString(16).toUpperCase()
+                                        case 0x02: return "0x" + laserData.faultInfo2.toString(16).toUpperCase()
                                         default: return "NA"
                                     }
                                 valueColor:"#d93025"
@@ -140,10 +129,10 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "光轴方位角:"; value: laserSerial.laserData.opticalAzimuth.toFixed(2) + "°" }
-                            DataLabel { label: "光轴俯仰角:"; value: laserSerial.laserData.opticalPitch.toFixed(2) + "°" }
-                            DataLabel { label: "方位偏差角:"; value: laserSerial.laserData.deviationAzimuth.toFixed(3) + "°" }
-                            DataLabel { label: "俯仰偏差角:"; value: laserSerial.laserData.deviationPitch.toFixed(3) + "°" }
+                            DataLabel { label: "光轴方位角:"; value: laserData.opticalAzimuth.toFixed(2) + "°" }
+                            DataLabel { label: "光轴俯仰角:"; value: laserData.opticalPitch.toFixed(2) + "°" }
+                            DataLabel { label: "方位偏差角:"; value: laserData.deviationAzimuth.toFixed(3) + "°" }
+                            DataLabel { label: "俯仰偏差角:"; value: laserData.deviationPitch.toFixed(3) + "°" }
                         }
                         
                     }
@@ -174,10 +163,10 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "方位陀螺:"; value: laserSerial.laserData.gyroAzimuthRate.toFixed(2) + "°/s" }
-                            DataLabel { label: "俯仰陀螺:"; value: laserSerial.laserData.gyroPitchRate.toFixed(2) + "°/s" }
-                            DataLabel { label: "方位视线:"; value: laserSerial.laserData.losAzimuthRate.toFixed(2) + "°/s" }
-                            DataLabel { label: "俯仰视线:"; value: laserSerial.laserData.losPitchRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "方位陀螺:"; value: laserData.gyroAzimuthRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰陀螺:"; value: laserData.gyroPitchRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "方位视线:"; value: laserData.losAzimuthRate.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰视线:"; value: laserData.losPitchRate.toFixed(2) + "°/s" }
                         }
 
                     }
@@ -212,10 +201,10 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "第一象限:"; value: laserSerial.laserData.quadrant1Energy.toFixed(2) }
-                            DataLabel { label: "第二象限:"; value: laserSerial.laserData.quadrant2Energy.toFixed(2) }
-                            DataLabel { label: "第三象限:"; value: laserSerial.laserData.quadrant3Energy.toFixed(2) }
-                            DataLabel { label: "第四象限:"; value: laserSerial.laserData.quadrant4Energy.toFixed(2) }
+                            DataLabel { label: "第一象限:"; value: laserData.quadrant1Energy.toFixed(2) }
+                            DataLabel { label: "第二象限:"; value: laserData.quadrant2Energy.toFixed(2) }
+                            DataLabel { label: "第三象限:"; value: laserData.quadrant3Energy.toFixed(2) }
+                            DataLabel { label: "第四象限:"; value: laserData.quadrant4Energy.toFixed(2) }
                         }
                     }
                 }
@@ -245,10 +234,10 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "激光周期:"; value: (laserSerial.laserData.laserPeriod * 2).toFixed(0) + " us" }
-                            DataLabel { label: "增益状态:"; value: "0x" + laserSerial.laserData.gainStatus.toString(16).toUpperCase() }
-                            DataLabel { label: "软件版本1:"; value: laserSerial.laserData.softwareVersion1.toFixed(2) }
-                            DataLabel { label: "软件版本2:"; value: laserSerial.laserData.softwareVersion2.toFixed(2) }
+                            DataLabel { label: "激光周期:"; value: (laserData.laserPeriod * 2).toFixed(0) + " us" }
+                            DataLabel { label: "增益状态:"; value: "0x" + laserData.gainStatus.toString(16).toUpperCase() }
+                            DataLabel { label: "软件版本1:"; value: laserData.softwareVersion1.toFixed(2) }
+                            DataLabel { label: "软件版本2:"; value: laserData.softwareVersion2.toFixed(2) }
                         }
                     
                     }
@@ -258,16 +247,16 @@ Rectangle {
     }
     
     // 连接到 laserSerial 信号
-    Connections {
-        target: laserSerial
-        function onErrorOccurred(msg) {
-            console.log("Laser serial error:", msg)
-        }
-        function onConnected() {
-            console.log("Laser serial connected")
-        }
-        function onDisconnected() {
-            console.log("Laser serial disconnected")
-        }
-    }
+    // Connections {
+    //     target: laserSerial
+    //     function onErrorOccurred(msg) {
+    //         console.log("Laser serial error:", msg)
+    //     }
+    //     function onConnected() {
+    //         console.log("Laser serial connected")
+    //     }
+    //     function onDisconnected() {
+    //         console.log("Laser serial disconnected")
+    //     }
+    // }
 }

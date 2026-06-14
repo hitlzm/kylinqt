@@ -443,8 +443,9 @@ private:
 class SerialPortImage : public SerialPort
 {
     Q_OBJECT
-    Q_PROPERTY(ImageData* imageData READ imageData CONSTANT)
-    Q_PROPERTY(ImageSendData* imageSendData READ imageSendData CONSTANT)
+    // Q_PROPERTY(ImageData* imageData READ imageData CONSTANT)
+    // Q_PROPERTY(ImageSendData* imageSendData READ imageSendData CONSTANT)
+    // Q_PROPERTY(QSerialPort * imageSerial READ imageSerial CONSTANT)
 public:
     explicit SerialPortImage(QObject *parent = nullptr);
     ~SerialPortImage() override;
@@ -455,15 +456,15 @@ public:
     static void init_crc16_table(uint16_t poly = 0x1021);
     static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
     // void dowork() override;
-    
+    ImageData *m_imageData;
+    ImageSendData *m_imageSendData;
+    // QSerialPort * imageSerial() const { return m_serialPort; }
 protected:
     void parseData(const QByteArray &rawData) override;
     
 
 private:
     static uint16_t crc16_table[256];
-    ImageData *m_imageData;
-    ImageSendData *m_imageSendData;
 
 };
 

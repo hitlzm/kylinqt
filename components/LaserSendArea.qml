@@ -95,25 +95,25 @@ Rectangle {
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSerial.laserSendData.m_cmd= 0x00
+                            laserSendData.m_cmd= 0x00
                             } else if (index === 1) {
                             firstColumn.disabledIndices = [0,1]      // 都禁用
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSerial.laserSendData.m_cmd= 0x01
+                            laserSendData.m_cmd= 0x01
                             } else if (index === 2) {
                             firstColumn.disabledIndices = [0]      
                             secondColumn.disabledIndices = [1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSerial.laserSendData.m_cmd= 0x02
+                            laserSendData.m_cmd= 0x02
                             } else if (index === 3) {
                             firstColumn.disabledIndices = [1]      
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSerial.laserSendData.m_cmd= 0x03
+                            laserSendData.m_cmd= 0x03
                             }
                             else if (index === 4 || index === 7) {
                             firstColumn.disabledIndices = [0]      
@@ -121,9 +121,9 @@ Rectangle {
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
                             if(index === 4){
-                                laserSerial.laserSendData.m_cmd= 0x06
+                                laserSendData.m_cmd= 0x06
                             }else{
-                                laserSerial.laserSendData.m_cmd= 0x09
+                                laserSendData.m_cmd= 0x09
                             }
                             }
                             else if (index === 5 || index === 8) {
@@ -132,9 +132,9 @@ Rectangle {
                             thirdColumn.disabledIndices = []
                             fourthColumn.disabledIndices = [1]
                             if(index === 5){
-                                laserSerial.laserSendData.m_cmd= 0x07
+                                laserSendData.m_cmd= 0x07
                             }else{
-                                laserSerial.laserSendData.m_cmd= 0x0A
+                                laserSendData.m_cmd= 0x0A
                             }
                             }
                             else if (index === 6 || index === 9) {
@@ -143,9 +143,9 @@ Rectangle {
                             thirdColumn.disabledIndices = [1]
                             fourthColumn.disabledIndices = [0]
                             if(index === 6){
-                                laserSerial.laserSendData.m_cmd= 0x08
+                                laserSendData.m_cmd= 0x08
                             }else{
-                                laserSerial.laserSendData.m_cmd= 0x0B
+                                laserSendData.m_cmd= 0x0B
                             }
                             }
                 }
@@ -219,7 +219,7 @@ Rectangle {
             // var data = ""      //打包数据
             // root.sendData(data)
             //直接调用对应串口里的发送函数就行，最后实现效果是固定周期的发送
-            laserSerial.sendData(laserSerial.laserSendData.buildFrame())
+            laserSerial.sendData(laserSendData.buildFrame())
             console.log("激光导引头数据已发送")
         }
     }
@@ -247,10 +247,10 @@ Rectangle {
                 enabled: firstColumn.disabledIndices.indexOf(index) === -1
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSerial.laserSendData.m_laserPeriod = Number(text)
+                        laserSendData.m_laserPeriod = Number(text)
                         console.log(Number(text))
                     } else if (index === 1) {
-                        laserSerial.laserSendData.m_azimuthAngle = Number(text)
+                        laserSendData.m_azimuthAngle = Number(text)
                     }
                 }
             }
@@ -282,9 +282,9 @@ Rectangle {
                 enabled: secondColumn.disabledIndices.indexOf(index) === -1
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSerial.laserSendData.m_elevationAngle = Number(text)
+                        laserSendData.m_elevationAngle = Number(text)
                     } else if (index === 1) {
-                        laserSerial.laserSendData.m_searchCenterAzimuth = Number(text)
+                        laserSendData.m_searchCenterAzimuth = Number(text)
                     }
                 }
             }
@@ -315,9 +315,9 @@ Rectangle {
                 enabled: thirdColumn.disabledIndices.indexOf(index) === -1
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSerial.laserSendData.m_searchCenterElevation = Number(text)
+                        laserSendData.m_searchCenterElevation = Number(text)
                     } else if (index === 1) {
-                        laserSerial.laserSendData.m_azimuthSearchRange = Number(text)
+                        laserSendData.m_azimuthSearchRange = Number(text)
                     }
                 }
             }
@@ -348,9 +348,9 @@ Rectangle {
                 enabled: fourthColumn.disabledIndices.indexOf(index) === -1 
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSerial.laserSendData.m_elevationSearchRange = Number(text)
+                        laserSendData.m_elevationSearchRange = Number(text)
                     } else if (index === 1) {
-                        laserSerial.laserSendData.m_searchRadius = Number(text)
+                        laserSendData.m_searchRadius = Number(text)
                     }
                 }
             }

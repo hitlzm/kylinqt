@@ -209,8 +209,8 @@ private:
 class SerialPortLaser : public SerialPort
 {
     Q_OBJECT
-    Q_PROPERTY(LaserData* laserData READ laserData CONSTANT)
-    Q_PROPERTY(LaserSendData* laserSendData READ laserSendData CONSTANT)
+    // Q_PROPERTY(LaserData* laserData READ laserData CONSTANT)
+    // Q_PROPERTY(LaserSendData* laserSendData READ laserSendData CONSTANT)
 public:
     explicit SerialPortLaser(QObject *parent = nullptr);
     ~SerialPortLaser() override;
@@ -218,7 +218,8 @@ public:
     LaserData* laserData() const;
     LaserSendData* laserSendData() const;
     // void dowork() override;
-
+    LaserData *m_laserData;
+    LaserSendData *m_laserSendData;
 protected:
     void parseData(const QByteArray &rawData) override;
     
@@ -226,8 +227,7 @@ protected:
 private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
     uint8_t xorChecksum(const QByteArray& data);
-    LaserData *m_laserData;
-    LaserSendData *m_laserSendData;
+    
 };
 
 

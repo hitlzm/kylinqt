@@ -31,11 +31,11 @@ Rectangle {
         anchors.verticalCenter: titleText.verticalCenter
         spacing: 20
 
-        Indicator { label: "红外视频接收"; normal: imageSerial.imageData.selfCheckFlag2 === 1 }
-        Indicator { label: "电视视频接收"; normal: imageSerial.imageData.selfCheckFlag3 === 1 }
-        Indicator { label: "视频输出";     normal: imageSerial.imageData.selfCheckFlag4 === 1 }
-        Indicator { label: "通讯";         normal: imageSerial.imageData.selfCheckFlag5 === 1 }
-        Indicator { label: "伺服自检";     normal: imageSerial.imageData.selfCheckFlag6 === 1 }
+        Indicator { label: "红外视频接收"; normal: imageData.selfCheckFlag2 === 1 }
+        Indicator { label: "电视视频接收"; normal: imageData.selfCheckFlag3 === 1 }
+        Indicator { label: "视频输出";     normal: imageData.selfCheckFlag4 === 1 }
+        Indicator { label: "通讯";         normal: imageData.selfCheckFlag5 === 1 }
+        Indicator { label: "伺服自检";     normal: imageData.selfCheckFlag6 === 1 }
     }
 
     // ═══ 数据显示区 ═══
@@ -85,12 +85,12 @@ Rectangle {
                         Column {
                             spacing: 6
                            
-                            DataLabel { label: "B帧流水号:"; value: imageSerial.imageData.bFrameSequence }
-                            DataLabel { label: "A帧流水号回告:"; value: imageSerial.imageData.aFrameSequenceReply }
+                            DataLabel { label: "B帧流水号:"; value: imageData.bFrameSequence }
+                            DataLabel { label: "A帧流水号回告:"; value: imageData.aFrameSequenceReply }
                             DataLabel {
                                 label: "A帧有效标志:"
-                                value: imageSerial.imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
-                                valueColor: imageSerial.imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+                                value: imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                                valueColor: imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
                             }
                         }    
                        
@@ -127,7 +127,7 @@ Rectangle {
                             DataLabel {
                                 label: "导引头控制字:"
                                 value: {
-                                    var v = imageSerial.imageData.seekerCtrlReply
+                                    var v = imageData.seekerCtrlReply
                                     switch(v) {
                                         case 0x00: return "默认值"
                                         case 0x01: return "自检通过"
@@ -148,7 +148,7 @@ Rectangle {
                                     }
                                 }
                                 valueColor: {
-                                    var v = imageSerial.imageData.seekerCtrlReply
+                                    var v = imageData.seekerCtrlReply
                                     if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
                                     if (v >= 0xF0 || v === 0x43) return "#d93025"
                                     return "#1a73e8"
@@ -157,7 +157,7 @@ Rectangle {
                             DataLabel {
                                 label: "光学参数装订:"
                                 value: {
-                                    var v = imageSerial.imageData.opticalParamReply
+                                    var v = imageData.opticalParamReply
                                     switch(v) {
                                         case 0x00: return "默认值"
                                         case 0xE1: return "非卫星图模板装订成功"
@@ -173,7 +173,7 @@ Rectangle {
                                     }
                                 }
                                 valueColor: {
-                                    var v = imageSerial.imageData.opticalParamReply
+                                    var v = imageData.opticalParamReply
                                     if (v === 0xE3 || v === 0xE5) return "#e68a00"
                                     if (v === 0xE7 || v === 0xE8) return "#d93025"
                                     return "#1a73e8"
@@ -181,15 +181,15 @@ Rectangle {
                             }
                             DataLabel {
                                 label: "当前工作通道:"
-                                value: imageSerial.imageData.currentWorkChannel === 0x02 ? "红外" : (imageSerial.imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
+                                value: imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
                             }
-                            DataLabel { label: "自检标志:"; value: "0x" + imageSerial.imageData.selfCheckFlag.toString(16).toUpperCase() }
+                            DataLabel { label: "自检标志:"; value: "0x" + imageData.selfCheckFlag.toString(16).toUpperCase() }
                             
                         }
                        
                         Column {
                             spacing: 6
-                            DataLabel { label: "目标类型:"; value: switch(imageSerial.imageData.m_targetBackgroundType1) {
+                            DataLabel { label: "目标类型:"; value: switch(imageData.m_targetBackgroundType1) {
                                         case 0x00: return "车辆"
                                         case 0x01: return "小型建筑物"
                                         case 0x02: return "坦克"
@@ -197,17 +197,17 @@ Rectangle {
                                         case 0x07: return "靶标"
                                         default: return "未知"
                                     } }
-                            DataLabel { label: "目标灰度类型:"; value: switch(imageSerial.imageData.m_targetBackgroundType2) {
+                            DataLabel { label: "目标灰度类型:"; value: switch(imageData.m_targetBackgroundType2) {
                                         case 0x00: return "亮目标"
                                         case 0x01: return "暗目标"
                                         default: return "未知"
                                     } }
-                            DataLabel { label: "目标动/静:"; value: switch(imageSerial.imageData.m_targetBackgroundType3) {
+                            DataLabel { label: "目标动/静:"; value: switch(imageData.m_targetBackgroundType3) {
                                         case 0x00: return "静目标"
                                         case 0x01: return "动目标"
                                         default: return "未知"
                                     } }
-                            DataLabel { label: "背景类型:"; value: switch(imageSerial.imageData.m_targetBackgroundType4) {
+                            DataLabel { label: "背景类型:"; value: switch(imageData.m_targetBackgroundType4) {
                                         case 0x00: return "平原"
                                         case 0x01: return "沙漠"
                                         case 0x02: return "岛岸"
@@ -225,7 +225,7 @@ Rectangle {
                              DataLabel {
                                 label: "光学工作状态:"
                                 value: {
-                                    switch(imageSerial.imageData.opticalWorkState) {
+                                    switch(imageData.opticalWorkState) {
                                         case 0x02: return "搜索状态"
                                         case 0x03: return "跟踪状态"
                                         case 0x04: return "框架角电锁零位状态"
@@ -235,8 +235,8 @@ Rectangle {
                                     }
                                 }
                             }
-                            DataLabel { label: "修正指令状态:"; value: imageSerial.imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态" }
-                            DataLabel { label: "修正指令次数:"; value: imageSerial.imageData.correctionCmdCount }
+                            DataLabel { label: "修正指令状态:"; value: imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态" }
+                            DataLabel { label: "修正指令次数:"; value: imageData.correctionCmdCount }
                         }
                     }
                 }
@@ -270,7 +270,7 @@ Rectangle {
                             DataLabel {
                                 label: "跟踪状态:"
                                 value: {
-                                    switch(imageSerial.imageData.trackingState) {
+                                    switch(imageData.trackingState) {
                                         case 0x00: return "默认"
                                         case 0x11: return "搜索中"
                                         case 0x22: return "目标丢失"
@@ -279,12 +279,12 @@ Rectangle {
                                         default: return "未知状态"
                                     }
                                 }
-                                valueColor: imageSerial.imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
+                                valueColor: imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
                             }
                             DataLabel {
                                 label: "跟踪器状态:"
                                 value: {
-                                    switch(imageSerial.imageData.trackerState) {
+                                    switch(imageData.trackerState) {
                                         case 0x00: return "空闲状态"
                                         case 0x01: return "跟踪状态"
                                         case 0x02: return "识别状态"
@@ -293,8 +293,8 @@ Rectangle {
                                     }
                                 }
                             }
-                            DataLabel { label: "方位偏差像素:"; value: imageSerial.imageData.azimuthDeviationPixel }
-                            DataLabel { label: "俯仰偏差像素:"; value: imageSerial.imageData.pitchDeviationPixel }
+                            DataLabel { label: "方位偏差像素:"; value: imageData.azimuthDeviationPixel }
+                            DataLabel { label: "俯仰偏差像素:"; value: imageData.pitchDeviationPixel }
                         }
                         
                     }
@@ -326,10 +326,10 @@ Rectangle {
                         Column {
                             spacing: 6
                             
-                            DataLabel { label: "俯仰框架角:"; value: imageSerial.imageData.pitchFrameAngle.toFixed(2) + "°" }
-                            DataLabel { label: "偏航框架角:"; value: imageSerial.imageData.yawFrameAngle.toFixed(2) + "°" }
-                            DataLabel { label: "方位主令:"; value: imageSerial.imageData.azimuthMasterCmd }
-                            DataLabel { label: "俯仰主令:"; value: imageSerial.imageData.pitchMasterCmd }
+                            DataLabel { label: "俯仰框架角:"; value: imageData.pitchFrameAngle.toFixed(2) + "°" }
+                            DataLabel { label: "偏航框架角:"; value: imageData.yawFrameAngle.toFixed(2) + "°" }
+                            DataLabel { label: "方位主令:"; value: imageData.azimuthMasterCmd }
+                            DataLabel { label: "俯仰主令:"; value: imageData.pitchMasterCmd }
                         }
                         
                     }
@@ -365,15 +365,15 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "俯仰视线角速度:"; value: imageSerial.imageData.pitchLosAngVel.toFixed(2) + "°/s" }
-                            DataLabel { label: "偏航视线角速度:"; value: imageSerial.imageData.yawLosAngVel.toFixed(2) + "°/s" }
-                            DataLabel { label: "俯仰陀螺:"; value: imageSerial.imageData.pitchGyro.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰视线角速度:"; value: imageData.pitchLosAngVel.toFixed(2) + "°/s" }
+                            DataLabel { label: "偏航视线角速度:"; value: imageData.yawLosAngVel.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰陀螺:"; value: imageData.pitchGyro.toFixed(2) + "°/s" }
                         }
                         Column {
                             spacing: 6
-                            DataLabel { label: "偏航陀螺:"; value: imageSerial.imageData.yawGyro.toFixed(2) + "°/s" }
-                            DataLabel { label: "方位陀螺输出:"; value: imageSerial.imageData.azimuthGyroOutput.toFixed(2) + "°/s" }
-                            DataLabel { label: "俯仰陀螺输出:"; value: imageSerial.imageData.pitchGyroOutput.toFixed(2) + "°/s" }
+                            DataLabel { label: "偏航陀螺:"; value: imageData.yawGyro.toFixed(2) + "°/s" }
+                            DataLabel { label: "方位陀螺输出:"; value: imageData.azimuthGyroOutput.toFixed(2) + "°/s" }
+                            DataLabel { label: "俯仰陀螺输出:"; value: imageData.pitchGyroOutput.toFixed(2) + "°/s" }
                         }
                        
                        
@@ -405,9 +405,9 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "平台自检结果:"; value: imageSerial.imageData.platformSelfCheck }
-                            DataLabel { label: "伺服运行时间:"; value: imageSerial.imageData.servoRunningTime + " s" }
-                            DataLabel { label: "伺服阶跃:"; value: imageSerial.imageData.servoStep }
+                            DataLabel { label: "平台自检结果:"; value: imageData.platformSelfCheck }
+                            DataLabel { label: "伺服运行时间:"; value: imageData.servoRunningTime + " s" }
+                            DataLabel { label: "伺服阶跃:"; value: imageData.servoStep }
                         }
                        
                     }
@@ -438,18 +438,18 @@ Rectangle {
 
                         Column {
                             spacing: 6
-                            DataLabel { label: "红外帧编号:"; value: imageSerial.imageData.infraredFrameNum }
-                            DataLabel { label: "红外帧频:"; value: imageSerial.imageData.infraredFrameRate + " Hz" }
-                            DataLabel { label: "电视帧频:"; value: imageSerial.imageData.tvFrameRate + " Hz" }
-                            DataLabel { label: "Cbh_tv4405:"; value: imageSerial.imageData.cbhTv4405 }
+                            DataLabel { label: "红外帧编号:"; value: imageData.infraredFrameNum }
+                            DataLabel { label: "红外帧频:"; value: imageData.infraredFrameRate + " Hz" }
+                            DataLabel { label: "电视帧频:"; value: imageData.tvFrameRate + " Hz" }
+                            DataLabel { label: "Cbh_tv4405:"; value: imageData.cbhTv4405 }
                         }
                         Column {
                             spacing: 6
                             
-                            DataLabel { label: "波门尺寸:"; value: imageSerial.imageData.gateSize }
-                            DataLabel { label: "软件版本1:"; value: imageSerial.imageData.softwareVersion1 }
-                             DataLabel { label: "软件版本2:"; value: imageSerial.imageData.softwareVersion2 }
-                            DataLabel { label: "软件版本3:"; value: imageSerial.imageData.softwareVersion3 }
+                            DataLabel { label: "波门尺寸:"; value: imageData.gateSize }
+                            DataLabel { label: "软件版本1:"; value: imageData.softwareVersion1 }
+                             DataLabel { label: "软件版本2:"; value: imageData.softwareVersion2 }
+                            DataLabel { label: "软件版本3:"; value: imageData.softwareVersion3 }
                         }
                         
                     }

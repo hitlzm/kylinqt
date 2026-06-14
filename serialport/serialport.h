@@ -31,7 +31,7 @@ public slots:
     bool open(const QString &portName, qint32 baudRate = QSerialPort::Baud115200);
     void close();
     bool isOpen() const;
-
+    
     qint64 send(const QByteArray &data);
 
 protected:

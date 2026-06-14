@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     SerialPortLaser laserPort;
     SerialPortImage imagePort;
     // SerialPortTurntable turntablePort;
-
+    // imagePort.m_imageData = new ImageData(&app);  // 让 imageData 属于主线程，随 app 一起销毁
     // 1) 先加载 QML，在 moveToThread 之前建立所有信号连接
     QQmlApplicationEngine engine;
 
@@ -25,8 +25,13 @@ int main(int argc, char *argv[])
     engine.addImportPath(app.applicationDirPath());
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
     // engine.rootContext()->setContextProperty("laserSerial", &laserPort);
-    // engine.rootContext()->setContextProperty("imageSerial", &imagePort);
+    // engine.rootContext()->setContextProperty("imageSerial", imagePort.geymyptr());
     // engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
+    engine.rootContext()->setContextProperty("imageData", imagePort.m_imageData);
+    engine.rootContext()->setContextProperty("imageSendData", imagePort.m_imageSendData);
+    engine.rootContext()->setContextProperty("laserData", laserPort.m_laserData);
+    engine.rootContext()->setContextProperty("laserSendData", laserPort.m_laserSendData);
+
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

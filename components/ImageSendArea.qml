@@ -95,42 +95,42 @@ Rectangle {
                     root.currentCmd = index
                     if(currentCmd===0)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x00
+                            imageSendData.m_seekerCtrlWord=0x00
                     } else if (currentCmd===1)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x01
+                            imageSendData.m_seekerCtrlWord=0x01
                     }
                     else if (currentCmd===2)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x02
+                            imageSendData.m_seekerCtrlWord=0x02
                     }else if (currentCmd===3)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x03
+                            imageSendData.m_seekerCtrlWord=0x03
                     }else if (currentCmd===4)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x04
+                            imageSendData.m_seekerCtrlWord=0x04
                     }else if (currentCmd===5)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x06
+                           imageSendData.m_seekerCtrlWord=0x06
                     }else if (currentCmd===6)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x55
+                            imageSendData.m_seekerCtrlWord=0x55
                     }else if (currentCmd===7)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0x40
+                            imageSendData.m_seekerCtrlWord=0x40
                     }else if (currentCmd===8)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0xA1
+                            imageSendData.m_seekerCtrlWord=0xA1
                     }else if (currentCmd===9)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0xB1
+                            imageSendData.m_seekerCtrlWord=0xB1
                     }else if (currentCmd===10)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0xED
+                            imageSendData.m_seekerCtrlWord=0xED
                     }
                     else if (currentCmd===11)
                     {
-                            imageSerial.imageSendData.m_seekerCtrlWord=0xEE
+                            imageSendData.m_seekerCtrlWord=0xEE
                     }
 
                     }
@@ -208,7 +208,7 @@ Rectangle {
         anchors.leftMargin: 30
 
         onClicked: {
-            imageSerial.sendData(imageSerial.imageSendData.buildFrame())
+            imageSerial.sendData(imageSendData.buildFrame())
             console.log("图像导引头数据已发送")
         }
     }
@@ -265,19 +265,20 @@ Rectangle {
                 labeltext: modelData.unit
                 onEditingFinished: {
                     if (index === 0) {
-                        imageSerial.imageSendData.m_missileTargetDistance = parseInt(text)
+                        imageSendData.m_missileTargetDistance = Number(text)
+                        console.log("弹目距离:", imageSendData.m_missileTargetDistance)
                     } else if (index === 1) {
-                        imageSerial.imageSendData.m_missileSpeed = Number(text)
+                        imageSendData.m_missileSpeed = Number(text)
                     } else if (index === 2) {
-                        imageSerial.imageSendData.m_bodyPitchAngle = Number(text)
+                        imageSendData.m_bodyPitchAngle = Number(text)
                     } else if (index === 3) {
-                        imageSerial.imageSendData.m_bodyYawAngle = Number(text)
+                        imageSendData.m_bodyYawAngle = Number(text)
                     } else if (index === 4) {
-                        imageSerial.imageSendData.m_bodyRollAngle = Number(text)
+                        imageSendData.m_bodyRollAngle = Number(text)
                     } else if (index === 5) {
-                        imageSerial.imageSendData.m_bodyPitchRate = Number(text)
+                        imageSendData.m_bodyPitchRate = Number(text)
                     } else if (index === 6) {
-                        imageSerial.imageSendData.m_correctionFrameNum = parseInt(text)
+                        imageSendData.m_correctionFrameNum = parseInt(text)
                     }
                 }
             }
@@ -310,17 +311,17 @@ Rectangle {
                 labeltext: modelData.unit
                 onEditingFinished: {
                     if (index === 0) {
-                        imageSerial.imageSendData.m_bodyYawRate = Number(text)
+                        imageSendData.m_bodyYawRate = Number(text)
                     } else if (index === 1) {
-                        imageSerial.imageSendData.m_bodyRollRate = Number(text)
+                        imageSendData.m_bodyRollRate = Number(text)
                     } else if (index === 2) {
-                        imageSerial.imageSendData.m_bodyVelX = Number(text)
+                        imageSendData.m_bodyVelX = Number(text)
                     } else if (index === 3) {
-                        imageSerial.imageSendData.m_bodyVelY = Number(text)
+                        imageSendData.m_bodyVelY = Number(text)
                     } else if (index === 4) {
-                        imageSerial.imageSendData.m_bodyVelZ = Number(text)
+                        imageSendData.m_bodyVelZ = Number(text)
                     } else if (index === 5) {
-                        imageSerial.imageSendData.m_bodyPosX = parseInt(text)
+                        imageSendData.m_bodyPosX = parseInt(text)
                     }
                 }
             }
@@ -341,19 +342,19 @@ Rectangle {
                 root.opticalParamCtrlCmd=currentIndex
 
                 if(opticalParamCtrlCmd===0){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0x00
+                    imageSendData.m_opticalParamCtrl=0x00
                 }else if(opticalParamCtrlCmd===1){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0xE1
+                    imageSendData.m_opticalParamCtrl=0xE1
                 }else if(opticalParamCtrlCmd===2){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0xE2
+                    imageSendData.m_opticalParamCtrl=0xE2
                 }else if(opticalParamCtrlCmd===3){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0xE3
+                    imageSendData.m_opticalParamCtrl=0xE3
                 }else if(opticalParamCtrlCmd===4){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0xE4
+                    imageSendData.m_opticalParamCtrl=0xE4
                 }else if(opticalParamCtrlCmd===5){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0xE5
+                    imageSendData.m_opticalParamCtrl=0xE5
                 }else if(opticalParamCtrlCmd===6){
-                    imageSerial.imageSendData.m_opticalParamCtrl=0xE6
+                    imageSendData.m_opticalParamCtrl=0xE6
                 }
             }
         }
@@ -368,7 +369,7 @@ Rectangle {
             model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
             onCurrentIndexChanged: {
                if (mycurrentIndex !== -1) {
-               imageSerial.imageSendData.m_templateIndex = mycurrentIndex + 1;
+               imageSendData.m_templateIndex = mycurrentIndex + 1;
              }
             }
         }
@@ -383,15 +384,15 @@ Rectangle {
             model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
             onCurrentIndexChanged: {
                if (mycurrentIndex === 0) {
-               imageSerial.imageSendData.m_targetBackgroundType1 = 0x00;
+               imageSendData.m_targetBackgroundType1 = 0x00;
              }else if(mycurrentIndex === 1){
-                imageSerial.imageSendData.m_targetBackgroundType1 = 0x01;
+                imageSendData.m_targetBackgroundType1 = 0x01;
              }else if(mycurrentIndex === 2){
-                imageSerial.imageSendData.m_targetBackgroundType1 = 0x02;
+                imageSendData.m_targetBackgroundType1 = 0x02;
              }else if(mycurrentIndex === 3){
-                imageSerial.imageSendData.m_targetBackgroundType1 = 0x04;
+                imageSendData.m_targetBackgroundType1 = 0x04;
              }else if(mycurrentIndex === 4){
-                imageSerial.imageSendData.m_targetBackgroundType1 = 0x07;
+                imageSendData.m_targetBackgroundType1 = 0x07;
              }
             }
         }
@@ -406,21 +407,21 @@ Rectangle {
             model: ["平原","沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
             onCurrentIndexChanged: {
                if (mycurrentIndex === 0) {
-               imageSerial.imageSendData.m_targetBackgroundType4 = 0x00;
+               imageSendData.m_targetBackgroundType4 = 0x00;
              }else if(mycurrentIndex === 1){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x01;
+                imageSendData.m_targetBackgroundType4 = 0x01;
              }else if(mycurrentIndex === 2){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x02;
+                imageSendData.m_targetBackgroundType4 = 0x02;
              }else if(mycurrentIndex === 3){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x03;
+                imageSendData.m_targetBackgroundType4 = 0x03;
              }else if(mycurrentIndex === 4){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x04;
+                imageSendData.m_targetBackgroundType4 = 0x04;
              }else if(mycurrentIndex === 5){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x05;
+                imageSendData.m_targetBackgroundType4 = 0x05;
              }else if(mycurrentIndex === 6){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x06;
+                imageSendData.m_targetBackgroundType4 = 0x06;
              }else if(mycurrentIndex === 7){
-                imageSerial.imageSendData.m_targetBackgroundType4 = 0x07;
+                imageSendData.m_targetBackgroundType4 = 0x07;
              }
             }
         }
@@ -435,7 +436,7 @@ Rectangle {
             model: ["亮目标", "暗目标"]
             onCurrentIndexChanged: {
                if (mycurrentIndex !== -1) {
-               imageSerial.imageSendData.m_targetBackgroundType2 = mycurrentIndex;
+               imageSendData.m_targetBackgroundType2 = mycurrentIndex;
                }
             }
         }
@@ -450,7 +451,7 @@ Rectangle {
             model: ["静目标","动目标" ]
             onCurrentIndexChanged: {
                if (mycurrentIndex !== -1) {
-               imageSerial.imageSendData.m_targetBackgroundType3 = mycurrentIndex;
+               imageSendData.m_targetBackgroundType3 = mycurrentIndex;
                }
              
             }
@@ -466,7 +467,7 @@ Rectangle {
             model: ["非修正状态","修正状态" ]
              onCurrentIndexChanged: {
                if (mycurrentIndex !== -1) {
-               imageSerial.imageSendData.m_trackingCorrectionCmd = mycurrentIndex;
+               imageSendData.m_trackingCorrectionCmd = mycurrentIndex;
                }
             }
         }
@@ -481,9 +482,9 @@ Rectangle {
             model: ["大","小" ]
             onCurrentIndexChanged: {
                if (mycurrentIndex === 0) {
-               imageSerial.imageSendData.m_gateSize = 0xaa;
+               imageSendData.m_gateSize = 0xaa;
              }else if(mycurrentIndex === 1){
-                imageSerial.imageSendData.m_gateSize = 0x55;
+                imageSendData.m_gateSize = 0x55;
              }
             }
         }
@@ -512,17 +513,17 @@ Rectangle {
                 labeltext: modelData.unit
                 onEditingFinished: {
                     if (index === 0) {
-                        imageSerial.imageSendData.m_bodyPosY = parseInt(text)
+                        imageSendData.m_bodyPosY = parseInt(text)
                     } else if (index === 1) {
-                        imageSerial.imageSendData.m_bodyPosZ = parseInt(text)
+                        imageSendData.m_bodyPosZ = parseInt(text)
                     } else if (index === 2) {
-                        imageSerial.imageSendData.m_pitchGimbalPreset = Number(text)
+                        imageSendData.m_pitchGimbalPreset = Number(text)
                     } else if (index === 3) {
-                        imageSerial.imageSendData.m_yawGimbalPreset = Number(text)
+                        imageSendData.m_yawGimbalPreset = Number(text)
                     } else if (index === 4) {
-                        imageSerial.imageSendData.m_irIntegrationTime = parseInt(text)
+                        imageSendData.m_irIntegrationTime = parseInt(text)
                     } else if (index === 5) {
-                        imageSerial.imageSendData.m_correctedPitchPos = parseInt(text)
+                        imageSendData.m_correctedPitchPos = parseInt(text)
                     }
                 }
             }
@@ -555,17 +556,17 @@ Rectangle {
                 labeltext: modelData.unit
                 onEditingFinished: {
                     if (index === 0) {
-                        imageSerial.imageSendData.m_correctedYawPos = parseInt(text)
+                        imageSendData.m_correctedYawPos = parseInt(text)
                     } else if (index === 1) {
-                        imageSerial.imageSendData.m_searchPitchRate = Number(text)
+                        imageSendData.m_searchPitchRate = Number(text)
                     } else if (index === 2) {
-                        imageSerial.imageSendData.m_searchYawRate = Number(text)
+                        imageSendData.m_searchYawRate = Number(text)
                     } else if (index === 3) {
-                        imageSerial.imageSendData.m_targetAltitude = parseInt(text)
+                        imageSendData.m_targetAltitude = parseInt(text)
                     } else if (index === 4) {
-                        imageSerial.imageSendData.m_aircraftPitch = Number(text)
+                        imageSendData.m_aircraftPitch = Number(text)
                     } else if (index === 5) {
-                        imageSerial.imageSendData.m_aircraftYaw = Number(text)
+                        imageSendData.m_aircraftYaw = Number(text)
                     }
                 }
             }
@@ -597,17 +598,17 @@ Rectangle {
                 labeltext: modelData.unit
                 onEditingFinished: {
                     if (index === 0) {
-                        imageSerial.imageSendData.m_aircraftRoll = Number(text)
+                        imageSendData.m_aircraftRoll = Number(text)
                     } else if (index === 1) {
-                        imageSerial.imageSendData.m_focalLength = parseInt(text)
+                        imageSendData.m_focalLength = parseInt(text)
                     } else if (index === 2) {
-                        imageSerial.imageSendData.m_podPitchAngle = Number(text)
+                        imageSendData.m_podPitchAngle = Number(text)
                     } else if (index === 3) {
-                        imageSerial.imageSendData.m_podYawAngle = Number(text)
+                        imageSendData.m_podYawAngle = Number(text)
                     } else if (index === 4) {
-                        imageSerial.imageSendData.m_satelliteMapScale = parseInt(text)
+                        imageSendData.m_satelliteMapScale = parseInt(text)
                     } else if (index === 5) {
-                        imageSerial.imageSendData.m_podType = parseInt(text)
+                        imageSendData.m_podType = parseInt(text)
                     }
                 }
             }
@@ -638,17 +639,17 @@ Rectangle {
                 labeltext: modelData.unit
                 onEditingFinished: {
                     if (index === 0) {
-                        imageSerial.imageSendData.m_targetLongitude = Number(text)
+                        imageSendData.m_targetLongitude = Number(text)
                     } else if (index === 1) {
-                        imageSerial.imageSendData.m_targetLatitude = Number(text)
+                        imageSendData.m_targetLatitude = Number(text)
                     } else if (index === 2) {
-                        imageSerial.imageSendData.m_aircraftLongitude = Number(text)
+                        imageSendData.m_aircraftLongitude = Number(text)
                     } else if (index === 3) {
-                        imageSerial.imageSendData.m_aircraftLatitude = Number(text)
+                        imageSendData.m_aircraftLatitude = Number(text)
                     } else if (index === 4) {
-                        imageSerial.imageSendData.m_aircraftAltitude = parseInt(text)
+                        imageSendData.m_aircraftAltitude = parseInt(text)
                     } else if (index === 5) {
-                        imageSerial.imageSendData.m_pixelSize = parseInt(text)
+                        imageSendData.m_pixelSize = parseInt(text)
                     }
                 }
             }
