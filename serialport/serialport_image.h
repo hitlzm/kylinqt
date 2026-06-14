@@ -445,7 +445,7 @@ class SerialPortImage : public SerialPort
     Q_OBJECT
     // Q_PROPERTY(ImageData* imageData READ imageData CONSTANT)
     // Q_PROPERTY(ImageSendData* imageSendData READ imageSendData CONSTANT)
-    // Q_PROPERTY(QSerialPort * imageSerial READ imageSerial CONSTANT)
+    Q_PROPERTY(QSerialPort * imageSerial READ imageSerial CONSTANT)
 public:
     explicit SerialPortImage(QObject *parent = nullptr);
     ~SerialPortImage() override;
@@ -458,7 +458,7 @@ public:
     // void dowork() override;
     ImageData *m_imageData;
     ImageSendData *m_imageSendData;
-    // QSerialPort * imageSerial() const { return m_serialPort; }
+    QSerialPort * imageSerial() const { return m_serialPort; }
 protected:
     void parseData(const QByteArray &rawData) override;
     

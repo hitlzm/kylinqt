@@ -341,7 +341,7 @@ QByteArray ImageSendData::buildFrame() const
         reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     frame.crc16 = crc;
 
-    return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
+    return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  //定义一个信号并发送信号
 }
 
 // ─────────────────────────────────────────────
@@ -394,7 +394,7 @@ void SerialPortImage::parseData(const QByteArray &rawData)
         return;
     }
 
-    m_imageData->updateFromFrame(rawData);
+    m_imageData->updateFromFrame(rawData);   //发送信号让界面更新
     // return rawData;
 }
 

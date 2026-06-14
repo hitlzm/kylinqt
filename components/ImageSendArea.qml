@@ -208,7 +208,7 @@ Rectangle {
         anchors.leftMargin: 30
 
         onClicked: {
-            imageSerial.sendData(imageSendData.buildFrame())
+            imageSerial.sendData(imageSendData.buildFrame())   //释放信号，由串口发送
             console.log("图像导引头数据已发送")
         }
     }
