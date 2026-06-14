@@ -36,8 +36,7 @@ set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
 # list(APPEND CMAKE_PREFIX_PATH "${VLCQT_ROOT}/lib/cmake")
 
 find_package(Qt5 COMPONENTS Core Quick Gui SerialPort REQUIRED)
-find_package(VLCQtCore REQUIRED)
-find_package(VLCQtQml REQUIRED)
+
 
 if(ANDROID)
     add_library(kylinqt SHARED
@@ -79,16 +78,12 @@ target_compile_definitions(kylinqt
 target_link_libraries(kylinqt
   PRIVATE
     Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort
-    # VLCQt::Core VLCQt::Qml
     libvlc libvlccore
 )
 
 # ── 编译后自动复制 DLL 到 exe 目录 ──
 add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        # "${VLCQT_ROOT}/bin/libVLCQtCored.dll"
-        # "${VLCQT_ROOT}/bin/libVLCQtQmld.dll"
-        # "${VLCQT_ROOT}/bin/libVLCQtWidgetsd.dll"
         "${VLC_ROOT}/libvlc.dll"
         "${VLC_ROOT}/libvlccore.dll"
         "$<TARGET_FILE_DIR:kylinqt>"
@@ -99,7 +94,4 @@ add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${VLC_ROOT}/plugins"
         "$<TARGET_FILE_DIR:kylinqt>/plugins"
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #     "${VLCQT_ROOT}/qml/VLCQt"
-    #     "$<TARGET_FILE_DIR:kylinqt>/VLCQt"
 )
