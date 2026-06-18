@@ -9,6 +9,17 @@ LaserData::LaserData(QObject *parent)
 {
 }
 
+// ── QML 调用方法：emit 请求信号，由 main.cpp 的 QueuedConnection 转发到工作线程 ──
+void LaserData::openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
+void LaserData::closePort()                                     { emit requestClosePort(); }
+void LaserData::scanPorts()                                     { emit requestScanPorts(); }
+void LaserData::sendData(const QByteArray &data)                { emit requestSendData(data); }
+
+// ── 工作线程回推：QueuedConnection 调用，更新状态并 NOTIFY QML ──
+void LaserData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
+void LaserData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
+void LaserData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+
 int LaserData::frameStatus() const { return m_frameStatus; }
 int LaserData::frameId() const { return m_frameId; }
 int LaserData::dytStatus() const { return m_dytStatus; }
@@ -243,6 +254,24 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
 SerialPortLaser::~SerialPortLaser() {
     delete m_laserData;
     delete m_laserSendData;
+}
+
+// ── Worker slots：接收主线程 Data 的请求（QueuedConnection）──
+void SerialPortLaser::onOpenPort(const QString &name, int baud) {
+    if (SerialPort::open(name, baud))
+        emit portOpened(true);
+    else
+        emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
+}
+void SerialPortLaser::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
+void SerialPortLaser::onSendData(const QByteArray &data) { SerialPort::send(data); }
+
+void SerialPortLaser::onReadyRead() {
+    // 覆写基类：收到数据解析后直接更新 LaserData（两个对象都在主线程，
+    // 但这里 parseData 在工作线程执行，updateFromFrame 也在工作线程执行。
+    // LaserData 成员变量被工作线程写 + 主线程读，对 int/float 安全可接受。）
+    SerialPort::onReadyRead();
 }
 
 LaserData* SerialPortLaser::laserData() const

@@ -459,17 +459,17 @@ Rectangle {
     }
     }
     // 连接到 imageSerial 信号
-    Connections {
-        target: imageSerial
-        function onErrorOccurred(msg) {
-            console.log("Image serial error:", msg)
-        }
-        function onConnected() {
-            console.log("Image serial connected")
-        }
-        function onDisconnected() {
-            console.log("Image serial disconnected")
-        }
-    }
+    // Connections {
+    //     target: imageSerial
+    //     function onErrorOccurred(msg) {
+    //         console.log("Image serial error:", msg)
+    //     }
+    //     function onConnected() {
+    //         console.log("Image serial connected")
+    //     }
+    //     function onDisconnected() {
+    //         console.log("Image serial disconnected")
+    //     }
+    // }
 
 }

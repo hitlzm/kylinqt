@@ -4,38 +4,41 @@
 #include <QThread>
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
-#include "serialport/serialport_turntable.h"
 #include "vlcvideo/VlcVideoItem.h"
-
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
     QGuiApplication app(argc, argv);
 
-    SerialPortLaser laserPort;
-    SerialPortImage imagePort;
-    // SerialPortTurntable turntablePort;
-    // imagePort.m_imageData = new ImageData(&app);  // 让 imageData 属于主线程，随 app 一起销毁
-    // 1) 先加载 QML，在 moveToThread 之前建立所有信号连接
-    QQmlApplicationEngine engine;
+    // ═══ 主线程对象：QML 直接访问 ═══
+    LaserData *laserData = new LaserData(&app);
+    LaserSendData *laserSendData = new LaserSendData(&app);
+    ImageData *imageData = new ImageData(&app);
+    ImageSendData *imageSendData = new ImageSendData(&app);
 
+    // ═══ 工作线程对象：只处理串口 I/O ═══
+    SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
+    SerialPortImage *imagePort = new SerialPortImage;
+
+    // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
+    laserPort->m_laserData = laserData;
+    laserPort->m_laserSendData = laserSendData;
+    imagePort->m_imageData = imageData;
+    imagePort->m_imageSendData = imageSendData;
+
+    // ═══ 1) 先加载 QML，建立绑定 ═══
+    QQmlApplicationEngine engine;
     engine.addImportPath(TaoQuickImportPath);
     engine.addImportPath(app.applicationDirPath());
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
-    // engine.rootContext()->setContextProperty("laserSerial", &laserPort);
-    // engine.rootContext()->setContextProperty("imageSerial", imagePort.geymyptr());
-    // engine.rootContext()->setContextProperty("turntableSerial", &turntablePort);
-    engine.rootContext()->setContextProperty("imageData", imagePort.m_imageData);
-    engine.rootContext()->setContextProperty("imageSendData", imagePort.m_imageSendData);
-    engine.rootContext()->setContextProperty("laserData", laserPort.m_laserData);
-    engine.rootContext()->setContextProperty("laserSendData", laserPort.m_laserSendData);
-
+    engine.rootContext()->setContextProperty("laserData", laserData);
+    engine.rootContext()->setContextProperty("laserSendData", laserSendData);
+    engine.rootContext()->setContextProperty("imageData", imageData);
+    engine.rootContext()->setContextProperty("imageSendData", imageSendData);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
-    // DirectConnection：同步检测加载结果，立刻知道 QML 是否出错
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl) {
@@ -45,22 +48,45 @@ int main(int argc, char *argv[])
     }, Qt::DirectConnection);
     engine.load(url);
 
-    // 2) QML 连接建立完毕，创建线程并迁移
+    // ═══ 2) 连线：Data（主线程）↔ Worker（工作线程），全部 QueuedConnection ═══
+
+    // ── Laser: 主线程 Data → 工作线程 Worker ──
+    QObject::connect(laserData, &LaserData::requestOpenPort,  laserPort, &SerialPortLaser::onOpenPort,  Qt::QueuedConnection);
+    QObject::connect(laserData, &LaserData::requestClosePort, laserPort, &SerialPortLaser::onClosePort, Qt::QueuedConnection);
+    QObject::connect(laserData, &LaserData::requestScanPorts, laserPort, &SerialPortLaser::onScanPorts, Qt::QueuedConnection);
+    QObject::connect(laserData, &LaserData::requestSendData,  laserPort, &SerialPortLaser::onSendData,  Qt::QueuedConnection);
+
+    // ── Laser: 工作线程 Worker → 主线程 Data ──
+    QObject::connect(laserPort, &SerialPortLaser::portOpened,   laserData, &LaserData::setPortOpen, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::portClosed,   laserData, [laserData]{ laserData->setPortOpen(false); }, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::portError,    laserData, &LaserData::setError,    Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::portsChanged, laserData, &LaserData::setPortList, Qt::QueuedConnection);
+
+    // ── Image: 主线程 Data → 工作线程 Worker ──
+    QObject::connect(imageData, &ImageData::requestOpenPort,  imagePort, &SerialPortImage::onOpenPort,  Qt::QueuedConnection);
+    QObject::connect(imageData, &ImageData::requestClosePort, imagePort, &SerialPortImage::onClosePort, Qt::QueuedConnection);
+    QObject::connect(imageData, &ImageData::requestScanPorts, imagePort, &SerialPortImage::onScanPorts, Qt::QueuedConnection);
+    QObject::connect(imageSendData, &ImageSendData::requestSendData,  imagePort, &SerialPortImage::onSendData,  Qt::QueuedConnection);
+
+
+    // ── Image: 工作线程 Worker → 主线程 Data ──
+    QObject::connect(imagePort, &SerialPortImage::portOpened,   imageData, &ImageData::setPortOpen, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::portClosed,   imageData, [imageData]{ imageData->setPortOpen(false); }, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::portError,    imageData, &ImageData::setError,    Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::portsChanged, imageData, &ImageData::setPortList, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::imageFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
+
+    // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
     QThread *Imagethread = new QThread;
-    // QThread *Turntablethread = new QThread;
-    laserPort.moveToThread(Laserthread);
-    imagePort.moveToThread(Imagethread);
-    // turntablePort.moveToThread(Turntablethread);
+    laserPort->moveToThread(Laserthread);
+    imagePort->moveToThread(Imagethread);
 
-    QObject::connect(Laserthread, &QThread::started, &laserPort, &SerialPortLaser::dowork);
-    QObject::connect(Imagethread, &QThread::started, &imagePort, &SerialPortImage::dowork);
-    // QObject::connect(Turntablethread, &QThread::started, &turntablePort, &SerialPortTurntable::dowork);
+    QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
+    QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
 
-    // 3) 启动工作线程
     Laserthread->start();
     Imagethread->start();
-    // Turntablethread->start();
 
     return app.exec();
 }

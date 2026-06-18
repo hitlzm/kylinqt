@@ -3,6 +3,8 @@
 
 #include "serialport.h"
 
+struct image_send_frame;
+
 class ImageData : public QObject
 {
     Q_OBJECT
@@ -58,6 +60,7 @@ class ImageData : public QObject
 public:
     explicit ImageData(QObject *parent = nullptr);
 
+    // 数据属性
     int frameLength() const;
     int bFrameSequence() const;
     int aFrameSequenceReply() const;
@@ -106,9 +109,24 @@ public:
     int softwareVersion2() const;
     int softwareVersion3() const;
 
-    void updateFromFrame(const QByteArray &frame);
+
+    // ── 串口状态属性（主线程，QML 直接读取）──
+    Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
+    Q_PROPERTY(QStringList availablePorts READ availablePorts NOTIFY availablePortsChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+
+    bool portOpen() const { return m_portOpen; }
+    QStringList availablePorts() const { return m_availablePorts; }
+    QString errorString() const { return m_errorString; }
+
+    // ── QML 可调用方法 ──
+    Q_INVOKABLE void openPort(const QString &portName, int baudRate);
+    Q_INVOKABLE void closePort();
+    Q_INVOKABLE void scanPorts();
+    // Q_INVOKABLE void sendData(const QByteArray &data);
 
 signals:
+    // 数据变化信号
     void frameLengthChanged();
     void bFrameSequenceChanged();
     void aFrameSequenceReplyChanged();
@@ -156,6 +174,24 @@ signals:
     void softwareVersion1Changed();
     void softwareVersion2Changed();
     void softwareVersion3Changed();
+
+    // ── 串口状态变化信号 ──
+    void portOpenChanged();
+    void availablePortsChanged();
+    void errorStringChanged();
+
+    // ── 请求信号（→ 排队到工作线程）──
+    void requestOpenPort(const QString &portName, int baudRate);
+    void requestClosePort();
+    void requestScanPorts();
+    // void requestSendData(const QByteArray &data);
+
+public slots:
+    // ── 工作线程回推状态（QueuedConnection）──
+    void setPortOpen(bool open);
+    void setPortList(const QStringList &ports);
+    void setError(const QString &msg);
+    void updateFromFrame(const QByteArray &frame);
 
 private:
     inline float fromRawValue_a(qint16 raw)
@@ -235,6 +271,10 @@ private:
     int m_softwareVersion1 = 0;
     int m_softwareVersion2 = 0;
     int m_softwareVersion3 = 0;
+
+    bool m_portOpen = false;
+    QStringList m_availablePorts;
+    QString m_errorString;
 };
 
 class ImageSendData : public QObject
@@ -295,7 +335,7 @@ class ImageSendData : public QObject
 public:
     explicit ImageSendData(QObject *parent = nullptr);
 
-    Q_INVOKABLE QByteArray buildFrame() const;
+    Q_INVOKABLE void buildFrame() ;
 
 signals:
     void frameLengthChanged();
@@ -350,6 +390,8 @@ signals:
     void aircraftAltitudeChanged();
     void pixelSizeChanged();
 
+    // void requestSendData(image_send_frame frame);
+    void requestSendData(image_send_frame &frame);
 private:
     //把显示数据转化为串口原始数据
     inline qint16 toRawValue_a(float value) const
@@ -368,25 +410,6 @@ private:
     return static_cast<qint16>(
                 qRound(value / 0.002f));
     }
-    // //int转qint8
-    // qint8 intToQint8Saturated(int value)
-    // {
-    // if (value > 127) return 127;
-    // if (value < -128) return -128;
-    // return static_cast<qint8>(value);
-    // }
-    // //组合多个qint8
-    // quint8 combineqint8(int one,int two,int three,int four){
-    //     qint8 first=intToQint8Saturated(one);
-    //     qint8 second=intToQint8Saturated(two);
-    //     qint8 third=intToQint8Saturated(three);
-    //     qint8 fourth=intToQint8Saturated(four);
-    //     quint8 result = (first & 0x07) |
-    //            ((second << 3) & 0x08) |
-    //            ((third << 4) & 0x10) |
-    //            ((fourth << 5) & 0xE0);
-    //     return result;
-    // }
     int m_frameLength = 0;
     int m_aFrameSequence = 0;
     int m_seekerCtrlWord = 0;
@@ -443,29 +466,39 @@ private:
 class SerialPortImage : public SerialPort
 {
     Q_OBJECT
-    // Q_PROPERTY(ImageData* imageData READ imageData CONSTANT)
-    // Q_PROPERTY(ImageSendData* imageSendData READ imageSendData CONSTANT)
-    Q_PROPERTY(QSerialPort * imageSerial READ imageSerial CONSTANT)
 public:
     explicit SerialPortImage(QObject *parent = nullptr);
     ~SerialPortImage() override;
 
-    ImageData* imageData() const ;
+    ImageData* imageData() const;
     ImageSendData* imageSendData() const;
+    ImageData *m_imageData;
+    ImageSendData *m_imageSendData;
+
+public slots:
+    void dowork() { SerialPort::dowork(); onScanPorts(); }
 
     static void init_crc16_table(uint16_t poly = 0x1021);
     static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
-    // void dowork() override;
-    ImageData *m_imageData;
-    ImageSendData *m_imageSendData;
-    QSerialPort * imageSerial() const { return m_serialPort; }
+
+signals:
+    void portOpened(bool success);
+    void portClosed();
+    void portError(const QString &msg);
+    void portsChanged(const QStringList &ports);
+    void imageFrameReceived(const QByteArray &rawData);
+public slots:
+    void onOpenPort(const QString &portName, int baudRate);
+    void onClosePort();
+    void onScanPorts();
+    void onSendData(image_send_frame &frame);
+
 protected:
     void parseData(const QByteArray &rawData) override;
-    
+    void onReadyRead() override;
 
 private:
     static uint16_t crc16_table[256];
-
 };
 
 
@@ -630,7 +663,7 @@ typedef struct {
 
 //图像导引头发送数据结构体
 #pragma pack(push,1)
-typedef struct {
+struct image_send_frame {
     // 定义发送数据的字段
     // 字节0-1: 帧头
     quint8 frame_header1;       // 0x77
@@ -792,6 +825,7 @@ typedef struct {
     // 字节222-223: CRC16校验位 (多项式X16+X12+X5+1)
     quint16 crc16;
 
-} image_send_frame;
+};
 #pragma pack(pop)
+
 #endif // SERIALPORT_IMAGE_H

@@ -37,6 +37,7 @@ class LaserData : public QObject
 public:
     explicit LaserData(QObject *parent = nullptr);
 
+    // 数据属性
     int frameStatus() const;
     int frameId() const;
     int dytStatus() const;
@@ -66,7 +67,23 @@ public:
 
     void updateFromFrame(const QByteArray &frame);
 
+    // ── 串口状态属性（主线程，QML 直接读取）──
+    Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
+    Q_PROPERTY(QStringList availablePorts READ availablePorts NOTIFY availablePortsChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+
+    bool portOpen() const { return m_portOpen; }
+    QStringList availablePorts() const { return m_availablePorts; }
+    QString errorString() const { return m_errorString; }
+
+    // ── QML 可调用方法（主线程执行，内部请求排队到工作线程）──
+    Q_INVOKABLE void openPort(const QString &portName, int baudRate);
+    Q_INVOKABLE void closePort();
+    Q_INVOKABLE void scanPorts();
+    Q_INVOKABLE void sendData(const QByteArray &data);
+
 signals:
+    // ── 数据变化信号 ──
     void frameStatusChanged();
     void frameIdChanged();
     void dytStatusChanged();
@@ -93,6 +110,23 @@ signals:
     void quadrant4EnergyChanged();
     void softwareVersion1Changed();
     void softwareVersion2Changed();
+
+    // ── 串口状态变化信号 ──
+    void portOpenChanged();
+    void availablePortsChanged();
+    void errorStringChanged();
+
+    // ── 请求信号（→ 排队到工作线程）──
+    void requestOpenPort(const QString &portName, int baudRate);
+    void requestClosePort();
+    void requestScanPorts();
+    void requestSendData(const QByteArray &data);
+
+public slots:
+    // ── 工作线程回推状态（QueuedConnection）──
+    void setPortOpen(bool open);
+    void setPortList(const QStringList &ports);
+    void setError(const QString &msg);
 
 private:
     inline float fromRawValue_a(qint16 raw)
@@ -150,6 +184,10 @@ private:
     float m_quadrant4Energy = 0;
     float m_softwareVersion1 = 0;
     float m_softwareVersion2 = 0;
+
+    bool m_portOpen = false;
+    QStringList m_availablePorts;
+    QString m_errorString;
 };
 
 class LaserSendData : public QObject
@@ -209,25 +247,39 @@ private:
 class SerialPortLaser : public SerialPort
 {
     Q_OBJECT
-    // Q_PROPERTY(LaserData* laserData READ laserData CONSTANT)
-    // Q_PROPERTY(LaserSendData* laserSendData READ laserSendData CONSTANT)
 public:
     explicit SerialPortLaser(QObject *parent = nullptr);
     ~SerialPortLaser() override;
 
     LaserData* laserData() const;
     LaserSendData* laserSendData() const;
-    // void dowork() override;
     LaserData *m_laserData;
     LaserSendData *m_laserSendData;
+
+public slots:
+    void dowork() { SerialPort::dowork(); onScanPorts(); }   // 创建 QSerialPort 后立即推送可用串口列表
+
+signals:
+    // ── 状态信号（→ QueuedConnection 回主线程 Data 对象）──
+    void portOpened(bool success);
+    void portClosed();
+    void portError(const QString &msg);
+    void portsChanged(const QStringList &ports);
+
+public slots:
+    // ── 接收主线程 Data 发来的请求（QueuedConnection）──
+    void onOpenPort(const QString &portName, int baudRate);
+    void onClosePort();
+    void onScanPorts();
+    void onSendData(const QByteArray &data);
+
 protected:
     void parseData(const QByteArray &rawData) override;
-    
+    void onReadyRead() override;
 
 private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
     uint8_t xorChecksum(const QByteArray& data);
-    
 };
 
 

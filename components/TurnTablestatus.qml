@@ -104,7 +104,7 @@ Rectangle {
                 DataLabel {
                     label: "内框状态:"
                     value: {
-                        switch(laserSerial.laserData.dytStatus) {
+                        switch(laserData.dytStatus) {
                             case 0x01: return "伺服"
                             case 0x02: return "回零执行中"
                             case 0x03: return "位置执行中"
@@ -139,7 +139,7 @@ Rectangle {
                 DataLabel {
                     label: "中框状态:"
                     value: {
-                        switch(laserSerial.laserData.dytStatus) {
+                        switch(laserData.dytStatus) {
                             // 同上，为了简洁省略，实际应与内框状态相同的 switch
                             default: return "未知"
                         }
@@ -153,7 +153,7 @@ Rectangle {
                 DataLabel {
                     label: "外框状态:"
                     value: {
-                        switch(laserSerial.laserData.dytStatus) {
+                        switch(laserData.dytStatus) {
                             // 同上
                             default: return "未知"
                         }

@@ -167,7 +167,7 @@ Rectangle {
         anchors.left: titleText.right
         anchors.leftMargin: 30
 
-        model: laserSerial.availablePorts
+        model: laserData.availablePorts
     }
 
     // 波特率
@@ -188,17 +188,17 @@ Rectangle {
         id: openButton
         width: 120
         height: 42
-        text: laserSerial.portOpen ? "关闭串口" : "打开串口"
+        text: laserData.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.top
         anchors.left: baudComboBox.right
         anchors.leftMargin: 30
         onClicked: {
-            if (laserSerial.portOpen) {
-                laserSerial.closePort()
+            if (laserData.portOpen) {
+                laserData.closePort()
             } else {
-                laserSerial.openPort(serialComboBox.currentText,
-                                     parseInt(baudComboBox.currentText))
+                laserData.openPort(serialComboBox.currentText,
+                                   parseInt(baudComboBox.currentText))
             }
         }
     }
@@ -209,7 +209,7 @@ Rectangle {
         width: 120
         height: 42
         text: "发送数据"
-        enabled: laserSerial.portOpen
+        enabled: laserData.portOpen
 
         anchors.top: serialComboBox.top
         anchors.left: openButton.right
@@ -219,7 +219,7 @@ Rectangle {
             // var data = ""      //打包数据
             // root.sendData(data)
             //直接调用对应串口里的发送函数就行，最后实现效果是固定周期的发送
-            laserSerial.sendData(laserSendData.buildFrame())
+            laserData.sendData(laserSendData.buildFrame())
             console.log("激光导引头数据已发送")
         }
     }
@@ -370,19 +370,19 @@ Rectangle {
     // signal sendData(string data)
 
     // 连接到 laserSerial 信号
-    Connections {
-        target: laserSerial
-        function onErrorOccurred(msg) {
-            console.log("Serial error:", msg)
-        }
-        function onConnected() {
-            console.log("Serial connected")
-        }
-        function onDisconnected() {
-            console.log("Serial disconnected")
-        }
+    // Connections {
+    //     target: laserSerial
+    //     function onErrorOccurred(msg) {
+    //         console.log("Serial error:", msg)
+    //     }
+    //     function onConnected() {
+    //         console.log("Serial connected")
+    //     }
+    //     function onDisconnected() {
+    //         console.log("Serial disconnected")
+    //     }
         
-    }
+    // }
 
     
 }

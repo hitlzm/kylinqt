@@ -9,8 +9,18 @@ uint16_t SerialPortImage::crc16_table[256] = {0};
 ImageData::ImageData(QObject *parent)
     : QObject(parent)
 {
-    
 }
+
+// ── QML 调用方法 ──
+void ImageData::openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
+void ImageData::closePort()                                     { emit requestClosePort(); }
+void ImageData::scanPorts()                                     { emit requestScanPorts(); }
+// void ImageData::sendData(const QByteArray &data)                { emit requestSendData(data); }
+
+// ── 工作线程回推 ──
+void ImageData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
+void ImageData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
+void ImageData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
 
 int ImageData::frameLength() const { return m_frameLength; }
 int ImageData::bFrameSequence() const { return m_bFrameSequence; }
@@ -277,7 +287,7 @@ ImageSendData::ImageSendData(QObject *parent)
 {
 }
 
-QByteArray ImageSendData::buildFrame() const
+void ImageSendData::buildFrame() 
 {
     image_send_frame frame = {};
 
@@ -337,11 +347,12 @@ QByteArray ImageSendData::buildFrame() const
     frame.aircraft_altitude = static_cast<qint16>(m_aircraftAltitude);
     frame.pixel_size = static_cast<quint8>(m_pixelSize);
 
-    uint16_t crc = SerialPortImage::crc16_ccitt_fast(
-        reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
-    frame.crc16 = crc;
-
-    return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  //定义一个信号并发送信号
+    // uint16_t crc = SerialPortImage::crc16_ccitt_fast(
+    //     reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
+    // frame.crc16 = crc;
+    //将校验位计算移到工作线程
+    // return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  //定义一个信号并发送信号
+    emit requestSendData(frame);
 }
 
 // ─────────────────────────────────────────────
@@ -360,6 +371,25 @@ SerialPortImage::~SerialPortImage() {
     // delete m_imageData;
     // delete m_imageSendData;
 }
+
+// ── Worker slots ──
+void SerialPortImage::onOpenPort(const QString &name, int baud) {
+    if (SerialPort::open(name, baud))
+        emit portOpened(true);
+    else
+        emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
+}
+void SerialPortImage::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
+void SerialPortImage::onSendData(image_send_frame &frame) { 
+
+    uint16_t crc = SerialPortImage::crc16_ccitt_fast(
+        reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
+    frame.crc16 = crc;
+    auto data=QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  //定义一个信号并发送信号
+    SerialPort::send(data); 
+}
+void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 
 ImageData* SerialPortImage::imageData() const
 {
@@ -394,7 +424,8 @@ void SerialPortImage::parseData(const QByteArray &rawData)
         return;
     }
 
-    m_imageData->updateFromFrame(rawData);   //发送信号让界面更新
+    emit imageFrameReceived(rawData);
+    // m_imageData->updateFromFrame(rawData);   //发送信号让界面更新
     // return rawData;
 }
 

@@ -149,7 +149,7 @@ Rectangle {
         anchors.left: titleText.right
         anchors.leftMargin: 30
 
-        model: imageSerial.availablePorts
+        model: imageData.availablePorts
     }
 
     // 波特率
@@ -165,32 +165,54 @@ Rectangle {
         model: ["9600", "115200"]
     }
     CusPopup {
-        id: tip
-        backgroundWidth: 100
-        backgroundHeight: 40
+            id: tip
+            backgroundWidth: 200
+            backgroundHeight: 80
+            barColor:"lightgray"
+            contentItem:Column {
+            spacing: 10
+            Text { text: "串口已打开！" }
+            CusButton_Blue { text: "确定"; onClicked: tip.hide() }
+            }
+        }
+    CusPopup {
+        id: tip1
+        backgroundWidth: 200
+        backgroundHeight: 80
         barColor:"lightgray"
-        contentItem: Text { text: "串口已打开！" }
-        // Button { text: "确定"; onClicked: tip.hide() }
-    
+        contentItem:Column {
+        spacing: 10
+        Text { text: "串口打开失败！" }
+        CusButton_Blue { text: "确定"; onClicked: tip1.hide() }
+        }
     }
     // 打开串口按钮
     CusButton_Blue {
         id: openButton
         width: 120
         height: 32
-        text: imageSerial.portOpen ? "关闭串口" : "打开串口"
+        text: imageData.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.top
         anchors.left: baudComboBox.right
         anchors.leftMargin: 30
-
+        Timer {
+            id: delayTimer
+            interval: 1  
+            onTriggered: {
+                if (imageData.portOpen) tip.show()
+                else tip1.show()
+            }
+        }
         onClicked: {
-            if (imageSerial.portOpen) {
-                imageSerial.closePort()
+            if (imageData.portOpen) {
+                imageData.closePort()
             } else {
-                imageSerial.openPort(serialComboBox.currentText,
-                                     parseInt(baudComboBox.currentText))
-                                 tip.myshow();
+                imageData.openPort(serialComboBox.currentText,
+                                    parseInt(baudComboBox.currentText))
+                // if (imageData.portOpen) {tip.show()} 
+                // else{tip1.show()}
+                delayTimer.start()
             }
         }
     }
@@ -201,14 +223,14 @@ Rectangle {
         width: 120
         height: 32
         text: "发送数据"
-        enabled: imageSerial.portOpen
+        enabled: imageData.portOpen
 
         anchors.top: serialComboBox.top
         anchors.left: openButton.right
         anchors.leftMargin: 30
 
         onClicked: {
-            imageSerial.sendData(imageSendData.buildFrame())   //释放信号，由串口发送
+            imageSendData.buildFrame()     //构建帧成功后释放信号，由串口工作线程计算校验位并发送
             console.log("图像导引头数据已发送")
         }
     }
@@ -657,17 +679,17 @@ Rectangle {
     }
 
     // 连接到 imageSerial 信号
-    Connections {
-        target: imageSerial
-        function onErrorOccurred(msg) {
-            console.log("Serial error:", msg)
-        }
-        function onConnected() {
-            console.log("Serial connected")
-        }
-        function onDisconnected() {
-            console.log("Serial disconnected")
-        }
+    // Connections {
+    //     target: imageSerial
+    //     function onErrorOccurred(msg) {
+    //         console.log("Serial error:", msg)
+    //     }
+    //     function onConnected() {
+    //         console.log("Serial connected")
+    //     }
+    //     function onDisconnected() {
+    //         console.log("Serial disconnected")
+    //     }
 
-    }
+    // }
 }
