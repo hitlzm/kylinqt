@@ -381,12 +381,12 @@ void SerialPortImage::onOpenPort(const QString &name, int baud) {
 }
 void SerialPortImage::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
-void SerialPortImage::onSendData(image_send_frame &frame) { 
+void SerialPortImage::onSendData(image_send_frame frame) { 
 
     uint16_t crc = SerialPortImage::crc16_ccitt_fast(
         reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     frame.crc16 = crc;
-    auto data=QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  //定义一个信号并发送信号
+    auto data=QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
     SerialPort::send(data); 
 }
 void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }

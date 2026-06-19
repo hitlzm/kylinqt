@@ -390,8 +390,7 @@ signals:
     void aircraftAltitudeChanged();
     void pixelSizeChanged();
 
-    // void requestSendData(image_send_frame frame);
-    void requestSendData(image_send_frame &frame);
+    void requestSendData(image_send_frame frame);
 private:
     //把显示数据转化为串口原始数据
     inline qint16 toRawValue_a(float value) const
@@ -491,7 +490,7 @@ public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
     void onScanPorts();
-    void onSendData(image_send_frame &frame);
+    void onSendData(image_send_frame frame);
 
 protected:
     void parseData(const QByteArray &rawData) override;

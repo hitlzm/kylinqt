@@ -1346,7 +1346,7 @@ void ImageData::requestScanPorts()
 }
 struct qt_meta_stringdata_ImageSendData_t {
     QByteArrayData data[107];
-    char stringdata0[2014];
+    char stringdata0[2013];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1409,59 +1409,59 @@ QT_MOC_LITERAL(50, 1063, 23), // "aircraftLatitudeChanged"
 QT_MOC_LITERAL(51, 1087, 23), // "aircraftAltitudeChanged"
 QT_MOC_LITERAL(52, 1111, 16), // "pixelSizeChanged"
 QT_MOC_LITERAL(53, 1128, 15), // "requestSendData"
-QT_MOC_LITERAL(54, 1144, 17), // "image_send_frame&"
-QT_MOC_LITERAL(55, 1162, 5), // "frame"
-QT_MOC_LITERAL(56, 1168, 10), // "buildFrame"
-QT_MOC_LITERAL(57, 1179, 13), // "m_frameLength"
-QT_MOC_LITERAL(58, 1193, 16), // "m_aFrameSequence"
-QT_MOC_LITERAL(59, 1210, 16), // "m_seekerCtrlWord"
-QT_MOC_LITERAL(60, 1227, 18), // "m_opticalParamCtrl"
-QT_MOC_LITERAL(61, 1246, 15), // "m_templateIndex"
-QT_MOC_LITERAL(62, 1262, 23), // "m_targetBackgroundType1"
-QT_MOC_LITERAL(63, 1286, 23), // "m_targetBackgroundType2"
-QT_MOC_LITERAL(64, 1310, 23), // "m_targetBackgroundType3"
-QT_MOC_LITERAL(65, 1334, 23), // "m_targetBackgroundType4"
-QT_MOC_LITERAL(66, 1358, 23), // "m_missileTargetDistance"
-QT_MOC_LITERAL(67, 1382, 14), // "m_missileSpeed"
-QT_MOC_LITERAL(68, 1397, 16), // "m_bodyPitchAngle"
-QT_MOC_LITERAL(69, 1414, 14), // "m_bodyYawAngle"
-QT_MOC_LITERAL(70, 1429, 15), // "m_bodyRollAngle"
-QT_MOC_LITERAL(71, 1445, 15), // "m_bodyPitchRate"
-QT_MOC_LITERAL(72, 1461, 13), // "m_bodyYawRate"
-QT_MOC_LITERAL(73, 1475, 14), // "m_bodyRollRate"
-QT_MOC_LITERAL(74, 1490, 10), // "m_bodyVelX"
-QT_MOC_LITERAL(75, 1501, 10), // "m_bodyVelY"
-QT_MOC_LITERAL(76, 1512, 10), // "m_bodyVelZ"
-QT_MOC_LITERAL(77, 1523, 10), // "m_bodyPosX"
-QT_MOC_LITERAL(78, 1534, 10), // "m_bodyPosY"
-QT_MOC_LITERAL(79, 1545, 10), // "m_bodyPosZ"
-QT_MOC_LITERAL(80, 1556, 19), // "m_pitchGimbalPreset"
-QT_MOC_LITERAL(81, 1576, 17), // "m_yawGimbalPreset"
-QT_MOC_LITERAL(82, 1594, 19), // "m_irIntegrationTime"
-QT_MOC_LITERAL(83, 1614, 23), // "m_trackingCorrectionCmd"
-QT_MOC_LITERAL(84, 1638, 20), // "m_correctionFrameNum"
-QT_MOC_LITERAL(85, 1659, 19), // "m_correctedPitchPos"
-QT_MOC_LITERAL(86, 1679, 17), // "m_correctedYawPos"
-QT_MOC_LITERAL(87, 1697, 17), // "m_searchPitchRate"
-QT_MOC_LITERAL(88, 1715, 15), // "m_searchYawRate"
-QT_MOC_LITERAL(89, 1731, 10), // "m_gateSize"
-QT_MOC_LITERAL(90, 1742, 11), // "m_osdSwitch"
-QT_MOC_LITERAL(91, 1754, 18), // "m_captureRefImgCmd"
-QT_MOC_LITERAL(92, 1773, 16), // "m_targetAltitude"
-QT_MOC_LITERAL(93, 1790, 15), // "m_aircraftPitch"
-QT_MOC_LITERAL(94, 1806, 13), // "m_aircraftYaw"
-QT_MOC_LITERAL(95, 1820, 14), // "m_aircraftRoll"
-QT_MOC_LITERAL(96, 1835, 13), // "m_focalLength"
-QT_MOC_LITERAL(97, 1849, 15), // "m_podPitchAngle"
-QT_MOC_LITERAL(98, 1865, 13), // "m_podYawAngle"
-QT_MOC_LITERAL(99, 1879, 19), // "m_satelliteMapScale"
-QT_MOC_LITERAL(100, 1899, 9), // "m_podType"
-QT_MOC_LITERAL(101, 1909, 17), // "m_targetLongitude"
-QT_MOC_LITERAL(102, 1927, 16), // "m_targetLatitude"
-QT_MOC_LITERAL(103, 1944, 19), // "m_aircraftLongitude"
-QT_MOC_LITERAL(104, 1964, 18), // "m_aircraftLatitude"
-QT_MOC_LITERAL(105, 1983, 18), // "m_aircraftAltitude"
-QT_MOC_LITERAL(106, 2002, 11) // "m_pixelSize"
+QT_MOC_LITERAL(54, 1144, 16), // "image_send_frame"
+QT_MOC_LITERAL(55, 1161, 5), // "frame"
+QT_MOC_LITERAL(56, 1167, 10), // "buildFrame"
+QT_MOC_LITERAL(57, 1178, 13), // "m_frameLength"
+QT_MOC_LITERAL(58, 1192, 16), // "m_aFrameSequence"
+QT_MOC_LITERAL(59, 1209, 16), // "m_seekerCtrlWord"
+QT_MOC_LITERAL(60, 1226, 18), // "m_opticalParamCtrl"
+QT_MOC_LITERAL(61, 1245, 15), // "m_templateIndex"
+QT_MOC_LITERAL(62, 1261, 23), // "m_targetBackgroundType1"
+QT_MOC_LITERAL(63, 1285, 23), // "m_targetBackgroundType2"
+QT_MOC_LITERAL(64, 1309, 23), // "m_targetBackgroundType3"
+QT_MOC_LITERAL(65, 1333, 23), // "m_targetBackgroundType4"
+QT_MOC_LITERAL(66, 1357, 23), // "m_missileTargetDistance"
+QT_MOC_LITERAL(67, 1381, 14), // "m_missileSpeed"
+QT_MOC_LITERAL(68, 1396, 16), // "m_bodyPitchAngle"
+QT_MOC_LITERAL(69, 1413, 14), // "m_bodyYawAngle"
+QT_MOC_LITERAL(70, 1428, 15), // "m_bodyRollAngle"
+QT_MOC_LITERAL(71, 1444, 15), // "m_bodyPitchRate"
+QT_MOC_LITERAL(72, 1460, 13), // "m_bodyYawRate"
+QT_MOC_LITERAL(73, 1474, 14), // "m_bodyRollRate"
+QT_MOC_LITERAL(74, 1489, 10), // "m_bodyVelX"
+QT_MOC_LITERAL(75, 1500, 10), // "m_bodyVelY"
+QT_MOC_LITERAL(76, 1511, 10), // "m_bodyVelZ"
+QT_MOC_LITERAL(77, 1522, 10), // "m_bodyPosX"
+QT_MOC_LITERAL(78, 1533, 10), // "m_bodyPosY"
+QT_MOC_LITERAL(79, 1544, 10), // "m_bodyPosZ"
+QT_MOC_LITERAL(80, 1555, 19), // "m_pitchGimbalPreset"
+QT_MOC_LITERAL(81, 1575, 17), // "m_yawGimbalPreset"
+QT_MOC_LITERAL(82, 1593, 19), // "m_irIntegrationTime"
+QT_MOC_LITERAL(83, 1613, 23), // "m_trackingCorrectionCmd"
+QT_MOC_LITERAL(84, 1637, 20), // "m_correctionFrameNum"
+QT_MOC_LITERAL(85, 1658, 19), // "m_correctedPitchPos"
+QT_MOC_LITERAL(86, 1678, 17), // "m_correctedYawPos"
+QT_MOC_LITERAL(87, 1696, 17), // "m_searchPitchRate"
+QT_MOC_LITERAL(88, 1714, 15), // "m_searchYawRate"
+QT_MOC_LITERAL(89, 1730, 10), // "m_gateSize"
+QT_MOC_LITERAL(90, 1741, 11), // "m_osdSwitch"
+QT_MOC_LITERAL(91, 1753, 18), // "m_captureRefImgCmd"
+QT_MOC_LITERAL(92, 1772, 16), // "m_targetAltitude"
+QT_MOC_LITERAL(93, 1789, 15), // "m_aircraftPitch"
+QT_MOC_LITERAL(94, 1805, 13), // "m_aircraftYaw"
+QT_MOC_LITERAL(95, 1819, 14), // "m_aircraftRoll"
+QT_MOC_LITERAL(96, 1834, 13), // "m_focalLength"
+QT_MOC_LITERAL(97, 1848, 15), // "m_podPitchAngle"
+QT_MOC_LITERAL(98, 1864, 13), // "m_podYawAngle"
+QT_MOC_LITERAL(99, 1878, 19), // "m_satelliteMapScale"
+QT_MOC_LITERAL(100, 1898, 9), // "m_podType"
+QT_MOC_LITERAL(101, 1908, 17), // "m_targetLongitude"
+QT_MOC_LITERAL(102, 1926, 16), // "m_targetLatitude"
+QT_MOC_LITERAL(103, 1943, 19), // "m_aircraftLongitude"
+QT_MOC_LITERAL(104, 1963, 18), // "m_aircraftLatitude"
+QT_MOC_LITERAL(105, 1982, 18), // "m_aircraftAltitude"
+QT_MOC_LITERAL(106, 2001, 11) // "m_pixelSize"
 
     },
     "ImageSendData\0frameLengthChanged\0\0"
@@ -1495,7 +1495,7 @@ QT_MOC_LITERAL(106, 2002, 11) // "m_pixelSize"
     "targetLatitudeChanged\0aircraftLongitudeChanged\0"
     "aircraftLatitudeChanged\0aircraftAltitudeChanged\0"
     "pixelSizeChanged\0requestSendData\0"
-    "image_send_frame&\0frame\0buildFrame\0"
+    "image_send_frame\0frame\0buildFrame\0"
     "m_frameLength\0m_aFrameSequence\0"
     "m_seekerCtrlWord\0m_opticalParamCtrl\0"
     "m_templateIndex\0m_targetBackgroundType1\0"
@@ -2177,7 +2177,7 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
             }
         }
         {
-            using _t = void (ImageSendData::*)(image_send_frame & );
+            using _t = void (ImageSendData::*)(image_send_frame );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&ImageSendData::requestSendData)) {
                 *result = 51;
                 return;
@@ -2918,14 +2918,14 @@ void ImageSendData::pixelSizeChanged()
 }
 
 // SIGNAL 51
-void ImageSendData::requestSendData(image_send_frame & _t1)
+void ImageSendData::requestSendData(image_send_frame _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 51, _a);
 }
 struct qt_meta_stringdata_SerialPortImage_t {
     QByteArrayData data[29];
-    char stringdata0[286];
+    char stringdata0[285];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2961,8 +2961,8 @@ QT_MOC_LITERAL(23, 218, 8), // "baudRate"
 QT_MOC_LITERAL(24, 227, 11), // "onClosePort"
 QT_MOC_LITERAL(25, 239, 11), // "onScanPorts"
 QT_MOC_LITERAL(26, 251, 10), // "onSendData"
-QT_MOC_LITERAL(27, 262, 17), // "image_send_frame&"
-QT_MOC_LITERAL(28, 280, 5) // "frame"
+QT_MOC_LITERAL(27, 262, 16), // "image_send_frame"
+QT_MOC_LITERAL(28, 279, 5) // "frame"
 
     },
     "SerialPortImage\0portOpened\0\0success\0"
@@ -2972,7 +2972,7 @@ QT_MOC_LITERAL(28, 280, 5) // "frame"
     "crc16_ccitt_fast\0const uint8_t*\0data\0"
     "size_t\0len\0init\0onOpenPort\0portName\0"
     "baudRate\0onClosePort\0onScanPorts\0"
-    "onSendData\0image_send_frame&\0frame"
+    "onSendData\0image_send_frame\0frame"
 };
 #undef QT_MOC_LITERAL
 

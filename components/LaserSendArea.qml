@@ -219,7 +219,7 @@ Rectangle {
             // var data = ""      //打包数据
             // root.sendData(data)
             //直接调用对应串口里的发送函数就行，最后实现效果是固定周期的发送
-            laserData.sendData(laserSendData.buildFrame())
+            laserSendData.buildFrame()
             console.log("激光导引头数据已发送")
         }
     }

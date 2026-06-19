@@ -13,7 +13,7 @@ LaserData::LaserData(QObject *parent)
 void LaserData::openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
 void LaserData::closePort()                                     { emit requestClosePort(); }
 void LaserData::scanPorts()                                     { emit requestScanPorts(); }
-void LaserData::sendData(const QByteArray &data)                { emit requestSendData(data); }
+// void LaserData::sendData(const QByteArray &data)                { emit requestSendData(data); }
 
 // ── 工作线程回推：QueuedConnection 调用，更新状态并 NOTIFY QML ──
 void LaserData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
@@ -186,7 +186,7 @@ LaserSendData::LaserSendData(QObject *parent)
 {
 }
 
-QByteArray LaserSendData::buildFrame() const
+void LaserSendData::buildFrame() 
 {
     laser_send_frame frame = {};
 
@@ -229,15 +229,16 @@ QByteArray LaserSendData::buildFrame() const
         frame.param5 = 0;
         break;
     }
+    frame.XOR_result = 0;
+    // const uint8_t* data = reinterpret_cast<const uint8_t*>(&frame);
+    // uint8_t checksum = 0;
+    // for (size_t i = 0; i < sizeof(frame) - 1; ++i) {
+    //     checksum ^= data[i];
+    // }
+    // frame.XOR_result = checksum;
 
-    const uint8_t* data = reinterpret_cast<const uint8_t*>(&frame);
-    uint8_t checksum = 0;
-    for (size_t i = 0; i < sizeof(frame) - 1; ++i) {
-        checksum ^= data[i];
-    }
-    frame.XOR_result = checksum;
-
-    return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
+    // return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
+    emit requestSendData(frame);
 }
 
 // ─────────────────────────────────────────────
@@ -265,7 +266,17 @@ void SerialPortLaser::onOpenPort(const QString &name, int baud) {
 }
 void SerialPortLaser::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
-void SerialPortLaser::onSendData(const QByteArray &data) { SerialPort::send(data); }
+void SerialPortLaser::onSendData(laser_send_frame frame)
+ { 
+    const uint8_t* checkdata = reinterpret_cast<const uint8_t*>(&frame);
+    uint8_t checksum = 0;
+    for (size_t i = 0; i < sizeof(frame) - 1; ++i) {
+        checksum ^= checkdata[i];
+    }
+    frame.XOR_result = checksum;
+    auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
+    SerialPort::send(data); 
+ }
 
 void SerialPortLaser::onReadyRead() {
     // 覆写基类：收到数据解析后直接更新 LaserData（两个对象都在主线程，

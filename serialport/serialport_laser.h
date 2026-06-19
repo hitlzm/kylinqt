@@ -3,6 +3,8 @@
 
 #include "serialport.h"
 
+struct laser_send_frame;
+
 class LaserData : public QObject
 {
     Q_OBJECT
@@ -80,7 +82,7 @@ public:
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
     Q_INVOKABLE void closePort();
     Q_INVOKABLE void scanPorts();
-    Q_INVOKABLE void sendData(const QByteArray &data);
+    // Q_INVOKABLE void sendData(const QByteArray &data);
 
 signals:
     // ── 数据变化信号 ──
@@ -120,8 +122,7 @@ signals:
     void requestOpenPort(const QString &portName, int baudRate);
     void requestClosePort();
     void requestScanPorts();
-    void requestSendData(const QByteArray &data);
-
+    
 public slots:
     // ── 工作线程回推状态（QueuedConnection）──
     void setPortOpen(bool open);
@@ -209,7 +210,7 @@ class LaserSendData : public QObject
 public:
     explicit LaserSendData(QObject *parent = nullptr);
 
-    Q_INVOKABLE QByteArray buildFrame() const;
+    Q_INVOKABLE void buildFrame() ;
 
 signals:
     void frameStatusChanged();
@@ -223,6 +224,9 @@ signals:
     void azimuthSearchRangeChanged();
     void elevationSearchRangeChanged();
     void searchRadiusChanged();
+
+    void requestSendData(laser_send_frame frame);
+
 
 private:
     inline qint16 toRawValue(float value) const
@@ -271,7 +275,7 @@ public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
     void onScanPorts();
-    void onSendData(const QByteArray &data);
+    void onSendData(laser_send_frame frame);
 
 protected:
     void parseData(const QByteArray &rawData) override;
@@ -367,7 +371,7 @@ typedef struct {
 
 //激光导引头发送结构体
 #pragma pack(push,1)
-typedef struct {
+typedef struct laser_send_frame{
     
     quint8 frame_header1;       // 0x55
     quint8 frame_header2;       // 0xAA
@@ -406,6 +410,6 @@ typedef struct {
                                     // - 其他指令: 无意义(填0)
     //以下为异或校验位
     quint8 XOR_result;            //按位异或校验位
-}laser_send_frame;
+}l_send_frame;
 #pragma pack(pop)
 #endif // SERIALPORT_LASER_H

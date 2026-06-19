@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
+    // 注册自定义结构体到 Qt 元对象系统（QueuedConnection 跨线程传递必需）
+    qRegisterMetaType<laser_send_frame>("laser_send_frame");
+    qRegisterMetaType<image_send_frame>("image_send_frame");
+
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);
     LaserSendData *laserSendData = new LaserSendData(&app);
@@ -54,7 +58,7 @@ int main(int argc, char *argv[])
     QObject::connect(laserData, &LaserData::requestOpenPort,  laserPort, &SerialPortLaser::onOpenPort,  Qt::QueuedConnection);
     QObject::connect(laserData, &LaserData::requestClosePort, laserPort, &SerialPortLaser::onClosePort, Qt::QueuedConnection);
     QObject::connect(laserData, &LaserData::requestScanPorts, laserPort, &SerialPortLaser::onScanPorts, Qt::QueuedConnection);
-    QObject::connect(laserData, &LaserData::requestSendData,  laserPort, &SerialPortLaser::onSendData,  Qt::QueuedConnection);
+    QObject::connect(laserSendData, &LaserSendData::requestSendData,  laserPort, &SerialPortLaser::onSendData,  Qt::QueuedConnection);
 
     // ── Laser: 工作线程 Worker → 主线程 Data ──
     QObject::connect(laserPort, &SerialPortLaser::portOpened,   laserData, &LaserData::setPortOpen, Qt::QueuedConnection);
