@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
     QObject::connect(laserPort, &SerialPortLaser::portClosed,   laserData, [laserData]{ laserData->setPortOpen(false); }, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::portError,    laserData, &LaserData::setError,    Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::portsChanged, laserData, &LaserData::setPortList, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::laserFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
 
     // ── Image: 主线程 Data → 工作线程 Worker ──
     QObject::connect(imageData, &ImageData::requestOpenPort,  imagePort, &SerialPortImage::onOpenPort,  Qt::QueuedConnection);

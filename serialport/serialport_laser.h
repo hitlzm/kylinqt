@@ -67,7 +67,6 @@ public:
     float softwareVersion1() const;
     float softwareVersion2() const;
 
-    void updateFromFrame(const QByteArray &frame);
 
     // ── 串口状态属性（主线程，QML 直接读取）──
     Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
@@ -128,6 +127,7 @@ public slots:
     void setPortOpen(bool open);
     void setPortList(const QStringList &ports);
     void setError(const QString &msg);
+    void updateFromFrame(const QByteArray &frame);
 
 private:
     inline float fromRawValue_a(qint16 raw)
@@ -269,7 +269,7 @@ signals:
     void portClosed();
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
-
+    void laserFrameReceived(const QByteArray &frame);
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──
     void onOpenPort(const QString &portName, int baudRate);

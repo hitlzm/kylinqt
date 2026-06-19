@@ -320,9 +320,10 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         return;
     }
     
-     //检验无误后更新数据并刷新QML界面显示
-    m_laserData->updateFromFrame(rawData);    
-    // return rawData;
+    //  //检验无误后更新数据并刷新QML界面显示
+    // m_laserData->updateFromFrame(rawData);    
+    // // return rawData;
+    emit laserFrameReceived(rawData);
 }
 
 uint8_t SerialPortLaser::xorChecksumcore(const uint8_t* data, size_t len)
