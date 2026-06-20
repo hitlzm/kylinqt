@@ -1,7 +1,7 @@
 CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: \
- E:/QTproject/kylinqt/serialport/serialport_turntable.cpp \
- E:/QTproject/kylinqt/serialport/serialport_turntable.h \
- E:/QTproject/kylinqt/serialport/serialport.h \
+ E:\QTproject\kylinqt\serialport\serialport_turntable.cpp \
+ E:\QTproject\kylinqt\serialport\serialport_turntable.h \
+ E:\QTproject\kylinqt\serialport\serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \

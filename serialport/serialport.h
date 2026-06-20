@@ -36,7 +36,7 @@ public slots:
 
 protected:
     virtual void onReadyRead();
-    virtual void parseData(const QByteArray &rawData) = 0;
+    virtual void parseData(const QByteArray &rawData) = 0;  //重构这部分代码
 
     QSerialPort *m_serialPort;
     QStringList m_availablePorts;

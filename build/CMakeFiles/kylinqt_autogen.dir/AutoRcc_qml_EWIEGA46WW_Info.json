@@ -5,7 +5,7 @@
 	"CMAKE_CURRENT_SOURCE_DIR" : "E:/QTproject/kylinqt",
 	"CMAKE_SOURCE_DIR" : "E:/QTproject/kylinqt",
 	"CROSS_CONFIG" : false,
-	"GENERATOR" : "Unix Makefiles",
+	"GENERATOR" : "MinGW Makefiles",
 	"INCLUDE_DIR" : "E:/QTproject/kylinqt/build/kylinqt_autogen/include",
 	"INPUTS" : 
 	[

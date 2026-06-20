@@ -1,5 +1,6 @@
 #include "serialport_image.h"
-
+#include <QDebug>
+#include <QString>
 // ─────────────────────────────────────────────
 // ImageData
 // ─────────────────────────────────────────────
@@ -413,6 +414,7 @@ void SerialPortImage::parseData(const QByteArray &rawData)
 
     if (pFrame->frame_header1 != 0x77 || pFrame->frame_header2 != 0xAB) {
         // return QByteArray();
+        qDebug() << "Invalid frame header:" << QString::number(pFrame->frame_header1, 16) << QString::number(pFrame->frame_header2, 16);
         return;
     }
 
@@ -421,6 +423,7 @@ void SerialPortImage::parseData(const QByteArray &rawData)
         reinterpret_cast<const uint8_t*>(rawData.data()), dataLen);
     if (calculatedCrc != pFrame->crc16) {
         // return QByteArray();
+        qDebug() << "Invalid frame CRC:" << QString::number(calculatedCrc, 16) << QString::number(pFrame->crc16, 16);
         return;
     }
 

@@ -1,6 +1,6 @@
 CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: \
- E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp \
- E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
+ E:\QTproject\kylinqt\vlcvideo\VlcVideoItem.cpp \
+ E:\QTproject\kylinqt\vlcvideo\VlcVideoItem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \

@@ -304,8 +304,10 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         
     }
 
-    const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(rawData.data());
-    if (pFrame->frame_header1 != 0x55 || pFrame->frame_header2 != 0xAA || pFrame->frame_header3 != 0xDC) {
+    // const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(rawData.data());
+    laser_recv_frame frame{};
+    memcpy(&frame, rawData.constData(), sizeof(frame));
+    if (frame.frame_header1 != 0x55 || frame.frame_header2 != 0xAA || frame.frame_header3 != 0xDC) {
         // return QByteArray();     //数据帧错误
         return;
     }
@@ -315,7 +317,7 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
     }
 
     uint8_t calculatedChecksum = xorChecksum(checkdata);
-    if (calculatedChecksum != pFrame->XOR_result) {
+    if (calculatedChecksum != frame.XOR_result) {
         // return QByteArray();
         return;
     }

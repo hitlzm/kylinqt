@@ -1,4 +1,4 @@
-CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
+CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QGuiApplication \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h \
@@ -274,8 +274,8 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_futex.h \
- E:/QTproject/kylinqt/serialport/serialport_laser.h \
- E:/QTproject/kylinqt/serialport/serialport.h \
+ E:\QTproject\kylinqt\serialport/serialport_laser.h \
+ E:\QTproject\kylinqt\serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
@@ -288,8 +288,8 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
- E:/QTproject/kylinqt/serialport/serialport_image.h \
- E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
+ E:\QTproject\kylinqt\serialport/serialport_image.h \
+ E:\QTproject\kylinqt\vlcvideo/VlcVideoItem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \

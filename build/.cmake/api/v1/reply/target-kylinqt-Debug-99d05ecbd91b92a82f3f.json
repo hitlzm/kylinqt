@@ -286,27 +286,27 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LE:/QTproject/vlclib/sdk/lib",
+				"fragment" : "-LE:\\QTproject\\vlclib\\sdk\\lib",
 				"role" : "libraryPath"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LE:/QTproject/vlclib",
+				"fragment" : "-LE:\\QTproject\\vlclib",
 				"role" : "libraryPath"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Quickd.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Guid.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Guid.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5SerialPortd.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5SerialPortd.a",
 				"role" : "libraries"
 			},
 			{
@@ -321,17 +321,17 @@
 			},
 			{
 				"backtrace" : 9,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Qmld.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Qmld.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 13,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Networkd.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Networkd.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Cored.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Cored.a",
 				"role" : "libraries"
 			},
 			{

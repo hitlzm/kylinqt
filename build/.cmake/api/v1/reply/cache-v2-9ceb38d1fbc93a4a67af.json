@@ -155,10 +155,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "No help, variable specified on the command line."
+					"value" : "CXX compiler"
 				}
 			],
-			"type" : "FILEPATH",
+			"type" : "STRING",
 			"value" : "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe"
 		},
 		{
@@ -491,7 +491,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "Unix Makefiles"
+			"value" : "MinGW Makefiles"
 		},
 		{
 			"name" : "CMAKE_GENERATOR_INSTANCE",
@@ -607,7 +607,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "F:/VScode/mingw64/bin/make.exe"
+			"value" : "E:/QT5.12.8/Tools/mingw730_64/bin/mingw32-make.exe"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -1262,18 +1262,6 @@
 			"value" : "FALSE"
 		},
 		{
-			"name" : "LIBVLC_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "The directory containing a CMake configuration file for LIBVLC."
-				}
-			],
-			"type" : "PATH",
-			"value" : "LIBVLC_DIR-NOTFOUND"
-		},
-		{
 			"name" : "QML2_IMPORT_PATH",
 			"properties" : 
 			[
@@ -1416,42 +1404,6 @@
 			],
 			"type" : "STRING",
 			"value" : "file:///E:/QTproject/kylinqt/"
-		},
-		{
-			"name" : "VLCQtCore_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "The directory containing a CMake configuration file for VLCQtCore."
-				}
-			],
-			"type" : "PATH",
-			"value" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtCore"
-		},
-		{
-			"name" : "VLCQtQml_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "The directory containing a CMake configuration file for VLCQtQml."
-				}
-			],
-			"type" : "PATH",
-			"value" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQtQml"
-		},
-		{
-			"name" : "VLCQt_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "The directory containing a CMake configuration file for VLCQt."
-				}
-			],
-			"type" : "PATH",
-			"value" : "E:/QTproject/vlc-qt/install/lib/cmake/VLCQt"
 		},
 		{
 			"name" : "kylinqt_BINARY_DIR",
