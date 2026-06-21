@@ -4,6 +4,7 @@
 #include "serialport.h"
 
 struct laser_send_frame;
+struct laser_recv_frame;
 
 class LaserData : public QObject
 {
@@ -127,7 +128,7 @@ public slots:
     void setPortOpen(bool open);
     void setPortList(const QStringList &ports);
     void setError(const QString &msg);
-    void updateFromFrame(const QByteArray &frame);
+    void updateFromFrame(const laser_recv_frame &frame);
 
 private:
     inline float fromRawValue_a(qint16 raw)
@@ -269,7 +270,7 @@ signals:
     void portClosed();
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
-    void laserFrameReceived(const QByteArray &frame);
+    void laserFrameReceived(const laser_recv_frame &frame);
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──
     void onOpenPort(const QString &portName, int baudRate);
@@ -278,7 +279,7 @@ public slots:
     void onSendData(laser_send_frame frame);
 
 protected:
-    void parseData(const QByteArray &rawData) override;
+    void parseData(const QByteArray &rawData);
     void onReadyRead() override;
 
 private:
@@ -289,7 +290,7 @@ private:
 
 //激光导引头接收结构体
 #pragma pack(push,1)
-typedef struct {
+typedef struct laser_recv_frame{
     
     quint8 frame_header1;       // 0x55
     quint8 frame_header2;       // 0xAA
@@ -366,7 +367,7 @@ typedef struct {
     //以下为异或校验位
     quint8 XOR_result;            //按位异或校验位
 
-}laser_recv_frame;
+}l_recv_frame;
 #pragma pack(pop)
 
 //激光导引头发送结构体

@@ -1,5 +1,6 @@
 #include "serialport_laser.h"
-
+#include <QDebug>
+#include <QString>
 // ─────────────────────────────────────────────
 // LaserData
 // ─────────────────────────────────────────────
@@ -47,29 +48,28 @@ float LaserData::quadrant4Energy() const { return m_quadrant4Energy; }
 float LaserData::softwareVersion1() const { return m_softwareVersion1; }
 float LaserData::softwareVersion2() const { return m_softwareVersion2; }
 
-void LaserData::updateFromFrame(const QByteArray &frame)
+void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
 {
-    if (frame.size() < static_cast<int>(sizeof(laser_recv_frame))) {
-        return;
-    }
+    
+    // const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(frame.data());
+    // laser_recv_frame pFrame{};
+    // memcpy(&pFrame, frame.constData(), sizeof(frame));
 
-    const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(frame.data());
-
-    if (m_frameStatus != pFrame->frame_status) {
-        m_frameStatus = pFrame->frame_status;
+    if (m_frameStatus != pFrame.frame_status) {
+        m_frameStatus = pFrame.frame_status;
         emit frameStatusChanged();
     }
-    if (m_frameId != pFrame->frame_ID) {
-        m_frameId = pFrame->frame_ID;
+    if (m_frameId != pFrame.frame_ID) {
+        m_frameId = pFrame.frame_ID;
         emit frameIdChanged();
     }
 
-    if (m_dytStatus != pFrame->dyt_status) {
-        m_dytStatus = pFrame->dyt_status;
+    if (m_dytStatus != pFrame.dyt_status) {
+        m_dytStatus = pFrame.dyt_status;
         emit dytStatusChanged();
     }
-    if (m_detectorStatus != pFrame->detector_status) {
-        m_detectorStatus = pFrame->detector_status;   //写位操作函数细分，qml端判断应该显示什么
+    if (m_detectorStatus != pFrame.detector_status) {
+        m_detectorStatus = pFrame.detector_status;   //写位操作函数细分，qml端判断应该显示什么
         //单独定义几个变量并使用位操作赋值
         m_detectorStatus1 = convertAndGetBit(m_detectorStatus,4,4);
         m_detectorStatus2 = convertAndGetBit(m_detectorStatus,2,3);
@@ -79,8 +79,8 @@ void LaserData::updateFromFrame(const QByteArray &frame)
         emit detectorStatus2Changed();
         emit detectorStatus3Changed();
     }
-    if (m_faultInfo != pFrame->fault_info) {
-        m_faultInfo = pFrame->fault_info;             //写位操作函数细分，qml端判断应该显示什么
+    if (m_faultInfo != pFrame.fault_info) {
+        m_faultInfo = pFrame.fault_info;             //写位操作函数细分，qml端判断应该显示什么
         m_faultInfo1 = convertAndGetBit(m_faultInfo,6,7);
         m_faultInfo2 = convertAndGetBit(m_faultInfo,0,5);
         emit faultInfoChanged();
@@ -88,75 +88,75 @@ void LaserData::updateFromFrame(const QByteArray &frame)
         emit faultInfo2Changed();
     }
 
-    if (m_opticalAzimuth != fromRawValue_a( pFrame->optical_azimuth)) {
-        m_opticalAzimuth = fromRawValue_a(pFrame->optical_azimuth);
+    if (m_opticalAzimuth != fromRawValue_a( pFrame.optical_azimuth)) {
+        m_opticalAzimuth = fromRawValue_a(pFrame.optical_azimuth);
         emit opticalAzimuthChanged();
     }
-    if (m_opticalPitch != fromRawValue_a(pFrame->optical_pitch)) {
-        m_opticalPitch = fromRawValue_a(pFrame->optical_pitch);
+    if (m_opticalPitch != fromRawValue_a(pFrame.optical_pitch)) {
+        m_opticalPitch = fromRawValue_a(pFrame.optical_pitch);
         emit opticalPitchChanged();
     }
 
-    if (m_gyroAzimuthRate != fromRawValue_a(pFrame->gyro_azimuth_rate)) {
-        m_gyroAzimuthRate = fromRawValue_a(pFrame->gyro_azimuth_rate);
+    if (m_gyroAzimuthRate != fromRawValue_a(pFrame.gyro_azimuth_rate)) {
+        m_gyroAzimuthRate = fromRawValue_a(pFrame.gyro_azimuth_rate);
         emit gyroAzimuthRateChanged();
     }
-    if (m_gyroPitchRate != fromRawValue_a(pFrame->gyro_pitch_rate)) {
-        m_gyroPitchRate = fromRawValue_a(pFrame->gyro_pitch_rate);
+    if (m_gyroPitchRate != fromRawValue_a(pFrame.gyro_pitch_rate)) {
+        m_gyroPitchRate = fromRawValue_a(pFrame.gyro_pitch_rate);
         emit gyroPitchRateChanged();
     }
 
-    if (m_losAzimuthRate != fromRawValue_a(pFrame->los_azimuth_rate)) {
-        m_losAzimuthRate = fromRawValue_a(pFrame->los_azimuth_rate);
+    if (m_losAzimuthRate != fromRawValue_a(pFrame.los_azimuth_rate)) {
+        m_losAzimuthRate = fromRawValue_a(pFrame.los_azimuth_rate);
         emit losAzimuthRateChanged();
     }
-    if (m_losPitchRate != fromRawValue_a(pFrame->los_pitch_rate)) {
-        m_losPitchRate = fromRawValue_a(pFrame->los_pitch_rate);
+    if (m_losPitchRate != fromRawValue_a(pFrame.los_pitch_rate)) {
+        m_losPitchRate = fromRawValue_a(pFrame.los_pitch_rate);
         emit losPitchRateChanged();
     }
 
-    if (m_deviationAzimuth != fromRawValue_b(pFrame->deviation_azimuth)) {
-        m_deviationAzimuth = fromRawValue_b(pFrame->deviation_azimuth);
+    if (m_deviationAzimuth != fromRawValue_b(pFrame.deviation_azimuth)) {
+        m_deviationAzimuth = fromRawValue_b(pFrame.deviation_azimuth);
         emit deviationAzimuthChanged();
     }
-    if (m_deviationPitch != fromRawValue_b(pFrame->deviation_pitch)) {
-        m_deviationPitch = fromRawValue_b(pFrame->deviation_pitch);
+    if (m_deviationPitch != fromRawValue_b(pFrame.deviation_pitch)) {
+        m_deviationPitch = fromRawValue_b(pFrame.deviation_pitch);
         emit deviationPitchChanged();
     }
 
-    if (m_laserPeriod != pFrame->laser_period*0.002) {
-        m_laserPeriod = pFrame->laser_period*0.002;
+    if (m_laserPeriod != pFrame.laser_period*0.002) {
+        m_laserPeriod = pFrame.laser_period*0.002;
         emit laserPeriodChanged();
     }
 
-    if (m_gainStatus != pFrame->gain_status) {
-        m_gainStatus = pFrame->gain_status;
+    if (m_gainStatus != pFrame.gain_status) {
+        m_gainStatus = pFrame.gain_status;
         emit gainStatusChanged();
     }
 
-    if (m_quadrant1Energy != fromRawValue_a(pFrame->quadrant1_energy)) {
-        m_quadrant1Energy = fromRawValue_a(pFrame->quadrant1_energy);
+    if (m_quadrant1Energy != fromRawValue_a(pFrame.quadrant1_energy)) {
+        m_quadrant1Energy = fromRawValue_a(pFrame.quadrant1_energy);
         emit quadrant1EnergyChanged();
     }
-    if (m_quadrant2Energy != fromRawValue_a(pFrame->quadrant2_energy)) {
-        m_quadrant2Energy = fromRawValue_a(pFrame->quadrant2_energy);
+    if (m_quadrant2Energy != fromRawValue_a(pFrame.quadrant2_energy)) {
+        m_quadrant2Energy = fromRawValue_a(pFrame.quadrant2_energy);
         emit quadrant2EnergyChanged();
     }
-    if (m_quadrant3Energy != fromRawValue_a(pFrame->quadrant3_energy)) {
-        m_quadrant3Energy = fromRawValue_a(pFrame->quadrant3_energy);
+    if (m_quadrant3Energy != fromRawValue_a(pFrame.quadrant3_energy)) {
+        m_quadrant3Energy = fromRawValue_a(pFrame.quadrant3_energy);
         emit quadrant3EnergyChanged();
     }
-    if (m_quadrant4Energy != fromRawValue_a(pFrame->quadrant4_energy)) {
-        m_quadrant4Energy = fromRawValue_a(pFrame->quadrant4_energy);
+    if (m_quadrant4Energy != fromRawValue_a(pFrame.quadrant4_energy)) {
+        m_quadrant4Energy = fromRawValue_a(pFrame.quadrant4_energy);
         emit quadrant4EnergyChanged();
     }
 
-    if (m_softwareVersion1 != fromRawValue_a(pFrame->software_version1)) {
-        m_softwareVersion1 = fromRawValue_a(pFrame->software_version1);
+    if (m_softwareVersion1 != fromRawValue_a(pFrame.software_version1)) {
+        m_softwareVersion1 = fromRawValue_a(pFrame.software_version1);
         emit softwareVersion1Changed();
     }
-    if (m_softwareVersion2 != fromRawValue_a(pFrame->software_version2)) {
-        m_softwareVersion2 = fromRawValue_a(pFrame->software_version2);
+    if (m_softwareVersion2 != fromRawValue_a(pFrame.software_version2)) {
+        m_softwareVersion2 = fromRawValue_a(pFrame.software_version2);
         emit softwareVersion2Changed();
     }
 }
@@ -279,10 +279,11 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
  }
 
 void SerialPortLaser::onReadyRead() {
-    // 覆写基类：收到数据解析后直接更新 LaserData（两个对象都在主线程，
-    // 但这里 parseData 在工作线程执行，updateFromFrame 也在工作线程执行。
+    // 但这里 parseData 在工作线程执行，updateFromFrame 也在主线程执行。
     // LaserData 成员变量被工作线程写 + 主线程读，对 int/float 安全可接受。）
     SerialPort::onReadyRead();
+    // QByteArray rawData = m_serialPort->readAll();
+    // parseData(rawData);
 }
 
 LaserData* SerialPortLaser::laserData() const
@@ -300,32 +301,71 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
     QByteArray checkdata;
     if (rawData.size() < static_cast<int>(sizeof(laser_recv_frame))) {
         //这里可以给出一个弹窗说明数据接收失败
+        qDebug() <<"Received data is too short. Expected at least " << sizeof(laser_recv_frame) << " bytes, but got " << rawData.size() << " bytes.";
         return;
-        
     }
 
     // const laser_recv_frame* pFrame = reinterpret_cast<const laser_recv_frame*>(rawData.data());
     laser_recv_frame frame{};
-    memcpy(&frame, rawData.constData(), sizeof(frame));
+    //将大端序数据转化为小端序
+    if(rawData.size() >= static_cast<int>(sizeof(laser_recv_frame))) {
+        frame.frame_header1 = static_cast<quint8>(rawData[0]);
+        frame.frame_header2 = static_cast<quint8>(rawData[1]);
+        frame.frame_header3 = static_cast<quint8>(rawData[2]);
+        frame.frame_status = static_cast<quint8>(rawData[3]);
+        frame.frame_ID = static_cast<quint8>(rawData[4]);
+        frame.dyt_status = static_cast<qint8>(rawData[5]);
+        frame.detector_status = static_cast<qint8>(rawData[6]);
+        frame.fault_info = static_cast<qint8>(rawData[7]);
+
+        // 处理大端序的16位数据
+        frame.optical_azimuth = (static_cast<qint16>(static_cast<unsigned char>(rawData[8])) << 8) | static_cast<unsigned char>(rawData[9]);
+        frame.optical_pitch = (static_cast<qint16>(static_cast<unsigned char>(rawData[10])) << 8) | static_cast<unsigned char>(rawData[11]);
+        frame.gyro_azimuth_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[12])) << 8) | static_cast<unsigned char>(rawData[13]);
+        frame.gyro_pitch_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[14])) << 8) | static_cast<unsigned char>(rawData[15]);
+        frame.los_azimuth_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[16])) << 8) | static_cast<unsigned char>(rawData[17]);
+        frame.los_pitch_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[18])) << 8) | static_cast<unsigned char>(rawData[19]);
+        frame.deviation_azimuth = (static_cast<qint16>(static_cast<unsigned char>(rawData[20])) << 8) | static_cast<unsigned char>(rawData[21]);
+        frame.deviation_pitch = (static_cast<qint16>(static_cast<unsigned char>(rawData[22])) << 8) | static_cast<unsigned char>(rawData[23]);
+        frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(rawData[24])) << 8) | static_cast<unsigned char>(rawData[25]);
+        frame.reserved1[0] = (static_cast<quint8>(static_cast<unsigned char>(rawData[27])));
+        frame.reserved1[1] = (static_cast<quint8>(static_cast<unsigned char>(rawData[26])));
+        frame.gain_status = static_cast<qint8>(rawData[28]);
+        frame.quadrant1_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[29]))) ;
+        frame.quadrant2_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[30]))) ;
+        frame.quadrant3_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[31]))) ;
+        frame.quadrant4_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[32]))) ;
+        frame.software_version1 = (static_cast<qint16>(static_cast<unsigned char>(rawData[33])) << 8) | static_cast<unsigned char>(rawData[34]);
+        frame.software_version2 = (static_cast<qint16>(static_cast<unsigned char>(rawData[35])) << 8) | static_cast<unsigned char>(rawData[36]);
+        frame.XOR_result = static_cast<quint8>(rawData[37]);
+    }
+    // memcpy(&frame, rawData.constData(), sizeof(frame));
+
     if (frame.frame_header1 != 0x55 || frame.frame_header2 != 0xAA || frame.frame_header3 != 0xDC) {
         // return QByteArray();     //数据帧错误
+        qDebug() << "Invalid frame header. Expected 0x55, 0xAA, 0xDC, but got "
+                 << QString("0x%1").arg(frame.frame_header1, 2, 16, QLatin1Char('0')).toUpper() << ", "
+                 << QString("0x%1").arg(frame.frame_header2, 2, 16, QLatin1Char('0')).toUpper() << ", "
+                 << QString("0x%1").arg(frame.frame_header3, 2, 16, QLatin1Char('0')).toUpper();
         return;
     }
-    //截取需要校验的数据
+    
+    // 截取需要校验的数据
     if (rawData.size() >= 4) {
         checkdata = rawData.mid(3, rawData.size() - 4);
     }
 
     uint8_t calculatedChecksum = xorChecksum(checkdata);
     if (calculatedChecksum != frame.XOR_result) {
-        // return QByteArray();
+        qDebug() << "Checksum mismatch. Expected: 0x" << QString("0x%1").arg(frame.XOR_result, 2, 16, QLatin1Char('0')).toUpper()
+                 << ", Calculated: 0x" << QString("0x%1").arg(calculatedChecksum, 2, 16, QLatin1Char('0')).toUpper();
         return;
     }
     
     //  //检验无误后更新数据并刷新QML界面显示
     // m_laserData->updateFromFrame(rawData);    
     // // return rawData;
-    emit laserFrameReceived(rawData);
+    emit laserFrameReceived(frame);
 }
 
 uint8_t SerialPortLaser::xorChecksumcore(const uint8_t* data, size_t len)
