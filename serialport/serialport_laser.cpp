@@ -373,8 +373,7 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
     }
     
     //  //检验无误后更新数据并刷新QML界面显示
-    // m_laserData->updateFromFrame(rawData);    
-    // // return rawData;
+   
     emit laserFrameReceived(frame);
 }
 

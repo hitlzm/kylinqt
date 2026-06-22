@@ -342,6 +342,18 @@
 			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake"
 		},
 		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake"
+		},
+		{
 			"path" : "qml.qrc"
 		}
 	],

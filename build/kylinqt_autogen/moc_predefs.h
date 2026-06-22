@@ -218,6 +218,7 @@
 #define __SIG_ATOMIC_MAX__ 0x7fffffff
 #define __GCC_ATOMIC_WCHAR_T_LOCK_FREE 2
 #define __SIZEOF_PTRDIFF_T__ 8
+#define QT_GAMEPAD_LIB 1
 #define __FLT32X_MANT_DIG__ 53
 #define __x86_64__ 1
 #define __FLT32X_MIN_EXP__ (-1021)

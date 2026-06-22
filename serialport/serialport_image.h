@@ -555,10 +555,10 @@ typedef struct {
 
     // 字节23: 修正指令状态回告 (bit0)
     quint8 correction_cmd_status;
-
-    // 字节24: 修正指令次数回告
+    //字节24-26预留三字节
+    quint8 reserved3[3];
+    // 字节27: 修正指令次数回告
     quint8 correction_cmd_count;
-
     // 字节25-26: 俯仰陀螺
     qint16 pitch_gyro;
 
@@ -566,7 +566,7 @@ typedef struct {
     qint16 yaw_gyro;
 
     // 字节29-31: 预留3字节
-    quint8 reserved3[3];
+    
 
     // 字节32: 跟踪状态
     quint8 tracking_state;

@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "E:/QTproject/kylinqt/handle/handle.cpp" "CMakeFiles/kylinqt.dir/handle/handle.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/handle/handle.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj.d"
   "E:/QTproject/kylinqt/main.cpp" "CMakeFiles/kylinqt.dir/main.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/main.cpp.obj.d"

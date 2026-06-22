@@ -157,6 +157,10 @@
 				},
 				{
 					"backtrace" : 3,
+					"define" : "QT_GAMEPAD_LIB"
+				},
+				{
+					"backtrace" : 3,
 					"define" : "QT_GUI_LIB"
 				},
 				{
@@ -244,6 +248,11 @@
 					"backtrace" : 3,
 					"isSystem" : true,
 					"path" : "E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad"
 				}
 			],
 			"language" : "CXX",
@@ -264,7 +273,8 @@
 				5,
 				6,
 				7,
-				8
+				8,
+				9
 			]
 		}
 	],
@@ -301,12 +311,12 @@
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Guid.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5SerialPortd.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5SerialPortd.a",
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Gamepadd.a",
 				"role" : "libraries"
 			},
 			{
@@ -327,6 +337,11 @@
 			{
 				"backtrace" : 13,
 				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Networkd.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Guid.a",
 				"role" : "libraries"
 			},
 			{
@@ -361,7 +376,8 @@
 				5,
 				6,
 				7,
-				8
+				8,
+				9
 			]
 		},
 		{
@@ -375,7 +391,7 @@
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				9
+				10
 			]
 		}
 	],
@@ -421,6 +437,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "serialport/serialport_turntable.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "handle/handle.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

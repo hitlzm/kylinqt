@@ -141,6 +141,30 @@ kylinqt_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt_autogen.dir\build.make CMakeFiles/kylinqt_autogen.dir/build
 .PHONY : kylinqt_autogen/fast
 
+handle/handle.obj: handle/handle.cpp.obj
+.PHONY : handle/handle.obj
+
+# target to build an object file
+handle/handle.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/handle/handle.cpp.obj
+.PHONY : handle/handle.cpp.obj
+
+handle/handle.i: handle/handle.cpp.i
+.PHONY : handle/handle.i
+
+# target to preprocess a source file
+handle/handle.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/handle/handle.cpp.i
+.PHONY : handle/handle.cpp.i
+
+handle/handle.s: handle/handle.cpp.s
+.PHONY : handle/handle.s
+
+# target to generate assembly for a file
+handle/handle.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/handle/handle.cpp.s
+.PHONY : handle/handle.cpp.s
+
 kylinqt_autogen/EWIEGA46WW/qrc_qml.obj: kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 .PHONY : kylinqt_autogen/EWIEGA46WW/qrc_qml.obj
 
@@ -343,6 +367,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... kylinqt_autogen
 	@echo ... kylinqt
+	@echo ... handle/handle.obj
+	@echo ... handle/handle.i
+	@echo ... handle/handle.s
 	@echo ... kylinqt_autogen/EWIEGA46WW/qrc_qml.obj
 	@echo ... kylinqt_autogen/EWIEGA46WW/qrc_qml.i
 	@echo ... kylinqt_autogen/EWIEGA46WW/qrc_qml.s

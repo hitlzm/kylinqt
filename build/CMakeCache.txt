@@ -251,6 +251,9 @@ QT_QML_GENERATE_QMLLS_INI:STRING=ON
 //The directory containing a CMake configuration file for Qt5Core.
 Qt5Core_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Core
 
+//The directory containing a CMake configuration file for Qt5Gamepad.
+Qt5Gamepad_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad
+
 //The directory containing a CMake configuration file for Qt5Gui.
 Qt5Gui_DIR:PATH=E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui
 

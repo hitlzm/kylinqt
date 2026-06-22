@@ -86,6 +86,9 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake",
 		"E:/QTproject/kylinqt/qml.qrc"
 	],
 	"CMAKE_SOURCE_DIR" : "E:/QTproject/kylinqt",
@@ -94,6 +97,12 @@
 	"DEP_FILE_RULE_NAME" : "",
 	"HEADERS" : 
 	[
+		[
+			"E:/QTproject/kylinqt/handle/handle.h",
+			"MU",
+			"62PF24DQ2C/moc_handle.cpp",
+			null
+		],
 		[
 			"E:/QTproject/kylinqt/serialport/serialport.h",
 			"MU",
@@ -131,6 +140,7 @@
 	"MOC_DEFINITIONS" : 
 	[
 		"QT_CORE_LIB",
+		"QT_GAMEPAD_LIB",
 		"QT_GUI_LIB",
 		"QT_NETWORK_LIB",
 		"QT_QML_DEBUG",
@@ -160,6 +170,7 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtANGLE",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort",
+		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad",
 		"E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++",
 		"E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32",
 		"E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward",
@@ -192,6 +203,7 @@
 	"SETTINGS_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "E:/QTproject/kylinqt/handle/handle.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_image.cpp", "MU", null ],

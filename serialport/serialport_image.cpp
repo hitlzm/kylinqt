@@ -124,8 +124,8 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit selfCheckFlag6Changed();
     }
 
-    if (m_pitchLosAngVel != fromRawValue_a(pFrame->pitch_line_of_sight_ang_vel) ){
-        m_pitchLosAngVel = fromRawValue_a(pFrame->pitch_line_of_sight_ang_vel);
+    if (m_pitchLosAngVel != fromRawValue_b(pFrame->pitch_line_of_sight_ang_vel) ){
+        m_pitchLosAngVel = fromRawValue_b(pFrame->pitch_line_of_sight_ang_vel);
         emit pitchLosAngVelChanged();
     }
     if (m_yawLosAngVel != fromRawValue_b(pFrame->yaw_line_of_sight_ang_vel) ) {
@@ -195,21 +195,21 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit pitchDeviationPixelChanged();
     }
 
-    if (m_azimuthGyroOutput != pFrame->azimuth_gyro_output) {
-        m_azimuthGyroOutput = pFrame->azimuth_gyro_output;
+    if (m_azimuthGyroOutput != fromRawValue_a(pFrame->azimuth_gyro_output)) {
+        m_azimuthGyroOutput = fromRawValue_a(pFrame->azimuth_gyro_output);
         emit azimuthGyroOutputChanged();
     }
-    if (m_pitchGyroOutput != pFrame->pitch_gyro_output) {
-        m_pitchGyroOutput = pFrame->pitch_gyro_output;
+    if (m_pitchGyroOutput != fromRawValue_a(pFrame->pitch_gyro_output)) {
+        m_pitchGyroOutput = fromRawValue_a(pFrame->pitch_gyro_output);
         emit pitchGyroOutputChanged();
     }
 
-    if (m_azimuthMasterCmd != pFrame->azimuth_master_cmd) {
-        m_azimuthMasterCmd = pFrame->azimuth_master_cmd;
+    if (m_azimuthMasterCmd != fromRawValue_a(pFrame->azimuth_master_cmd)) {
+        m_azimuthMasterCmd = fromRawValue_a(pFrame->azimuth_master_cmd);
         emit azimuthMasterCmdChanged();
     }
-    if (m_pitchMasterCmd != pFrame->pitch_master_cmd) {
-        m_pitchMasterCmd = pFrame->pitch_master_cmd;
+    if (m_pitchMasterCmd != fromRawValue_a(pFrame->pitch_master_cmd)) {
+        m_pitchMasterCmd = fromRawValue_a(pFrame->pitch_master_cmd);
         emit pitchMasterCmdChanged();
     }
 

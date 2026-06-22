@@ -13,7 +13,9 @@ int main(int argc, char *argv[])
 
     // 注册自定义结构体到 Qt 元对象系统（QueuedConnection 跨线程传递必需）
     qRegisterMetaType<laser_send_frame>("laser_send_frame");
+    qRegisterMetaType<laser_recv_frame>("laser_recv_frame");
     qRegisterMetaType<image_send_frame>("image_send_frame");
+    qRegisterMetaType<image_recv_frame>("image_recv_frame");
 
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);

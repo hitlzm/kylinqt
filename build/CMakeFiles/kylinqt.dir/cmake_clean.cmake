@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/kylinqt.dir/handle/handle.cpp.obj"
+  "CMakeFiles/kylinqt.dir/handle/handle.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
   "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj"
