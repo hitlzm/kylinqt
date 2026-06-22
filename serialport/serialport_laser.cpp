@@ -231,14 +231,7 @@ void LaserSendData::buildFrame()
         break;
     }
     frame.XOR_result = 0;
-    // const uint8_t* data = reinterpret_cast<const uint8_t*>(&frame);
-    // uint8_t checksum = 0;
-    // for (size_t i = 0; i < sizeof(frame) - 1; ++i) {
-    //     checksum ^= data[i];
-    // }
-    // frame.XOR_result = checksum;
-
-    // return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
+    
     emit requestSendData(frame);
 }
 
