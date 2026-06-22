@@ -160,7 +160,7 @@ private:
     int m_frameStatus = 0;
     int m_frameStatus1 = 0;//帧长
     int m_frameStatus2 = 0; //帧计数器
-    int m_frameId = 0;
+    int m_frameId = 0x25;
     int m_dytStatus = 0;
     int m_detectorStatus = 0;  //细分为三种
     int m_detectorStatus1 = 0;
@@ -237,7 +237,7 @@ private:
     }
 
     int m_frameStatus = 0; //帧长与帧计数器
-    int m_frameId = 0;     //M或S
+    int m_frameId = 0x15;     //M或S
     int m_cmd = 0;
     int m_laserPeriod = 0;                    
     float m_azimuthAngle = 0.0f;              // 方位角度

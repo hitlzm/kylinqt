@@ -59,6 +59,7 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
         m_frameStatus = pFrame.frame_status;
         emit frameStatusChanged();
     }
+    //帧ID不用判断
     if (m_frameId != pFrame.frame_ID) {
         m_frameId = pFrame.frame_ID;
         emit frameIdChanged();
@@ -267,13 +268,22 @@ void SerialPortLaser::onOpenPort(const QString &name, int baud) {
 void SerialPortLaser::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortLaser::onSendData(laser_send_frame frame)
- { 
+ {  
+    const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
+     //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
+    frame.laser_period = (static_cast<qint16>(static_cast<unsigned char>(mydata[7])) << 8) | static_cast<unsigned char>(mydata[6]);
+    frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[9])) << 8) | static_cast<unsigned char>(mydata[8]);
+    frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[11])) << 8) | static_cast<unsigned char>(mydata[10]);
+    frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[13])) << 8) | static_cast<unsigned char>(mydata[12]);
+    frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[15])) << 8) | static_cast<unsigned char>(mydata[14]);
     const uint8_t* checkdata = reinterpret_cast<const uint8_t*>(&frame);
     uint8_t checksum = 0;
-    for (size_t i = 0; i < sizeof(frame) - 1; ++i) {
+    //去掉开头的三个字节与结尾的一个校验位字节
+    for (size_t i = 3; i < sizeof(frame) - 1; ++i) {
         checksum ^= checkdata[i];
     }
     frame.XOR_result = checksum;
+    
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
     SerialPort::send(data); 
  }
@@ -350,7 +360,7 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         return;
     }
     
-    // 截取需要校验的数据
+    // 截取需要校验的数据,仍按大端序数据格式来计算校验位
     if (rawData.size() >= 4) {
         checkdata = rawData.mid(3, rawData.size() - 4);
     }
