@@ -30,7 +30,7 @@ int VlcVideoItem::volume() const { return m_volume; }
 
 void VlcVideoItem::setVolume(int vol)
 {
-    vol = qBound(0, vol, 200);
+    vol = qBound(0, vol, 100);
     if (m_volume != vol) {
         m_volume = vol;
         if (m_player) {

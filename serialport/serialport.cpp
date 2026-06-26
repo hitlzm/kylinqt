@@ -5,7 +5,7 @@ SerialPort::SerialPort(QObject *parent)
     : QObject(parent)
     , m_serialPort(nullptr)   // 延迟到 dowork() 在目标线程中创建
 {
-    scanPorts();
+    scanPorts();  //创建串口对象时提供一次扫描
 }
 
 SerialPort::~SerialPort()

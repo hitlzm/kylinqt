@@ -183,6 +183,20 @@ Rectangle {
         model: ["9600", "115200"]
     }
 
+    CusButton_Blue {
+        id: scanButton
+        width: 120
+        height: 42
+        text: "扫描串口"
+
+        anchors.top: serialComboBox.top
+        anchors.left: baudComboBox.right
+        anchors.leftMargin: 30
+
+        onClicked: {
+            laserData.requestScanPorts()
+        }
+    }
     // 打开串口按钮
     CusButton_Blue {
         id: openButton
@@ -191,7 +205,7 @@ Rectangle {
         text: laserData.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.top
-        anchors.left: baudComboBox.right
+        anchors.left: scanButton.right
         anchors.leftMargin: 30
         onClicked: {
             if (laserData.portOpen) {

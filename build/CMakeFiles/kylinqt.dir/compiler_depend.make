@@ -1129,11 +1129,13 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearraylist.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h \
@@ -1180,6 +1182,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
@@ -1376,11 +1379,13 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearraylist.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h \
@@ -1427,6 +1432,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
@@ -2373,6 +2379,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/concept_check.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/cpp_type_traits.h:
@@ -2500,6 +2508,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf.tcc:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf_iterator.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h:
 
@@ -2892,6 +2902,8 @@ E:/QTproject/kylinqt/serialport/serialport.cpp:
 E:/QTproject/kylinqt/serialport/serialport_image.cpp:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QPainter:
 

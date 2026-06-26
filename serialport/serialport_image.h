@@ -409,7 +409,7 @@ private:
     return static_cast<qint16>(
                 qRound(value / 0.002f));
     }
-    int m_frameLength = 0;
+    int m_frameLength = 220;
     int m_aFrameSequence = 0;
     int m_seekerCtrlWord = 0;
     int m_opticalParamCtrl = 0;

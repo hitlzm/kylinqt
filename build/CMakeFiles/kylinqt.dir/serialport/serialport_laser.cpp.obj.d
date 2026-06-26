@@ -248,4 +248,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h

@@ -1,6 +1,7 @@
 #include "serialport_laser.h"
 #include <QDebug>
 #include <QString>
+#include <QTimer>
 // ─────────────────────────────────────────────
 // LaserData
 // ─────────────────────────────────────────────
@@ -278,7 +279,26 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     frame.XOR_result = checksum;
     
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
-    SerialPort::send(data); 
+    int sendCount = 0;
+    //SerialPort::send(data); 
+    QTimer *timer = new QTimer(this);
+    timer->setInterval(10); // 20ms
+    // 连接定时器的超时信号
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
+        // 发送数据
+        SerialPort::send(data);
+        sendCount++;
+        //统计并更改发送次数
+
+        // 发送5次后停止并销毁定时器
+        if (sendCount >= 10) {
+            timer->stop();
+            timer->deleteLater();
+        }
+    });
+
+    //  启动定时器（立即触发第一次发送，若想先等20ms再发，可改为 timer->start(20) 但默认立即触发）
+    timer->start();
  }
 
 void SerialPortLaser::onReadyRead() {

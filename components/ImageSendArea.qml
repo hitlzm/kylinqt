@@ -17,7 +17,7 @@ Rectangle {
     }
     property var commandList: [
 
-        "无动作",
+        "默认值",
         //以下指令发送三拍，三拍后恢复默认值
         "自检",
         "射检",
@@ -162,7 +162,7 @@ Rectangle {
         anchors.left: serialComboBox.right
         anchors.leftMargin: 30
 
-        model: ["9600", "115200"]
+        model: ["9600", "115200","460800"]
     }
     CusPopup {
             id: tip
@@ -186,16 +186,31 @@ Rectangle {
         CusButton_Blue { text: "确定"; onClicked: tip1.hide() }
         }
     }
+    //扫描串口按钮
+    CusButton_Blue {
+        id: scanButton
+        width: 100
+        height: 32
+        text: "扫描串口"
+
+        anchors.top: serialComboBox.top
+        anchors.left: baudComboBox.right
+        anchors.leftMargin: 20
+
+        onClicked: {
+            imageData.requestScanPorts()
+        }
+    }
     // 打开串口按钮
     CusButton_Blue {
         id: openButton
-        width: 120
+        width: 100
         height: 32
         text: imageData.portOpen ? "关闭串口" : "打开串口"
 
         anchors.top: serialComboBox.top
-        anchors.left: baudComboBox.right
-        anchors.leftMargin: 30
+        anchors.left: scanButton.right
+        anchors.leftMargin: 20
         Timer {
             id: delayTimer
             interval: 1  
@@ -220,7 +235,7 @@ Rectangle {
     // 发送数据按钮
     CusButton_Blue {
         id: sendButton
-        width: 120
+        width: 100
         height: 32
         text: "发送数据"
         enabled: imageData.portOpen
@@ -237,14 +252,15 @@ Rectangle {
 
     CusButton_Blue {
         id: photobutton
-        width: 120
+        width: 100
         height: 32
         text: "拍摄参考图"
         anchors.top: serialComboBox.top
         anchors.left: sendButton.right
-        anchors.leftMargin: 30
+        anchors.leftMargin: 20
         onClicked: {
-
+                imageSendData.m_captureRefImgCmd=0xaa;
+                imageSendData.buildFrame()
         }
     }
 
@@ -255,7 +271,7 @@ Rectangle {
         title: "字符叠加"
         anchors.top: photobutton.top
         anchors.left: photobutton.right
-        anchors.leftMargin: 30
+        anchors.leftMargin: 20
     }
 
     // 左侧输入框

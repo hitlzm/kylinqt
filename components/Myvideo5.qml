@@ -74,7 +74,7 @@ Rectangle {
         Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
         CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 200
             value: videoPlayer.volume; onMoved: videoPlayer.setVolume(value) }
-        CusLabel { text: Math.round(videoPlayer.volume / 2) + "%"; font.pixelSize: 14; Layout.preferredWidth: 45; horizontalAlignment: Text.AlignHCenter }
+        CusLabel { text: Math.round(videoPlayer.volume ) + "%"; font.pixelSize: 14; Layout.preferredWidth: 45; horizontalAlignment: Text.AlignHCenter }
     }
 
     // ========== URL 输入区 ==========

@@ -1,6 +1,7 @@
 #include "serialport_image.h"
 #include <QDebug>
 #include <QString>
+#include <QTimer>
 // ─────────────────────────────────────────────
 // ImageData
 // ─────────────────────────────────────────────
@@ -388,7 +389,39 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     frame.crc16 = crc;
     auto data=QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
-    SerialPort::send(data); 
+
+    // SerialPort::send(data); 
+    //引入定时器，每20ms发送一次
+    int sendCount = 0;
+    // .创建定时器（父对象为this，避免内存泄漏）
+    QTimer *timer = new QTimer(this);
+    timer->setInterval(20); // 20ms
+    // 连接定时器的超时信号
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
+        // 发送数据
+        SerialPort::send(data);
+        sendCount++;
+        //增加帧流水号改变
+        
+        //发一拍处理
+        if(sendCount >= 1){
+            data[46]=0x00;
+        }
+        //加入发三拍处理
+        if(sendCount >= 3){
+            data[5]=0x00;    //导引头控制字
+            data[6]=0x00;    //光学参数装订控制字
+            data[61]=0x00;   //拍摄参考图
+        }
+        // 发送5次后停止并销毁定时器
+        if (sendCount >= 10) {
+            timer->stop();
+            timer->deleteLater();
+        }
+    });
+
+    // 启动定时器（立即触发第一次发送，若想先等20ms再发，可改为 timer->start(20) 但默认立即触发）
+    timer->start();
 }
 void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 
