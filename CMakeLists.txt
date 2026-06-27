@@ -58,6 +58,7 @@ else()
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
       handle/handle.cpp
+      handle/gamepadprocessor.cpp
       vlcvideo/VlcVideoItem.cpp
       ${TaoQuickRes}
     )

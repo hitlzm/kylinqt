@@ -1,7 +1,7 @@
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:\QTproject\kylinqt\build\kylinqt_autogen\mocs_compilation.cpp \
- E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_handle.cpp \
- E:/QTproject/kylinqt/handle/handle.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_gamepadprocessor.cpp \
+ E:/QTproject/kylinqt/handle/gamepadprocessor.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
@@ -220,6 +220,8 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_time.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_handle.cpp \
+ E:/QTproject/kylinqt/handle/handle.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/QGamepad \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/qgamepad.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \

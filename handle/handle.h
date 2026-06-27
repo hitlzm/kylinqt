@@ -4,88 +4,107 @@
 #include <QGamepad>
 #include <QGamepadManager>
 
+class GamepadProcessor;
+
 /*!
- * brief 游戏手柄控制器封装类
- * 自动连接系统中第一个可用手柄，并发射标准的按键/摇杆信号
+ * brief 游戏手柄控制器封装类（主线程对象）
+ *
+ * 职责：包装 Qt QGamepad，将原生信号转换为统一通知信号。
+ * 不包含数据处理逻辑 —— 数据变动的实际处理交给 GamepadProcessor（工作线程）。
  */
 class Handle : public QObject
 {
     Q_OBJECT
 
 public:
-    /*!
-     * brief 构造函数，默认连接设备ID 0（通常为第一个手柄）
-     * param parent 父对象
-     * param deviceId 手柄设备ID，默认为0
-     */
     explicit Handle(int deviceId = 0, QObject *parent = nullptr);
     ~Handle();
 
-    /*!
-     * brief 检查手柄是否已连接
-     * return true 表示已连接
-     */
     bool isConnected() const { return m_isConnected; }
+    int deviceId() const  { return m_deviceId; }
 
     /*!
-     * brief 获取当前绑定的设备ID
-     * return 设备ID，-1 表示无设备
+     * brief 触发手柄震动（需要硬件支持）
+     * param leftMotor  左马达强度 (0.0 ~ 1.0)
+     * param rightMotor 右马达强度 (0.0 ~ 1.0)
      */
-    int deviceId() const { return m_deviceId; }
+    Q_INVOKABLE void setVibration(double leftMotor, double rightMotor);
 
     /*!
-     * \brief 触发手柄震动（需要硬件支持）
-     * \param weak 左马达强度 (0.0 ~ 1.0)
-     * \param strong 右马达强度 (0.0 ~ 1.0)
+     * brief 将 Handle 的信号连接到 GamepadProcessor 的槽（QueuedConnection 跨线程安全）
      */
-    void setVibration(double weak, double strong);
+    void connectToProcessor(GamepadProcessor *processor);
 
 signals:
     // ==================== 连接状态信号 ====================
-    void deviceConnected(int id);
-    void deviceDisconnected();
+    void connected(int deviceId);
+    void disconnected();
 
-    // ==================== 按键信号（布尔值：按下 true / 抬起 false） ====================
+    // ==================== 按键信号（按下 true / 抬起 false） ====================
     void buttonAChanged(bool pressed);
     void buttonBChanged(bool pressed);
     void buttonXChanged(bool pressed);
     void buttonYChanged(bool pressed);
-    void buttonL1Changed(bool pressed);   // 左肩键
-    void buttonR1Changed(bool pressed);   // 右肩键
-    void buttonL3Changed(bool pressed);   // 左摇杆按下
-    void buttonR3Changed(bool pressed);   // 右摇杆按下
+    void buttonL1Changed(bool pressed);
+    void buttonR1Changed(bool pressed);
+    void buttonL3Changed(bool pressed);
+    void buttonR3Changed(bool pressed);
     void buttonStartChanged(bool pressed);
     void buttonSelectChanged(bool pressed);
-    void buttonGuideChanged(bool pressed); // Xbox 西瓜键 / PS Home键
+    void buttonGuideChanged(bool pressed);
 
     // ==================== 轴/摇杆信号（值范围：-1.0 ~ 1.0） ====================
-    void leftStickChanged(double x, double y);   // 左摇杆
-    void rightStickChanged(double x, double y);  // 右摇杆
-    void triggerChanged(double left, double right); // 左右扳机 (0.0 ~ 1.0)
+    void leftStickChanged(double x, double y);
+    void rightStickChanged(double x, double y);
+    void triggerChanged(double left, double right);
+
+    // ==================== 单轴信号（便于按需连接） ====================
+    void axisLeftXChanged(double value);
+    void axisLeftYChanged(double value);
+    void axisRightXChanged(double value);
+    void axisRightYChanged(double value);
+    void triggerL2Changed(double value);
+    void triggerR2Changed(double value);
 
 private slots:
-    // 内部连接 QGamepad 信号的槽函数
+    // 连接状态
     void onConnectedChanged();
-    void onButtonA(bool pressed);
-    void onButtonB(bool pressed);
-    void onButtonX(bool pressed);
-    void onButtonY(bool pressed);
-    void onButtonL1(bool pressed);
-    void onButtonR1(bool pressed);
-    void onButtonL3(bool pressed);
-    void onButtonR3(bool pressed);
-    void onButtonStart(bool pressed);
-    void onButtonSelect(bool pressed);
-    void onButtonGuide(bool pressed);
-    void onAxisLeftX(double value);
-    void onAxisLeftY(double value);
-    void onAxisRightX(double value);
-    void onAxisRightY(double value);
-    void onButtonL2(double value);  // 注意：L2/R2 在 Qt 中按扳机轴处理
-    void onButtonR2(double value);
+
+    // 按钮
+    void onButtonAChanged(bool pressed);
+    void onButtonBChanged(bool pressed);
+    void onButtonXChanged(bool pressed);
+    void onButtonYChanged(bool pressed);
+    void onButtonL1Changed(bool pressed);
+    void onButtonR1Changed(bool pressed);
+    void onButtonL3Changed(bool pressed);
+    void onButtonR3Changed(bool pressed);
+    void onButtonStartChanged(bool pressed);
+    void onButtonSelectChanged(bool pressed);
+    void onButtonGuideChanged(bool pressed);
+
+    // 摇杆单轴
+    void onAxisLeftXChanged(double value);
+    void onAxisLeftYChanged(double value);
+    void onAxisRightXChanged(double value);
+    void onAxisRightYChanged(double value);
+
+    // 扳机
+    void onButtonL2Changed(double value);
+    void onButtonR2Changed(double value);
 
 private:
-    QGamepad *m_gamepad;    // Qt游戏手柄核心对象
-    int       m_deviceId;   // 绑定的设备ID
-    bool      m_isConnected; // 连接状态缓存
+    void connectGamepadSignals();
+
+    QGamepad *m_gamepad;
+    int       m_deviceId;
+    bool      m_isConnected;
+
+    // 摇杆缓存（用于合成 leftStickChanged / rightStickChanged）
+    double    m_leftX  = 0.0;
+    double    m_leftY  = 0.0;
+    double    m_rightX = 0.0;
+    double    m_rightY = 0.0;
+    double    m_l2     = 0.0;
+    double    m_r2     = 0.0;
 };

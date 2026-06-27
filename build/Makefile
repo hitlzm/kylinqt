@@ -141,6 +141,30 @@ kylinqt_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt_autogen.dir\build.make CMakeFiles/kylinqt_autogen.dir/build
 .PHONY : kylinqt_autogen/fast
 
+handle/gamepadprocessor.obj: handle/gamepadprocessor.cpp.obj
+.PHONY : handle/gamepadprocessor.obj
+
+# target to build an object file
+handle/gamepadprocessor.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/handle/gamepadprocessor.cpp.obj
+.PHONY : handle/gamepadprocessor.cpp.obj
+
+handle/gamepadprocessor.i: handle/gamepadprocessor.cpp.i
+.PHONY : handle/gamepadprocessor.i
+
+# target to preprocess a source file
+handle/gamepadprocessor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/handle/gamepadprocessor.cpp.i
+.PHONY : handle/gamepadprocessor.cpp.i
+
+handle/gamepadprocessor.s: handle/gamepadprocessor.cpp.s
+.PHONY : handle/gamepadprocessor.s
+
+# target to generate assembly for a file
+handle/gamepadprocessor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/handle/gamepadprocessor.cpp.s
+.PHONY : handle/gamepadprocessor.cpp.s
+
 handle/handle.obj: handle/handle.cpp.obj
 .PHONY : handle/handle.obj
 
@@ -367,6 +391,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... kylinqt_autogen
 	@echo ... kylinqt
+	@echo ... handle/gamepadprocessor.obj
+	@echo ... handle/gamepadprocessor.i
+	@echo ... handle/gamepadprocessor.s
 	@echo ... handle/handle.obj
 	@echo ... handle/handle.i
 	@echo ... handle/handle.s

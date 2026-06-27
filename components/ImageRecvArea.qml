@@ -10,6 +10,8 @@ Rectangle {
     height: 400
     color: '#e9f0f9'
     property int groupHeight1: 150
+    property string lastValidDesc1: "默认值"
+    property string lastValidDesc2: "默认值"
     Text {
         id: titleText
         text: "图像导引头接收区"
@@ -126,28 +128,31 @@ Rectangle {
                             
                             DataLabel {
                                 label: "导引头控制字:"
+                                
                                 value: {
-                                    var v = imageData.seekerCtrlReply
-                                    var desc = "默认值"
+                                    var v = imageData.seekerCtrlReply;
+                                    var currentDesc = null;  // null 代表“此次不更新缓存”
                                     switch(v) {
-                                        // case 0x00: return "默认值"
-                                        case 0x01: desc= "自检通过"; break
-                                        case 0x02: desc= "射检通过"; break
-                                        case 0x04: desc= "搜索回告"; break
-                                        case 0x06: desc= "发射指令回告"; break
-                                        case 0x41: desc= "解锁回告"; break
-                                        case 0x42: desc= "软件升级成功回告"; break
-                                        case 0x43: desc= "软件升级失败回告"; break
-                                        case 0x44: desc= "软件升级中"; break
-                                        case 0x55: desc= "通讯检查通过"; break
-                                        case 0xE1: desc= "自检中"; break
-                                        case 0xE2: desc= "射检中"; break
-                                        case 0xF1: desc= "自检不通过"; break
-                                        case 0xF2: desc= "射检不通过"; break
-                                        case 0xF4: desc= "通讯检查不通过"; break
-                                        default: break
+                                        case 0x01: currentDesc = "自检通过"; break;
+                                        case 0x02: currentDesc = "射检通过"; break;
+                                        case 0x04: currentDesc = "搜索回告"; break;
+                                        case 0x06: currentDesc = "发射指令回告"; break;
+                                        case 0x41: currentDesc = "解锁回告"; break;
+                                        case 0x42: currentDesc = "软件升级成功回告"; break;
+                                        case 0x43: currentDesc = "软件升级失败回告"; break;
+                                        case 0x44: currentDesc = "软件升级中"; break;
+                                        case 0x55: currentDesc = "通讯检查通过"; break;
+                                        case 0xE1: currentDesc = "自检中"; break;
+                                        case 0xE2: currentDesc = "射检中"; break;
+                                        case 0xF1: currentDesc = "自检不通过"; break;
+                                        case 0xF2: currentDesc = "射检不通过"; break;
+                                        case 0xF4: currentDesc = "通讯检查不通过"; break;
+                                        default: break;
                                     }
-                                    return desc;
+                                    if (currentDesc !== null) {
+                                        root.lastValidDesc1 = currentDesc;
+                                    }
+                                    return root.lastValidDesc1;
                                 }
                                 valueColor: {
                                     var v = imageData.seekerCtrlReply
@@ -158,9 +163,10 @@ Rectangle {
                             }
                             DataLabel {
                                 label: "光学参数装订:"
+                                
                                 value: {
                                     var v = imageData.opticalParamReply
-                                    var data="默认值"
+                                    var currentDesc = null;
                                     switch(v) {
                             
                                         case 0xE1: data= "非卫星图模板装订成功"; break
@@ -174,7 +180,10 @@ Rectangle {
                                         case 0xE9: data= "盲元校正成功"; break
                                         default: break
                                     }
-                                    return data;
+                                    if (currentDesc !== null) {
+                                        root.lastValidDesc2 = currentDesc;
+                                    }
+                                    return root.lastValidDesc2;
                                 }
                                 valueColor: {
                                     var v = imageData.opticalParamReply
