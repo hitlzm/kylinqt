@@ -180,7 +180,7 @@ Rectangle {
         anchors.left: serialComboBox.right
         anchors.leftMargin: 30
 
-        model: ["9600", "115200"]
+        model: ["115200"]
     }
 
     CusButton_Blue {

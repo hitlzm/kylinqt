@@ -388,20 +388,28 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     uint16_t crc = SerialPortImage::crc16_ccitt_fast(
         reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     frame.crc16 = crc;
-    auto data=QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
+    auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
 
     // SerialPort::send(data); 
     //引入定时器，每20ms发送一次
     int sendCount = 0;
+    static quint16 num=0;
     // .创建定时器（父对象为this，避免内存泄漏）
     QTimer *timer = new QTimer(this);
     timer->setInterval(20); // 20ms
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 发送数据
-        SerialPort::send(data);
-        sendCount++;
+        qint64 count=SerialPort::send(data);
         //增加帧流水号改变
+        if(count >= 224){
+        //计算流水号      
+            num += 1;
+        //  将结果拆分回两个字节
+            data[3] = static_cast<char>(num & 0xFF);        // 低字节
+            data[4] = static_cast<char>((num >> 8) & 0xFF); // 高字节
+        }
+        sendCount++;
         
         //发一拍处理
         if(sendCount >= 1){
@@ -413,7 +421,11 @@ void SerialPortImage::onSendData(image_send_frame frame) {
             data[6]=0x00;    //光学参数装订控制字
             data[61]=0x00;   //拍摄参考图
         }
-        // 发送5次后停止并销毁定时器
+        //更新数据后重新计算并填入校验位
+        crc= crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));
+        data[222] = static_cast<char>(crc & 0xFF);        // 低字节
+        data[223] = static_cast<char>((crc >> 8) & 0xFF); // 高字节
+        // 发送10次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();
             timer->deleteLater();

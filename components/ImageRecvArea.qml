@@ -128,24 +128,26 @@ Rectangle {
                                 label: "导引头控制字:"
                                 value: {
                                     var v = imageData.seekerCtrlReply
+                                    var desc = "默认值"
                                     switch(v) {
-                                        case 0x00: return "默认值"
-                                        case 0x01: return "自检通过"
-                                        case 0x02: return "射检通过"
-                                        case 0x04: return "搜索回告"
-                                        case 0x06: return "发射指令回告"
-                                        case 0x41: return "解锁回告"
-                                        case 0x42: return "软件升级成功回告"
-                                        case 0x43: return "软件升级失败回告"
-                                        case 0x44: return "软件升级中"
-                                        case 0x55: return "通讯检查通过"
-                                        case 0xE1: return "自检中"
-                                        case 0xE2: return "射检中"
-                                        case 0xF1: return "自检不通过"
-                                        case 0xF2: return "射检不通过"
-                                        case 0xF4: return "通讯检查不通过"
-                                        default: return "0x" + v.toString(16).toUpperCase()
+                                        // case 0x00: return "默认值"
+                                        case 0x01: desc= "自检通过"; break
+                                        case 0x02: desc= "射检通过"; break
+                                        case 0x04: desc= "搜索回告"; break
+                                        case 0x06: desc= "发射指令回告"; break
+                                        case 0x41: desc= "解锁回告"; break
+                                        case 0x42: desc= "软件升级成功回告"; break
+                                        case 0x43: desc= "软件升级失败回告"; break
+                                        case 0x44: desc= "软件升级中"; break
+                                        case 0x55: desc= "通讯检查通过"; break
+                                        case 0xE1: desc= "自检中"; break
+                                        case 0xE2: desc= "射检中"; break
+                                        case 0xF1: desc= "自检不通过"; break
+                                        case 0xF2: desc= "射检不通过"; break
+                                        case 0xF4: desc= "通讯检查不通过"; break
+                                        default: break
                                     }
+                                    return desc;
                                 }
                                 valueColor: {
                                     var v = imageData.seekerCtrlReply
@@ -158,19 +160,21 @@ Rectangle {
                                 label: "光学参数装订:"
                                 value: {
                                     var v = imageData.opticalParamReply
+                                    var data="默认值"
                                     switch(v) {
-                                        case 0x00: return "默认值"
-                                        case 0xE1: return "非卫星图模板装订成功"
-                                        case 0xE2: return "卫星图模板装订成功"
-                                        case 0xE3: return "模板装订中"
-                                        case 0xE4: return "红外非均匀校正成功"
-                                        case 0xE5: return "模板正在擦除"
-                                        case 0xE6: return "模板擦除成功"
-                                        case 0xE7: return "非卫星图模板装订失败"
-                                        case 0xE8: return "卫星图模板装订失败"
-                                        case 0xE9: return "盲元校正成功"
-                                        default: return "0x" + v.toString(16).toUpperCase()
+                            
+                                        case 0xE1: data= "非卫星图模板装订成功"; break
+                                        case 0xE2: data= "卫星图模板装订成功"; break
+                                        case 0xE3: data= "模板装订中"; break
+                                        case 0xE4: data= "红外非均匀校正成功"; break
+                                        case 0xE5: data= "模板正在擦除"; break
+                                        case 0xE6: data= "模板擦除成功"; break
+                                        case 0xE7: data= "非卫星图模板装订失败"; break
+                                        case 0xE8: data= "卫星图模板装订失败"; break
+                                        case 0xE9: data= "盲元校正成功"; break
+                                        default: break
                                     }
+                                    return data;
                                 }
                                 valueColor: {
                                     var v = imageData.opticalParamReply

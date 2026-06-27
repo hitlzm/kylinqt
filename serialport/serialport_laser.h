@@ -236,8 +236,7 @@ private:
                 qRound(value / 0.01f));
     }
 
-    int m_serialcount=0;
-    int m_frameStatus = 0x11 || (m_serialcount >> 6); //帧长与帧计数器
+    int m_frameStatus = 0x11; //帧长与帧计数器
     int m_frameId = 0x15;     //M或S
     int m_cmd = 0;
     int m_laserPeriod = 0;                    

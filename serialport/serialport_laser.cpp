@@ -280,16 +280,30 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
     int sendCount = 0;
+    static quint8 datacount=0;
     //SerialPort::send(data); 
     QTimer *timer = new QTimer(this);
-    timer->setInterval(10); // 20ms
+    timer->setInterval(10); // 10ms
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 发送数据
         SerialPort::send(data);
+        
         sendCount++;
-        //统计并更改发送次数
+        //统计并更改发送次数,重新进行校验位计算
+        datacount++;
+        if(datacount >= 3){
+            datacount=0;
+        }
+        data[3]= 0x11 | (datacount << 6);
 
+        const char * checkdata2= data.data();
+        uint8_t checksum2 = 0;
+        //计算异或校验位并更新,不计入帧头与校验位
+        for (size_t i = 3; i < data.size() - 1; ++i) {
+        checksum2 ^= checkdata2[i];
+        }
+        data[16] = checksum2;
         // 发送5次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();

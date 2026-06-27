@@ -162,7 +162,7 @@ Rectangle {
         anchors.left: serialComboBox.right
         anchors.leftMargin: 30
 
-        model: ["9600", "115200","460800"]
+        model: ["460800"]
     }
     CusPopup {
             id: tip
