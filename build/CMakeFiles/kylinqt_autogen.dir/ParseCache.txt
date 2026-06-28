@@ -21,3 +21,6 @@ E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp
 E:/QTproject/kylinqt/handle/gamepadprocessor.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/handle/myhandle.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/handle/myhandle.cpp

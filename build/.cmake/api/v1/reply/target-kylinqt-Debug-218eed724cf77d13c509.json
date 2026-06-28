@@ -47,13 +47,13 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 72,
+				"line" : 73,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 80,
+				"line" : 81,
 				"parent" : 0
 			},
 			{
@@ -113,7 +113,7 @@
 			{
 				"command" : 7,
 				"file" : 0,
-				"line" : 77,
+				"line" : 78,
 				"parent" : 0
 			},
 			{
@@ -135,7 +135,7 @@
 			{
 				"command" : 10,
 				"file" : 0,
-				"line" : 67,
+				"line" : 68,
 				"parent" : 0
 			}
 		]
@@ -275,7 +275,7 @@
 				7,
 				8,
 				9,
-				10
+				11
 			]
 		}
 	],
@@ -379,7 +379,7 @@
 				7,
 				8,
 				9,
-				10
+				11
 			]
 		},
 		{
@@ -390,10 +390,17 @@
 			]
 		},
 		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				10
+			]
+		},
+		{
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				11
+				12
 			]
 		}
 	],
@@ -460,6 +467,11 @@
 			"sourceGroupIndex" : 0
 		},
 		{
+			"backtrace" : 1,
+			"path" : "handle/myhandle.h",
+			"sourceGroupIndex" : 2
+		},
+		{
 			"backtrace" : 0,
 			"compileGroupIndex" : 0,
 			"isGenerated" : true,
@@ -470,7 +482,7 @@
 			"backtrace" : 0,
 			"isGenerated" : true,
 			"path" : "build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.rule",
-			"sourceGroupIndex" : 2
+			"sourceGroupIndex" : 3
 		}
 	],
 	"type" : "EXECUTABLE"

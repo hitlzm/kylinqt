@@ -5,7 +5,7 @@
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
 #include "vlcvideo/VlcVideoItem.h"
-
+#include "handle/myhandle.h"
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -33,6 +33,9 @@ int main(int argc, char *argv[])
     imagePort->m_imageData = imageData;
     imagePort->m_imageSendData = imageSendData;
 
+    //创建手柄对象
+    Myhandle _myhandle(&app);
+
     // ═══ 1) 先加载 QML，建立绑定 ═══
     QQmlApplicationEngine engine;
     engine.addImportPath(TaoQuickImportPath);
@@ -42,6 +45,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("laserSendData", laserSendData);
     engine.rootContext()->setContextProperty("imageData", imageData);
     engine.rootContext()->setContextProperty("imageSendData", imageSendData);
+    engine.rootContext()->setContextProperty("handle", &_myhandle);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -91,6 +95,12 @@ int main(int argc, char *argv[])
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
+
+    // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
+    QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
+    QObject::connect(Laserthread, &QThread::finished, Laserthread,  &QObject::deleteLater);
+    QObject::connect(Imagethread, &QThread::finished, imagePort,    &QObject::deleteLater);
+    QObject::connect(Imagethread, &QThread::finished, Imagethread,  &QObject::deleteLater);
 
     Laserthread->start();
     Imagethread->start();

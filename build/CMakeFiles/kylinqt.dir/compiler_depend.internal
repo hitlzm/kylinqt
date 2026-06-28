@@ -782,6 +782,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h
  E:/QTproject/kylinqt/handle/gamepadprocessor.h
  E:/QTproject/kylinqt/handle/handle.h
+ E:/QTproject/kylinqt/handle/myhandle.h
  E:/QTproject/kylinqt/serialport/serialport.h
  E:/QTproject/kylinqt/serialport/serialport_image.h
  E:/QTproject/kylinqt/serialport/serialport_laser.h
@@ -789,6 +790,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj
  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h
  E:/QTproject/kylinqt/build/kylinqt_autogen/62PF24DQ2C/moc_gamepadprocessor.cpp
  E:/QTproject/kylinqt/build/kylinqt_autogen/62PF24DQ2C/moc_handle.cpp
+ E:/QTproject/kylinqt/build/kylinqt_autogen/62PF24DQ2C/moc_myhandle.cpp
  E:/QTproject/kylinqt/build/kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp
  E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp
  E:/QTproject/kylinqt/build/kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp
@@ -1119,6 +1121,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h
+ E:/QTproject/kylinqt/handle/myhandle.h
  E:/QTproject/kylinqt/serialport/serialport.h
  E:/QTproject/kylinqt/serialport/serialport_image.h
  E:/QTproject/kylinqt/serialport/serialport_laser.h

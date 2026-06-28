@@ -1,7 +1,6 @@
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: \
- E:\QTproject\kylinqt\serialport\serialport_turntable.cpp \
- E:\QTproject\kylinqt\serialport\serialport_turntable.h \
- E:\QTproject\kylinqt\serialport\serialport.h \
+CMakeFiles/kylinqt.dir/handle/myhandle.cpp.obj: \
+ E:\QTproject\kylinqt\handle\myhandle.cpp \
+ E:\QTproject\kylinqt\handle\myhandle.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
@@ -219,31 +218,4 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/time.h \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_time.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h

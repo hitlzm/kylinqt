@@ -60,6 +60,7 @@ else()
       handle/handle.cpp
       handle/gamepadprocessor.cpp
       vlcvideo/VlcVideoItem.cpp
+      handle/myhandle.h
       ${TaoQuickRes}
     )
 endif()

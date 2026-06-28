@@ -778,6 +778,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
   E:/QTproject/kylinqt/handle/gamepadprocessor.h \
   E:/QTproject/kylinqt/handle/handle.h \
+  E:/QTproject/kylinqt/handle/myhandle.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
@@ -785,6 +786,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
   kylinqt_autogen/62PF24DQ2C/moc_gamepadprocessor.cpp \
   kylinqt_autogen/62PF24DQ2C/moc_handle.cpp \
+  kylinqt_autogen/62PF24DQ2C/moc_myhandle.cpp \
   kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp \
   kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp \
   kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp \
@@ -1114,6 +1116,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/handle/myhandle.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
@@ -2736,6 +2739,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_iterator_base_types.h:
 
+kylinqt_autogen/62PF24DQ2C/moc_myhandle.cpp:
+
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_list.h:
@@ -2919,6 +2924,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stat64.h:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h:
+
+E:/QTproject/kylinqt/handle/myhandle.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/assert.h:
 

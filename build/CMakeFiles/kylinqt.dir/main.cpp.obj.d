@@ -329,4 +329,5 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
+ E:\QTproject\kylinqt\handle/myhandle.h

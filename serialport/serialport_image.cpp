@@ -370,8 +370,8 @@ SerialPortImage::SerialPortImage(QObject *parent)
 }
 
 SerialPortImage::~SerialPortImage() {
-    // delete m_imageData;
-    // delete m_imageSendData;
+    delete m_imageData;
+    delete m_imageSendData;
 }
 
 // ── Worker slots ──

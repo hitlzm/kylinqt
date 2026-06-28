@@ -10,6 +10,7 @@ SerialPort::SerialPort(QObject *parent)
 
 SerialPort::~SerialPort()
 {
+    delete m_serialPort;
     close();
 }
 
