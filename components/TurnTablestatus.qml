@@ -131,7 +131,7 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { label: "内框角度值:"; value: turntableData.inner_angel }
+                DataLabel { label: "内框角度值:"; value: turntableData.inner_angle }
                 DataLabel { label: "内框控制偏差:"; value: turntableData.inner_ctlDeviation }
             }
             Row {
@@ -166,7 +166,7 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { label: "中框角度值:"; value: turntableData.middle_angel }
+                DataLabel { label: "中框角度值:"; value: turntableData.middle_angle }
                 DataLabel { label: "中框控制偏差:"; value: turntableData.middle_ctlDeviation }
             }
             Row {
@@ -201,7 +201,7 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { label: "外框角度值:"; value: turntableData.outter_angel }
+                DataLabel { label: "外框角度值:"; value: turntableData.outter_angle }
                 DataLabel { label: "外框控制偏差:"; value: turntableData.outter_ctlDeviation }
             }
         }

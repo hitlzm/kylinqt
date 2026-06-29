@@ -68,18 +68,43 @@ ColumnLayout{
                 // width:150
                 Layout.preferredHeight: 40
                 Layout.preferredWidth: 150
+                horizontalAlignment: TextInput.AlignHCenter
+                // 垂直居中：设置垂直居中对齐和相同的上下内边距
+                verticalAlignment: TextInput.AlignVCenter
+                //区分是哪种控制方式，给不同变量赋值
+                // onEditingFinished: {
+                //     if (index === 0) {
+                //         imageSendData.m_bodyYawRate = Number(text)
+                //     } else if (index === 1) {
+                //         imageSendData.m_bodyRollRate = Number(text)
+                //     } else if (index === 2) {
+                //         imageSendData.m_bodyVelX = Number(text)
+                //     } else if (index === 3) {
+                //         imageSendData.m_bodyVelY = Number(text)
+                //     } else if (index === 4) {
+                //         imageSendData.m_bodyVelZ = Number(text)
+                //     } else if (index === 5) {
+                //         imageSendData.m_bodyPosX = parseInt(text)
+                //     }
+                // }
             }
             CusTextField{
                 id:input2
                 // width:150
                 Layout.preferredHeight: 40
                 Layout.preferredWidth: 150  
+                horizontalAlignment: TextInput.AlignHCenter
+                // 垂直居中：设置垂直居中对齐和相同的上下内边距
+                verticalAlignment: TextInput.AlignVCenter
             }
             CusTextField{
                 id:input3
                 // width:150
                 Layout.preferredHeight: 40
                 Layout.preferredWidth: 150
+                horizontalAlignment: TextInput.AlignHCenter
+                // 垂直居中：设置垂直居中对齐和相同的上下内边距
+                verticalAlignment: TextInput.AlignVCenter
             }
             CusButton_Blue {
             id: sendButton
@@ -88,8 +113,8 @@ ColumnLayout{
             text: "发送数据"
 
             onClicked: {
-            // imageSerial.sendData(imageSerial.imageSendData.buildFrame())
-            // console.log("图像导引头数据已发送")
+                //turntablesendata发出信号，通知串口工作线程计算并发送
+                //区分不同按钮
             }
         }
 
