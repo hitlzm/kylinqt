@@ -4,7 +4,7 @@
 
 #include <QObject>
 #include <QThread>
-#include "worker.h"
+// #include "worker.h"
 
 class ModeController : public QObject
 {
@@ -12,19 +12,19 @@ class ModeController : public QObject
 public:
     explicit ModeController(QObject *parent = nullptr) : QObject(parent) {
         // 1. 创建工作对象
-        Worker *worker = new Worker();
+        // Worker *worker = new Worker();
         // 2. 创建线程
         QThread *thread = new QThread(this);
         // 3. 将工作对象移动到子线程
-        worker->moveToThread(thread);
+        // worker->moveToThread(thread);
         
-        // 4. 连接信号与槽
-        // 当QML调用startWork()时，会触发此信号，进而调用Worker::startWork()（在子线程执行）
-        connect(this, &ModeController::startWork, worker, &Worker::startWork);
-        // 当Worker发出progressUpdated，会触发ModeController::onProgressUpdated（在主线程执行）
-        connect(worker, &Worker::progressUpdated, this, &ModeController::onProgressUpdated);
-        // 当Worker发出workFinished，会触发ModeController::onWorkFinished（在主线程执行）
-        connect(worker, &Worker::workFinished, this, &ModeController::onWorkFinished);
+        // // 4. 连接信号与槽
+        // // 当QML调用startWork()时，会触发此信号，进而调用Worker::startWork()（在子线程执行）
+        // connect(this, &ModeController::startWork, worker, &Worker::startWork);
+        // // 当Worker发出progressUpdated，会触发ModeController::onProgressUpdated（在主线程执行）
+        // connect(worker, &Worker::progressUpdated, this, &ModeController::onProgressUpdated);
+        // // 当Worker发出workFinished，会触发ModeController::onWorkFinished（在主线程执行）
+        // connect(worker, &Worker::workFinished, this, &ModeController::onWorkFinished);
 
         // 5. 启动线程
         thread->start();
