@@ -96,15 +96,15 @@ Rectangle {
 
             Row {
                 spacing: 6
-                DataLabel { label: "秒时间:"; value: "0x"  }
-                DataLabel { label: "序号:"; value: "0x"  }
+                DataLabel { label: "秒时间:"; value: turntableData.time  }
+                DataLabel { label: "序号:"; value: turntableData.ctlnumber  }
             }
             Row {
                 spacing: 6
                 DataLabel {
                     label: "内框状态:"
                     value: {
-                        switch(laserData.dytStatus) {
+                        switch(turntableData.inner_statusnumber) {
                             case 0x01: return "伺服"
                             case 0x02: return "回零执行中"
                             case 0x03: return "位置执行中"
@@ -131,36 +131,78 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { label: "内框角度值:"; value: "0x" }
-                DataLabel { label: "内框控制偏差:"; value: "0x" }
+                DataLabel { label: "内框角度值:"; value: turntableData.inner_angel }
+                DataLabel { label: "内框控制偏差:"; value: turntableData.inner_ctlDeviation }
             }
             Row {
                 spacing: 6
                 DataLabel {
                     label: "中框状态:"
                     value: {
-                        switch(laserData.dytStatus) {
-                            // 同上，为了简洁省略，实际应与内框状态相同的 switch
+                        switch(turntableData.middle_statusnumber) {
+                            case 0x01: return "伺服"
+                            case 0x02: return "回零执行中"
+                            case 0x03: return "位置执行中"
+                            case 0x04: return "速率执行中"
+                            case 0x05: return "速率稳定"
+                            case 0x06: return "摇摆执行中"
+                            case 0x07: return "摇摆稳定"
+                            case 0x08: return "停车执行中"
+                            case 0x09: return "跟踪模式1执行中"
+                            case 0x0A: return "停止跟踪"
+                            case 0x0B: return "跟踪模式2执行中"
+                            case 0x0F: return "速度环模式执行中"
+                            case 0x1F: return "驱动器报警"
+                            case 0x20: return "伺服超差报警"
+                            case 0x21: return "正向限位报警"
+                            case 0x22: return "逆向限位报警"
+                            case 0x23: return "时钟同步报警"
+                            case 0x24: return "初始化信息报警"
+                            case 0x25: return "限位开关同时导通"
+                            case 0x26: return "编码器数据故障报警"
+                            case 0x29: return "瞬态电流报警"
+                            case 0x2A: return "连续电流报警"
                             default: return "未知"
                         }
                     }
                 }
-                DataLabel { label: "中框角度值:"; value: "0x" }
-                DataLabel { label: "中框控制偏差:"; value: "0x" }
+                DataLabel { label: "中框角度值:"; value: turntableData.middle_angel }
+                DataLabel { label: "中框控制偏差:"; value: turntableData.middle_ctlDeviation }
             }
             Row {
                 spacing: 6
                 DataLabel {
                     label: "外框状态:"
                     value: {
-                        switch(laserData.dytStatus) {
-                            // 同上
+                        switch(turntableData.outter_statusnumber) {
+                            case 0x01: return "伺服"
+                            case 0x02: return "回零执行中"
+                            case 0x03: return "位置执行中"
+                            case 0x04: return "速率执行中"
+                            case 0x05: return "速率稳定"
+                            case 0x06: return "摇摆执行中"
+                            case 0x07: return "摇摆稳定"
+                            case 0x08: return "停车执行中"
+                            case 0x09: return "跟踪模式1执行中"
+                            case 0x0A: return "停止跟踪"
+                            case 0x0B: return "跟踪模式2执行中"
+                            case 0x0F: return "速度环模式执行中"
+                            case 0x1F: return "驱动器报警"
+                            case 0x20: return "伺服超差报警"
+                            case 0x21: return "正向限位报警"
+                            case 0x22: return "逆向限位报警"
+                            case 0x23: return "时钟同步报警"
+                            case 0x24: return "初始化信息报警"
+                            case 0x25: return "限位开关同时导通"
+                            case 0x26: return "编码器数据故障报警"
+                            case 0x29: return "瞬态电流报警"
+                            case 0x2A: return "连续电流报警"
                             default: return "未知"
                         }
                     }
                 }
-                DataLabel { label: "外框角度值:"; value: "0x" }
-                DataLabel { label: "外框控制偏差:"; value: "0x" }
+                DataLabel { label: "外框角度值:"; value: turntableData.outter_angel }
+                DataLabel { label: "外框控制偏差:"; value: turntableData.outter_ctlDeviation }
             }
         }
     }
