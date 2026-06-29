@@ -164,36 +164,7 @@ Rectangle {
             }
         }
     }
-    // ProgramMode {
-    //     id: programMode
-    //     anchors.left: parent.left
-    //     anchors.leftMargin: 10
-    //     anchors.right: parent.right
-    //     anchors.rightMargin: 10
-    //     anchors.top: statusGroup.bottom
-    //     anchors.topMargin: 30
-    // }
-    // ExGuide {
-    //     id: exGuide
-    //     width: parent.width - 20
-    //     height: 250
-    //     anchors.left: parent.left
-    //     anchors.leftMargin: 10
-    //     anchors.right: parent.right
-    //     anchors.rightMargin: 10
-    //     anchors.top: statusGroup.bottom
-    //     anchors.topMargin: 10
-    // }
-    // Remotectlmode {
-    //     id: remoteCtlMode
-    //     // anchors.left: parent.left
-    //     // anchors.leftMargin: 10
-    //     // anchors.right: parent.right
-    //     // anchors.rightMargin: 10
-    //     anchors.horizontalCenter: parent.horizontalCenter
-    //     anchors.top: statusGroup.bottom
-    //     anchors.topMargin: 100
-    // }
+    
     StackLayout {
             id: stack
             width: root.width - 20

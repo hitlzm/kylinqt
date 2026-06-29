@@ -4,6 +4,7 @@
 #include <QThread>
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
+#include "serialport/serialport_turntable.h"
 #include "vlcvideo/VlcVideoItem.h"
 #include "handle/myhandle.h"
 int main(int argc, char *argv[])
@@ -22,17 +23,19 @@ int main(int argc, char *argv[])
     LaserSendData *laserSendData = new LaserSendData(&app);
     ImageData *imageData = new ImageData(&app);
     ImageSendData *imageSendData = new ImageSendData(&app);
+    TurntableData * turntableData = new TurntableData(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
     SerialPortImage *imagePort = new SerialPortImage;
+    SerialPortTurntable *turntablePort = new SerialPortTurntable;
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
     laserPort->m_laserSendData = laserSendData;
     imagePort->m_imageData = imageData;
     imagePort->m_imageSendData = imageSendData;
-
+    turntablePort->m_turntableData = turntableData;
     //创建手柄对象
     Myhandle _myhandle(&app);
 
@@ -46,6 +49,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageData", imageData);
     engine.rootContext()->setContextProperty("imageSendData", imageSendData);
     engine.rootContext()->setContextProperty("handle", &_myhandle);
+    engine.rootContext()->setContextProperty("turntableData", turntableData);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -90,20 +94,26 @@ int main(int argc, char *argv[])
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
     QThread *Imagethread = new QThread;
+    QThread *Turntablethread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
+    turntablePort->moveToThread(Turntablethread);
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
+    QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntable::dowork);
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
     QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
     QObject::connect(Laserthread, &QThread::finished, Laserthread,  &QObject::deleteLater);
     QObject::connect(Imagethread, &QThread::finished, imagePort,    &QObject::deleteLater);
     QObject::connect(Imagethread, &QThread::finished, Imagethread,  &QObject::deleteLater);
+    QObject::connect(Turntablethread, &QThread::finished, turntablePort,    &QObject::deleteLater);
+
 
     Laserthread->start();
     Imagethread->start();
-
+    Turntablethread->start();
+    
     return app.exec();
 }

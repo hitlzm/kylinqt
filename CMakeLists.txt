@@ -61,6 +61,7 @@ else()
       handle/gamepadprocessor.cpp
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
+    #   ModeControl/ModeController.h
       ${TaoQuickRes}
     )
 endif()

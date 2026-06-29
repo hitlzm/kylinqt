@@ -7,22 +7,50 @@ brief:1.转台串口类负责实时接收转台状态反馈信息
       2.根据运行模式的不同发送不同的数据
         遥控模式下，接收手柄数据，根据数据判断是三轴速度控制，还是角度控制
         程控模式下，线程内部实现计算并发送数据
-        外引导模式下，接收指定导引头传来的角度数据，使用转台的跟踪模式，
+        外引导模式下，接收指定导引头传来的角度数据，使用转台的跟踪模式
 */
 
 #include "serialport.h"
+
+//转台信息反馈结构体
+typedef struct {
+    int m_time;
+    int m_ctlnumber;
+    int m_inner_statusnumber;
+    float m_inner_angle;
+    float m_inner_ctlDeviation;
+    int m_middle_statusnumber;
+    float m_middle_angle;
+    float m_middle_ctlDeviation;
+    int m_outter_statusnumber;
+    float m_outter_angle;
+    float m_outter_ctlDeviation;
+} StatusFeedback;
+
+
+
+class TurntableData;
 
 class SerialPortTurntable : public SerialPort
 {
     Q_OBJECT
 
 public:
+
     explicit SerialPortTurntable(QObject *parent = nullptr);
     ~SerialPortTurntable() override;
+    TurntableData * m_turntableData;
 
+signals:
+    void requpdateframe(StatusFeedback recvdata);
+public slots:
+    void dowork() { SerialPort::dowork(); 
+                    // onScanPorts(); 
+                    }
 protected:
     void parseData(const QByteArray &rawData) override;  //实现ASCII字符向数字的转换
-
+private:
+    
 };
 
 class TurntableData : public QObject
@@ -54,6 +82,11 @@ signals:
     void outter_statusnumberChanged();
     void outter_angleChanged();
     void outter_ctlDeviationChanged();
+
+public slots:
+
+    void updateframe(StatusFeedback recvdata);    
+    
 private:
     int m_time;
     int m_ctlnumber;
@@ -162,17 +195,18 @@ typedef struct {
 #pragma pack(pop)
 
 // ------------------------------ 状态反馈接收 ------------------------------
-typedef struct {
-    uint32_t time;          // 时间 (4字节)
-    uint16_t seq;           // 序号 (2字节)
-    uint16_t innerState;    // 内框状态 (2字节)
-    uint8_t  innerAngle[9]; // 内框角度 (9字节)
-    uint8_t  innerErr[9];   // 内框偏差 (9字节)
-    uint16_t middleState;   // 中框状态 (2字节)
-    uint8_t  middleAngle[9];// 中框角度 (9字节)
-    uint8_t  middleErr[9];  // 中框偏差 (9字节)
-    uint16_t outerState;    // 外框状态 (2字节)
-    uint8_t  outerAngle[9]; // 外框角度 (9字节)
-    uint8_t  outerErr[9];   // 外框偏差 (9字节)
-} StatusFeedback;
+// typedef struct {
+//     uint32_t time;          // 时间 (4字节)
+//     uint16_t seq;           // 序号 (2字节)
+//     uint16_t innerState;    // 内框状态 (2字节)
+//     uint8_t  innerAngle[9]; // 内框角度 (9字节)
+//     uint8_t  innerErr[9];   // 内框偏差 (9字节)
+//     uint16_t middleState;   // 中框状态 (2字节)
+//     uint8_t  middleAngle[9];// 中框角度 (9字节)
+//     uint8_t  middleErr[9];  // 中框偏差 (9字节)
+//     uint16_t outerState;    // 外框状态 (2字节)
+//     uint8_t  outerAngle[9]; // 外框角度 (9字节)
+//     uint8_t  outerErr[9];   // 外框偏差 (9字节)
+// } StatusFeedback;
+
 #endif // SERIALPORT_TURNTABLE_H

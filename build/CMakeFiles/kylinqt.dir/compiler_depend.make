@@ -1120,6 +1120,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
+  E:/QTproject/kylinqt/serialport/serialport_turntable.h \
   E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h
 
 CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj: E:/QTproject/kylinqt/serialport/serialport.cpp \
@@ -1869,6 +1870,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
 
 CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kylinqt/serialport/serialport_turntable.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
@@ -1882,15 +1884,20 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kyl
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcompilerdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qconfig.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h \
@@ -1903,6 +1910,10 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kyl
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrefcount.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qregexp.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qscopedpointer.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
@@ -1912,8 +1923,11 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kyl
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsysinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
@@ -1966,7 +1980,9 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kyl
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/predefined_ops.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h \
@@ -2014,6 +2030,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kyl
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/numeric_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/string_conversions.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/type_traits.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \

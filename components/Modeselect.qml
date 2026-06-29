@@ -7,23 +7,23 @@ import "./"
 Item{
     id: root
     property int myindex: 0
- GroupBox {
-                background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-                }
-Row {
-    spacing: 10   // 统一控制间距
-    Text {
-        id: text1
-        text: qsTr("控制模式选择")
-        font.pixelSize: 20
-        font.bold: true
-        color: 'black'
-        anchors.verticalCenter: parent.verticalCenter
-    }
+    GroupBox {
+                    background: Rectangle {
+                    color: "transparent"
+                    border.color: "gray"
+                    border.width: 4
+                    radius: 8
+                    }
+    Row {
+        spacing: 10   // 统一控制间距
+        Text {
+            id: text1
+            text: qsTr("控制模式选择")
+            font.pixelSize: 20
+            font.bold: true
+            color: 'black'
+            anchors.verticalCenter: parent.verticalCenter
+        }
     CusRadioButton {
         id: radio1
         width: 160
@@ -61,8 +61,4 @@ Row {
 
 }
 }
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
+
