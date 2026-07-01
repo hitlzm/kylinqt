@@ -113,6 +113,90 @@ void SerialPortTurntable::parseData(const QByteArray &rawData)
     emit requpdateframe(feedback);
 }
 
+
+void SerialPortTurntable::sendCommands(const QStringList &commands, int repeatTimes)
+{
+    if (!m_serialPort || !m_serialPort->isOpen()) {
+        qWarning() << "串口未打开，无法发送指令";
+        return;
+    }
+
+    for (const QString &cmd : commands) {
+        for (int i = 0; i < repeatTimes; ++i) {
+            QString fullFrame = QString("$%1\r\n").arg(cmd);
+            QByteArray data = fullFrame.toUtf8();
+
+            qint64 written = m_serialPort->write(data);
+            if (written == -1) {
+                qWarning() << "发送指令失败：" << cmd << m_serialPort->errorString();
+                return; // 或 break/continue 根据需求
+            }
+        }
+        }
+}
+    void SerialPortTurntable::openTurntable()
+    {
+         sendCommands({"1mo=0", "2mo=0", "3mo=0"});
+         sendCommands({"1mo=1", "2mo=1", "3mo=1"});
+    };
+    void SerialPortTurntable::closeTurntable()
+    {
+        sendCommands({"1st=0", "2st=0", "3st=0"});
+    };
+    void SerialPortTurntable::resetTurntable()
+    {
+        sendCommands({"RST"});
+    };
+    void SerialPortTurntable::zeroTurntable()
+    {
+        sendCommands({"1z", "2z", "3z"});
+    };
+    void SerialPortTurntable::sendProgramMode()
+    {
+
+    }; 
+
+TurntableSendData :: TurntableSendData(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+void TurntableSendData :: buildFrame()
+{
+    // 构建转台控制帧
+    programSend_frame m_frame;
+    switch(m_index){
+        case 0:     //三轴控制
+        m_frame.current_inner_angle=m_current_inner_angle;
+        m_frame.inner_endangle=m_inner_endangle;
+        m_frame.current_middle_angle=m_current_middle_angle;
+        m_frame.middle_endangle=m_middle_endangle;
+        m_frame.current_outter_angle=m_current_outter_angle;
+        m_frame.outter_endangle=m_outter_endangle;
+        m_frame.runtime=m_runtime;
+        break;
+        case 1:
+        m_frame.current_inner_angle=m_current_inner_angle;
+        m_frame.inner_endangle=m_inner_endangle;
+        m_frame.runtime=m_runtime;
+        break;
+        case 2:
+        m_frame.current_middle_angle=m_current_middle_angle;
+        m_frame.middle_endangle=m_middle_endangle;
+        m_frame.runtime=m_runtime;
+        break;
+        case 3:
+        m_frame.current_outter_angle=m_current_outter_angle;
+        m_frame.outter_endangle=m_outter_endangle;
+        m_frame.runtime=m_runtime;
+        break;
+        default: qDebug() << "程控模式发送失败";
+    }
+    // 发送指令到串口
+    emit requestSendProgramMode(m_frame);
+}
+
 TurntableData :: TurntableData(QObject *parent)
     : QObject(parent)
 {

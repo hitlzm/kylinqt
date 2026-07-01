@@ -20,9 +20,397 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
+struct qt_meta_stringdata_TurntableSendData_t {
+    QByteArrayData data[23];
+    char stringdata0[412];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    qptrdiff(offsetof(qt_meta_stringdata_TurntableSendData_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
+    )
+static const qt_meta_stringdata_TurntableSendData_t qt_meta_stringdata_TurntableSendData = {
+    {
+QT_MOC_LITERAL(0, 0, 17), // "TurntableSendData"
+QT_MOC_LITERAL(1, 18, 20), // "requestOpenTurntable"
+QT_MOC_LITERAL(2, 39, 0), // ""
+QT_MOC_LITERAL(3, 40, 21), // "requestCloseTurntable"
+QT_MOC_LITERAL(4, 62, 21), // "requestResetTurntable"
+QT_MOC_LITERAL(5, 84, 20), // "requestZeroTurntable"
+QT_MOC_LITERAL(6, 105, 22), // "requestSendProgramMode"
+QT_MOC_LITERAL(7, 128, 14), // "runtimeChanged"
+QT_MOC_LITERAL(8, 143, 23), // "inner_startangleChanged"
+QT_MOC_LITERAL(9, 167, 21), // "inner_endangleChanged"
+QT_MOC_LITERAL(10, 189, 24), // "middle_startangleChanged"
+QT_MOC_LITERAL(11, 214, 22), // "middle_endangleChanged"
+QT_MOC_LITERAL(12, 237, 24), // "outter_startangleChanged"
+QT_MOC_LITERAL(13, 262, 22), // "outter_endangleChanged"
+QT_MOC_LITERAL(14, 285, 12), // "indexChanged"
+QT_MOC_LITERAL(15, 298, 7), // "runtime"
+QT_MOC_LITERAL(16, 306, 16), // "inner_startangle"
+QT_MOC_LITERAL(17, 323, 14), // "inner_endangle"
+QT_MOC_LITERAL(18, 338, 17), // "middle_startangle"
+QT_MOC_LITERAL(19, 356, 15), // "middle_endangle"
+QT_MOC_LITERAL(20, 372, 17), // "outter_startangle"
+QT_MOC_LITERAL(21, 390, 15), // "outter_endangle"
+QT_MOC_LITERAL(22, 406, 5) // "index"
+
+    },
+    "TurntableSendData\0requestOpenTurntable\0"
+    "\0requestCloseTurntable\0requestResetTurntable\0"
+    "requestZeroTurntable\0requestSendProgramMode\0"
+    "runtimeChanged\0inner_startangleChanged\0"
+    "inner_endangleChanged\0middle_startangleChanged\0"
+    "middle_endangleChanged\0outter_startangleChanged\0"
+    "outter_endangleChanged\0indexChanged\0"
+    "runtime\0inner_startangle\0inner_endangle\0"
+    "middle_startangle\0middle_endangle\0"
+    "outter_startangle\0outter_endangle\0"
+    "index"
+};
+#undef QT_MOC_LITERAL
+
+static const uint qt_meta_data_TurntableSendData[] = {
+
+ // content:
+       8,       // revision
+       0,       // classname
+       0,    0, // classinfo
+      13,   14, // methods
+       8,   92, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+      13,       // signalCount
+
+ // signals: name, argc, parameters, tag, flags
+       1,    0,   79,    2, 0x06 /* Public */,
+       3,    0,   80,    2, 0x06 /* Public */,
+       4,    0,   81,    2, 0x06 /* Public */,
+       5,    0,   82,    2, 0x06 /* Public */,
+       6,    0,   83,    2, 0x06 /* Public */,
+       7,    0,   84,    2, 0x06 /* Public */,
+       8,    0,   85,    2, 0x06 /* Public */,
+       9,    0,   86,    2, 0x06 /* Public */,
+      10,    0,   87,    2, 0x06 /* Public */,
+      11,    0,   88,    2, 0x06 /* Public */,
+      12,    0,   89,    2, 0x06 /* Public */,
+      13,    0,   90,    2, 0x06 /* Public */,
+      14,    0,   91,    2, 0x06 /* Public */,
+
+ // signals: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+
+ // properties: name, type, flags
+      15, QMetaType::Int, 0x00495001,
+      16, QMetaType::Float, 0x00495001,
+      17, QMetaType::Float, 0x00495001,
+      18, QMetaType::Float, 0x00495001,
+      19, QMetaType::Float, 0x00495001,
+      20, QMetaType::Float, 0x00495001,
+      21, QMetaType::Float, 0x00495001,
+      22, QMetaType::Int, 0x00495001,
+
+ // properties: notify_signal_id
+       5,
+       6,
+       7,
+       8,
+       9,
+      10,
+      11,
+      12,
+
+       0        // eod
+};
+
+void TurntableSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        auto *_t = static_cast<TurntableSendData *>(_o);
+        Q_UNUSED(_t)
+        switch (_id) {
+        case 0: _t->requestOpenTurntable(); break;
+        case 1: _t->requestCloseTurntable(); break;
+        case 2: _t->requestResetTurntable(); break;
+        case 3: _t->requestZeroTurntable(); break;
+        case 4: _t->requestSendProgramMode(); break;
+        case 5: _t->runtimeChanged(); break;
+        case 6: _t->inner_startangleChanged(); break;
+        case 7: _t->inner_endangleChanged(); break;
+        case 8: _t->middle_startangleChanged(); break;
+        case 9: _t->middle_endangleChanged(); break;
+        case 10: _t->outter_startangleChanged(); break;
+        case 11: _t->outter_endangleChanged(); break;
+        case 12: _t->indexChanged(); break;
+        default: ;
+        }
+    } else if (_c == QMetaObject::IndexOfMethod) {
+        int *result = reinterpret_cast<int *>(_a[0]);
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestOpenTurntable)) {
+                *result = 0;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestCloseTurntable)) {
+                *result = 1;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestResetTurntable)) {
+                *result = 2;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestZeroTurntable)) {
+                *result = 3;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestSendProgramMode)) {
+                *result = 4;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::runtimeChanged)) {
+                *result = 5;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::inner_startangleChanged)) {
+                *result = 6;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::inner_endangleChanged)) {
+                *result = 7;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::middle_startangleChanged)) {
+                *result = 8;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::middle_endangleChanged)) {
+                *result = 9;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::outter_startangleChanged)) {
+                *result = 10;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::outter_endangleChanged)) {
+                *result = 11;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::indexChanged)) {
+                *result = 12;
+                return;
+            }
+        }
+    }
+#ifndef QT_NO_PROPERTIES
+    else if (_c == QMetaObject::ReadProperty) {
+        auto *_t = static_cast<TurntableSendData *>(_o);
+        Q_UNUSED(_t)
+        void *_v = _a[0];
+        switch (_id) {
+        case 0: *reinterpret_cast< int*>(_v) = _t->runtime(); break;
+        case 1: *reinterpret_cast< float*>(_v) = _t->inner_startangle(); break;
+        case 2: *reinterpret_cast< float*>(_v) = _t->inner_endangle(); break;
+        case 3: *reinterpret_cast< float*>(_v) = _t->middle_startangle(); break;
+        case 4: *reinterpret_cast< float*>(_v) = _t->middle_endangle(); break;
+        case 5: *reinterpret_cast< float*>(_v) = _t->outter_startangle(); break;
+        case 6: *reinterpret_cast< float*>(_v) = _t->outter_endangle(); break;
+        case 7: *reinterpret_cast< int*>(_v) = _t->index(); break;
+        default: break;
+        }
+    } else if (_c == QMetaObject::WriteProperty) {
+    } else if (_c == QMetaObject::ResetProperty) {
+    }
+#endif // QT_NO_PROPERTIES
+    Q_UNUSED(_a);
+}
+
+QT_INIT_METAOBJECT const QMetaObject TurntableSendData::staticMetaObject = { {
+    &QObject::staticMetaObject,
+    qt_meta_stringdata_TurntableSendData.data,
+    qt_meta_data_TurntableSendData,
+    qt_static_metacall,
+    nullptr,
+    nullptr
+} };
+
+
+const QMetaObject *TurntableSendData::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *TurntableSendData::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_meta_stringdata_TurntableSendData.stringdata0))
+        return static_cast<void*>(this);
+    return QObject::qt_metacast(_clname);
+}
+
+int TurntableSendData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QObject::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 13)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 13;
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 13)
+            *reinterpret_cast<int*>(_a[0]) = -1;
+        _id -= 13;
+    }
+#ifndef QT_NO_PROPERTIES
+    else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
+            || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType) {
+        qt_static_metacall(this, _c, _id, _a);
+        _id -= 8;
+    } else if (_c == QMetaObject::QueryPropertyDesignable) {
+        _id -= 8;
+    } else if (_c == QMetaObject::QueryPropertyScriptable) {
+        _id -= 8;
+    } else if (_c == QMetaObject::QueryPropertyStored) {
+        _id -= 8;
+    } else if (_c == QMetaObject::QueryPropertyEditable) {
+        _id -= 8;
+    } else if (_c == QMetaObject::QueryPropertyUser) {
+        _id -= 8;
+    }
+#endif // QT_NO_PROPERTIES
+    return _id;
+}
+
+// SIGNAL 0
+void TurntableSendData::requestOpenTurntable()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
+}
+
+// SIGNAL 1
+void TurntableSendData::requestCloseTurntable()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
+}
+
+// SIGNAL 2
+void TurntableSendData::requestResetTurntable()
+{
+    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
+}
+
+// SIGNAL 3
+void TurntableSendData::requestZeroTurntable()
+{
+    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
+}
+
+// SIGNAL 4
+void TurntableSendData::requestSendProgramMode()
+{
+    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
+}
+
+// SIGNAL 5
+void TurntableSendData::runtimeChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
+}
+
+// SIGNAL 6
+void TurntableSendData::inner_startangleChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 6, nullptr);
+}
+
+// SIGNAL 7
+void TurntableSendData::inner_endangleChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 7, nullptr);
+}
+
+// SIGNAL 8
+void TurntableSendData::middle_startangleChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 8, nullptr);
+}
+
+// SIGNAL 9
+void TurntableSendData::middle_endangleChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 9, nullptr);
+}
+
+// SIGNAL 10
+void TurntableSendData::outter_startangleChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 10, nullptr);
+}
+
+// SIGNAL 11
+void TurntableSendData::outter_endangleChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 11, nullptr);
+}
+
+// SIGNAL 12
+void TurntableSendData::indexChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
+}
 struct qt_meta_stringdata_SerialPortTurntable_t {
-    QByteArrayData data[6];
-    char stringdata0[67];
+    QByteArrayData data[11];
+    char stringdata0[141];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -36,11 +424,18 @@ QT_MOC_LITERAL(1, 20, 14), // "requpdateframe"
 QT_MOC_LITERAL(2, 35, 0), // ""
 QT_MOC_LITERAL(3, 36, 14), // "StatusFeedback"
 QT_MOC_LITERAL(4, 51, 8), // "recvdata"
-QT_MOC_LITERAL(5, 60, 6) // "dowork"
+QT_MOC_LITERAL(5, 60, 13), // "openTurntable"
+QT_MOC_LITERAL(6, 74, 14), // "closeTurntable"
+QT_MOC_LITERAL(7, 89, 14), // "resetTurntable"
+QT_MOC_LITERAL(8, 104, 13), // "zeroTurntable"
+QT_MOC_LITERAL(9, 118, 15), // "sendProgramMode"
+QT_MOC_LITERAL(10, 134, 6) // "dowork"
 
     },
     "SerialPortTurntable\0requpdateframe\0\0"
-    "StatusFeedback\0recvdata\0dowork"
+    "StatusFeedback\0recvdata\0openTurntable\0"
+    "closeTurntable\0resetTurntable\0"
+    "zeroTurntable\0sendProgramMode\0dowork"
 };
 #undef QT_MOC_LITERAL
 
@@ -50,7 +445,7 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -58,15 +453,25 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   24,    2, 0x06 /* Public */,
+       1,    1,   49,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       5,    0,   27,    2, 0x0a /* Public */,
+       5,    0,   52,    2, 0x0a /* Public */,
+       6,    0,   53,    2, 0x0a /* Public */,
+       7,    0,   54,    2, 0x0a /* Public */,
+       8,    0,   55,    2, 0x0a /* Public */,
+       9,    0,   56,    2, 0x0a /* Public */,
+      10,    0,   57,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
 
        0        // eod
@@ -79,7 +484,12 @@ void SerialPortTurntable::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->requpdateframe((*reinterpret_cast< StatusFeedback(*)>(_a[1]))); break;
-        case 1: _t->dowork(); break;
+        case 1: _t->openTurntable(); break;
+        case 2: _t->closeTurntable(); break;
+        case 3: _t->resetTurntable(); break;
+        case 4: _t->zeroTurntable(); break;
+        case 5: _t->sendProgramMode(); break;
+        case 6: _t->dowork(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -123,13 +533,13 @@ int SerialPortTurntable::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 2;
+        _id -= 7;
     }
     return _id;
 }

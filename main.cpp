@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     ImageData *imageData = new ImageData(&app);
     ImageSendData *imageSendData = new ImageSendData(&app);
     TurntableData * turntableData = new TurntableData(&app);
+    TurntableSendData *turntableSendData = new TurntableSendData(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
@@ -36,6 +37,7 @@ int main(int argc, char *argv[])
     imagePort->m_imageData = imageData;
     imagePort->m_imageSendData = imageSendData;
     turntablePort->m_turntableData = turntableData;
+    turntablePort->m_turntableSendData = turntableSendData;
     //创建手柄对象
     Myhandle _myhandle(&app);
 
@@ -50,6 +52,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageSendData", imageSendData);
     engine.rootContext()->setContextProperty("handle", &_myhandle);
     engine.rootContext()->setContextProperty("turntableData", turntableData);
+    engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

@@ -131,8 +131,8 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { label: "内框角度值:"; value: turntableData.inner_angle }
-                DataLabel { label: "内框控制偏差:"; value: turntableData.inner_ctlDeviation }
+                DataLabel { label: "内框角度值:"; value: String(turntableData.inner_angle) }
+                DataLabel { label: "内框控制偏差:"; value: String(turntableData.inner_ctlDeviation) }
             }
             Row {
                 spacing: 6

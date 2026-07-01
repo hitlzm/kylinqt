@@ -27,9 +27,82 @@ typedef struct {
     float m_outter_ctlDeviation;
 } StatusFeedback;
 
-
+typedef struct{
+    int runtime;
+    float inner_startangle;
+    float current_inner_angle;
+    float inner_endangle;
+    float middle_startangle;
+    float current_middle_angle;
+    float middle_endangle;
+    float outter_startangle;
+    float current_outter_angle;
+    float outter_endangle;  
+}programSend_frame;
 
 class TurntableData;
+
+class TurntableSendData : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(int runtime READ runtime NOTIFY runtimeChanged)
+    Q_PROPERTY(float inner_startangle READ inner_startangle NOTIFY inner_startangleChanged)
+    Q_PROPERTY(float inner_endangle READ inner_endangle NOTIFY inner_endangleChanged)
+    Q_PROPERTY(float middle_startangle READ middle_startangle NOTIFY middle_startangleChanged)
+    Q_PROPERTY(float middle_endangle READ middle_endangle NOTIFY middle_endangleChanged)
+    Q_PROPERTY(float outter_startangle READ outter_startangle NOTIFY outter_startangleChanged)
+    Q_PROPERTY(float outter_endangle READ outter_endangle NOTIFY outter_endangleChanged)
+    Q_PROPERTY(int index READ index NOTIFY indexChanged)
+
+public:
+    explicit TurntableSendData(QObject *parent = nullptr);
+    ~TurntableSendData() override{};
+
+    int runtime() const { return m_runtime; }
+    float inner_startangle() const { return m_inner_startangle; }
+    float inner_endangle() const { return m_inner_endangle; }
+    float middle_startangle() const { return m_middle_startangle; }
+    float middle_endangle() const { return m_middle_endangle; }
+    float outter_startangle() const { return m_outter_startangle; }
+    float outter_endangle() const { return m_outter_endangle; }
+    int index() const { return m_index; }
+
+    Q_INVOKABLE void buildFrame() ;
+public slots:
+    void recvinner_angle(float angle){m_current_inner_angle = angle;}
+    void recvmiddle_angle(float angle){m_current_middle_angle = angle;}
+    void recvoutter_angle(float angle){m_current_outter_angle = angle;}
+    //这里存放各个轴的角度数据及运动时间，实现最基础的程控模式
+
+    //发送信号并在串口类编写槽函数，实现开机，停机，回零，复位，程控模式的实现
+signals:
+    void requestOpenTurntable();
+    void requestCloseTurntable();
+    void requestResetTurntable();
+    void requestZeroTurntable();
+    void requestSendProgramMode(programSend_frame &frame);
+    void runtimeChanged();
+    void inner_startangleChanged();
+    void inner_endangleChanged();
+    void middle_startangleChanged();
+    void middle_endangleChanged();
+    void outter_startangleChanged();
+    void outter_endangleChanged();
+    void indexChanged();
+private:
+    //这里存放各个轴的角度数据及运动时间
+    int m_index;    //用来记录是对哪个轴的控制
+    int m_runtime;
+    float m_inner_startangle;
+    float m_current_inner_angle;
+    float m_inner_endangle;
+    float m_middle_startangle;
+    float m_current_middle_angle;
+    float m_middle_endangle;
+    float m_outter_startangle;
+    float m_current_outter_angle;
+    float m_outter_endangle;  
+};
 
 class SerialPortTurntable : public SerialPort
 {
@@ -40,15 +113,27 @@ public:
     explicit SerialPortTurntable(QObject *parent = nullptr);
     ~SerialPortTurntable() override;
     TurntableData * m_turntableData;
-
+    TurntableSendData * m_turntableSendData;
 signals:
     void requpdateframe(StatusFeedback recvdata);
+    
+    
 public slots:
-    void dowork() { SerialPort::dowork(); 
+
+    void openTurntable();
+    void closeTurntable();
+    void resetTurntable();
+    void zeroTurntable();
+
+    void sendProgramMode(programSend_frame &frame); 
+    void dowork() { 
+        SerialPort::dowork(); 
                     // onScanPorts(); 
-                    }
+        }
+
 protected:
-    void parseData(const QByteArray &rawData) override;  //实现ASCII字符向数字的转换
+    void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换），后期仍需要加入其他反馈指令解析
+    void sendCommands(const QStringList &commands, int repeatTimes = 5);
 private:
     
 };
@@ -70,6 +155,7 @@ class TurntableData : public QObject
 public:
     explicit TurntableData(QObject *parent = nullptr);
     ~TurntableData() override{};
+    
 signals:
     void timeChanged();
     void ctlnumberChanged();
@@ -83,11 +169,17 @@ signals:
     void outter_angleChanged();
     void outter_ctlDeviationChanged();
 
+    //把信号连接到发送类，更新发送类中的当前角度
+    void myinner_angleChanged(float inner_angle);
+    void mymiddle_angleChanged(float middle_angle);
+    void myoutter_angleChanged(float outter_angle);
+
 public slots:
 
     void updateframe(StatusFeedback recvdata);    
-    
+
 private:
+    
     int m_time;
     int m_ctlnumber;
     int m_inner_statusnumber;
@@ -104,7 +196,7 @@ private:
 
 #pragma pack(push,1)
 
-// ------------------------------ 位置模式 ------------------------------//对应外引导模式
+// ------------------------------ 位置模式 ------------------------------//对应程控模式
 typedef struct {
     uint16_t axis;              // 轴号 (2字节)
     uint32_t acceleration;      // 加速度 (4字节)
@@ -112,7 +204,7 @@ typedef struct {
     uint8_t  anglePos[9];       // 角度位置 (9字节)
 } PositionModeCmd;
 
-// ------------------------------ 速度模式 ------------------------------//对应程控模式
+// ------------------------------ 速度模式 ------------------------------
 typedef struct {
     uint16_t axis;              // 轴号 (2字节)
     uint32_t acceleration;      // 加速度 (4字节)
@@ -126,7 +218,7 @@ typedef struct {
     uint8_t  frequency[10];     // 摇摆频率 (10字节)
 } SwingModeCmd;
 
-// ------------------------------ 跟踪模式1 发送 ------------------------------
+// ------------------------------ 跟踪模式1 发送 ------------------------------//对应外引导模式
 typedef struct {
     uint16_t axis;          // 轴号 (2字节)
     uint32_t trackTime;     // 跟踪时间 (4字节)
