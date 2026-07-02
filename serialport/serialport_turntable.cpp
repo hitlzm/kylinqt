@@ -1,5 +1,7 @@
 #include "serialport_turntable.h"
 #include <QDebug>
+#include <QByteArray>
+#include <cmath>
 SerialPortTurntable::SerialPortTurntable(QObject *parent)
     : SerialPort(parent)
 {
@@ -151,10 +153,122 @@ void SerialPortTurntable::sendCommands(const QStringList &commands, int repeatTi
     {
         sendCommands({"1z", "2z", "3z"});
     };
-    void SerialPortTurntable::sendProgramMode()
-    {
 
-    }; 
+QString SerialPortTurntable::formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits) {
+        // 处理符号
+        QString sign = (value >= 0) ? "+" : "-";
+        float absVal = std::abs(value);
+
+        // 分离整数和小数部分（四舍五入到指定小数位数）
+        double rounded = std::round(absVal * std::pow(10, fracDigits)) / std::pow(10, fracDigits);
+        int intPart = static_cast<int>(rounded);
+        double fracPart = rounded - intPart;
+
+        // 格式化整数部分（补零）
+        QString intStr = QString("%1").arg(intPart, intDigits, 10, QChar('0'));
+
+        // 格式化小数部分（补零，截断到指定位数）
+        QString fracStr = QString::number(fracPart, 'f', fracDigits);
+        // 去掉开头的 "0."，只保留小数数字
+        if (fracStr.startsWith("0.")) {
+            fracStr = fracStr.mid(2);
+        } else if (fracStr.startsWith("-0.")) {
+            fracStr = fracStr.mid(3);
+        }
+         // 确保小数位数足够（补零）
+        while (fracStr.length() < fracDigits) {
+            fracStr.append('0');
+        }
+        if (fracStr.length() > fracDigits) {
+            fracStr = fracStr.left(fracDigits);
+        }
+
+        return sign + intStr + "." + fracStr;
+}
+
+
+void  SerialPortTurntable::sendPositionCmd(const PositionModeCmd1 &cmd)
+{
+    if (!m_serialPort->isOpen()) {
+            qWarning() << "串口未打开！";
+            return;
+        }
+        // ---------- 构建数据帧 ----------
+        QString data = "$";
+
+        // 轴号 + p + 加速度（4位十进制，补零）
+        data += QString::number(cmd.axis);
+        data += "p";
+        data += QString("%1").arg(cmd.acceleration, 4, 10, QChar('0'));
+
+        // 速度（带符号，4位整数，4位小数）
+        data += formatNumberWithSignAndDecimals(cmd.velocity, 4, 4);
+
+        // 角度（带符号，3位整数，4位小数）
+        data += formatNumberWithSignAndDecimals(cmd.anglePos, 3, 4);
+
+        // 帧尾
+        data += "\r\n";
+         // 发送 ASCII 流
+        QByteArray frame = data.toLatin1();
+        qint64 bytesWritten = m_serialPort->write(frame);
+        if (bytesWritten == -1) {
+            qCritical() << "程控模式发送失败：" << m_serialPort->errorString();
+        } else {
+            qDebug() << "程控模式已发送帧：" << frame;
+        }
+}
+
+void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
+    {
+        //判断索引，区分是三轴控制还是单轴控制
+        if(frame.index==0){
+            PositionModeCmd1 cmd1;
+            cmd1.axis = 1; // 内框
+            cmd1.acceleration = 1000; // 示例加速度
+            cmd1.velocity = (frame.current_inner_angle-frame.inner_endangle)/frame.runtime; // 使用当前角度作为速度示例
+            cmd1.anglePos = frame.inner_endangle; // 使用结束角度作为目标位置示例
+            sendPositionCmd(cmd1);
+
+            PositionModeCmd1 cmd2;
+            cmd2.axis = 2; // 中框
+            cmd2.acceleration = 1000;
+            cmd2.velocity = (frame.current_middle_angle-frame.middle_endangle)/frame.runtime;
+            cmd2.anglePos = frame.middle_endangle;
+            sendPositionCmd(cmd2);
+
+            PositionModeCmd1 cmd3;
+            cmd3.axis = 3; // 外框
+            cmd3.acceleration = 1000;
+            cmd3.velocity = (frame.current_outter_angle-frame.outter_endangle)/frame.runtime;
+            cmd3.anglePos = frame.outter_endangle;
+            sendPositionCmd(cmd3);
+    }else if(frame.index==1){
+            PositionModeCmd1 cmd1;
+            cmd1.axis = 1; // 内框
+            cmd1.acceleration = 1000; // 示例加速度
+            cmd1.velocity = (frame.current_inner_angle-frame.inner_endangle)/frame.runtime; // 使用当前角度作为速度示例
+            cmd1.anglePos = frame.inner_endangle; // 使用结束角度作为目标位置示例
+            sendPositionCmd(cmd1);
+        }else if(frame.index==2){
+            PositionModeCmd1 cmd2;
+            cmd2.axis = 2; // 中框
+            cmd2.acceleration = 1000;
+            cmd2.velocity = (frame.current_middle_angle-frame.middle_endangle)/frame.runtime;
+            cmd2.anglePos = frame.middle_endangle;
+            sendPositionCmd(cmd2);
+        }else if(frame.index==3){
+            PositionModeCmd1 cmd3;
+            cmd3.axis = 3; // 外框
+            cmd3.acceleration = 1000;
+            cmd3.velocity = (frame.current_outter_angle-frame.outter_endangle)/frame.runtime;
+            cmd3.anglePos = frame.outter_endangle;
+            sendPositionCmd(cmd3);
+        }else{
+             qDebug() << "程控模式发送失败";
+        }
+        
+}
 
 TurntableSendData :: TurntableSendData(QObject *parent)
     : QObject(parent)

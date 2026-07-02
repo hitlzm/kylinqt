@@ -29,18 +29,80 @@ typedef struct {
 
 typedef struct{
     int runtime;
-    float inner_startangle;
+    int index;  //用来记录是对哪个轴的控制
+    // float inner_startangle;
     float current_inner_angle;
     float inner_endangle;
-    float middle_startangle;
+    // float middle_startangle;
     float current_middle_angle;
     float middle_endangle;
-    float outter_startangle;
+    // float outter_startangle;
     float current_outter_angle;
     float outter_endangle;  
 }programSend_frame;
 
-class TurntableData;
+typedef struct PositionModeCmd1{
+    int axis;              
+    int acceleration;      
+    float  velocity;      
+    float  anglePos;       
+} PositionModeCmd1;
+
+
+class TurntableData : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(int time MEMBER m_time NOTIFY timeChanged)
+    Q_PROPERTY(int ctlnumber MEMBER m_ctlnumber NOTIFY ctlnumberChanged)
+    Q_PROPERTY(int inner_statusnumber MEMBER m_inner_statusnumber NOTIFY inner_statusnumberChanged)
+    Q_PROPERTY(float inner_angle MEMBER m_inner_angle NOTIFY inner_angleChanged)
+    Q_PROPERTY(float inner_ctlDeviation MEMBER m_inner_ctlDeviation NOTIFY inner_ctlDeviationChanged)
+    Q_PROPERTY(int middle_statusnumber MEMBER m_middle_statusnumber NOTIFY middle_statusnumberChanged)
+    Q_PROPERTY(float middle_angle MEMBER m_middle_angle NOTIFY middle_angleChanged)
+    Q_PROPERTY(float middle_ctlDeviation MEMBER m_middle_ctlDeviation NOTIFY middle_ctlDeviationChanged)
+    Q_PROPERTY(int outter_statusnumber MEMBER m_outter_statusnumber NOTIFY outter_statusnumberChanged)
+    Q_PROPERTY(float outter_angle MEMBER m_outter_angle NOTIFY outter_angleChanged)
+    Q_PROPERTY(float outter_ctlDeviation MEMBER m_outter_ctlDeviation NOTIFY outter_ctlDeviationChanged)
+public:
+    explicit TurntableData(QObject *parent = nullptr);
+    ~TurntableData() override{};
+    
+signals:
+    void timeChanged();
+    void ctlnumberChanged();
+    void inner_statusnumberChanged();
+    void inner_angleChanged();
+    void inner_ctlDeviationChanged();
+    void middle_statusnumberChanged();
+    void middle_angleChanged();
+    void middle_ctlDeviationChanged();
+    void outter_statusnumberChanged();
+    void outter_angleChanged();
+    void outter_ctlDeviationChanged();
+
+    //把信号连接到发送类，更新发送类中的当前角度
+    void myinner_angleChanged(float inner_angle);
+    void mymiddle_angleChanged(float middle_angle);
+    void myoutter_angleChanged(float outter_angle);
+
+public slots:
+
+    void updateframe(StatusFeedback recvdata);    
+
+private:
+    
+    int m_time;
+    int m_ctlnumber;
+    int m_inner_statusnumber;
+    float m_inner_angle;
+    float m_inner_ctlDeviation;
+    int m_middle_statusnumber;
+    float m_middle_angle;
+    float m_middle_ctlDeviation;
+    int m_outter_statusnumber;
+    float m_outter_angle;
+    float m_outter_ctlDeviation;
+};
 
 class TurntableSendData : public QObject
 {
@@ -127,88 +189,37 @@ public slots:
 
     void sendProgramMode(programSend_frame &frame); 
     void dowork() { 
-        SerialPort::dowork(); 
+        SerialPort::dowork();     //初始化串口并做一些信号连接操作
                     // onScanPorts(); 
         }
 
 protected:
     void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换），后期仍需要加入其他反馈指令解析
     void sendCommands(const QStringList &commands, int repeatTimes = 5);
+    void sendPositionCmd(const PositionModeCmd1 &cmd);
+    QString formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits);
 private:
     
 };
 
-class TurntableData : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(int time MEMBER m_time NOTIFY timeChanged)
-    Q_PROPERTY(int ctlnumber MEMBER m_ctlnumber NOTIFY ctlnumberChanged)
-    Q_PROPERTY(int inner_statusnumber MEMBER m_inner_statusnumber NOTIFY inner_statusnumberChanged)
-    Q_PROPERTY(float inner_angle MEMBER m_inner_angle NOTIFY inner_angleChanged)
-    Q_PROPERTY(float inner_ctlDeviation MEMBER m_inner_ctlDeviation NOTIFY inner_ctlDeviationChanged)
-    Q_PROPERTY(int middle_statusnumber MEMBER m_middle_statusnumber NOTIFY middle_statusnumberChanged)
-    Q_PROPERTY(float middle_angle MEMBER m_middle_angle NOTIFY middle_angleChanged)
-    Q_PROPERTY(float middle_ctlDeviation MEMBER m_middle_ctlDeviation NOTIFY middle_ctlDeviationChanged)
-    Q_PROPERTY(int outter_statusnumber MEMBER m_outter_statusnumber NOTIFY outter_statusnumberChanged)
-    Q_PROPERTY(float outter_angle MEMBER m_outter_angle NOTIFY outter_angleChanged)
-    Q_PROPERTY(float outter_ctlDeviation MEMBER m_outter_ctlDeviation NOTIFY outter_ctlDeviationChanged)
-public:
-    explicit TurntableData(QObject *parent = nullptr);
-    ~TurntableData() override{};
-    
-signals:
-    void timeChanged();
-    void ctlnumberChanged();
-    void inner_statusnumberChanged();
-    void inner_angleChanged();
-    void inner_ctlDeviationChanged();
-    void middle_statusnumberChanged();
-    void middle_angleChanged();
-    void middle_ctlDeviationChanged();
-    void outter_statusnumberChanged();
-    void outter_angleChanged();
-    void outter_ctlDeviationChanged();
 
-    //把信号连接到发送类，更新发送类中的当前角度
-    void myinner_angleChanged(float inner_angle);
-    void mymiddle_angleChanged(float middle_angle);
-    void myoutter_angleChanged(float outter_angle);
-
-public slots:
-
-    void updateframe(StatusFeedback recvdata);    
-
-private:
-    
-    int m_time;
-    int m_ctlnumber;
-    int m_inner_statusnumber;
-    float m_inner_angle;
-    float m_inner_ctlDeviation;
-    int m_middle_statusnumber;
-    float m_middle_angle;
-    float m_middle_ctlDeviation;
-    int m_outter_statusnumber;
-    float m_outter_angle;
-    float m_outter_ctlDeviation;
-};
 
 
 #pragma pack(push,1)
 
 // ------------------------------ 位置模式 ------------------------------//对应程控模式
-typedef struct {
+typedef struct PositionModeCmd{
     uint16_t axis;              // 轴号 (2字节)
     uint32_t acceleration;      // 加速度 (4字节)
-    uint8_t  velocity[10];      // 速度 (10字节)
-    uint8_t  anglePos[9];       // 角度位置 (9字节)
+    int8_t  velocity[10];      // 速度 (10字节)
+    int8_t  anglePos[9];       // 角度位置 (9字节)
 } PositionModeCmd;
 
 // ------------------------------ 速度模式 ------------------------------
 typedef struct {
     uint16_t axis;              // 轴号 (2字节)
     uint32_t acceleration;      // 加速度 (4字节)
-    uint8_t  velocity[10];      // 速度 (10字节)
+    int8_t  velocity[10];      // 速度 (10字节)
 } SpeedModeCmd;
 
 // ------------------------------ 摇摆模式 ------------------------------

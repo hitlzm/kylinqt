@@ -246,4 +246,6 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
+ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h
