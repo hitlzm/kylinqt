@@ -47,13 +47,13 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 74,
+				"line" : 72,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 82,
+				"line" : 80,
 				"parent" : 0
 			},
 			{
@@ -113,7 +113,7 @@
 			{
 				"command" : 7,
 				"file" : 0,
-				"line" : 79,
+				"line" : 77,
 				"parent" : 0
 			},
 			{
@@ -135,7 +135,7 @@
 			{
 				"command" : 10,
 				"file" : 0,
-				"line" : 69,
+				"line" : 67,
 				"parent" : 0
 			}
 		]
@@ -273,9 +273,7 @@
 				5,
 				6,
 				7,
-				8,
-				9,
-				11
+				9
 			]
 		}
 	],
@@ -377,9 +375,7 @@
 				5,
 				6,
 				7,
-				8,
-				9,
-				11
+				9
 			]
 		},
 		{
@@ -393,14 +389,14 @@
 			"name" : "Header Files",
 			"sourceIndexes" : 
 			[
-				10
+				8
 			]
 		},
 		{
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				12
+				10
 			]
 		}
 	],
@@ -446,18 +442,6 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "serialport/serialport_turntable.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "handle/handle.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "handle/gamepadprocessor.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

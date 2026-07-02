@@ -12,15 +12,15 @@ Item {
     Gamepad {
         id: myGamepad
         deviceId: 0
-        onAxisLeftXChanged: handle.axisLeftX = axisLeftX
-        onAxisLeftYChanged: handle.axisLeftY = axisLeftY
-        onAxisRightXChanged: handle.axisRightX = axisRightX
-        onButtonL2Changed: handle.buttonL2 = buttonL2
-        onButtonR2Changed: handle.buttonR2 = buttonR2
-        onButtonAChanged: handle.buttonA = buttonA   // 或者 = myGamepad.buttonA
-        // onButtonAReleased: handle.buttonA = false // 松开时复位
-        onButtonBChanged: handle.buttonB = buttonB
-        // onButtonBReleased: handle.buttonB = false
+        onAxisLeftXChanged: handle.axisLeftXChanged(axisLeftX)
+        onAxisLeftYChanged: handle.axisLeftYChanged(axisLeftY)
+        onAxisRightXChanged: handle.axisRightXChanged(axisRightX)
+        onButtonL2Changed: handle.buttonL2Changed(buttonL2)
+        onButtonR2Changed: handle.buttonR2Changed(buttonR2)
+        onButtonAChanged: handle.buttonAChanged(buttonA)   // 或者 = myGamepad.buttonA
+        // onButtonAReleased: handle.buttonAChanged(false) // 松开时复位
+        onButtonBChanged: handle.buttonBChanged(buttonB)
+        // onButtonBReleased: handle.buttonBChanged(false)
     }
     
     ColumnLayout {

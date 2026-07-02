@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_TurntableData_t {
-    QByteArrayData data[30];
-    char stringdata0[535];
+    QByteArrayData data[31];
+    char stringdata0[550];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -53,14 +53,15 @@ QT_MOC_LITERAL(18, 353, 12), // "outter_angle"
 QT_MOC_LITERAL(19, 366, 11), // "updateframe"
 QT_MOC_LITERAL(20, 378, 14), // "StatusFeedback"
 QT_MOC_LITERAL(21, 393, 8), // "recvdata"
-QT_MOC_LITERAL(22, 402, 4), // "time"
-QT_MOC_LITERAL(23, 407, 9), // "ctlnumber"
-QT_MOC_LITERAL(24, 417, 18), // "inner_statusnumber"
-QT_MOC_LITERAL(25, 436, 18), // "inner_ctlDeviation"
-QT_MOC_LITERAL(26, 455, 19), // "middle_statusnumber"
-QT_MOC_LITERAL(27, 475, 19), // "middle_ctlDeviation"
-QT_MOC_LITERAL(28, 495, 19), // "outter_statusnumber"
-QT_MOC_LITERAL(29, 515, 19) // "outter_ctlDeviation"
+QT_MOC_LITERAL(22, 402, 14), // "sendHandleData"
+QT_MOC_LITERAL(23, 417, 4), // "time"
+QT_MOC_LITERAL(24, 422, 9), // "ctlnumber"
+QT_MOC_LITERAL(25, 432, 18), // "inner_statusnumber"
+QT_MOC_LITERAL(26, 451, 18), // "inner_ctlDeviation"
+QT_MOC_LITERAL(27, 470, 19), // "middle_statusnumber"
+QT_MOC_LITERAL(28, 490, 19), // "middle_ctlDeviation"
+QT_MOC_LITERAL(29, 510, 19), // "outter_statusnumber"
+QT_MOC_LITERAL(30, 530, 19) // "outter_ctlDeviation"
 
     },
     "TurntableData\0timeChanged\0\0ctlnumberChanged\0"
@@ -74,10 +75,10 @@ QT_MOC_LITERAL(29, 515, 19) // "outter_ctlDeviation"
     "mymiddle_angleChanged\0middle_angle\0"
     "myoutter_angleChanged\0outter_angle\0"
     "updateframe\0StatusFeedback\0recvdata\0"
-    "time\0ctlnumber\0inner_statusnumber\0"
-    "inner_ctlDeviation\0middle_statusnumber\0"
-    "middle_ctlDeviation\0outter_statusnumber\0"
-    "outter_ctlDeviation"
+    "sendHandleData\0time\0ctlnumber\0"
+    "inner_statusnumber\0inner_ctlDeviation\0"
+    "middle_statusnumber\0middle_ctlDeviation\0"
+    "outter_statusnumber\0outter_ctlDeviation"
 };
 #undef QT_MOC_LITERAL
 
@@ -87,31 +88,32 @@ static const uint qt_meta_data_TurntableData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      15,   14, // methods
-      11,  112, // properties
+      16,   14, // methods
+      11,  124, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
       14,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   89,    2, 0x06 /* Public */,
-       3,    0,   90,    2, 0x06 /* Public */,
-       4,    0,   91,    2, 0x06 /* Public */,
-       5,    0,   92,    2, 0x06 /* Public */,
-       6,    0,   93,    2, 0x06 /* Public */,
-       7,    0,   94,    2, 0x06 /* Public */,
-       8,    0,   95,    2, 0x06 /* Public */,
-       9,    0,   96,    2, 0x06 /* Public */,
-      10,    0,   97,    2, 0x06 /* Public */,
-      11,    0,   98,    2, 0x06 /* Public */,
-      12,    0,   99,    2, 0x06 /* Public */,
-      13,    1,  100,    2, 0x06 /* Public */,
-      15,    1,  103,    2, 0x06 /* Public */,
-      17,    1,  106,    2, 0x06 /* Public */,
+       1,    0,   94,    2, 0x06 /* Public */,
+       3,    0,   95,    2, 0x06 /* Public */,
+       4,    0,   96,    2, 0x06 /* Public */,
+       5,    0,   97,    2, 0x06 /* Public */,
+       6,    0,   98,    2, 0x06 /* Public */,
+       7,    0,   99,    2, 0x06 /* Public */,
+       8,    0,  100,    2, 0x06 /* Public */,
+       9,    0,  101,    2, 0x06 /* Public */,
+      10,    0,  102,    2, 0x06 /* Public */,
+      11,    0,  103,    2, 0x06 /* Public */,
+      12,    0,  104,    2, 0x06 /* Public */,
+      13,    1,  105,    2, 0x06 /* Public */,
+      15,    1,  108,    2, 0x06 /* Public */,
+      17,    1,  111,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      19,    1,  109,    2, 0x0a /* Public */,
+      19,    1,  114,    2, 0x0a /* Public */,
+      22,    3,  117,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -131,19 +133,20 @@ static const uint qt_meta_data_TurntableData[] = {
 
  // slots: parameters
     QMetaType::Void, 0x80000000 | 20,   21,
+    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float,   14,   16,   18,
 
  // properties: name, type, flags
-      22, QMetaType::Int, 0x00495003,
       23, QMetaType::Int, 0x00495003,
       24, QMetaType::Int, 0x00495003,
+      25, QMetaType::Int, 0x00495003,
       14, QMetaType::Float, 0x00495003,
-      25, QMetaType::Float, 0x00495003,
-      26, QMetaType::Int, 0x00495003,
+      26, QMetaType::Float, 0x00495003,
+      27, QMetaType::Int, 0x00495003,
       16, QMetaType::Float, 0x00495003,
-      27, QMetaType::Float, 0x00495003,
-      28, QMetaType::Int, 0x00495003,
+      28, QMetaType::Float, 0x00495003,
+      29, QMetaType::Int, 0x00495003,
       18, QMetaType::Float, 0x00495003,
-      29, QMetaType::Float, 0x00495003,
+      30, QMetaType::Float, 0x00495003,
 
  // properties: notify_signal_id
        0,
@@ -182,6 +185,7 @@ void TurntableData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 12: _t->mymiddle_angleChanged((*reinterpret_cast< float(*)>(_a[1]))); break;
         case 13: _t->myoutter_angleChanged((*reinterpret_cast< float(*)>(_a[1]))); break;
         case 14: _t->updateframe((*reinterpret_cast< StatusFeedback(*)>(_a[1]))); break;
+        case 15: _t->sendHandleData((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -411,13 +415,13 @@ int TurntableData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 15)
+        if (_id < 16)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 15;
+        _id -= 16;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 15)
+        if (_id < 16)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 15;
+        _id -= 16;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
@@ -944,8 +948,8 @@ void TurntableSendData::indexChanged()
     QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
 }
 struct qt_meta_stringdata_SerialPortTurntable_t {
-    QByteArrayData data[13];
-    char stringdata0[166];
+    QByteArrayData data[14];
+    char stringdata0[181];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -966,14 +970,16 @@ QT_MOC_LITERAL(8, 104, 13), // "zeroTurntable"
 QT_MOC_LITERAL(9, 118, 15), // "sendProgramMode"
 QT_MOC_LITERAL(10, 134, 18), // "programSend_frame&"
 QT_MOC_LITERAL(11, 153, 5), // "frame"
-QT_MOC_LITERAL(12, 159, 6) // "dowork"
+QT_MOC_LITERAL(12, 159, 14), // "sendHandleMode"
+QT_MOC_LITERAL(13, 174, 6) // "dowork"
 
     },
     "SerialPortTurntable\0requpdateframe\0\0"
     "StatusFeedback\0recvdata\0openTurntable\0"
     "closeTurntable\0resetTurntable\0"
     "zeroTurntable\0sendProgramMode\0"
-    "programSend_frame&\0frame\0dowork"
+    "programSend_frame&\0frame\0sendHandleMode\0"
+    "dowork"
 };
 #undef QT_MOC_LITERAL
 
@@ -983,7 +989,7 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -991,15 +997,16 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   49,    2, 0x06 /* Public */,
+       1,    1,   54,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       5,    0,   52,    2, 0x0a /* Public */,
-       6,    0,   53,    2, 0x0a /* Public */,
-       7,    0,   54,    2, 0x0a /* Public */,
-       8,    0,   55,    2, 0x0a /* Public */,
-       9,    1,   56,    2, 0x0a /* Public */,
-      12,    0,   59,    2, 0x0a /* Public */,
+       5,    0,   57,    2, 0x0a /* Public */,
+       6,    0,   58,    2, 0x0a /* Public */,
+       7,    0,   59,    2, 0x0a /* Public */,
+       8,    0,   60,    2, 0x0a /* Public */,
+       9,    1,   61,    2, 0x0a /* Public */,
+      12,    0,   64,    2, 0x0a /* Public */,
+      13,    0,   65,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -1010,6 +1017,7 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 10,   11,
+    QMetaType::Void,
     QMetaType::Void,
 
        0        // eod
@@ -1027,7 +1035,8 @@ void SerialPortTurntable::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         case 3: _t->resetTurntable(); break;
         case 4: _t->zeroTurntable(); break;
         case 5: _t->sendProgramMode((*reinterpret_cast< programSend_frame(*)>(_a[1]))); break;
-        case 6: _t->dowork(); break;
+        case 6: _t->sendHandleMode(); break;
+        case 7: _t->dowork(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -1071,13 +1080,13 @@ int SerialPortTurntable::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 8)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        _id -= 8;
     }
     return _id;
 }

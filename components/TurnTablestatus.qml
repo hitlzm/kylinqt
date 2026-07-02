@@ -206,36 +206,57 @@ Rectangle {
             }
         }
     }
-    
     StackLayout {
-            id: stack
-            width: root.width - 20
-            height: 280
-            currentIndex: stacklayoutindex
-            anchors.top: statusGroup.bottom
-            anchors.topMargin: 5
-            anchors.left:root.left
-            anchors.leftMargin: 10
-            anchors.right: root.right
-            anchors.rightMargin: 10 
-            // --- 第一个页面 ---
-            Item {
-                ExGuide {
-                    anchors.fill: parent   
-                }
-            }
-            // --- 第二个页面 ---
-            Item {
-                ProgramMode{
-                    anchors.fill: parent
-                }
-            }
-            Item {
-                Remotectlmode{
-                    anchors.fill: parent
-                }
+        id: stack
+        currentIndex: stacklayoutindex
+        width: root.width - 20
+        height: 280
+        anchors.top: statusGroup.bottom
+        anchors.topMargin: 5
+        anchors.left:root.left
+        anchors.leftMargin: 10
+        anchors.right: root.right
+        anchors.rightMargin: 10 
+        Repeater {
+            model: ["ExGuide.qml", "ProgramMode.qml", "Remotectlmode.qml"]
+            Loader {
+                asynchronous: true
+                source: modelData
+                active: stack.currentIndex === index
+                // 加载完成后自动填充父项
+                onLoaded: item.anchors.fill = parent
             }
         }
+}
+    // StackLayout {
+    //         id: stack
+    //         width: root.width - 20
+    //         height: 280
+    //         currentIndex: stacklayoutindex
+    //         anchors.top: statusGroup.bottom
+    //         anchors.topMargin: 5
+    //         anchors.left:root.left
+    //         anchors.leftMargin: 10
+    //         anchors.right: root.right
+    //         anchors.rightMargin: 10 
+    //         // --- 第一个页面 ---
+    //         Item {
+    //             ExGuide {
+    //                 anchors.fill: parent   
+    //             }
+    //         }
+    //         // --- 第二个页面 ---
+    //         Item {
+    //             ProgramMode{
+    //                 anchors.fill: parent
+    //             }
+    //         }
+    //         Item {
+    //             Remotectlmode{
+    //                 anchors.fill: parent
+    //             }
+    //         }
+    //     }
   
 }
 

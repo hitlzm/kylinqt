@@ -98,18 +98,6 @@
 	"HEADERS" : 
 	[
 		[
-			"E:/QTproject/kylinqt/handle/gamepadprocessor.h",
-			"MU",
-			"62PF24DQ2C/moc_gamepadprocessor.cpp",
-			null
-		],
-		[
-			"E:/QTproject/kylinqt/handle/handle.h",
-			"MU",
-			"62PF24DQ2C/moc_handle.cpp",
-			null
-		],
-		[
 			"E:/QTproject/kylinqt/handle/myhandle.h",
 			"MU",
 			"62PF24DQ2C/moc_myhandle.cpp",
@@ -215,8 +203,6 @@
 	"SETTINGS_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
-		[ "E:/QTproject/kylinqt/handle/gamepadprocessor.cpp", "MU", null ],
-		[ "E:/QTproject/kylinqt/handle/handle.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_image.cpp", "MU", null ],

@@ -94,6 +94,10 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::portsChanged, imageData, &ImageData::setPortList, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::imageFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
 
+    //Turntable 信号与槽连接
+    QObject::connect(turntableSendData, &TurntableSendData::requestSendProgramMode,   turntablePort, &SerialPortTurntable::sendProgramMode, Qt::QueuedConnection);
+    QObject::connect(turntablePort, &SerialPortTurntable::requpdateframe,   turntableData, &TurntableData::updateframe, Qt::QueuedConnection);
+
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
     QThread *Imagethread = new QThread;

@@ -136,23 +136,23 @@ void SerialPortTurntable::sendCommands(const QStringList &commands, int repeatTi
         }
         }
 }
-    void SerialPortTurntable::openTurntable()
-    {
-         sendCommands({"1mo=0", "2mo=0", "3mo=0"});
-         sendCommands({"1mo=1", "2mo=1", "3mo=1"});
-    };
-    void SerialPortTurntable::closeTurntable()
-    {
-        sendCommands({"1st=0", "2st=0", "3st=0"});
-    };
-    void SerialPortTurntable::resetTurntable()
-    {
-        sendCommands({"RST"});
-    };
-    void SerialPortTurntable::zeroTurntable()
-    {
-        sendCommands({"1z", "2z", "3z"});
-    };
+void SerialPortTurntable::openTurntable()
+{
+     sendCommands({"1mo=0", "2mo=0", "3mo=0"});
+     sendCommands({"1mo=1", "2mo=1", "3mo=1"});
+};
+void SerialPortTurntable::closeTurntable()
+{
+    sendCommands({"1st=0", "2st=0", "3st=0"});
+};
+void SerialPortTurntable::resetTurntable()
+{
+    sendCommands({"RST"});
+};
+void SerialPortTurntable::zeroTurntable()
+{
+    sendCommands({"1z", "2z", "3z"});
+};
 
 QString SerialPortTurntable::formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits) {
         // 处理符号
@@ -219,6 +219,35 @@ void  SerialPortTurntable::sendPositionCmd(const PositionModeCmd1 &cmd)
         }
 }
 
+void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
+{
+        if (!m_serialPort->isOpen()) {
+            qWarning() << "串口未打开！";
+            return;
+        }
+        // ---------- 构建数据帧 ----------
+        QString data = "$";
+
+        // 轴号 + v + 加速度（4位十进制，补零）
+        data += QString::number(cmd.axis);
+        data += "v";
+        data += QString("%1").arg(cmd.acceleration, 4, 10, QChar('0'));
+
+        // 速度（带符号，4位整数，4位小数）
+        data += formatNumberWithSignAndDecimals(cmd.velocity, 4, 4);
+
+        // 帧尾
+        data += "\r\n";
+         // 发送 ASCII 流
+        QByteArray frame = data.toLatin1();
+        qint64 bytesWritten = m_serialPort->write(frame);
+        if (bytesWritten == -1) {
+            qCritical() << "程控模式发送失败：" << m_serialPort->errorString();
+        } else {
+            qDebug() << "程控模式已发送帧：" << frame;
+        }
+}
+
 void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
     {
         //判断索引，区分是三轴控制还是单轴控制
@@ -268,6 +297,14 @@ void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
              qDebug() << "程控模式发送失败";
         }
         
+}
+
+void SerialPortTurntable::sendHandleMode()
+{
+    //根据手柄数据判断是速率模式还是位置模式，发送对应的指令。当两个扳机有一个输出不为0时，认为使用位置模式，提供步进与步减功能
+    //当两个扳机都为0时，认为使用速率模式，手柄左轴与右轴的输出直接对应到三轴转台各轴速度
+
+    
 }
 
 TurntableSendData :: TurntableSendData(QObject *parent)

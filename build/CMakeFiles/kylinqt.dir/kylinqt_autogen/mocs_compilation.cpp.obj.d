@@ -1,7 +1,7 @@
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:\QTproject\kylinqt\build\kylinqt_autogen\mocs_compilation.cpp \
- E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_gamepadprocessor.cpp \
- E:/QTproject/kylinqt/handle/gamepadprocessor.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_myhandle.cpp \
+ E:/QTproject/kylinqt/handle/myhandle.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
@@ -220,28 +220,15 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_time.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_handle.cpp \
- E:/QTproject/kylinqt/handle/handle.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/QGamepad \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/qgamepad.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/qtgamepadglobal.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/QGamepadManager \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/qgamepadmanager.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMap \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad/QGamepadManager \
- E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_myhandle.cpp \
- E:/QTproject/kylinqt/handle/myhandle.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport.cpp \
  E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
@@ -273,6 +260,9 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h \
@@ -282,6 +272,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsvalue.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \

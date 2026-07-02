@@ -48,6 +48,11 @@ typedef struct PositionModeCmd1{
     float  anglePos;       
 } PositionModeCmd1;
 
+typedef struct SpeedModeCmd1{
+    int axis;              // 轴号 (2字节)
+    int acceleration;      // 加速度 (4字节)
+    float  velocity;      // 速度 (10字节)
+} SpeedModeCmd1;
 
 class TurntableData : public QObject
 {
@@ -89,6 +94,10 @@ public slots:
 
     void updateframe(StatusFeedback recvdata);    
 
+    void sendHandleData(float inner_angle, float middle_angle, float outter_angle)
+    {
+        
+    }
 private:
     
     int m_time;
@@ -188,15 +197,18 @@ public slots:
     void zeroTurntable();
 
     void sendProgramMode(programSend_frame &frame); 
+    void sendHandleMode();   //接收的参数为手柄传来的各轴信号
     void dowork() { 
         SerialPort::dowork();     //初始化串口并做一些信号连接操作
                     // onScanPorts(); 
         }
-
+    
 protected:
     void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换），后期仍需要加入其他反馈指令解析
     void sendCommands(const QStringList &commands, int repeatTimes = 5);
     void sendPositionCmd(const PositionModeCmd1 &cmd);
+    void sendVecCmd(const SpeedModeCmd1 &cmd);
+
     QString formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits);
 private:
     
@@ -216,7 +228,7 @@ typedef struct PositionModeCmd{
 } PositionModeCmd;
 
 // ------------------------------ 速度模式 ------------------------------
-typedef struct {
+typedef struct SpeedModeCmd{
     uint16_t axis;              // 轴号 (2字节)
     uint32_t acceleration;      // 加速度 (4字节)
     int8_t  velocity[10];      // 速度 (10字节)
