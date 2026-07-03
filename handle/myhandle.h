@@ -16,7 +16,6 @@ class Myhandle : public QObject
     // Q_PROPERTY(bool  buttonB    MEMBER m_buttonB    NOTIFY buttonBChanged)
 private:
     QTimer *m_timer;
-
 public:
     Myhandle( QObject *parent)
     : QObject(parent)

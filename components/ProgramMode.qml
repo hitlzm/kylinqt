@@ -5,7 +5,9 @@ import QtQuick.Layouts 1.12
 import "./"
 
 Item{
-id:root
+    id:root
+    anchors.fill: parent
+
 property var controlNames: [
     "三轴控制",
     "内框控制",

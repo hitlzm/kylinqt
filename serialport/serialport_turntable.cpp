@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QByteArray>
 #include <cmath>
+
+#define MAX_SPEED 2000.0f
 SerialPortTurntable::SerialPortTurntable(QObject *parent)
     : SerialPort(parent)
 {
@@ -248,8 +250,28 @@ void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
         }
 }
 
+void SerialPortTurntable::ProgramModeChanged(int mode)
+{
+    if(mode==1){
+        m_isProgramMode=true;
+    }else{
+        m_isProgramMode=false;
+    }
+}
+
+void SerialPortTurntable::sendTrackMode()
+{
+
+};
+
 void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
-    {
+    {   
+        //判断程控模式是否被选中
+        if(!m_isProgramMode){
+            qDebug() << "未进入程控模式，无法发送程控指令";
+            return;
+        }
+
         //判断索引，区分是三轴控制还是单轴控制
         if(frame.index==0){
             PositionModeCmd1 cmd1;
@@ -272,7 +294,7 @@ void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
             cmd3.velocity = (frame.current_outter_angle-frame.outter_endangle)/frame.runtime;
             cmd3.anglePos = frame.outter_endangle;
             sendPositionCmd(cmd3);
-    }else if(frame.index==1){
+        }else if(frame.index==1){
             PositionModeCmd1 cmd1;
             cmd1.axis = 1; // 内框
             cmd1.acceleration = 1000; // 示例加速度
@@ -299,13 +321,94 @@ void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
         
 }
 
-void SerialPortTurntable::sendHandleMode()
+void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB)
 {
     //根据手柄数据判断是速率模式还是位置模式，发送对应的指令。当两个扳机有一个输出不为0时，认为使用位置模式，提供步进与步减功能
     //当两个扳机都为0时，认为使用速率模式，手柄左轴与右轴的输出直接对应到三轴转台各轴速度
+    if( buttonL2!=0 || buttonR2!=0){  //两个扳机任意一个不为0，使用位置模式。左扳机按下：内框；右扳机按下：中框；两扳机同时按下，外框
+        //位置模式
+        if(buttonL2!=0){
+            PositionModeCmd1 cmd;
+            cmd.axis = 3; // 内框
+            cmd.acceleration = 1000; // 示例加速度
+            //判断步进还是步减，每次变动角度为3度
+            if(buttonA)
+            {
+                cmd.velocity = MAX_SPEED/2; // 步进
+                cmd.anglePos = m_current_outter_angle+3; 
+            }else if(buttonB)
+            {
+                cmd.velocity = -MAX_SPEED/2; // 步退
+                cmd.anglePos = m_current_outter_angle-3; 
+            }
+            sendPositionCmd(cmd);
+        }
+        if(buttonR2!=0){
+            PositionModeCmd1 cmd;
+            cmd.axis = 2; // 中框
+            cmd.acceleration = 1000;
+            if(buttonA)
+            {
+                cmd.velocity = MAX_SPEED/2; // 步进
+                cmd.anglePos = m_current_middle_angle+3; 
+            }else if(buttonB)
+            {
+                cmd.velocity = -MAX_SPEED/2; // 步退
+                cmd.anglePos = m_current_middle_angle-3; 
+            }
+            sendPositionCmd(cmd);
+        }
+        if(buttonR2 >0.9 && buttonL2 >0.9){
+            PositionModeCmd1 cmd;
+            cmd.axis = 1; // 外框
+            cmd.acceleration = 1000;
+            if(buttonA)
+            {
+                cmd.velocity = MAX_SPEED/2; // 步进
+                cmd.anglePos = m_current_inner_angle+3; 
+            }else if(buttonB)
+            {
+                cmd.velocity = -MAX_SPEED/2; // 步退
+                cmd.anglePos = m_current_inner_angle-3; 
+            }
+            sendPositionCmd(cmd);
+        }
+    }else if(buttonL2 == 0 && buttonR2 == 0)
+    {
+        //当两个扳机都未按下时，使用速度模式
+        //axisLeftX对应外框，axisLeftY对应中框，axisRightX对应内框
+        SpeedModeCmd1 innercmd;
+        SpeedModeCmd1 middlecmd;
+        SpeedModeCmd1 outtercmd;
+        innercmd.axis = 1;
+        innercmd.acceleration = 1000;
+        innercmd.velocity = axisRightX*MAX_SPEED;
+        middlecmd.axis = 2;
+        middlecmd.acceleration = 1000;
+        middlecmd.velocity = axisLeftY*MAX_SPEED;
+        outtercmd.axis= 3;
+        outtercmd.acceleration = 1000;
+        outtercmd.velocity = axisLeftX*MAX_SPEED;
+        sendVecCmd(innercmd);
+        sendVecCmd(middlecmd);
+        sendVecCmd(outtercmd);
+    }
 
-    
 }
+
+void SerialPortTurntable::sendTrackCmd(const TrackingSendCmd1 &cmd)
+{
+
+}
+
+void SerialPortTurntable::onOpenPort(const QString &name, int baud) {
+    if (SerialPort::open(name, baud))
+        emit portOpened(true);
+    else
+        emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
+}
+void SerialPortTurntable::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortTurntable::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 
 TurntableSendData :: TurntableSendData(QObject *parent)
     : QObject(parent)
@@ -354,6 +457,11 @@ TurntableData :: TurntableData(QObject *parent)
 
 }
 
+// ── 工作线程回推 ──
+void TurntableData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
+void TurntableData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
+void TurntableData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+
 void TurntableData :: updateframe(StatusFeedback recvdata)
 {
     if (m_time != recvdata.m_time) {
@@ -371,6 +479,8 @@ void TurntableData :: updateframe(StatusFeedback recvdata)
     if (m_inner_angle != recvdata.m_inner_angle) {
         m_inner_angle = recvdata.m_inner_angle;
         emit inner_angleChanged();
+        //也可以不使用信号与槽的方式，仅在需要数据时，调用数据对象方法返回
+        emit myinner_angleChanged(m_inner_angle);
     }
     if (m_inner_ctlDeviation != recvdata.m_inner_ctlDeviation) {
         m_inner_ctlDeviation = recvdata.m_inner_ctlDeviation;
@@ -383,6 +493,7 @@ void TurntableData :: updateframe(StatusFeedback recvdata)
     if (m_middle_angle != recvdata.m_middle_angle) {
         m_middle_angle = recvdata.m_middle_angle;
         emit middle_angleChanged();
+        emit mymiddle_angleChanged(m_middle_angle);
     }
     if (m_middle_ctlDeviation != recvdata.m_middle_ctlDeviation) {
         m_middle_ctlDeviation = recvdata.m_middle_ctlDeviation;
@@ -395,9 +506,14 @@ void TurntableData :: updateframe(StatusFeedback recvdata)
     if (m_outter_angle != recvdata.m_outter_angle) {
         m_outter_angle = recvdata.m_outter_angle;
         emit outter_angleChanged();
+        emit myoutter_angleChanged(m_outter_angle);
     }
     if (m_outter_ctlDeviation != recvdata.m_outter_ctlDeviation) {
         m_outter_ctlDeviation = recvdata.m_outter_ctlDeviation;
         emit outter_ctlDeviationChanged();
     }
 }
+
+void TurntableData :: openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
+void TurntableData :: closePort()                                     { emit requestClosePort(); }
+void TurntableData :: scanPorts()                                     { emit requestScanPorts(); }

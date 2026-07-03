@@ -492,6 +492,7 @@ public slots:
     void onScanPorts();
     void onSendData(image_send_frame frame);
 
+    void ExmodeChanged(int mode);
 protected:
     void parseData(const QByteArray &rawData) override;
     void onReadyRead() override;

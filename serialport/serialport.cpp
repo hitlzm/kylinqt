@@ -111,6 +111,6 @@ void SerialPort::handleError(QSerialPort::SerialPortError error)
 {
     if (error == QSerialPort::NoError)
         return;
-
     emit errorOccurred(m_serialPort->errorString());
+    close(); //出错后关闭串口，并通知串口异常
 }

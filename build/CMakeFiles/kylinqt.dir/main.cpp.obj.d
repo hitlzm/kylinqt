@@ -334,4 +334,5 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:\QTproject\kylinqt\handle/myhandle.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:\QTproject\kylinqt\ModeControl/ModeController.h

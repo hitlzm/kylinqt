@@ -2924,8 +2924,8 @@ void ImageSendData::requestSendData(image_send_frame _t1)
     QMetaObject::activate(this, &staticMetaObject, 51, _a);
 }
 struct qt_meta_stringdata_SerialPortImage_t {
-    QByteArrayData data[29];
-    char stringdata0[285];
+    QByteArrayData data[31];
+    char stringdata0[304];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2962,7 +2962,9 @@ QT_MOC_LITERAL(24, 227, 11), // "onClosePort"
 QT_MOC_LITERAL(25, 239, 11), // "onScanPorts"
 QT_MOC_LITERAL(26, 251, 10), // "onSendData"
 QT_MOC_LITERAL(27, 262, 16), // "image_send_frame"
-QT_MOC_LITERAL(28, 279, 5) // "frame"
+QT_MOC_LITERAL(28, 279, 5), // "frame"
+QT_MOC_LITERAL(29, 285, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(30, 299, 4) // "mode"
 
     },
     "SerialPortImage\0portOpened\0\0success\0"
@@ -2972,7 +2974,8 @@ QT_MOC_LITERAL(28, 279, 5) // "frame"
     "crc16_ccitt_fast\0const uint8_t*\0data\0"
     "size_t\0len\0init\0onOpenPort\0portName\0"
     "baudRate\0onClosePort\0onScanPorts\0"
-    "onSendData\0image_send_frame\0frame"
+    "onSendData\0image_send_frame\0frame\0"
+    "ExmodeChanged\0mode"
 };
 #undef QT_MOC_LITERAL
 
@@ -2982,7 +2985,7 @@ static const uint qt_meta_data_SerialPortImage[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -2990,22 +2993,23 @@ static const uint qt_meta_data_SerialPortImage[] = {
        5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   84,    2, 0x06 /* Public */,
-       4,    0,   87,    2, 0x06 /* Public */,
-       5,    1,   88,    2, 0x06 /* Public */,
-       7,    1,   91,    2, 0x06 /* Public */,
-       9,    1,   94,    2, 0x06 /* Public */,
+       1,    1,   89,    2, 0x06 /* Public */,
+       4,    0,   92,    2, 0x06 /* Public */,
+       5,    1,   93,    2, 0x06 /* Public */,
+       7,    1,   96,    2, 0x06 /* Public */,
+       9,    1,   99,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      11,    0,   97,    2, 0x0a /* Public */,
-      12,    1,   98,    2, 0x0a /* Public */,
-      12,    0,  101,    2, 0x2a /* Public | MethodCloned */,
-      15,    3,  102,    2, 0x0a /* Public */,
-      15,    2,  109,    2, 0x2a /* Public | MethodCloned */,
-      21,    2,  114,    2, 0x0a /* Public */,
-      24,    0,  119,    2, 0x0a /* Public */,
-      25,    0,  120,    2, 0x0a /* Public */,
-      26,    1,  121,    2, 0x0a /* Public */,
+      11,    0,  102,    2, 0x0a /* Public */,
+      12,    1,  103,    2, 0x0a /* Public */,
+      12,    0,  106,    2, 0x2a /* Public | MethodCloned */,
+      15,    3,  107,    2, 0x0a /* Public */,
+      15,    2,  114,    2, 0x2a /* Public | MethodCloned */,
+      21,    2,  119,    2, 0x0a /* Public */,
+      24,    0,  124,    2, 0x0a /* Public */,
+      25,    0,  125,    2, 0x0a /* Public */,
+      26,    1,  126,    2, 0x0a /* Public */,
+      29,    1,  129,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -3024,6 +3028,7 @@ static const uint qt_meta_data_SerialPortImage[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 27,   28,
+    QMetaType::Void, QMetaType::Int,   30,
 
        0        // eod
 };
@@ -3050,6 +3055,7 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 11: _t->onClosePort(); break;
         case 12: _t->onScanPorts(); break;
         case 13: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
+        case 14: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -3121,13 +3127,13 @@ int SerialPortImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 15)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 14;
+        _id -= 15;
     }
     return _id;
 }

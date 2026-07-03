@@ -58,6 +58,86 @@ Rectangle {
         }
     }
 
+    //加入串口扫描与串口连接
+    RowLayout {
+        id: serialctrlrow
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        anchors.top: ctrlrow.bottom
+        anchors.topMargin: 10
+        spacing: 20
+
+        // 串口选择 - 绑定到 C++ imageSerial 对象
+        CusComboBox {
+            id: serialComboBox
+            Layout.fillWidth: true
+            Layout.preferredHeight: 32
+            
+            model: turntableData.availablePorts   //和Imageport使用同一个串口列表即可
+        }
+         // 波特率
+        CusComboBox {
+            id: baudComboBox
+            Layout.fillWidth: true
+            Layout.preferredHeight: 32
+            model: ["115200"]
+        }
+        //扫描串口按钮
+        CusButton_Blue {
+            id: scanButton
+            Layout.fillWidth: true
+            height: 32
+            text: "扫描串口"
+
+            onClicked: {
+                turntableData.requestScanPorts()
+            }
+        }
+       
+        CusButton_Blue {
+        id: openButton
+        Layout.fillWidth: true
+        height: 32
+        text: turntableData.portOpen ? "关闭串口" : "打开串口"
+
+        //弹窗组件
+        // CusPopup {
+        // id: tip1
+        // backgroundWidth: 200
+        // backgroundHeight: 80
+        // barColor:"lightgray"
+        // contentItem:Column {
+        // spacing: 10
+        // Text { text: "串口打开失败！" }
+        // CusButton_Blue { text: "确定"; onClicked: tip1.hide() }
+        // }
+        // }
+        // Timer {
+        //     id: delayTimer
+        //     interval: 1  
+        //     onTriggered: {
+        //         if (turntableData.portOpen) tip.show()
+        //         else tip1.show()
+        //     }
+        // }
+        onClicked: {
+            if (turntableData.portOpen) {
+                turntableData.closePort()
+            } else {
+                turntableData.openPort(serialComboBox.currentText,
+                                    parseInt(baudComboBox.currentText))
+                // if (imageData.portOpen) {tip.show()} 
+                // else{tip1.show()}
+                // delayTimer.start()
+            }
+        }
+    }
+
+
+    }
+
     // ---------- 转台状态显示区（GroupBox 直接占满剩余空间）----------
     GroupBox {
         id: statusGroup
@@ -65,7 +145,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        anchors.top: ctrlrow.bottom
+        anchors.top: serialctrlrow.bottom
         anchors.topMargin: 5
         // anchors.bottom: parent.bottom       // 填满剩余垂直空间
         // anchors.bottomMargin: 10
@@ -78,16 +158,16 @@ Rectangle {
             radius: 8
         }
 
-        title: "转台状态信息"
-        font.pixelSize: 18
+        // title: "转台状态信息"
+        // font.pixelSize: 18
 
-        // 自定义标题标签（保持原有样式）
-        label: Label {
-            text: parent.title
-            font.pixelSize: 18
-            leftPadding: 12
-            topPadding: 6
-        }
+        // // 自定义标题标签（保持原有样式）
+        // label: Label {
+        //     text: parent.title
+        //     font.pixelSize: 18
+        //     leftPadding: 12
+        //     topPadding: 6
+        // }
 
         // 内容区域：三行状态数据，整体居中显示
         Column {
@@ -223,11 +303,9 @@ Rectangle {
                 asynchronous: true
                 source: modelData
                 active: stack.currentIndex === index
-                // 加载完成后自动填充父项
-                onLoaded: item.anchors.fill = parent
             }
         }
-}
+    }
     // StackLayout {
     //         id: stack
     //         width: root.width - 20

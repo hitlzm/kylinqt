@@ -24,3 +24,5 @@ E:/QTproject/kylinqt/handle/gamepadprocessor.h
 E:/QTproject/kylinqt/handle/myhandle.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/handle/myhandle.cpp
+E:/QTproject/kylinqt/ModeControl/ModeController.h
+ mmc:Q_OBJECT

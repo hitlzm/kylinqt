@@ -1,7 +1,7 @@
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:\QTproject\kylinqt\build\kylinqt_autogen\mocs_compilation.cpp \
- E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_myhandle.cpp \
- E:/QTproject/kylinqt/handle/myhandle.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\2GCJWZ5LBA/moc_ModeController.cpp \
+ E:/QTproject/kylinqt/ModeControl/ModeController.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
@@ -220,10 +220,31 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_time.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/future \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/mutex \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_mutex.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/thread \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_futex.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_myhandle.cpp \
+ E:/QTproject/kylinqt/handle/myhandle.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport.cpp \
  E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
@@ -260,9 +281,6 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h \

@@ -437,6 +437,12 @@ void SerialPortImage::onSendData(image_send_frame frame) {
 }
 void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 
+void SerialPortImage::ExmodeChanged(int mode)
+{
+    //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
+
+}
+
 ImageData* SerialPortImage::imageData() const
 {
     return m_imageData;

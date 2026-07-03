@@ -7,7 +7,7 @@ import QtGamepad 1.0
 
 Item {
     id: root
-    anchors.centerIn:parent
+    anchors.fill: parent
    
     Gamepad {
         id: myGamepad

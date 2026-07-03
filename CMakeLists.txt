@@ -59,7 +59,7 @@ else()
       serialport/serialport_turntable.cpp
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
-    #   ModeControl/ModeController.h
+      ModeControl/ModeController.h
       ${TaoQuickRes}
     )
 endif()

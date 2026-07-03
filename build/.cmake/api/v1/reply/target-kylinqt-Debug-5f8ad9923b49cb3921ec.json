@@ -273,7 +273,7 @@
 				5,
 				6,
 				7,
-				9
+				10
 			]
 		}
 	],
@@ -375,7 +375,7 @@
 				5,
 				6,
 				7,
-				9
+				10
 			]
 		},
 		{
@@ -389,14 +389,15 @@
 			"name" : "Header Files",
 			"sourceIndexes" : 
 			[
-				8
+				8,
+				9
 			]
 		},
 		{
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				10
+				11
 			]
 		}
 	],
@@ -453,6 +454,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "handle/myhandle.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "ModeControl/ModeController.h",
 			"sourceGroupIndex" : 2
 		},
 		{

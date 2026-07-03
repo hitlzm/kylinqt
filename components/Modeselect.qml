@@ -8,12 +8,12 @@ Item{
     id: root
     property int myindex: 0
     GroupBox {
-                    background: Rectangle {
-                    color: "transparent"
-                    border.color: "gray"
-                    border.width: 4
-                    radius: 8
-                    }
+        background: Rectangle {
+        color: "transparent"
+        border.color: "gray"
+        border.width: 4
+        radius: 8
+    }
     Row {
         spacing: 10   // 统一控制间距
         Text {
@@ -32,6 +32,8 @@ Item{
         onCheckedChanged: {
             if (checked) {
                 root.myindex = 0
+                //在这里发送信号，通知模式已改变为外引导模式
+                modeController.modeChanged(0)  // 假设外引导模式对应的索引为0
             }
         }
     }
@@ -43,6 +45,7 @@ Item{
         onCheckedChanged: {
             if (checked) {
                 root.myindex = 1
+                modeController.modeChanged(1)  // 假设程控模式对应的索引为1
             }
         }
     }
@@ -54,6 +57,7 @@ Item{
         onCheckedChanged: {
             if (checked) {
                 root.myindex = 2
+                modeController.modeChanged(2)  // 假设遥控模式对应的索引为2
             }
         }
     }

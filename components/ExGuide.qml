@@ -5,6 +5,7 @@ import taoQuick 1.0
 
 Item {
     id: root
+    anchors.fill: parent
 
     // 供外部调用的日志接口：ExGuide.addLog("消息内容")
     function addLog(msg) {

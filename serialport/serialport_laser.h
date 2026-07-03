@@ -280,8 +280,7 @@ public slots:
     void onScanPorts();
     void onSendData(laser_send_frame frame);
 
-    void Exmodechanged(int index){
-        
+    void Exmodechanged(int index){    
         //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
         //维护一个环形缓冲区，每1秒记录一次导引头反馈的角度信息，使用外引导模式时，发送最新角度数据
     };

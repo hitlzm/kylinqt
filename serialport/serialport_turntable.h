@@ -54,6 +54,23 @@ typedef struct SpeedModeCmd1{
     float  velocity;      // 速度 (10字节)
 } SpeedModeCmd1;
 
+typedef struct {
+    int axis;          // 轴号 (2字节)
+    int trackTime;     // 跟踪时间 (4字节)
+    float  angle11;    // 角度11 (9字节)
+    float  angle12;    // 角度12 (9字节)
+    float  angle13;    // 角度13 (9字节)
+    float  angle14;    // 角度14 (9字节)
+    float  angle21;    // 角度21 (9字节)
+    float  angle22;    // 角度22 (9字节)
+    float  angle23;    // 角度23 (9字节)
+    float  angle24;    // 角度24 (9字节)
+    float  angle31;    // 角度31 (9字节)
+    float  angle32;    // 角度32 (9字节)
+    float  angle33;    // 角度33 (9字节)
+    float  angle34;    // 角度34 (9字节)
+} TrackingSendCmd1;
+
 class TurntableData : public QObject
 {
     Q_OBJECT
@@ -68,10 +85,24 @@ class TurntableData : public QObject
     Q_PROPERTY(int outter_statusnumber MEMBER m_outter_statusnumber NOTIFY outter_statusnumberChanged)
     Q_PROPERTY(float outter_angle MEMBER m_outter_angle NOTIFY outter_angleChanged)
     Q_PROPERTY(float outter_ctlDeviation MEMBER m_outter_ctlDeviation NOTIFY outter_ctlDeviationChanged)
+
+    Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
+    Q_PROPERTY(QStringList availablePorts READ availablePorts NOTIFY availablePortsChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+
 public:
     explicit TurntableData(QObject *parent = nullptr);
     ~TurntableData() override{};
-    
+
+    bool portOpen() const { return m_portOpen; }
+    QStringList availablePorts() const { return m_availablePorts; }
+    QString errorString() const { return m_errorString; }
+
+    // ── QML 可调用方法 ──
+    Q_INVOKABLE void openPort(const QString &portName, int baudRate);
+    Q_INVOKABLE void closePort();
+    Q_INVOKABLE void scanPorts();
+
 signals:
     void timeChanged();
     void ctlnumberChanged();
@@ -85,32 +116,45 @@ signals:
     void outter_angleChanged();
     void outter_ctlDeviationChanged();
 
-    //把信号连接到发送类，更新发送类中的当前角度
+    //把信号连接到发送类，更新发送类中的当前角度。同时也连到转台串口类，发送数据也需要当前角度数据
     void myinner_angleChanged(float inner_angle);
     void mymiddle_angleChanged(float middle_angle);
     void myoutter_angleChanged(float outter_angle);
+
+    //串口状态变化信号
+    void portOpenChanged();
+    void availablePortsChanged();
+    void errorStringChanged();
+
+    //与转台串口类交互
+    void requestOpenPort(const QString &portName, int baudRate);
+    void requestClosePort();
+    void requestScanPorts();
 
 public slots:
 
     void updateframe(StatusFeedback recvdata);    
 
-    void sendHandleData(float inner_angle, float middle_angle, float outter_angle)
-    {
-        
-    }
-private:
-    
-    int m_time;
-    int m_ctlnumber;
-    int m_inner_statusnumber;
-    float m_inner_angle;
-    float m_inner_ctlDeviation;
-    int m_middle_statusnumber;
-    float m_middle_angle;
-    float m_middle_ctlDeviation;
-    int m_outter_statusnumber;
-    float m_outter_angle;
-    float m_outter_ctlDeviation;
+    void setPortOpen(bool open);
+    void setPortList(const QStringList &ports);
+    void setError(const QString &msg);
+
+private: 
+    int m_time = 0;
+    int m_ctlnumber = 0;
+    int m_inner_statusnumber = 0;
+    float m_inner_angle = 0;
+    float m_inner_ctlDeviation = 0;
+    int m_middle_statusnumber = 0;
+    float m_middle_angle = 0;
+    float m_middle_ctlDeviation = 0;
+    int m_outter_statusnumber = 0;
+    float m_outter_angle = 0;
+    float m_outter_ctlDeviation = 0;
+
+    bool m_portOpen = false;
+    QStringList m_availablePorts;
+    QString m_errorString;
 };
 
 class TurntableSendData : public QObject
@@ -188,7 +232,11 @@ public:
 signals:
     void requpdateframe(StatusFeedback recvdata);
     
-    
+    void portOpened(bool success);
+    void portClosed();
+    void portError(const QString &msg);
+    void portsChanged(const QStringList &ports);
+
 public slots:
 
     void openTurntable();
@@ -197,25 +245,39 @@ public slots:
     void zeroTurntable();
 
     void sendProgramMode(programSend_frame &frame); 
-    void sendHandleMode();   //接收的参数为手柄传来的各轴信号
+    void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB);   //接收的参数为手柄传来的各轴信号
+    void sendTrackMode();
+
+    void ProgramModeChanged(int mode);  //接收模式控制器的信号，判断是否进入程控模式
+
     void dowork() { 
         SerialPort::dowork();     //初始化串口并做一些信号连接操作
-                    // onScanPorts(); 
+        onScanPorts(); 
         }
+    //保存更新的角度数据
+    void recvinner_angle(float angle){m_current_inner_angle = angle;}
+    void recvmiddle_angle(float angle){m_current_middle_angle = angle;}
+    void recvoutter_angle(float angle){m_current_outter_angle = angle;}
+
+    void onOpenPort(const QString &portName, int baudRate);
+    void onClosePort();
+    void onScanPorts();
     
 protected:
     void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换），后期仍需要加入其他反馈指令解析
-    void sendCommands(const QStringList &commands, int repeatTimes = 5);
-    void sendPositionCmd(const PositionModeCmd1 &cmd);
-    void sendVecCmd(const SpeedModeCmd1 &cmd);
+    void sendCommands(const QStringList &commands, int repeatTimes = 5);   //开机，停机，回零，复位，程控模式的实现
+    void sendPositionCmd(const PositionModeCmd1 &cmd);    //位置模式指令发送
+    void sendVecCmd(const SpeedModeCmd1 &cmd);     //速度模式指令发送
+    void sendTrackCmd(const TrackingSendCmd1 &cmd);   //跟踪模式指令发送，对应外引导模式
 
     QString formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits);
 private:
-    
+    bool m_isProgramMode;  //标志位，判断是否进入程控模式
+    //需要保存现在的转台角度数据
+    float m_current_inner_angle;
+    float m_current_middle_angle;
+    float m_current_outter_angle;
 };
-
-
-
 
 #pragma pack(push,1)
 
@@ -257,7 +319,7 @@ typedef struct {
     uint8_t  angle32[9];    // 角度32 (9字节)
     uint8_t  angle33[9];    // 角度33 (9字节)
     uint8_t  angle34[9];    // 角度34 (9字节)
-} Tracking1SendCmd;
+} TrackingSendCmd;
 
 // ------------------------------ 跟踪模式1 接收 ------------------------------
 typedef struct {

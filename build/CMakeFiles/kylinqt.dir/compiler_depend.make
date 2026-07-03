@@ -9,11 +9,14 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearraylist.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h \
@@ -73,6 +76,8 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
@@ -128,12 +133,14 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/binders.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/algorithmfwd.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/alloc_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocated_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_base.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_futex.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_lockfree_defines.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_ios.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_ios.tcc \
@@ -170,8 +177,12 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/ptr_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/range_access.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_mutex.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_bvector.h \
@@ -186,6 +197,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_multimap.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_numeric.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_relops.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tempbuf.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_tree.h \
@@ -196,12 +208,14 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf_iterator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uses_allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/vector.tcc \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cctype \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdio \
@@ -215,11 +229,13 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/aligned_buffer.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/alloc_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/atomicity.h \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/new_allocator.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/numeric_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/string_conversions.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/type_traits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/future \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
@@ -228,6 +244,8 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/map \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/mutex \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/new \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ostream \
@@ -237,6 +255,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/streambuf \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/string \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/system_error \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/thread \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/tuple \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/type_traits \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/typeinfo \
@@ -300,12 +319,14 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/ModeControl/ModeController.h \
   E:/QTproject/kylinqt/handle/myhandle.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
   E:/QTproject/kylinqt/serialport/serialport_turntable.h \
   E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
+  kylinqt_autogen/2GCJWZ5LBA/moc_ModeController.cpp \
   kylinqt_autogen/62PF24DQ2C/moc_myhandle.cpp \
   kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp \
   kylinqt_autogen/YN6D6BICVT/moc_serialport.cpp \
@@ -320,11 +341,13 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearraylist.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h \
@@ -385,6 +408,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtcore-config.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
@@ -636,6 +660,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/ModeControl/ModeController.h \
   E:/QTproject/kylinqt/handle/myhandle.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
@@ -1962,6 +1987,10 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h:
 
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread:
+
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/sec_api/stdlib_s.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList:
@@ -1998,6 +2027,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h:
@@ -2026,13 +2057,17 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/cpp_type_traits.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/invoke.h:
 
@@ -2140,13 +2175,13 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpair.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
-
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/debug/assertions.h:
 
@@ -2175,6 +2210,12 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h:
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h:
 
 E:/QTproject/vlclib/sdk/include/vlc/libvlc_events.h:
 
@@ -2280,12 +2321,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/cpp_type_traits.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h:
@@ -2308,11 +2343,19 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/atomic:
 
+E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/alloc_traits.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/allocator.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_base.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_futex.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_lockfree_defines.h:
 
@@ -2378,15 +2421,17 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/predefined_ops.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_mutex.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algo.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_futex.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_algobase.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_function.h:
 
@@ -2428,11 +2473,11 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/streambuf_iterator.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stringfwd.h:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uses_allocator.h:
 
@@ -2447,6 +2492,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chron
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfontinfo.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stddef.h:
 
@@ -2478,6 +2525,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/t
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/future:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list:
 
 E:/QTproject/kylinqt/serialport/serialport_turntable.h:
@@ -2498,6 +2547,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/list:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/map:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/mutex:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/new:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numeric:
@@ -2513,6 +2564,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/strea
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/string:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/system_error:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/thread:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/typeinfo:
 
@@ -2545,6 +2598,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_6
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfontmetrics.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/os_defines.h:
+
+kylinqt_autogen/2GCJWZ5LBA/moc_ModeController.cpp:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdarg.h:
 
@@ -2610,11 +2665,9 @@ E:/QTproject/vlclib/sdk/include/vlc/libvlc_media_library.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h:
 
+E:/QTproject/kylinqt/ModeControl/ModeController.h:
+
 E:/QTproject/kylinqt/serialport/serialport.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h:
-
-E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h:
 
 kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp:
 
@@ -2625,10 +2678,6 @@ kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp:
 kylinqt_autogen/YN6D6BICVT/moc_serialport_turntable.cpp:
 
 E:/QTproject/kylinqt/main.cpp:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h:
 
 E:/QTproject/vlclib/sdk/include/vlc/libvlc_renderer_discoverer.h:
 
@@ -2648,31 +2697,11 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcontext.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlengine.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_mutex.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/future:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/mutex:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/thread:
-
 E:/QTproject/kylinqt/serialport/serialport.cpp:
 
 E:/QTproject/kylinqt/serialport/serialport_image.cpp:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h:
 
