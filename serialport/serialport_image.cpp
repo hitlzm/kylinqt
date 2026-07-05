@@ -125,12 +125,14 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit selfCheckFlag6Changed();
     }
 
-    if (m_pitchLosAngVel != fromRawValue_b(pFrame->pitch_line_of_sight_ang_vel) ){
-        m_pitchLosAngVel = fromRawValue_b(pFrame->pitch_line_of_sight_ang_vel);
+    auto pitch_los_ang_vel = fromRawValue_b(pFrame->pitch_line_of_sight_ang_vel);
+    if (m_pitchLosAngVel != pitch_los_ang_vel) {
+        m_pitchLosAngVel = pitch_los_ang_vel;
         emit pitchLosAngVelChanged();
     }
-    if (m_yawLosAngVel != fromRawValue_b(pFrame->yaw_line_of_sight_ang_vel) ) {
-        m_yawLosAngVel = fromRawValue_b(pFrame->yaw_line_of_sight_ang_vel);
+    auto yaw_los_ang_vel = fromRawValue_b(pFrame->yaw_line_of_sight_ang_vel);
+    if (m_yawLosAngVel != yaw_los_ang_vel) {
+        m_yawLosAngVel = yaw_los_ang_vel;
         emit yawLosAngVelChanged();
     }
 
@@ -150,13 +152,14 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         m_opticalWorkState = pFrame->optical_work_state;
         emit opticalWorkStateChanged();
     }
-
-    if (m_pitchFrameAngle != fromRawValue_b(pFrame->pitch_frame_angle)) {
-        m_pitchFrameAngle = fromRawValue_b(pFrame->pitch_frame_angle);
+    auto pitch_frame_angle = fromRawValue_b(pFrame->pitch_frame_angle);
+    if (m_pitchFrameAngle != pitch_frame_angle) {
+        m_pitchFrameAngle = pitch_frame_angle;
         emit pitchFrameAngleChanged();
     }
-    if (m_yawFrameAngle != fromRawValue_b(pFrame->yaw_frame_angle)) {
-        m_yawFrameAngle = fromRawValue_b(pFrame->yaw_frame_angle);
+    auto yaw_frame_angle = fromRawValue_b(pFrame->yaw_frame_angle);
+    if (m_yawFrameAngle != yaw_frame_angle) {
+        m_yawFrameAngle = yaw_frame_angle;
         emit yawFrameAngleChanged();
     }
 
@@ -169,12 +172,14 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit correctionCmdCountChanged();
     }
 
-    if (m_pitchGyro != fromRawValue_a(pFrame->pitch_gyro)) {
-        m_pitchGyro = fromRawValue_a(pFrame->pitch_gyro);
+    auto pitch_gyro = fromRawValue_a(pFrame->pitch_gyro);
+    if (m_pitchGyro != pitch_gyro) {
+        m_pitchGyro = pitch_gyro;
         emit pitchGyroChanged();
     }
-    if (m_yawGyro != fromRawValue_a(pFrame->yaw_gyro)) {
-        m_yawGyro = fromRawValue_a(pFrame->yaw_gyro);
+    auto yaw_gyro = fromRawValue_a(pFrame->yaw_gyro);
+    if (m_yawGyro != yaw_gyro) {
+        m_yawGyro = yaw_gyro;
         emit yawGyroChanged();
     }
 
@@ -196,21 +201,25 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit pitchDeviationPixelChanged();
     }
 
-    if (m_azimuthGyroOutput != fromRawValue_a(pFrame->azimuth_gyro_output)) {
-        m_azimuthGyroOutput = fromRawValue_a(pFrame->azimuth_gyro_output);
+    auto azimuth_gyro_output = fromRawValue_a(pFrame->azimuth_gyro_output);
+    if (m_azimuthGyroOutput != azimuth_gyro_output) {
+        m_azimuthGyroOutput = azimuth_gyro_output;
         emit azimuthGyroOutputChanged();
     }
-    if (m_pitchGyroOutput != fromRawValue_a(pFrame->pitch_gyro_output)) {
-        m_pitchGyroOutput = fromRawValue_a(pFrame->pitch_gyro_output);
+    auto pitch_gyro_output = fromRawValue_a(pFrame->pitch_gyro_output);
+    if (m_pitchGyroOutput != pitch_gyro_output) {
+        m_pitchGyroOutput = pitch_gyro_output;
         emit pitchGyroOutputChanged();
     }
 
-    if (m_azimuthMasterCmd != fromRawValue_a(pFrame->azimuth_master_cmd)) {
-        m_azimuthMasterCmd = fromRawValue_a(pFrame->azimuth_master_cmd);
+    auto azimuth_master_cmd = fromRawValue_a(pFrame->azimuth_master_cmd);
+    if (m_azimuthMasterCmd != azimuth_master_cmd) {
+        m_azimuthMasterCmd = azimuth_master_cmd;
         emit azimuthMasterCmdChanged();
     }
-    if (m_pitchMasterCmd != fromRawValue_a(pFrame->pitch_master_cmd)) {
-        m_pitchMasterCmd = fromRawValue_a(pFrame->pitch_master_cmd);
+    auto pitch_master_cmd = fromRawValue_a(pFrame->pitch_master_cmd);
+    if (m_pitchMasterCmd != pitch_master_cmd) {
+        m_pitchMasterCmd = pitch_master_cmd;
         emit pitchMasterCmdChanged();
     }
 
@@ -227,8 +236,9 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit servoStepChanged();
     }
 
-    if (m_infraredFrameNum != static_cast<int>(pFrame->infrared_frame_num)) {
-        m_infraredFrameNum = pFrame->infrared_frame_num;
+    auto infrared_frame_num = static_cast<int>(pFrame->infrared_frame_num);
+    if (m_infraredFrameNum != infrared_frame_num) {
+        m_infraredFrameNum = infrared_frame_num;
         emit infraredFrameNumChanged();
     }
 

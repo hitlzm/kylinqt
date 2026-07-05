@@ -89,40 +89,44 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
         emit faultInfo1Changed();
         emit faultInfo2Changed();
     }
-
-    if (m_opticalAzimuth != fromRawValue_a( pFrame.optical_azimuth)) {
-        m_opticalAzimuth = fromRawValue_a(pFrame.optical_azimuth);
+    auto opticalAzimuth = fromRawValue_a(pFrame.optical_azimuth);
+    if (m_opticalAzimuth != opticalAzimuth) {
+        m_opticalAzimuth = opticalAzimuth;
         emit opticalAzimuthChanged();
     }
-    if (m_opticalPitch != fromRawValue_a(pFrame.optical_pitch)) {
-        m_opticalPitch = fromRawValue_a(pFrame.optical_pitch);
+    auto opticalPitch = fromRawValue_a(pFrame.optical_pitch);
+    if (m_opticalPitch != opticalPitch) {
+        m_opticalPitch = opticalPitch;
         emit opticalPitchChanged();
     }
-
-    if (m_gyroAzimuthRate != fromRawValue_a(pFrame.gyro_azimuth_rate)) {
-        m_gyroAzimuthRate = fromRawValue_a(pFrame.gyro_azimuth_rate);
+    auto gyroAzimuthRate = fromRawValue_a(pFrame.gyro_azimuth_rate);
+    if (m_gyroAzimuthRate != gyroAzimuthRate) {
+        m_gyroAzimuthRate = gyroAzimuthRate;
         emit gyroAzimuthRateChanged();
     }
-    if (m_gyroPitchRate != fromRawValue_a(pFrame.gyro_pitch_rate)) {
-        m_gyroPitchRate = fromRawValue_a(pFrame.gyro_pitch_rate);
+    auto gyro_pitch_rate = fromRawValue_a(pFrame.gyro_pitch_rate);
+    if (m_gyroPitchRate != gyro_pitch_rate) {
+        m_gyroPitchRate = gyro_pitch_rate;
         emit gyroPitchRateChanged();
     }
-
-    if (m_losAzimuthRate != fromRawValue_a(pFrame.los_azimuth_rate)) {
-        m_losAzimuthRate = fromRawValue_a(pFrame.los_azimuth_rate);
+    auto los_azimuth_rate = fromRawValue_a(pFrame.los_azimuth_rate);
+    if (m_losAzimuthRate != los_azimuth_rate) {
+        m_losAzimuthRate = los_azimuth_rate;
         emit losAzimuthRateChanged();
     }
-    if (m_losPitchRate != fromRawValue_a(pFrame.los_pitch_rate)) {
-        m_losPitchRate = fromRawValue_a(pFrame.los_pitch_rate);
+    auto los_pitch_rate = fromRawValue_a(pFrame.los_pitch_rate);
+    if (m_losPitchRate != los_pitch_rate) {
+        m_losPitchRate = los_pitch_rate;
         emit losPitchRateChanged();
     }
-
-    if (m_deviationAzimuth != fromRawValue_b(pFrame.deviation_azimuth)) {
-        m_deviationAzimuth = fromRawValue_b(pFrame.deviation_azimuth);
+    auto deviation_azimuth = fromRawValue_b(pFrame.deviation_azimuth);
+    if (m_deviationAzimuth != deviation_azimuth) {
+        m_deviationAzimuth = deviation_azimuth;
         emit deviationAzimuthChanged();
     }
-    if (m_deviationPitch != fromRawValue_b(pFrame.deviation_pitch)) {
-        m_deviationPitch = fromRawValue_b(pFrame.deviation_pitch);
+    auto deviation_pitch = fromRawValue_b(pFrame.deviation_pitch);
+    if (m_deviationPitch != deviation_pitch) {
+        m_deviationPitch = deviation_pitch;
         emit deviationPitchChanged();
     }
 
@@ -135,30 +139,34 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
         m_gainStatus = pFrame.gain_status;
         emit gainStatusChanged();
     }
-
-    if (m_quadrant1Energy != fromRawValue_a(pFrame.quadrant1_energy)) {
-        m_quadrant1Energy = fromRawValue_a(pFrame.quadrant1_energy);
+    auto quadrant1_energy = fromRawValue_a(pFrame.quadrant1_energy);
+    if (m_quadrant1Energy != quadrant1_energy) {
+        m_quadrant1Energy = quadrant1_energy;
         emit quadrant1EnergyChanged();
     }
-    if (m_quadrant2Energy != fromRawValue_a(pFrame.quadrant2_energy)) {
-        m_quadrant2Energy = fromRawValue_a(pFrame.quadrant2_energy);
+    auto quadrant2_energy = fromRawValue_a(pFrame.quadrant2_energy);
+    if (m_quadrant2Energy != quadrant2_energy) {
+        m_quadrant2Energy = quadrant2_energy;
         emit quadrant2EnergyChanged();
     }
-    if (m_quadrant3Energy != fromRawValue_a(pFrame.quadrant3_energy)) {
-        m_quadrant3Energy = fromRawValue_a(pFrame.quadrant3_energy);
+    auto quadrant3_energy = fromRawValue_a(pFrame.quadrant3_energy);
+    if (m_quadrant3Energy != quadrant3_energy) {
+        m_quadrant3Energy = quadrant3_energy;
         emit quadrant3EnergyChanged();
     }
-    if (m_quadrant4Energy != fromRawValue_a(pFrame.quadrant4_energy)) {
-        m_quadrant4Energy = fromRawValue_a(pFrame.quadrant4_energy);
+    auto quadrant4_energy = fromRawValue_a(pFrame.quadrant4_energy);
+    if (m_quadrant4Energy != quadrant4_energy) {
+        m_quadrant4Energy = quadrant4_energy;
         emit quadrant4EnergyChanged();
     }
-
-    if (m_softwareVersion1 != fromRawValue_a(pFrame.software_version1)) {
-        m_softwareVersion1 = fromRawValue_a(pFrame.software_version1);
+    auto software_version1 = fromRawValue_a(pFrame.software_version1);
+    if (m_softwareVersion1 != software_version1) {
+        m_softwareVersion1 = software_version1;
         emit softwareVersion1Changed();
     }
-    if (m_softwareVersion2 != fromRawValue_a(pFrame.software_version2)) {
-        m_softwareVersion2 = fromRawValue_a(pFrame.software_version2);
+    auto software_version2 = fromRawValue_a(pFrame.software_version2);
+    if (m_softwareVersion2 != software_version2) {
+        m_softwareVersion2 = software_version2;
         emit softwareVersion2Changed();
     }
 }

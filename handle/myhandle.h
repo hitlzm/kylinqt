@@ -2,64 +2,65 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QMutex>
+#include <QDebug>
 
 class Myhandle : public QObject
 {
     Q_OBJECT
-    // Q_PROPERTY(float axisLeftX  MEMBER m_axisLeftX  NOTIFY axisLeftXChanged)
-    // Q_PROPERTY(float axisLeftY  MEMBER m_axisLeftY  NOTIFY axisLeftYChanged)
-    // Q_PROPERTY(float axisRightX MEMBER m_axisRightX NOTIFY axisRightXChanged)
-    // // Q_PROPERTY(float axisRightY MEMBER m_axisRightY NOTIFY axisRightYChanged)
-    // Q_PROPERTY(float buttonL2   MEMBER m_buttonL2   NOTIFY buttonL2Changed)
-    // Q_PROPERTY(float buttonR2   MEMBER m_buttonR2   NOTIFY buttonR2Changed)
-    // Q_PROPERTY(bool  buttonA    MEMBER m_buttonA    NOTIFY buttonAChanged)
-    // Q_PROPERTY(bool  buttonB    MEMBER m_buttonB    NOTIFY buttonBChanged)
-private:
-    QTimer *m_timer;
+
 public:
-    Myhandle( QObject *parent)
-    : QObject(parent)
-    , m_timer(new QTimer(this))
+    Myhandle(QObject *parent)
+        : QObject(parent)
+        , m_timer(new QTimer(this))
     {
         connect(m_timer, &QTimer::timeout, this, [this]{
-            emit handleModeSignal(m_axisLeftX, m_axisLeftY, m_axisRightX, m_buttonL2, m_buttonR2, m_buttonA, m_buttonB);
+            // 加锁读取 → 拷贝到信号参数 → 解锁，信号参数是值拷贝，线程安全
+            QMutexLocker locker(&m_mutex);
+            emit handleModeSignal(m_axisLeftX, m_axisLeftY, m_axisRightX,
+                                  m_buttonL2, m_buttonR2, m_buttonA, m_buttonB);
         });
-    };
-    ~Myhandle(){};
-signals:
-    // void reqturntablesend();  // 遥控模式时以一定周期通知转台串口线程发送指令
+    }
 
-    //切换到手柄模式时发给转台线程的信号
-    void handleModeSignal(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB);
+    ~Myhandle() override = default;
+
+signals:
+    void handleModeSignal(float axisLeftX, float axisLeftY, float axisRightX,
+                          float buttonL2, float buttonR2, bool buttonA, bool buttonB);
+
 public slots:
-    //接收QML的通知，看看是否为手柄模式
     void modechanged(int index)
-    {   
-        //以40ms周期定时发送信号给转台串口线程，通知转台串口线程发送手柄数据
-        if(index == 2)
-        {
-            //启动定时器，每40ms发送一次手柄数据
+    {
+        if (index == 2) {
             m_timer->start(40);
-        }
-        else{
-            //关闭定时器
+        } else {
             m_timer->stop();
         }
-    };
-    //更新手柄数据的槽函数
-    void axisLeftXChanged(float value){ m_axisLeftX = value;};
-    void axisLeftYChanged(float value){ m_axisLeftY = value;};
-    void axisRightXChanged(float value){ m_axisRightX = value;};
-    // void axisRightYChanged(float value){ m_axisRightY = value;};
-    void buttonL2Changed(float value){ m_buttonL2 = value;};
-    void buttonR2Changed(float value){ m_buttonR2 = value;};
-    void buttonAChanged(bool pressed){ m_buttonA = pressed;};
-    void buttonBChanged(bool pressed){ m_buttonB = pressed;};
+    }
+
+    // ── 手柄数据更新槽（主线程 QML 调用 → 加锁写入）──
+    void axisLeftXChanged(float value)  { QMutexLocker locker(&m_mutex); m_axisLeftX  = value; 
+    // qDebug()   经测试发现，直接在QML中调用槽函数还是在主线程运行，QML接收手柄信号易造成主界面卡顿
+    // << "Current:"
+    // << QThread::currentThread();
+    // qDebug()
+    // << "Object:"
+    // << thread();
+    }
+    void axisLeftYChanged(float value)  { QMutexLocker locker(&m_mutex); m_axisLeftY  = value; }
+    void axisRightXChanged(float value) { QMutexLocker locker(&m_mutex); m_axisRightX = value; }
+    void buttonL2Changed(float value)   { QMutexLocker locker(&m_mutex); m_buttonL2   = value; }
+    void buttonR2Changed(float value)   { QMutexLocker locker(&m_mutex); m_buttonR2   = value; }
+    void buttonAChanged(bool pressed)   { QMutexLocker locker(&m_mutex); m_buttonA    = pressed; }
+    void buttonBChanged(bool pressed)   { QMutexLocker locker(&m_mutex); m_buttonB    = pressed; }
+
 private:
+    QTimer *m_timer;
+    mutable QMutex m_mutex;
+
     float m_axisLeftX  = 0.0f;
     float m_axisLeftY  = 0.0f;
     float m_axisRightX = 0.0f;
-    // float m_axisRightY = 0.0f;
     float m_buttonL2   = 0.0f;
     float m_buttonR2   = 0.0f;
     bool  m_buttonA    = false;

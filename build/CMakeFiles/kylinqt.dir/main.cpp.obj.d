@@ -294,8 +294,9 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:\QTproject\kylinqt\serialport/serialport_image.h \
  E:\QTproject\kylinqt\serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\vlcvideo/VlcVideoItem.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickFramebufferObject \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickframebufferobject.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
@@ -335,4 +336,6 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
  E:\QTproject\kylinqt\handle/myhandle.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
  E:\QTproject\kylinqt\ModeControl/ModeController.h

@@ -245,11 +245,26 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport.cpp \
  E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
@@ -266,8 +281,9 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QTproject/kylinqt/serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\DPWVDNBJWW/moc_VlcVideoItem.cpp \
  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickPaintedItem \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickpainteditem.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickFramebufferObject \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickframebufferobject.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqmlglobal.h \
@@ -279,9 +295,6 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqml.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h \
@@ -304,23 +317,15 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h \
@@ -332,6 +337,4 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h

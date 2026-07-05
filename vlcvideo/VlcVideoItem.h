@@ -1,7 +1,7 @@
 #ifndef VLCVIDEOITEM_H
 #define VLCVIDEOITEM_H
 
-#include <QtQuick/QQuickPaintedItem>
+#include <QtQuick/QQuickFramebufferObject>
 #include <QImage>
 #include <QMutex>
 
@@ -11,7 +11,9 @@ struct libvlc_media_player_t;
 struct libvlc_event_manager_t;
 struct libvlc_event_t;
 
-class VlcVideoItem : public QQuickPaintedItem
+class VlcVideoRenderer;
+
+class VlcVideoItem : public QQuickFramebufferObject
 {
     Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
@@ -23,7 +25,7 @@ class VlcVideoItem : public QQuickPaintedItem
 
 public:
     explicit VlcVideoItem(QQuickItem *parent = nullptr);
-    ~VlcVideoItem();
+    ~VlcVideoItem() override;
 
     QString source() const;
     void setSource(const QString &url);
@@ -32,13 +34,16 @@ public:
     int volume() const;
     Q_INVOKABLE void setVolume(int vol);
     float position() const;
-    void setPosition(float pos);  //设置视频进度
+    void setPosition(float pos);
     qint64 length() const;
     bool isSeekable() const;
 
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
+
+    // ---- QQuickFramebufferObject 接口 ----
+    Renderer *createRenderer() const override;
 
 signals:
     void sourceChanged();
@@ -51,10 +56,9 @@ signals:
     void ended();
     void error(const QString &errorMsg);
 
-protected:
-    void paint(QPainter *painter) override;
-
 private:
+    friend class VlcVideoRenderer;
+
     void setupPlayer();
     void releasePlayer();
     void attachEvents();
@@ -78,13 +82,14 @@ private:
     libvlc_event_manager_t *m_eventManager = nullptr;
 
     QImage m_frame;
-    QMutex m_frameMutex;
+    mutable QMutex m_frameMutex;
     unsigned m_width = 0;
     unsigned m_height = 0;
+    volatile bool m_frameUpdated = false;
 
     bool m_playing = false;
     int m_volume = 100;
-    bool m_seekable = false;  //视频是否可跳转或拖动进度条的信息
+    bool m_seekable = false;
 };
 
 #endif

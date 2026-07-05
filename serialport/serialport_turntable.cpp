@@ -192,7 +192,7 @@ QString SerialPortTurntable::formatNumberWithSignAndDecimals(float value, int in
 void  SerialPortTurntable::sendPositionCmd(const PositionModeCmd1 &cmd)
 {
     if (!m_serialPort->isOpen()) {
-            qWarning() << "串口未打开！";
+            // qWarning() << "串口未打开！";
             return;
         }
         // ---------- 构建数据帧 ----------
