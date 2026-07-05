@@ -13,7 +13,7 @@ brief:1.转台串口类负责实时接收转台状态反馈信息
 #include "serialport.h"
 
 //转台信息反馈结构体
-typedef struct {
+typedef struct StatusFeedback {
     int m_time;
     int m_ctlnumber;
     int m_inner_statusnumber;
@@ -25,20 +25,17 @@ typedef struct {
     int m_outter_statusnumber;
     float m_outter_angle;
     float m_outter_ctlDeviation;
-} StatusFeedback;
+}StatusFeedback;
 
-typedef struct{
+typedef struct programSend_frame {
     int runtime;
     int index;  //用来记录是对哪个轴的控制
-    // float inner_startangle;
     float current_inner_angle;
     float inner_endangle;
-    // float middle_startangle;
     float current_middle_angle;
     float middle_endangle;
-    // float outter_startangle;
     float current_outter_angle;
-    float outter_endangle;  
+    float outter_endangle;
 }programSend_frame;
 
 typedef struct PositionModeCmd1{
@@ -160,42 +157,32 @@ private:
 class TurntableSendData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int runtime READ runtime NOTIFY runtimeChanged)
-    Q_PROPERTY(float inner_startangle READ inner_startangle NOTIFY inner_startangleChanged)
-    Q_PROPERTY(float inner_endangle READ inner_endangle NOTIFY inner_endangleChanged)
-    Q_PROPERTY(float middle_startangle READ middle_startangle NOTIFY middle_startangleChanged)
-    Q_PROPERTY(float middle_endangle READ middle_endangle NOTIFY middle_endangleChanged)
-    Q_PROPERTY(float outter_startangle READ outter_startangle NOTIFY outter_startangleChanged)
-    Q_PROPERTY(float outter_endangle READ outter_endangle NOTIFY outter_endangleChanged)
-    Q_PROPERTY(int index READ index NOTIFY indexChanged)
+    Q_PROPERTY(int runtime MEMBER m_runtime NOTIFY runtimeChanged)
+    Q_PROPERTY(float inner_startangle MEMBER m_inner_startangle NOTIFY inner_startangleChanged)
+    Q_PROPERTY(float inner_endangle MEMBER m_inner_endangle NOTIFY inner_endangleChanged)
+    Q_PROPERTY(float middle_startangle MEMBER m_middle_startangle NOTIFY middle_startangleChanged)
+    Q_PROPERTY(float middle_endangle MEMBER m_middle_endangle NOTIFY middle_endangleChanged)
+    Q_PROPERTY(float outter_startangle MEMBER m_outter_startangle NOTIFY outter_startangleChanged)
+    Q_PROPERTY(float outter_endangle MEMBER m_outter_endangle NOTIFY outter_endangleChanged)
+    // Q_PROPERTY(int index READ index NOTIFY indexChanged)
 
 public:
     explicit TurntableSendData(QObject *parent = nullptr);
     ~TurntableSendData() override{};
 
-    int runtime() const { return m_runtime; }
-    float inner_startangle() const { return m_inner_startangle; }
-    float inner_endangle() const { return m_inner_endangle; }
-    float middle_startangle() const { return m_middle_startangle; }
-    float middle_endangle() const { return m_middle_endangle; }
-    float outter_startangle() const { return m_outter_startangle; }
-    float outter_endangle() const { return m_outter_endangle; }
-    int index() const { return m_index; }
-
-    Q_INVOKABLE void buildFrame() ;
+    Q_INVOKABLE void buildFrame(int m_index);
 public slots:
     void recvinner_angle(float angle){m_current_inner_angle = angle;}
     void recvmiddle_angle(float angle){m_current_middle_angle = angle;}
     void recvoutter_angle(float angle){m_current_outter_angle = angle;}
     //这里存放各个轴的角度数据及运动时间，实现最基础的程控模式
 
-    //发送信号并在串口类编写槽函数，实现开机，停机，回零，复位，程控模式的实现
 signals:
     void requestOpenTurntable();
     void requestCloseTurntable();
     void requestResetTurntable();
     void requestZeroTurntable();
-    void requestSendProgramMode(programSend_frame &frame);
+    void requestSendProgramMode(programSend_frame frame);
     void runtimeChanged();
     void inner_startangleChanged();
     void inner_endangleChanged();
@@ -204,9 +191,16 @@ signals:
     void outter_startangleChanged();
     void outter_endangleChanged();
     void indexChanged();
+
+    //发送信号并在串口类编写槽函数，实现开机，停机，回零，复位，程控模式的实现
+    void reqopenTurntable();
+    void reqcloseTurntable();
+    void reqzeroTurntable();
+    void reqresetTurntable();
+
 private:
     //这里存放各个轴的角度数据及运动时间
-    int m_index;    //用来记录是对哪个轴的控制
+    // int m_index;    //用来记录是对哪个轴的控制
     int m_runtime;
     float m_inner_startangle;
     float m_current_inner_angle;
@@ -244,7 +238,7 @@ public slots:
     void resetTurntable();
     void zeroTurntable();
 
-    void sendProgramMode(programSend_frame &frame); 
+    void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB);   //接收的参数为手柄传来的各轴信号
     void sendTrackMode();
 

@@ -96,25 +96,24 @@ ColumnLayout{
                 Layout.preferredWidth: 150
                 //区分是哪种控制方式，给不同变量赋值
                 onEditingFinished: {
-                    // var mynumbers = [];
-                    mynumber = extractNumbers(text);
+                    var mynumber = extractNumbers(text);
                     if (index === 0) {                            // 三轴控制
                         turntableSendData.inner_startangle = mynumber[0] || 0;
-                        
+
                         turntableSendData.middle_startangle = mynumber[1] || 0;
-                        
+
                         turntableSendData.outter_startangle = mynumber[2] || 0;
                         turntableSendData.index = 0;
                         
                     } else if (index === 1) {
                         turntableSendData.inner_startangle = Number(text)
-                        turntableSendData.index = 1;
+                        // turntableSendData.index = 1;
                     } else if (index === 2) {
                         turntableSendData.middle_startangle = Number(text)
-                        turntableSendData.index = 2;
+                        // turntableSendData.index = 2;
                     } else if (index === 3) {
                         turntableSendData.outter_startangle = Number(text)
-                        turntableSendData.index = 3;
+                        // turntableSendData.index = 3;
                     } 
                 }
             }
@@ -128,10 +127,9 @@ ColumnLayout{
                 verticalAlignment: TextInput.AlignVCenter
 
                 onEditingFinished: {
-                    // var mynumbers = [];
-                    mynumber = extractNumbers(text);
+                    var mynumber = extractNumbers(text);
                     if (index === 0) {                            // 三轴控制
-                        
+
                         turntableSendData.inner_endangle = mynumber[0] || 0;
                         
                         turntableSendData.middle_endangle = mynumber[1] || 0;
@@ -166,7 +164,7 @@ ColumnLayout{
             text: "发送数据"
 
             onClicked: {
-                turntableSendData.buildFrame()
+                turntableSendData.buildFrame(index)
             }
         }
 

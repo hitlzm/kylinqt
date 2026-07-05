@@ -37,24 +37,36 @@ Rectangle {
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
+            onClicked: {
+                turntableSendData.reqopenTurntable()
+            }
         }
         CusButton_Blue {
             text: "停机"
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
+            onClicked: {
+                turntableSendData.reqcloseTurntable()
+            }
         }
         CusButton_Blue {
             text: "回零"
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
+            onClicked: {
+                turntableSendData.reqzeroTurntable()
+            }
         }
         CusButton_Blue {
             text: "复位"
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
+            onClicked: {
+                turntableSendData.reqresetTurntable()
+            }
         }
     }
 

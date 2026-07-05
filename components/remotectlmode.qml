@@ -12,15 +12,13 @@ Item {
     Gamepad {
         id: myGamepad
         deviceId: 0
-        onAxisLeftXChanged: handle.axisLeftXChanged(axisLeftX)
-        onAxisLeftYChanged: handle.axisLeftYChanged(axisLeftY)
-        onAxisRightXChanged: handle.axisRightXChanged(axisRightX)
-        onButtonL2Changed: handle.buttonL2Changed(buttonL2)
-        onButtonR2Changed: handle.buttonR2Changed(buttonR2)
-        onButtonAChanged: handle.buttonAChanged(buttonA)   // 或者 = myGamepad.buttonA
-        // onButtonAReleased: handle.buttonAChanged(false) // 松开时复位
-        onButtonBChanged: handle.buttonBChanged(buttonB)
-        // onButtonBReleased: handle.buttonBChanged(false)
+        // onAxisLeftXChanged: gamepadBridge.axisLeftXChange(axisLeftX)
+        // onAxisLeftYChanged: gamepadBridge.axisLeftYChange(axisLeftY)
+        // onAxisRightXChanged: gamepadBridge.axisRightXChange(axisRightX)
+        // onButtonL2Changed: gamepadBridge.buttonL2Change(buttonL2)
+        // onButtonR2Changed: gamepadBridge.buttonR2Change(buttonR2)
+        // onButtonAChanged: gamepadBridge.buttonAChange(buttonA)   // 或者 = myGamepad.buttonA
+        // onButtonBChanged: gamepadBridge.buttonBChange(buttonB)
     }
     
     ColumnLayout {
@@ -183,4 +181,23 @@ ColumnLayout {
             fontSize: 20
         }
     }
+
+//以固定周期更新手柄数据
+Timer {
+    interval: 100        // 50Hz
+    repeat: true
+    running: true
+
+    onTriggered: {
+
+        gamepadBridge.updateGamepad(
+                    myGamepad.axisLeftX,
+                    myGamepad.axisLeftY,
+                    myGamepad.axisRightX,
+                    myGamepad.buttonA,
+                    myGamepad.buttonB,
+                    myGamepad.buttonL2,
+                    myGamepad.buttonR2)
+    }
+}
 }

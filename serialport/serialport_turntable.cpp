@@ -264,7 +264,7 @@ void SerialPortTurntable::sendTrackMode()
 
 };
 
-void SerialPortTurntable::sendProgramMode(programSend_frame &frame)
+void SerialPortTurntable::sendProgramMode(programSend_frame frame)
     {   
         //判断程控模式是否被选中
         if(!m_isProgramMode){
@@ -416,7 +416,7 @@ TurntableSendData :: TurntableSendData(QObject *parent)
 
 }
 
-void TurntableSendData :: buildFrame()
+void TurntableSendData :: buildFrame(int m_index)
 {
     // 构建转台控制帧
     programSend_frame m_frame;

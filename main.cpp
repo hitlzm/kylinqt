@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<laser_recv_frame>("laser_recv_frame");
     qRegisterMetaType<image_send_frame>("image_send_frame");
     qRegisterMetaType<image_recv_frame>("image_recv_frame");
+    qRegisterMetaType<programSend_frame>("programSend_frame");
+    qRegisterMetaType<StatusFeedback>("StatusFeedback");
 
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);
@@ -43,6 +45,8 @@ int main(int argc, char *argv[])
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
     ModeController m_modeController(&app);  //释放的信号分别连接到手柄线程和导引头串口线程
+    GamepadBridge *m_gamepadBridge = new GamepadBridge();
+
 
     // ═══ 1) 先加载 QML，建立绑定 ═══
     QQmlApplicationEngine engine;
@@ -55,8 +59,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageSendData", imageSendData);
     engine.rootContext()->setContextProperty("turntableData", turntableData);
     engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
-     engine.rootContext()->setContextProperty("handle", _myhandle);
+    // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
+    engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
@@ -111,6 +116,11 @@ int main(int argc, char *argv[])
 
     //Turntable 信号与槽连接
     QObject::connect(turntableSendData, &TurntableSendData::requestSendProgramMode,   turntablePort, &SerialPortTurntable::sendProgramMode, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::reqopenTurntable,   turntablePort, &SerialPortTurntable::openTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::reqzeroTurntable,   turntablePort, &SerialPortTurntable::zeroTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::reqresetTurntable,   turntablePort, &SerialPortTurntable::resetTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::reqcloseTurntable,   turntablePort, &SerialPortTurntable::closeTurntable, Qt::QueuedConnection);
+
     QObject::connect(turntablePort, &SerialPortTurntable::requpdateframe,   turntableData, &TurntableData::updateframe, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableData::myinner_angleChanged,  turntableSendData, &TurntableSendData::recvinner_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableData::myinner_angleChanged,  turntablePort, &SerialPortTurntable::recvinner_angle, Qt::QueuedConnection);
@@ -129,7 +139,15 @@ int main(int argc, char *argv[])
     //手柄信号连接
     QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntable::sendHandleMode, Qt::QueuedConnection);
 
-
+    //QML gamepad与手柄信号连接
+    QObject::connect(m_gamepadBridge, &GamepadBridge::axisLeftXChange, _myhandle, &Myhandle::axisLeftXChanged, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::axisLeftYChange, _myhandle, &Myhandle::axisLeftYChanged, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::axisRightXChange, _myhandle, &Myhandle::axisRightXChanged, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::buttonL2Change, _myhandle, &Myhandle::buttonL2Changed, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::buttonR2Change, _myhandle, &Myhandle::buttonR2Changed, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::buttonAChange, _myhandle, &Myhandle::buttonAChanged, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::buttonBChange, _myhandle, &Myhandle::buttonBChanged, Qt::QueuedConnection);
+    QObject::connect(m_gamepadBridge, &GamepadBridge::updateGamepad, _myhandle, &Myhandle::update, Qt::QueuedConnection);
 
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
