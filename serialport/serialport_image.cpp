@@ -394,8 +394,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     //引入定时器，每20ms发送一次
     int sendCount = 0;
     static quint16 num=0;
-    // .创建定时器（父对象为this，避免内存泄漏）
-    QTimer *timer = new QTimer(this);
+    
     timer->setInterval(20); // 20ms
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
@@ -428,7 +427,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         // 发送10次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();
-            timer->deleteLater();
+            // timer->deleteLater();
         }
     });
 

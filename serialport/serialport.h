@@ -6,6 +6,7 @@
 #include <QSerialPortInfo>
 #include <QByteArray>
 #include <QStringList>
+#include <QTimer>
 
 class SerialPort : public QObject
 {
@@ -40,6 +41,7 @@ protected:
 
     QSerialPort *m_serialPort;
     QStringList m_availablePorts;
+    QTimer *timer;
 
 signals:
     // void dataReceived(const QByteArray &parsedData);

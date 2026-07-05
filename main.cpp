@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     turntablePort->m_turntableData = turntableData;
     turntablePort->m_turntableSendData = turntableSendData;
     //创建手柄对象
-    Myhandle _myhandle(&app);
+    Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
     ModeController m_modeController(&app);  //释放的信号分别连接到手柄线程和导引头串口线程
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageSendData", imageSendData);
     engine.rootContext()->setContextProperty("turntableData", turntableData);
     engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
-     engine.rootContext()->setContextProperty("handle", &_myhandle);
+     engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
@@ -121,13 +121,13 @@ int main(int argc, char *argv[])
 
 
     //模式控制器的信号连接
-    QObject::connect(&m_modeController, &ModeController::modeChanged, &_myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, laserPort, &SerialPortLaser::Exmodechanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, turntablePort, &SerialPortTurntable::ProgramModeChanged, Qt::QueuedConnection);
 
     //手柄信号连接
-    QObject::connect(&_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntable::sendHandleMode, Qt::QueuedConnection);
+    QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntable::sendHandleMode, Qt::QueuedConnection);
 
 
 
@@ -135,9 +135,11 @@ int main(int argc, char *argv[])
     QThread *Laserthread = new QThread;
     QThread *Imagethread = new QThread;
     QThread *Turntablethread = new QThread;
+    QThread *Handlethread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
+    _myhandle->moveToThread(Handlethread);
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
@@ -149,11 +151,15 @@ int main(int argc, char *argv[])
     QObject::connect(Imagethread, &QThread::finished, imagePort,    &QObject::deleteLater);
     QObject::connect(Imagethread, &QThread::finished, Imagethread,  &QObject::deleteLater);
     QObject::connect(Turntablethread, &QThread::finished, turntablePort,    &QObject::deleteLater);
+    QObject::connect(Turntablethread, &QThread::finished, Turntablethread,  &QObject::deleteLater);
+    QObject::connect(Handlethread,    &QThread::finished, _myhandle,        &QObject::deleteLater);
+    QObject::connect(Handlethread,    &QThread::finished, Handlethread,     &QObject::deleteLater);
 
 
     Laserthread->start();
     Imagethread->start();
     Turntablethread->start();
+    Handlethread->start();
     
     return app.exec();
 }

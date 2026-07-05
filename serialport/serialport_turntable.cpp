@@ -3,7 +3,7 @@
 #include <QByteArray>
 #include <cmath>
 
-#define MAX_SPEED 2000.0f
+#define MAX_SPEED 12.0f
 SerialPortTurntable::SerialPortTurntable(QObject *parent)
     : SerialPort(parent)
 {

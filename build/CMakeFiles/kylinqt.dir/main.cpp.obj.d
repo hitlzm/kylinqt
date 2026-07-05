@@ -288,6 +288,9 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
  E:\QTproject\kylinqt\serialport/serialport_image.h \
  E:\QTproject\kylinqt\serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\vlcvideo/VlcVideoItem.h \
@@ -332,7 +335,4 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
  E:\QTproject\kylinqt\handle/myhandle.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
  E:\QTproject\kylinqt\ModeControl/ModeController.h

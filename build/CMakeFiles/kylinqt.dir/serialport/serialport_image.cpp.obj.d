@@ -231,6 +231,9 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
@@ -248,7 +251,4 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h

@@ -279,10 +279,12 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     frame.XOR_result = checksum;
     
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
+
+    //断开上一次的连接
+    disconnect(timer, &QTimer::timeout, this, nullptr);
+
     int sendCount = 0;
     static quint8 datacount=0;
-    //SerialPort::send(data); 
-    QTimer *timer = new QTimer(this);
     timer->setInterval(10); // 10ms
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
@@ -307,7 +309,7 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
         // 发送5次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();
-            timer->deleteLater();
+            // timer->deleteLater();
         }
     });
 
