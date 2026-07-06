@@ -5,6 +5,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: kylinqt_autog
 
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen/mocs_compilation.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
@@ -28,6 +29,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
@@ -338,6 +340,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
 
 CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
@@ -361,6 +364,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
@@ -1172,6 +1176,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
 
 CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt/serialport/serialport_laser.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
@@ -1190,6 +1195,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qconfig.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h \
@@ -2227,16 +2233,6 @@ kylinqt_autogen/mocs_compilation.cpp:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_string.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qscopedpointer.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList:
-
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug:
@@ -2255,6 +2251,14 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdlib.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdlib:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic_cxx11.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject:
@@ -2262,6 +2266,16 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject:
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/bcrypt.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/driverspecs.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/basic_string.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qscopedpointer.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
 
@@ -2300,6 +2314,10 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasicatomic.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h:
 
@@ -2379,10 +2397,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdlib:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhashfunctions.h:
-
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qopenglcontext.h:
@@ -2400,12 +2414,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/libloaderapi.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/rpc.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h:
 
@@ -2430,6 +2438,12 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpair.h:
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/xsaveoptintrin.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/rpc.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h:
 
@@ -2467,11 +2481,11 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/ammintrin
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsystemdetection.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h:
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pshpack2.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_pair.h:
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h:
 
@@ -2537,8 +2551,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/rpcnsi.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h:
@@ -2596,8 +2608,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h:
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/synchapi.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pshpack1.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqml-config.h:
 
@@ -2750,8 +2760,6 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pshpack4.h:
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_abs.h:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_mutex.h:
 
@@ -3284,6 +3292,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/_wsa_errnos.h:
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/_wsadata.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/_xmitfile.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pshpack1.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pshpack8.h:
 

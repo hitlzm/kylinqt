@@ -478,7 +478,7 @@ public slots:
     void dowork() { SerialPort::dowork(); onScanPorts(); }
 
     static void init_crc16_table(uint16_t poly = 0x1021);
-    static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0xFFFF);
+    static uint16_t crc16_ccitt_fast(const uint8_t *data, size_t len, uint16_t init = 0x0000);
 
 signals:
     void portOpened(bool success);

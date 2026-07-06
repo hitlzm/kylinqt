@@ -2,7 +2,7 @@
 #define SERIALPORT_LASER_H
 
 #include "serialport.h"
-
+#include <QDateTime>
 struct laser_send_frame;
 struct laser_recv_frame;
 
@@ -282,7 +282,11 @@ public slots:
 
     void Exmodechanged(int index){    
         //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
-        //维护一个环形缓冲区，每1秒记录一次导引头反馈的角度信息，使用外引导模式时，发送最新角度数据
+        //维护一个环形缓冲区，每1秒记录一次导引头反馈的角度信息,选择数据发送给转台串口线程
+        //以下操作可把一小时转化为0-3599的数值
+        // QDateTime current = QDateTime::currentDateTime();
+        // QTime time = current.time();
+        // int value = time.minute() * 60 + time.second();
     };
 
 protected:

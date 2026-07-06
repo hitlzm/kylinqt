@@ -175,6 +175,9 @@ Rectangle {
             CusButton_Blue { text: "确定"; onClicked: tip.hide() }
             }
         }
+    MessagePopup {
+        id: msg
+    }
     CusPopup {
         id: tip1
         backgroundWidth: 200
@@ -215,7 +218,8 @@ Rectangle {
             id: delayTimer
             interval: 1  
             onTriggered: {
-                if (imageData.portOpen) tip.show()
+                // if (imageData.portOpen) tip.show()
+                if (imageData.portOpen) {msg.message = "串口已打开！"; msg.open()}
                 else tip1.show()
             }
         }

@@ -7,6 +7,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj
  E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex
@@ -30,6 +31,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h
@@ -341,6 +343,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj
 CMakeFiles/kylinqt.dir/main.cpp.obj
  E:/QTproject/kylinqt/main.cpp
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex
@@ -364,6 +367,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h
@@ -1178,6 +1182,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj
 CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj
  E:/QTproject/kylinqt/serialport/serialport_laser.cpp
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString
@@ -1196,6 +1201,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qconfig.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontainerfwd.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qgenericatomic.h

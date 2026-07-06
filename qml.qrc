@@ -18,5 +18,6 @@
         <file>components/Myvideo5.qml</file>
         <file>components/ExGuide.qml</file>
         <file>components/Remotectlmode.qml</file>
+        <file>components/MessagePopup.qml</file>
     </qresource>
 </RCC>
