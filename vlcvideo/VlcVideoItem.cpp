@@ -1,5 +1,6 @@
 #include "VlcVideoItem.h"
 #include <vlc/vlc.h>
+#include <QCoreApplication>
 #include <QOpenGLFunctions>
 #include <QQuickWindow>
 #include <QDebug>
@@ -351,10 +352,17 @@ void VlcVideoItem::pause()
 
 void VlcVideoItem::stop()
 {
-    releasePlayer();
-    m_playing = false;
-    emit playingChanged();
-    emit stopped();
+    // 只请求 libvlc 停止播放，不立即释放 player。
+    // releasePlayer() 由 Stopped 事件异步触发，避免与 VLC 内部线程竞态。
+    if (m_player) {
+        libvlc_media_player_stop(m_player);
+    }
+    // 如果当前没有 player（从未播放过），直接发射信号
+    if (!m_player) {
+        m_playing = false;
+        emit playingChanged();
+        emit stopped();
+    }
 }
 
 // ===== 内部 =====
@@ -407,6 +415,11 @@ void onLibVlcEvent(const libvlc_event_t *event, void *opaque)
     case libvlc_MediaPlayerStopped:
         self->m_playing = false;
         self->playingChanged();
+        // 延迟释放 player，避免在事件回调内部 detach 事件导致死锁/竞态。
+        // context=self 保证对象销毁时自动取消排队调用，防止悬空指针。
+        QMetaObject::invokeMethod(self, [self]() {
+            self->releasePlayer();
+        }, Qt::QueuedConnection);
         self->stopped();
         break;
     case libvlc_MediaPlayerEndReached:

@@ -1678,6 +1678,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kyl
   E:/QTproject/kylinqt/serialport/serialport_turntable.h
 
 CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QCoreApplication \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QEvent \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
@@ -2945,8 +2946,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindow.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++locale.h:
 
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/intrin-impl.h:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/cpu_defines.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/avx512ifmavlintrin.h:
@@ -3062,6 +3061,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/utilapiset.h:
 kylinqt_autogen/YN6D6BICVT/moc_serialport_image.cpp:
 
 kylinqt_autogen/YN6D6BICVT/moc_serialport_turntable.cpp:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QCoreApplication:
 
 E:/QTproject/kylinqt/main.cpp:
 
@@ -3292,6 +3293,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/_wsa_errnos.h:
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/_wsadata.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/_xmitfile.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/psdk_inc/intrin-impl.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pshpack1.h:
 

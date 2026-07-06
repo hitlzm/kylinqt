@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntable *turntablePort = new SerialPortTurntable;
 
-    // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
+    // 把 Data 对象挂给 Worker 存引用
     laserPort->m_laserData = laserData;
     laserPort->m_laserSendData = laserSendData;
     imagePort->m_imageData = imageData;

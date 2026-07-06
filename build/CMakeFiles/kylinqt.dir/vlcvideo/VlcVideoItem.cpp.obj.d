@@ -307,6 +307,8 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdbool.h \
  E:/QTproject/vlclib/sdk/include/vlc/libvlc_vlm.h \
  E:/QTproject/vlclib/sdk/include/vlc/deprecated.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QCoreApplication \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QOpenGLFunctions \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qopenglfunctions.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qopengl.h \

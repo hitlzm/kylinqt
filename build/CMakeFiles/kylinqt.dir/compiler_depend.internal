@@ -1686,6 +1686,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj
 
 CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
  E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QCoreApplication
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QEvent
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList
