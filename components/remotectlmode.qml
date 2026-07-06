@@ -17,8 +17,8 @@ Item {
         // onAxisRightXChanged: gamepadBridge.axisRightXChange(axisRightX)
         // onButtonL2Changed: gamepadBridge.buttonL2Change(buttonL2)
         // onButtonR2Changed: gamepadBridge.buttonR2Change(buttonR2)
-        // onButtonAChanged: gamepadBridge.buttonAChange(buttonA)   // 或者 = myGamepad.buttonA
-        // onButtonBChanged: gamepadBridge.buttonBChange(buttonB)
+        onButtonAChanged: gamepadBridge.buttonAChange(buttonA)   // 或者 = myGamepad.buttonA
+        onButtonBChanged: gamepadBridge.buttonBChange(buttonB)
     }
     
     ColumnLayout {
@@ -194,8 +194,6 @@ Timer {
                     myGamepad.axisLeftX,
                     myGamepad.axisLeftY,
                     myGamepad.axisRightX,
-                    myGamepad.buttonA,
-                    myGamepad.buttonB,
                     myGamepad.buttonL2,
                     myGamepad.buttonR2)
     }

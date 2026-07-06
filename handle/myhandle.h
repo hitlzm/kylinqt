@@ -15,7 +15,10 @@ public:
     {
         connect(m_timer, &QTimer::timeout, this, [this]{
             emit handleModeSignal(m_axisLeftX, m_axisLeftY, m_axisRightX,
-                                  m_buttonL2, m_buttonR2, m_buttonA, m_buttonB);
+                                  m_buttonL2, m_buttonR2, m_buttonA, m_buttonB, buttonA_count, buttonB_count);
+            //每发送一次，减少一次手柄按键计数值
+            if(buttonA_count > 0)  buttonA_count--;
+            if(buttonB_count > 0)  buttonB_count--;
         });
     }
 
@@ -23,7 +26,7 @@ public:
 
 signals:
     void handleModeSignal(float axisLeftX, float axisLeftY, float axisRightX,
-                          float buttonL2, float buttonR2, bool buttonA, bool buttonB);
+                          float buttonL2, float buttonR2, bool buttonA, bool buttonB , int Acount ,int Bcount);
 
 public slots:
     void modechanged(int index)
@@ -41,15 +44,31 @@ public slots:
     void axisRightXChanged(float value) { m_axisRightX = value; }
     void buttonL2Changed(float value)   { m_buttonL2   = value; }
     void buttonR2Changed(float value)   { m_buttonR2   = value; }
-    void buttonAChanged(bool pressed)   { m_buttonA    = pressed; }
-    void buttonBChanged(bool pressed)   { m_buttonB    = pressed; }
+    void buttonAChanged(bool pressed)   
+    {
+        // 只有按下瞬间统计
+        if (pressed)
+        {
+            buttonA_count++;
+            // qDebug() << "A button pressed:" << m_buttonACount;
+        }
+        m_buttonA = pressed;
+    }
+    void buttonBChanged(bool pressed) 
+    {
+        // 只有按下瞬间统计
+        if (pressed)
+        {
+            buttonB_count++;
+            // qDebug() << "A button pressed:" << m_buttonACount;
+        }
+        m_buttonB = pressed;
+    }
 
     void update(
                     float axisLeftX,
                     float axisLeftY,
                     float axisRightX,
-                    bool buttonA,
-                    bool buttonB,
                     float buttonL2,
                     float buttonR2)
             {
@@ -58,8 +77,6 @@ public slots:
                 m_axisRightX = axisRightX;
                 m_buttonL2 = buttonL2;
                 m_buttonR2 = buttonR2;
-                m_buttonA = buttonA;
-                m_buttonB = buttonB;
             }
 
 private:
@@ -72,6 +89,8 @@ private:
     float m_buttonR2   = 0.0f;
     bool  m_buttonA    = false;
     bool  m_buttonB    = false;
+    int buttonA_count = 0;
+    int buttonB_count = 0;
 };
 
 class GamepadBridge : public QObject
@@ -93,8 +112,6 @@ signals:
                     float axisLeftX,
                     float axisLeftY,
                     float axisRightX,
-                    bool buttonA,
-                    bool buttonB,
                     float buttonL2,
                     float buttonR2);
 };

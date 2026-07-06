@@ -201,16 +201,16 @@ signals:
 private:
     //这里存放各个轴的角度数据及运动时间
     // int m_index;    //用来记录是对哪个轴的控制
-    int m_runtime;
-    float m_inner_startangle;
-    float m_current_inner_angle;
-    float m_inner_endangle;
-    float m_middle_startangle;
-    float m_current_middle_angle;
-    float m_middle_endangle;
-    float m_outter_startangle;
-    float m_current_outter_angle;
-    float m_outter_endangle;  
+    int m_runtime = 1;                    // 默认 1，防止除零
+    float m_inner_startangle = 0.0f;
+    float m_current_inner_angle = 0.0f;
+    float m_inner_endangle = 0.0f;
+    float m_middle_startangle = 0.0f;
+    float m_current_middle_angle = 0.0f;
+    float m_middle_endangle = 0.0f;
+    float m_outter_startangle = 0.0f;
+    float m_current_outter_angle = 0.0f;
+    float m_outter_endangle = 0.0f;
 };
 
 class SerialPortTurntable : public SerialPort
@@ -239,7 +239,7 @@ public slots:
     void zeroTurntable();
 
     void sendProgramMode(programSend_frame frame); 
-    void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB);   //接收的参数为手柄传来的各轴信号
+    void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号
     void sendTrackMode();
 
     void ProgramModeChanged(int mode);  //接收模式控制器的信号，判断是否进入程控模式

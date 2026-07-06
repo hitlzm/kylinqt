@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Myhandle_t {
-    QByteArrayData data[22];
-    char stringdata0[245];
+    QByteArrayData data[24];
+    char stringdata0[259];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -41,27 +41,30 @@ QT_MOC_LITERAL(6, 58, 8), // "buttonL2"
 QT_MOC_LITERAL(7, 67, 8), // "buttonR2"
 QT_MOC_LITERAL(8, 76, 7), // "buttonA"
 QT_MOC_LITERAL(9, 84, 7), // "buttonB"
-QT_MOC_LITERAL(10, 92, 11), // "modechanged"
-QT_MOC_LITERAL(11, 104, 5), // "index"
-QT_MOC_LITERAL(12, 110, 16), // "axisLeftXChanged"
-QT_MOC_LITERAL(13, 127, 5), // "value"
-QT_MOC_LITERAL(14, 133, 16), // "axisLeftYChanged"
-QT_MOC_LITERAL(15, 150, 17), // "axisRightXChanged"
-QT_MOC_LITERAL(16, 168, 15), // "buttonL2Changed"
-QT_MOC_LITERAL(17, 184, 15), // "buttonR2Changed"
-QT_MOC_LITERAL(18, 200, 14), // "buttonAChanged"
-QT_MOC_LITERAL(19, 215, 7), // "pressed"
-QT_MOC_LITERAL(20, 223, 14), // "buttonBChanged"
-QT_MOC_LITERAL(21, 238, 6) // "update"
+QT_MOC_LITERAL(10, 92, 6), // "Acount"
+QT_MOC_LITERAL(11, 99, 6), // "Bcount"
+QT_MOC_LITERAL(12, 106, 11), // "modechanged"
+QT_MOC_LITERAL(13, 118, 5), // "index"
+QT_MOC_LITERAL(14, 124, 16), // "axisLeftXChanged"
+QT_MOC_LITERAL(15, 141, 5), // "value"
+QT_MOC_LITERAL(16, 147, 16), // "axisLeftYChanged"
+QT_MOC_LITERAL(17, 164, 17), // "axisRightXChanged"
+QT_MOC_LITERAL(18, 182, 15), // "buttonL2Changed"
+QT_MOC_LITERAL(19, 198, 15), // "buttonR2Changed"
+QT_MOC_LITERAL(20, 214, 14), // "buttonAChanged"
+QT_MOC_LITERAL(21, 229, 7), // "pressed"
+QT_MOC_LITERAL(22, 237, 14), // "buttonBChanged"
+QT_MOC_LITERAL(23, 252, 6) // "update"
 
     },
     "Myhandle\0handleModeSignal\0\0axisLeftX\0"
     "axisLeftY\0axisRightX\0buttonL2\0buttonR2\0"
-    "buttonA\0buttonB\0modechanged\0index\0"
-    "axisLeftXChanged\0value\0axisLeftYChanged\0"
-    "axisRightXChanged\0buttonL2Changed\0"
-    "buttonR2Changed\0buttonAChanged\0pressed\0"
-    "buttonBChanged\0update"
+    "buttonA\0buttonB\0Acount\0Bcount\0modechanged\0"
+    "index\0axisLeftXChanged\0value\0"
+    "axisLeftYChanged\0axisRightXChanged\0"
+    "buttonL2Changed\0buttonR2Changed\0"
+    "buttonAChanged\0pressed\0buttonBChanged\0"
+    "update"
 };
 #undef QT_MOC_LITERAL
 
@@ -79,32 +82,32 @@ static const uint qt_meta_data_Myhandle[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    7,   64,    2, 0x06 /* Public */,
+       1,    9,   64,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      10,    1,   79,    2, 0x0a /* Public */,
-      12,    1,   82,    2, 0x0a /* Public */,
-      14,    1,   85,    2, 0x0a /* Public */,
-      15,    1,   88,    2, 0x0a /* Public */,
-      16,    1,   91,    2, 0x0a /* Public */,
-      17,    1,   94,    2, 0x0a /* Public */,
-      18,    1,   97,    2, 0x0a /* Public */,
-      20,    1,  100,    2, 0x0a /* Public */,
-      21,    7,  103,    2, 0x0a /* Public */,
+      12,    1,   83,    2, 0x0a /* Public */,
+      14,    1,   86,    2, 0x0a /* Public */,
+      16,    1,   89,    2, 0x0a /* Public */,
+      17,    1,   92,    2, 0x0a /* Public */,
+      18,    1,   95,    2, 0x0a /* Public */,
+      19,    1,   98,    2, 0x0a /* Public */,
+      20,    1,  101,    2, 0x0a /* Public */,
+      22,    1,  104,    2, 0x0a /* Public */,
+      23,    5,  107,    2, 0x0a /* Public */,
 
  // signals: parameters
-    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool,    3,    4,    5,    6,    7,    8,    9,
+    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::Int,    3,    4,    5,    6,    7,    8,    9,   10,   11,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Int,   11,
-    QMetaType::Void, QMetaType::Float,   13,
-    QMetaType::Void, QMetaType::Float,   13,
-    QMetaType::Void, QMetaType::Float,   13,
-    QMetaType::Void, QMetaType::Float,   13,
-    QMetaType::Void, QMetaType::Float,   13,
-    QMetaType::Void, QMetaType::Bool,   19,
-    QMetaType::Void, QMetaType::Bool,   19,
-    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Float, QMetaType::Float,    3,    4,    5,    8,    9,    6,    7,
+    QMetaType::Void, QMetaType::Int,   13,
+    QMetaType::Void, QMetaType::Float,   15,
+    QMetaType::Void, QMetaType::Float,   15,
+    QMetaType::Void, QMetaType::Float,   15,
+    QMetaType::Void, QMetaType::Float,   15,
+    QMetaType::Void, QMetaType::Float,   15,
+    QMetaType::Void, QMetaType::Bool,   21,
+    QMetaType::Void, QMetaType::Bool,   21,
+    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float,    3,    4,    5,    6,    7,
 
        0        // eod
 };
@@ -115,7 +118,7 @@ void Myhandle::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         auto *_t = static_cast<Myhandle *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->handleModeSignal((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5])),(*reinterpret_cast< bool(*)>(_a[6])),(*reinterpret_cast< bool(*)>(_a[7]))); break;
+        case 0: _t->handleModeSignal((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5])),(*reinterpret_cast< bool(*)>(_a[6])),(*reinterpret_cast< bool(*)>(_a[7])),(*reinterpret_cast< int(*)>(_a[8])),(*reinterpret_cast< int(*)>(_a[9]))); break;
         case 1: _t->modechanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 2: _t->axisLeftXChanged((*reinterpret_cast< float(*)>(_a[1]))); break;
         case 3: _t->axisLeftYChanged((*reinterpret_cast< float(*)>(_a[1]))); break;
@@ -124,13 +127,13 @@ void Myhandle::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 6: _t->buttonR2Changed((*reinterpret_cast< float(*)>(_a[1]))); break;
         case 7: _t->buttonAChanged((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 8: _t->buttonBChanged((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 9: _t->update((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< bool(*)>(_a[4])),(*reinterpret_cast< bool(*)>(_a[5])),(*reinterpret_cast< float(*)>(_a[6])),(*reinterpret_cast< float(*)>(_a[7]))); break;
+        case 9: _t->update((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _t = void (Myhandle::*)(float , float , float , float , float , bool , bool );
+            using _t = void (Myhandle::*)(float , float , float , float , float , bool , bool , int , int );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&Myhandle::handleModeSignal)) {
                 *result = 0;
                 return;
@@ -180,14 +183,14 @@ int Myhandle::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void Myhandle::handleModeSignal(float _t1, float _t2, float _t3, float _t4, float _t5, bool _t6, bool _t7)
+void Myhandle::handleModeSignal(float _t1, float _t2, float _t3, float _t4, float _t5, bool _t6, bool _t7, int _t8, int _t9)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)), const_cast<void*>(reinterpret_cast<const void*>(&_t4)), const_cast<void*>(reinterpret_cast<const void*>(&_t5)), const_cast<void*>(reinterpret_cast<const void*>(&_t6)), const_cast<void*>(reinterpret_cast<const void*>(&_t7)) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)), const_cast<void*>(reinterpret_cast<const void*>(&_t4)), const_cast<void*>(reinterpret_cast<const void*>(&_t5)), const_cast<void*>(reinterpret_cast<const void*>(&_t6)), const_cast<void*>(reinterpret_cast<const void*>(&_t7)), const_cast<void*>(reinterpret_cast<const void*>(&_t8)), const_cast<void*>(reinterpret_cast<const void*>(&_t9)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 struct qt_meta_stringdata_GamepadBridge_t {
-    QByteArrayData data[19];
-    char stringdata0[215];
+    QByteArrayData data[17];
+    char stringdata0[199];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -211,10 +214,8 @@ QT_MOC_LITERAL(11, 136, 13), // "updateGamepad"
 QT_MOC_LITERAL(12, 150, 9), // "axisLeftX"
 QT_MOC_LITERAL(13, 160, 9), // "axisLeftY"
 QT_MOC_LITERAL(14, 170, 10), // "axisRightX"
-QT_MOC_LITERAL(15, 181, 7), // "buttonA"
-QT_MOC_LITERAL(16, 189, 7), // "buttonB"
-QT_MOC_LITERAL(17, 197, 8), // "buttonL2"
-QT_MOC_LITERAL(18, 206, 8) // "buttonR2"
+QT_MOC_LITERAL(15, 181, 8), // "buttonL2"
+QT_MOC_LITERAL(16, 190, 8) // "buttonR2"
 
     },
     "GamepadBridge\0axisLeftXChange\0\0value\0"
@@ -222,8 +223,7 @@ QT_MOC_LITERAL(18, 206, 8) // "buttonR2"
     "buttonL2Change\0buttonR2Change\0"
     "buttonAChange\0pressed\0buttonBChange\0"
     "updateGamepad\0axisLeftX\0axisLeftY\0"
-    "axisRightX\0buttonA\0buttonB\0buttonL2\0"
-    "buttonR2"
+    "axisRightX\0buttonL2\0buttonR2"
 };
 #undef QT_MOC_LITERAL
 
@@ -248,7 +248,7 @@ static const uint qt_meta_data_GamepadBridge[] = {
        7,    1,   66,    2, 0x06 /* Public */,
        8,    1,   69,    2, 0x06 /* Public */,
       10,    1,   72,    2, 0x06 /* Public */,
-      11,    7,   75,    2, 0x06 /* Public */,
+      11,    5,   75,    2, 0x06 /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Float,    3,
@@ -258,7 +258,7 @@ static const uint qt_meta_data_GamepadBridge[] = {
     QMetaType::Void, QMetaType::Float,    3,
     QMetaType::Void, QMetaType::Bool,    9,
     QMetaType::Void, QMetaType::Bool,    9,
-    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Float, QMetaType::Float,   12,   13,   14,   15,   16,   17,   18,
+    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float,   12,   13,   14,   15,   16,
 
        0        // eod
 };
@@ -276,7 +276,7 @@ void GamepadBridge::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 4: _t->buttonR2Change((*reinterpret_cast< float(*)>(_a[1]))); break;
         case 5: _t->buttonAChange((*reinterpret_cast< bool(*)>(_a[1]))); break;
         case 6: _t->buttonBChange((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 7: _t->updateGamepad((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< bool(*)>(_a[4])),(*reinterpret_cast< bool(*)>(_a[5])),(*reinterpret_cast< float(*)>(_a[6])),(*reinterpret_cast< float(*)>(_a[7]))); break;
+        case 7: _t->updateGamepad((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -331,7 +331,7 @@ void GamepadBridge::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
             }
         }
         {
-            using _t = void (GamepadBridge::*)(float , float , float , bool , bool , float , float );
+            using _t = void (GamepadBridge::*)(float , float , float , float , float );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&GamepadBridge::updateGamepad)) {
                 *result = 7;
                 return;
@@ -430,9 +430,9 @@ void GamepadBridge::buttonBChange(bool _t1)
 }
 
 // SIGNAL 7
-void GamepadBridge::updateGamepad(float _t1, float _t2, float _t3, bool _t4, bool _t5, float _t6, float _t7)
+void GamepadBridge::updateGamepad(float _t1, float _t2, float _t3, float _t4, float _t5)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)), const_cast<void*>(reinterpret_cast<const void*>(&_t4)), const_cast<void*>(reinterpret_cast<const void*>(&_t5)), const_cast<void*>(reinterpret_cast<const void*>(&_t6)), const_cast<void*>(reinterpret_cast<const void*>(&_t7)) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)), const_cast<void*>(reinterpret_cast<const void*>(&_t4)), const_cast<void*>(reinterpret_cast<const void*>(&_t5)) };
     QMetaObject::activate(this, &staticMetaObject, 7, _a);
 }
 QT_WARNING_POP

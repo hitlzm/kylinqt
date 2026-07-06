@@ -157,9 +157,22 @@ void SerialPortTurntable::zeroTurntable()
 };
 
 QString SerialPortTurntable::formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits) {
+        // 检查非正常值（NaN、无穷大）
+        if (std::isnan(value) || std::isinf(value)) {
+            qDebug() << "formatNumberWithSignAndDecimals: 收到非正常浮点值，返回零值";
+            value = 0.0f;
+        }
+
         // 处理符号
         QString sign = (value >= 0) ? "+" : "-";
         float absVal = std::abs(value);
+
+        // 检查整数部分是否超出指定位数，防止 int 溢出和格式错乱
+        double maxVal = std::pow(10, intDigits) - 1;   // 如 intDigits=4 → 9999
+        if (absVal > maxVal) {
+            qDebug() << "formatNumberWithSignAndDecimals: 值" << value << "超出" << intDigits << "位整数范围，已钳位至" << sign + QString::number((int)maxVal);
+            absVal = static_cast<float>(maxVal);
+        }
 
         // 分离整数和小数部分（四舍五入到指定小数位数）
         double rounded = std::round(absVal * std::pow(10, fracDigits)) / std::pow(10, fracDigits);
@@ -215,10 +228,11 @@ void  SerialPortTurntable::sendPositionCmd(const PositionModeCmd1 &cmd)
         QByteArray frame = data.toLatin1();
         qint64 bytesWritten = m_serialPort->write(frame);
         if (bytesWritten == -1) {
-            qCritical() << "程控模式发送失败：" << m_serialPort->errorString();
-        } else {
-            qDebug() << "程控模式已发送帧：" << frame;
-        }
+            qCritical() << "位置模式发送失败：" << m_serialPort->errorString();
+        } 
+        // else {
+        //     qDebug() << "位置模式已发送帧：" << frame;
+        // }
 }
 
 void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
@@ -244,10 +258,11 @@ void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
         QByteArray frame = data.toLatin1();
         qint64 bytesWritten = m_serialPort->write(frame);
         if (bytesWritten == -1) {
-            qCritical() << "程控模式发送失败：" << m_serialPort->errorString();
-        } else {
-            qDebug() << "程控模式已发送帧：" << frame;
-        }
+            qCritical() << "速度模式发送失败：" << m_serialPort->errorString();
+        } 
+        // else {
+        //     qDebug() << "速度模式已发送帧：" << frame;
+        // }
 }
 
 void SerialPortTurntable::ProgramModeChanged(int mode)
@@ -321,57 +336,78 @@ void SerialPortTurntable::sendProgramMode(programSend_frame frame)
         
 }
 
-void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB)
+void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount)
 {
     //根据手柄数据判断是速率模式还是位置模式，发送对应的指令。当两个扳机有一个输出不为0时，认为使用位置模式，提供步进与步减功能
     //当两个扳机都为0时，认为使用速率模式，手柄左轴与右轴的输出直接对应到三轴转台各轴速度
     if( buttonL2!=0 || buttonR2!=0){  //两个扳机任意一个不为0，使用位置模式。左扳机按下：内框；右扳机按下：中框；两扳机同时按下，外框
         //位置模式
-        if(buttonL2!=0){
+        if(buttonR2 >0.9 && buttonL2 >0.9){
             PositionModeCmd1 cmd;
-            cmd.axis = 3; // 内框
+            cmd.axis = 1; // 内框
+            cmd.acceleration = 1000;
+            if(buttonA)
+            {
+                if(Acount>=1)
+                {
+                cmd.velocity = MAX_SPEED/2; // 步进
+                cmd.anglePos = m_current_inner_angle+3; 
+                sendPositionCmd(cmd);
+                }
+            }else if(buttonB)
+            {
+                if(Bcount>=1)
+                {
+                cmd.velocity = -MAX_SPEED/2; // 步退
+                cmd.anglePos = m_current_inner_angle-3; 
+                sendPositionCmd(cmd);
+                }
+            }
+        }else if(buttonL2!=0){
+            PositionModeCmd1 cmd;
+            cmd.axis = 3; // 外框框
             cmd.acceleration = 1000; // 示例加速度
             //判断步进还是步减，每次变动角度为3度
             if(buttonA)
-            {
+            {   
+                if(Acount>=1)
+                {
                 cmd.velocity = MAX_SPEED/2; // 步进
                 cmd.anglePos = m_current_outter_angle+3; 
+                sendPositionCmd(cmd);
+                }
             }else if(buttonB)
-            {
+            {   
+                if(Bcount>=1)
+                {
                 cmd.velocity = -MAX_SPEED/2; // 步退
                 cmd.anglePos = m_current_outter_angle-3; 
+                sendPositionCmd(cmd);
+                }
             }
-            sendPositionCmd(cmd);
-        }
-        if(buttonR2!=0){
+            
+        }else if(buttonR2!=0){
             PositionModeCmd1 cmd;
             cmd.axis = 2; // 中框
             cmd.acceleration = 1000;
             if(buttonA)
-            {
+            {   
+                if(Acount>=1)
+                {
                 cmd.velocity = MAX_SPEED/2; // 步进
                 cmd.anglePos = m_current_middle_angle+3; 
+                sendPositionCmd(cmd);
+                }
             }else if(buttonB)
-            {
+            {   
+                if(Bcount>=1)
+                {
                 cmd.velocity = -MAX_SPEED/2; // 步退
                 cmd.anglePos = m_current_middle_angle-3; 
+                sendPositionCmd(cmd);
+                }
             }
-            sendPositionCmd(cmd);
-        }
-        if(buttonR2 >0.9 && buttonL2 >0.9){
-            PositionModeCmd1 cmd;
-            cmd.axis = 1; // 外框
-            cmd.acceleration = 1000;
-            if(buttonA)
-            {
-                cmd.velocity = MAX_SPEED/2; // 步进
-                cmd.anglePos = m_current_inner_angle+3; 
-            }else if(buttonB)
-            {
-                cmd.velocity = -MAX_SPEED/2; // 步退
-                cmd.anglePos = m_current_inner_angle-3; 
-            }
-            sendPositionCmd(cmd);
+            
         }
     }else if(buttonL2 == 0 && buttonR2 == 0)
     {
@@ -418,8 +454,14 @@ TurntableSendData :: TurntableSendData(QObject *parent)
 
 void TurntableSendData :: buildFrame(int m_index)
 {
+    // 运行时必须大于0，防止除零
+    if (m_runtime <= 0) {
+        qDebug() << "程控模式发送失败: runtime 无效 (" << m_runtime << ")";
+        return;
+    }
     // 构建转台控制帧
     programSend_frame m_frame;
+    m_frame.index = m_index;
     switch(m_index){
         case 0:     //三轴控制
         m_frame.current_inner_angle=m_current_inner_angle;
