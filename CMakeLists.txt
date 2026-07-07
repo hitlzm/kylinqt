@@ -60,6 +60,7 @@ else()
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
       ModeControl/ModeController.h
+    #   opencv/cvconvert.h
       ${TaoQuickRes}
     )
 endif()

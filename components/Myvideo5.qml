@@ -50,6 +50,15 @@ Rectangle {
         anchors.bottom: videoBorder.bottom; anchors.bottomMargin: 2
     }
 
+    // 停止时的黑色遮罩层（覆盖在视频画面上方）
+    Rectangle {
+        id: stopOverlay
+        anchors.fill: videoBorder
+        color: "#000000"
+        visible: false
+        z: 1
+    }
+
     Text { anchors.centerIn: videoBorder; text: _connected ? "" : "请设置视频源并点击「连接」"; font.pixelSize: 16; color: "#888888" }
 
     // ========== 控制按钮栏 ==========
@@ -66,11 +75,14 @@ Rectangle {
             onClicked: {
                 if (!_connected) connectToUrl(urlInput.text.trim())
                 if (videoPlayer.playing) videoPlayer.pause()
-                else videoPlayer.play()
+                else { videoPlayer.play(); stopOverlay.visible = false }
             }
         }
         CusButton_Blue { text: "停止"; Layout.fillWidth: true; height: 40
-            onClicked: videoPlayer.stop() }
+            onClicked: {
+                videoPlayer.stop()
+                stopOverlay.visible = true
+            } }
         Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
         CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 200
             value: videoPlayer.volume; onMoved: videoPlayer.setVolume(value) }
@@ -93,8 +105,8 @@ Rectangle {
 
     Connections { target: videoPlayer
         function onPlayingChanged() { console.log("VlcVideo playing:", videoPlayer.playing) }
-        function onEnded() { console.log("VlcVideo: 播放结束") }
+        function onEnded() { console.log("VlcVideo: 播放结束"); stopOverlay.visible = true }
         function onError(msg) { console.log("VlcVideo error:", msg) }
-        function onStopped() { console.log("VlcVideo: 已停止") }
+        function onStopped() { console.log("VlcVideo: 已停止"); stopOverlay.visible = true }
     }
 }

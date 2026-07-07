@@ -8,16 +8,16 @@
 // 简易 GLSL Shader
 // ══════════════════════════════════════════════════════════════════
 static const char *kVertexShader =
-    "attribute highp vec2 aPosition;\n"
-    "attribute highp vec2 aTexCoord;\n"
-    "varying highp vec2 vTexCoord;\n"
+    "attribute vec2 aPosition;\n"
+    "attribute vec2 aTexCoord;\n"
+    "varying vec2 vTexCoord;\n"
     "void main() {\n"
     "    gl_Position = vec4(aPosition, 0.0, 1.0);\n"
     "    vTexCoord = aTexCoord;\n"
     "}\n";
 
 static const char *kFragmentShader =
-    "varying highp vec2 vTexCoord;\n"
+    "varying vec2 vTexCoord;\n"
     "uniform sampler2D uTexture;\n"
     "void main() {\n"
     "    gl_FragColor = texture2D(uTexture, vTexCoord);\n"
@@ -265,7 +265,7 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
     const char *args[] = {
         "--intf", "dummy",
         "--no-video-title-show",
-        "--no-xlib"
+        "--no-xlib",
     };
     m_vlcInstance = libvlc_new(sizeof(args)/sizeof(args[0]), args);
 }
