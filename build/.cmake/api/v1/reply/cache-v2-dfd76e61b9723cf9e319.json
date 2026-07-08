@@ -1262,6 +1262,18 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenCV",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenCV"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[E:/opencv-4.2.0/DNN/install][v4.2.0()]"
+		},
+		{
 			"name" : "QML2_IMPORT_PATH",
 			"properties" : 
 			[

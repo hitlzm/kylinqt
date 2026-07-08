@@ -10,6 +10,9 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(OpenCV_DIR "E:/opencv-4.2.0/DNN/install")
+
 include(taoQuick.cmake)
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check http://doc.qt.io/qt-5/deployment-android.html for more information.
@@ -26,18 +29,22 @@ include(taoQuick.cmake)
 
 # VLC & VLC-QT 库路径
 set(VLC_ROOT "E:/QTproject/vlclib")
-# set(VLCQT_ROOT "E:/QTproject/vlc-qt/install")
+
+# 引入Opencv4.2.0
+
 
 # VLC SDK 头文件和库
 set(VLC_INCLUDE_DIR "${VLC_ROOT}/sdk/include")
 set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
 
-# 将 VLC-QT cmake 模块加入搜索路径
-# list(APPEND CMAKE_PREFIX_PATH "${VLCQT_ROOT}/lib/cmake")
 
 find_package(Qt5 COMPONENTS Core Quick Gui SerialPort  Gamepad REQUIRED)
-# find_package(VLCQtCore REQUIRED)    # 不再使用 VLCQt，改用直接 libvlc
-# find_package(VLCQtQml REQUIRED)
+find_package(OpenCV REQUIRED)
+
+if(NOT OPENCV_BIN_DIR)
+    # 尝试从 OpenCV_DIR 推导
+    get_filename_component(OPENCV_BIN_DIR "${OpenCV_DIR}/x64/mingw/bin" ABSOLUTE)
+endif()
 
 if(ANDROID)
     add_library(kylinqt SHARED
@@ -82,14 +89,33 @@ target_link_libraries(kylinqt
   PRIVATE
     Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad
     libvlc libvlccore
+    ${OpenCV_LIBS}
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${OpenCV_INCLUDE_DIRS}  # OpenCV的头文件路径
+)
+
+set(OPENCV_DLLS
+    libopencv_core420.dll
+    libopencv_imgproc420.dll
+    libopencv_imgcodecs420.dll
+    libopencv_dnn420.dll
+    libopencv_features2d420.dll
+    libopencv_flann420.dll
+)
+
+foreach(DLL ${OPENCV_DLLS})
+    add_custom_command(TARGET kylinqt POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${OPENCV_BIN_DIR}/${DLL}"
+            "$<TARGET_FILE_DIR:kylinqt>"
+    )
+endforeach()
 
 # ── 编译后自动复制 DLL 到 exe 目录 ──
 add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        # "${VLCQT_ROOT}/bin/libVLCQtCored.dll"
-        # "${VLCQT_ROOT}/bin/libVLCQtQmld.dll"
-        # "${VLCQT_ROOT}/bin/libVLCQtWidgetsd.dll"
         "${VLC_ROOT}/libvlc.dll"
         "${VLC_ROOT}/libvlccore.dll"
         "$<TARGET_FILE_DIR:kylinqt>"
@@ -100,7 +126,4 @@ add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${VLC_ROOT}/plugins"
         "$<TARGET_FILE_DIR:kylinqt>/plugins"
-    # COMMAND ${CMAKE_COMMAND} -E copy_directory
-    #     "${VLCQT_ROOT}/qml/VLCQt"
-    #     "$<TARGET_FILE_DIR:kylinqt>/VLCQt"
 )

@@ -243,15 +243,65 @@ kylinqt.exe: CMakeFiles/kylinqt.dir/build.make
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5SerialPortd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Gamepadd.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_gapi420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_stitching420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_aruco420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_bgsegm420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_bioinspired420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_ccalib420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_cvv420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_dnn_objdetect420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_dnn_superres420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_dpm420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_face420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_fuzzy420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_img_hash420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_line_descriptor420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_quality420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_reg420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_saliency420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_shape420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_stereo420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_structured_light420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_superres420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_tracking420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_videostab420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_xobjdetect420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_xphoto420.dll.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Qmld.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Networkd.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_highgui420.dll.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Guid.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Cored.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_datasets420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_plot420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_text420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_dnn420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_ml420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_phase_unwrapping420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_optflow420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_ximgproc420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_video420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_videoio420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_imgcodecs420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_objdetect420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_calib3d420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_features2d420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_flann420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_photo420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_imgproc420.dll.a
+kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_core420.dll.a
 kylinqt.exe: CMakeFiles/kylinqt.dir/linkLibs.rsp
 kylinqt.exe: CMakeFiles/kylinqt.dir/objects1.rsp
 kylinqt.exe: CMakeFiles/kylinqt.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable kylinqt.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\kylinqt.dir\link.txt --verbose=$(VERBOSE)
+	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_core420.dll E:/QTproject/kylinqt/build
+	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_imgproc420.dll E:/QTproject/kylinqt/build
+	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_imgcodecs420.dll E:/QTproject/kylinqt/build
+	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_dnn420.dll E:/QTproject/kylinqt/build
+	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_features2d420.dll E:/QTproject/kylinqt/build
+	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_flann420.dll E:/QTproject/kylinqt/build
 	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/QTproject/vlclib/libvlc.dll E:/QTproject/vlclib/libvlccore.dll E:/QTproject/kylinqt/build
 	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/QTproject/vlclib/axvlc.dll E:/QTproject/vlclib/npvlc.dll E:/QTproject/kylinqt/build
 	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_directory E:/QTproject/vlclib/plugins E:/QTproject/kylinqt/build/plugins

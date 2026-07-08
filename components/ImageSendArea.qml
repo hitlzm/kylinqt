@@ -381,7 +381,7 @@ Rectangle {
             model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正","红外非均匀校正","模板擦除","积分时间设置"]
             onCurrentIndexChanged:{
 
-                root.opticalParamCtrlCmd=currentIndex
+                root.opticalParamCtrlCmd=mycurrentIndex
 
                 if(opticalParamCtrlCmd===0){
                     imageSendData.m_opticalParamCtrl=0x00
