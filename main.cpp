@@ -8,6 +8,15 @@
 #include "vlcvideo/VlcVideoItem.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
+
+//使用GPU来做图像绘制
+#ifdef _WIN32
+extern "C"
+{
+    __declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
+#endif
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

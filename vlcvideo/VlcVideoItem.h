@@ -13,6 +13,8 @@ struct libvlc_event_t;
 
 class VlcVideoRenderer;
 
+//后期如果目标主机不支持OPENGL，则可能需要换回QQuickPaintedItem
+
 class VlcVideoItem : public QQuickFramebufferObject
 {
     Q_OBJECT

@@ -5,7 +5,7 @@
 #include <QDebug>
 
 // ══════════════════════════════════════════════════════════════════
-// 简易 GLSL Shader
+// 简易 GLSL Shader，这是 OpenGL ES / OpenGL 的 GLSL 着色器（Shader）代码，作用就是把一张纹理（Texture）绘制到屏幕上
 // ══════════════════════════════════════════════════════════════════
 static const char *kVertexShader =
     "attribute vec2 aPosition;\n"
@@ -63,8 +63,10 @@ public:
         }
     }
 
+    //QQuickFramebufferObject 每一帧的渲染函数
     void render() override
-    {
+    {   
+        //把当前 OpenGL Context 的所有 OpenGL 函数地址绑定到当前对象。
         initializeOpenGLFunctions();
 
         if (!m_glInitialized)
@@ -76,7 +78,7 @@ public:
         // 清背景为黑色
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        //判断纹理预顶点是否存在
         if (m_texture && !m_vertices.isEmpty()) {
             glUseProgram(m_program);
 
@@ -99,7 +101,7 @@ public:
             glEnableVertexAttribArray(texLoc);
             glVertexAttribPointer(texLoc, 2, GL_FLOAT, GL_FALSE,
                                   4 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
-
+            //开始绘制
             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
             glDisableVertexAttribArray(posLoc);
@@ -120,6 +122,9 @@ private:
         m_program = buildProgram(kVertexShader, kFragmentShader);
         glGenBuffers(1, &m_vbo);
         m_glInitialized = true;
+        qDebug() << "Vendor  :" << (const char*)glGetString(GL_VENDOR);
+        qDebug() << "Renderer:" << (const char*)glGetString(GL_RENDERER);
+        qDebug() << "Version :" << (const char*)glGetString(GL_VERSION);
     }
 
     // ---- 上传 QImage 到 GL 纹理 ----
@@ -249,9 +254,9 @@ private:
     QSize m_itemSize;
 
     // GL 资源
-    GLuint m_texture = 0;
-    GLuint m_program = 0;
-    GLuint m_vbo     = 0;
+    GLuint m_texture = 0;   //着色器程序
+    GLuint m_program = 0;   //纹理对象
+    GLuint m_vbo     = 0;   //顶点缓冲对象
     bool   m_glInitialized = false;
 };
 
