@@ -123,6 +123,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/serialport/serialport_BD.h",
+			"MU",
+			"YN6D6BICVT/moc_serialport_BD.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/serialport/serialport_image.h",
 			"MU",
 			"YN6D6BICVT/moc_serialport_image.cpp",
@@ -219,6 +225,7 @@
 	[
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/serialport/serialport_BD.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_image.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_laser.cpp", "MU", null ],
 		[

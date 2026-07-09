@@ -64,6 +64,7 @@ else()
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
+      serialport/serialport_BD.cpp
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
       ModeControl/ModeController.h

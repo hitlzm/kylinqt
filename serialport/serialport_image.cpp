@@ -363,7 +363,6 @@ void ImageSendData::buildFrame()
     //     reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     // frame.crc16 = crc;
     //将校验位计算移到工作线程
-    // return QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  //定义一个信号并发送信号
     emit requestSendData(frame);
 }
 

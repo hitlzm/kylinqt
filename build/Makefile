@@ -237,6 +237,30 @@ serialport/serialport.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport.cpp.s
 .PHONY : serialport/serialport.cpp.s
 
+serialport/serialport_BD.obj: serialport/serialport_BD.cpp.obj
+.PHONY : serialport/serialport_BD.obj
+
+# target to build an object file
+serialport/serialport_BD.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj
+.PHONY : serialport/serialport_BD.cpp.obj
+
+serialport/serialport_BD.i: serialport/serialport_BD.cpp.i
+.PHONY : serialport/serialport_BD.i
+
+# target to preprocess a source file
+serialport/serialport_BD.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.i
+.PHONY : serialport/serialport_BD.cpp.i
+
+serialport/serialport_BD.s: serialport/serialport_BD.cpp.s
+.PHONY : serialport/serialport_BD.s
+
+# target to generate assembly for a file
+serialport/serialport_BD.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.s
+.PHONY : serialport/serialport_BD.cpp.s
+
 serialport/serialport_image.obj: serialport/serialport_image.cpp.obj
 .PHONY : serialport/serialport_image.obj
 
@@ -355,6 +379,9 @@ help:
 	@echo ... serialport/serialport.obj
 	@echo ... serialport/serialport.i
 	@echo ... serialport/serialport.s
+	@echo ... serialport/serialport_BD.obj
+	@echo ... serialport/serialport_BD.i
+	@echo ... serialport/serialport_BD.s
 	@echo ... serialport/serialport_image.obj
 	@echo ... serialport/serialport_image.i
 	@echo ... serialport/serialport_image.s
