@@ -270,13 +270,15 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_image.cpp \
- E:/QTproject/kylinqt/serialport/serialport_image.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_BD.cpp \
+ E:/QTproject/kylinqt/serialport/serialport_BD.h \
  E:/QTproject/kylinqt/serialport/serialport.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_laser.cpp \
- E:/QTproject/kylinqt/serialport/serialport_laser.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_image.cpp \
+ E:/QTproject/kylinqt/serialport/serialport_image.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_laser.cpp \
+ E:/QTproject/kylinqt/serialport/serialport_laser.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_turntable.cpp \
  E:/QTproject/kylinqt/serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\DPWVDNBJWW/moc_VlcVideoItem.cpp \

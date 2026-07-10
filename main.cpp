@@ -5,6 +5,7 @@
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
 #include "serialport/serialport_turntable.h"
+#include "serialport/serialport_BD.h"
 #include "vlcvideo/VlcVideoItem.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<image_recv_frame>("image_recv_frame");
     qRegisterMetaType<programSend_frame>("programSend_frame");
     qRegisterMetaType<StatusFeedback>("StatusFeedback");
+    qRegisterMetaType<RMCData>("RMCData");
 
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);
@@ -37,11 +39,13 @@ int main(int argc, char *argv[])
     ImageSendData *imageSendData = new ImageSendData(&app);
     TurntableData * turntableData = new TurntableData(&app);
     TurntableSendData *turntableSendData = new TurntableSendData(&app);
+    BDData *bdData = new BDData(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntable *turntablePort = new SerialPortTurntable;
+    SerialPortBD *bdPort = new SerialPortBD;
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
@@ -68,6 +72,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageSendData", imageSendData);
     engine.rootContext()->setContextProperty("turntableData", turntableData);
     engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
+    engine.rootContext()->setContextProperty("bdData", bdData);
     // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
@@ -138,6 +143,18 @@ int main(int argc, char *argv[])
     QObject::connect(turntableData, &TurntableData::myoutter_angleChanged,  turntableSendData, &TurntableSendData::recvoutter_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableData::myoutter_angleChanged,  turntablePort, &SerialPortTurntable::recvoutter_angle, Qt::QueuedConnection);
 
+    // ── BD: 主线程 Data → 工作线程 Worker ──
+    QObject::connect(bdData, &BDData::requestOpenPort,  bdPort, &SerialPortBD::onOpenPort,  Qt::QueuedConnection);
+    QObject::connect(bdData, &BDData::requestClosePort, bdPort, &SerialPortBD::onClosePort, Qt::QueuedConnection);
+    QObject::connect(bdData, &BDData::requestScanPorts, bdPort, &SerialPortBD::onScanPorts, Qt::QueuedConnection);
+
+    // ── BD: 工作线程 Worker → 主线程 Data ──
+    QObject::connect(bdPort, &SerialPortBD::portOpened,   bdData, &BDData::setPortOpen, Qt::QueuedConnection);
+    QObject::connect(bdPort, &SerialPortBD::portClosed,   bdData, [bdData]{ bdData->setPortOpen(false); }, Qt::QueuedConnection);
+    QObject::connect(bdPort, &SerialPortBD::portError,    bdData, &BDData::setError,    Qt::QueuedConnection);
+    QObject::connect(bdPort, &SerialPortBD::portsChanged, bdData, &BDData::setPortList, Qt::QueuedConnection);
+    QObject::connect(bdPort, &SerialPortBD::bdFrameReceived, bdData, &BDData::updateFromFrame, Qt::QueuedConnection);
+
 
     //模式控制器的信号连接
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
@@ -163,14 +180,17 @@ int main(int argc, char *argv[])
     QThread *Imagethread = new QThread;
     QThread *Turntablethread = new QThread;
     QThread *Handlethread = new QThread;
+    QThread *BDthread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
+    bdPort->moveToThread(BDthread);
     _myhandle->moveToThread(Handlethread);
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
     QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntable::dowork);
+    QObject::connect(BDthread, &QThread::started, bdPort, &SerialPortBD::dowork);
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
     QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
@@ -181,12 +201,15 @@ int main(int argc, char *argv[])
     QObject::connect(Turntablethread, &QThread::finished, Turntablethread,  &QObject::deleteLater);
     QObject::connect(Handlethread,    &QThread::finished, _myhandle,        &QObject::deleteLater);
     QObject::connect(Handlethread,    &QThread::finished, Handlethread,     &QObject::deleteLater);
+    QObject::connect(BDthread,       &QThread::finished, bdPort,           &QObject::deleteLater);
+    QObject::connect(BDthread,       &QThread::finished, BDthread,         &QObject::deleteLater);
 
 
     Laserthread->start();
     Imagethread->start();
     Turntablethread->start();
     Handlethread->start();
+    BDthread->start();
     
     return app.exec();
 }

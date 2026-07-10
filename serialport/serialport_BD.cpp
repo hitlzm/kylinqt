@@ -1,5 +1,7 @@
 #include "serialport_BD.h"
 #include <QDebug>
+#include <QTimeZone>
+
 SerialPortBD::SerialPortBD(QObject *parent)
     : SerialPort(parent)
     , m_bdData(new BDData(nullptr))        // 留在主线程，不随 moveToThread 迁移
@@ -7,15 +9,17 @@ SerialPortBD::SerialPortBD(QObject *parent)
     
 }
 
+void SerialPortBD::onReadyRead() { SerialPort::onReadyRead(); }
+
 //数据格式：$BDRMC,123400.000,A,4002.217821,N,11618.105743,E,0.026,181.631,180411,,,A*2C
 void SerialPortBD::parseData(const QByteArray &rawData)
 {
- // 1. 将原始字节转为 QString（NMEA 为 ASCII 字符）
+ // 1. 将原始字节转为 QString（NMEA 为 ASCII 字符），将一个Latin-1 (ISO 8859-1) 编码的 8 位字符串转换为 Qt 内部使用的 UTF-16 编码的 QString 对象
     QString sentence = QString::fromLatin1(rawData.trimmed()); // 去除换行符
     //输出数据结构体
     RMCData outData;
     // 2. 基础校验：必须以 '$' 开头且包含 "RMC"
-    if (!sentence.startsWith('$') || !sentence.contains("RMC")) {
+    if (!sentence.startsWith('$') || !sentence.contains("BDRMC")) {
         qWarning() << "Invalid RMC sentence prefix";
         return;
     }
@@ -40,8 +44,8 @@ void SerialPortBD::parseData(const QByteArray &rawData)
         }
     
      // 4. 去除校验和部分，按逗号切分
-    int starIdx = sentence.indexOf('*');
-    if (starIdx != -1) {
+    int starIdx1 = sentence.indexOf('*');
+    if (starIdx1 != -1) {
         sentence = sentence.left(starIdx);
     }
     QStringList fields = sentence.split(',');
@@ -59,8 +63,6 @@ void SerialPortBD::parseData(const QByteArray &rawData)
     QString latDir = fields[4];
     QString lonStr = fields[5];
     QString lonDir = fields[6];
-    QString speedStr = fields[7];
-    QString headingStr = fields[8];
 
     QString dateStr = fields[9];
     QString modeStr = (fields.size() > 12) ? fields[12] : "N";
@@ -93,6 +95,9 @@ void SerialPortBD::parseData(const QByteArray &rawData)
         qWarning() << "Invalid date parsed:" << dateStr;
         return;
     }
+    
+    //把UTC时间转化为北京时间
+    QDateTime beijingTime = QDateTime(utcDate, utcTime, Qt::UTC).toTimeZone(QTimeZone("Asia/Beijing"));
 
     // 8. 转换经纬度
     double latitude = nmeaToDecimal(latStr, latDir);
@@ -102,10 +107,12 @@ void SerialPortBD::parseData(const QByteArray &rawData)
     outData.isValid = (statusStr == "A");
     outData.isnorth = (latDir == "N");
     outData.iseast = (lonDir == "E");
-    outData.utcDateTime = QDateTime(utcDate, utcTime, Qt::UTC);
+    outData.BJDateTime = beijingTime;
     outData.latitude = latitude;
     outData.longitude = longitude;
     outData.mode = modeStr;
+
+    emit bdFrameReceived(outData);
 }
 
 double SerialPortBD::nmeaToDecimal(const QString& coord, const QString& dir)
@@ -117,10 +124,104 @@ double SerialPortBD::nmeaToDecimal(const QString& coord, const QString& dir)
     // 经度：dddmm.mmmmm -> 度 = 整数部分/100 取整，分 = 余数
     int deg = static_cast<int>(value / 100.0);
     double minutes = value - deg * 100.0;
-    double decimalDeg = deg + minutes / 60.0;
+    double decimalDeg = deg + minutes / 60.0; //把分转化为度
     // 根据方向符号：北纬(N)/东经(E)为正，南纬(S)/西经(W)为负
-    if (dir == "S" || dir == "W") {
-        decimalDeg = -decimalDeg;
-    }
+    // if (dir == "S" || dir == "W") {
+    //     decimalDeg = -decimalDeg;
+    // }
     return decimalDeg;
 }
+
+//串口操作槽函数
+void SerialPortBD::onOpenPort(const QString &name, int baud) {
+    if (SerialPort::open(name, baud))
+        emit portOpened(true);
+    else
+        emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
+}
+void SerialPortBD::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortBD::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
+
+
+// ── BDData 数据属性 READ 函数 ──
+QDateTime BDData::bjDateTime() const
+{
+    return m_BJDateTime;
+}
+
+bool BDData::isPosValid() const
+{
+    return m_isPosValid;
+}
+
+double BDData::latitude() const
+{
+    return m_latitude;
+}
+
+bool BDData::isnorth() const
+{
+    return m_isnorth;
+}
+
+double BDData::longitude() const
+{
+    return m_longitude;
+}
+
+bool BDData::iseast() const
+{
+    return m_iseast;
+}
+
+QString BDData::mode() const
+{
+    return m_mode;
+}
+
+void BDData ::updateFromFrame(const RMCData &frame)
+{
+    //先判断定位是否有效
+    if(frame.isValid)
+    {
+        m_BJDateTime = frame.BJDateTime;
+        emit bjDateTimeChanged();
+        if(m_latitude != frame.latitude)
+        {
+            emit latitudeChanged();
+        }
+        if(m_longitude != frame.longitude)
+        {
+            emit longitudeChanged();
+        }
+        //用于判断北纬还是南纬
+        if(m_isnorth != frame.isnorth)
+        {
+            emit isnorthChanged();
+        }
+        if(m_iseast != frame.iseast)
+        {
+            emit iseastChanged();
+        }
+        if(m_mode != frame.mode)
+        {
+            emit modeChanged();
+        }
+    }
+
+}
+
+BDData::BDData(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+void BDData::openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
+void BDData::closePort()                                     { emit requestClosePort(); }
+void BDData::scanPorts()                                     { emit requestScanPorts(); }
+
+void BDData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
+void BDData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
+void BDData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+

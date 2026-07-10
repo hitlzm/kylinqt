@@ -3,8 +3,6 @@
 
 #include "serialport.h"
 #include <QDateTime>
-struct bd_recv_frame;
-
 
 //北斗接收结构体
 struct RMCData
@@ -12,7 +10,7 @@ struct RMCData
     bool isValid;           // true=定位有效 (A), false=无效 (V)
     bool isnorth;           //判断是否为北纬
     bool iseast;
-    QDateTime utcDateTime;  // 解析出的完整 UTC 时间（日期+时间）
+    QDateTime BJDateTime;  // 解析出的完整 UTC 时间（日期+时间）
     double latitude;        // 纬度（十进制度数，正=北纬，负=南纬）
     double longitude;       // 经度（十进制度数，正=东经，负=西经）
     QString mode;           // 定位模式 (A=单点定位, N=未定位)
@@ -24,13 +22,13 @@ class BDData : public QObject
     Q_OBJECT
 
     // BD 数据属性（暴露给 QML）
-    Q_PROPERTY(QDateTime utcDateTime READ utcDateTime NOTIFY utcDateTimeChanged)
-    Q_PROPERTY(bool isPosValid READ isPosValid NOTIFY isPosValidChanged)
-    Q_PROPERTY(double latitude READ latitude NOTIFY latitudeChanged)
-    Q_PROPERTY(bool isnorth READ isnorth NOTIFY isnorthChanged)
-    Q_PROPERTY(double longitude READ longitude NOTIFY longitudeChanged)
-    Q_PROPERTY(bool iseast READ iseast NOTIFY iseastChanged)
-    Q_PROPERTY(QString mode READ mode NOTIFY modeChanged)
+    Q_PROPERTY(QDateTime m_bjDateTime READ bjDateTime NOTIFY bjDateTimeChanged)
+    Q_PROPERTY(bool m_isPosValid READ isPosValid NOTIFY isPosValidChanged)
+    Q_PROPERTY(double m_latitude READ latitude NOTIFY latitudeChanged)
+    Q_PROPERTY(bool m_isnorth READ isnorth NOTIFY isnorthChanged)
+    Q_PROPERTY(double m_longitude READ longitude NOTIFY longitudeChanged)
+    Q_PROPERTY(bool m_iseast READ iseast NOTIFY iseastChanged)
+    Q_PROPERTY(QString m_mode READ mode NOTIFY modeChanged)
 
     // ── 串口状态属性 ──
     Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
@@ -41,7 +39,7 @@ public:
     explicit BDData(QObject *parent = nullptr);
 
     // 数据属性访问器
-    QDateTime utcDateTime() const;
+    QDateTime bjDateTime() const;
     bool isPosValid() const;
     double latitude() const;
     bool isnorth() const;
@@ -61,7 +59,7 @@ public:
 
 signals:
     // 数据变化信号
-    void utcDateTimeChanged();
+    void bjDateTimeChanged();
     void isPosValidChanged();
     void latitudeChanged();
     void isnorthChanged();
@@ -84,7 +82,7 @@ public slots:
     void setPortOpen(bool open);
     void setPortList(const QStringList &ports);
     void setError(const QString &msg);
-    void updateFromFrame(const bd_recv_frame &frame);
+    void updateFromFrame(const RMCData &frame);
 
 private:
     // TODO: 根据 BD 协议补充转换辅助函数
@@ -94,13 +92,13 @@ private:
     QStringList m_availablePorts;
     QString m_errorString;
 
-    QDateTime utcDateTime;
-    bool isPosValid;        //位置有效标识
-    double latitude;        // 纬度（十进制度数，正=北纬，负=南纬）
-    bool isnorth;           //判断是否为北纬
-    double longitude;       // 经度（十进制度数，正=东经，负=西经）
-    bool iseast;            //判断是否为东经
-    QString mode;           // 定位模式 (A=单点定位, N=未定位)
+    QDateTime m_BJDateTime;
+    bool m_isPosValid = false;        //位置有效标识
+    double m_latitude = 0.0;        // 纬度（十进制度数，正=北纬，负=南纬）
+    bool m_isnorth = true;           //判断是否为北纬
+    double m_longitude = 0.0;       // 经度（十进制度数，正=东经，负=西经）
+    bool m_iseast = true;            //判断是否为东经
+    QString m_mode = "N";           // 定位模式 (A=单点定位, N=未定位)
 };
 
 
@@ -110,12 +108,13 @@ class SerialPortBD : public SerialPort
     Q_OBJECT
 public:
     explicit SerialPortBD(QObject *parent = nullptr);
-    ~SerialPortBD() override;
+    ~SerialPortBD() override{ delete m_bdData; }
 
     BDData* bdData() const;
     BDData *m_bdData;
 
 public slots:
+    //初始化串口对象，并扫描可用串口
     void dowork() { SerialPort::dowork(); onScanPorts(); }
 
 signals:
@@ -123,7 +122,7 @@ signals:
     void portClosed();
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
-    void bdFrameReceived(const bd_recv_frame &frame);
+    void bdFrameReceived(const RMCData &frame);
 
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
