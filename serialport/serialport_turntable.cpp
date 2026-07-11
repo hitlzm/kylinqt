@@ -276,8 +276,24 @@ void SerialPortTurntable::ProgramModeChanged(int mode)
 
 void SerialPortTurntable::sendTrackMode()
 {
-
+    
 };
+
+void SerialPortTurntable::sendTimesync(int value)
+{
+    QString data = "$";
+    // 轴号 + v + 加速度（4位十进制，补零）
+    data += QString::number(1);
+    data += "tm";
+    // 帧尾
+    data += "\r\n";
+    // 发送 ASCII 流
+    QByteArray frame = data.toLatin1();
+    qint64 bytesWritten = m_serialPort->write(frame);
+    if (bytesWritten == -1) {
+        qCritical() << "时间同步发送失败：" << m_serialPort->errorString();
+    } 
+}
 
 void SerialPortTurntable::sendProgramMode(programSend_frame frame)
     {   

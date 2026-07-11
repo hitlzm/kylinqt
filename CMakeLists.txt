@@ -68,6 +68,8 @@ else()
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
       ModeControl/ModeController.h
+      serialport/circularbuffer.h
+      kalman/seekKalman.cpp
     #   opencv/cvconvert.h
       ${TaoQuickRes}
     )

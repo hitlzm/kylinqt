@@ -141,6 +141,30 @@ kylinqt_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt_autogen.dir\build.make CMakeFiles/kylinqt_autogen.dir/build
 .PHONY : kylinqt_autogen/fast
 
+kalman/seekKalman.obj: kalman/seekKalman.cpp.obj
+.PHONY : kalman/seekKalman.obj
+
+# target to build an object file
+kalman/seekKalman.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj
+.PHONY : kalman/seekKalman.cpp.obj
+
+kalman/seekKalman.i: kalman/seekKalman.cpp.i
+.PHONY : kalman/seekKalman.i
+
+# target to preprocess a source file
+kalman/seekKalman.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.i
+.PHONY : kalman/seekKalman.cpp.i
+
+kalman/seekKalman.s: kalman/seekKalman.cpp.s
+.PHONY : kalman/seekKalman.s
+
+# target to generate assembly for a file
+kalman/seekKalman.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.s
+.PHONY : kalman/seekKalman.cpp.s
+
 kylinqt_autogen/EWIEGA46WW/qrc_qml.obj: kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 .PHONY : kylinqt_autogen/EWIEGA46WW/qrc_qml.obj
 
@@ -367,6 +391,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... kylinqt_autogen
 	@echo ... kylinqt
+	@echo ... kalman/seekKalman.obj
+	@echo ... kalman/seekKalman.i
+	@echo ... kalman/seekKalman.s
 	@echo ... kylinqt_autogen/EWIEGA46WW/qrc_qml.obj
 	@echo ... kylinqt_autogen/EWIEGA46WW/qrc_qml.i
 	@echo ... kylinqt_autogen/EWIEGA46WW/qrc_qml.s

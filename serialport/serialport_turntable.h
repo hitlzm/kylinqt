@@ -240,7 +240,9 @@ public slots:
 
     void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号
-    void sendTrackMode();
+    void sendTrackMode();  //跟踪模式指令发送，对应外引导模式
+
+    void sendTimesync(int value);
 
     void ProgramModeChanged(int mode);  //接收模式控制器的信号，判断是否进入程控模式
 

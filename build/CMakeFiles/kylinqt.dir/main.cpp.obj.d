@@ -293,6 +293,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
+ E:/QTproject/kylinqt/serialport/circularbuffer.h \
  E:\QTproject\kylinqt\serialport/serialport_image.h \
  E:\QTproject\kylinqt\serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\serialport/serialport_BD.h \

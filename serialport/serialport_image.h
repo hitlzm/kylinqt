@@ -2,8 +2,16 @@
 #define SERIALPORT_IMAGE_H
 
 #include "serialport.h"
+#include "./circularbuffer.h"
+#include <QDateTime>
 
 struct image_send_frame;
+struct imageExGuideData
+{
+    double pitch;  //俯仰角
+    double azimuth;  //方位角
+    uint32_t time;
+};
 
 class ImageData : public QObject
 {
@@ -486,6 +494,7 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void imageFrameReceived(const QByteArray &rawData);
+    void reqTimesync();
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
@@ -499,6 +508,9 @@ protected:
 
 private:
     static uint16_t crc16_table[256];
+    //图像导引头每20ms接收一次数据，3s共150组数据，预留200个位置
+    CircularBuffer<imageExGuideData> m_circularbuf;
+    //不再存储环形缓冲区，利用卡尔曼滤波器来估计目标位置
 };
 
 

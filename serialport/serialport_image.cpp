@@ -374,6 +374,7 @@ SerialPortImage::SerialPortImage(QObject *parent)
     : SerialPort(parent)
     , m_imageData(new ImageData(nullptr))        // 留在主线程，不随 moveToThread 迁移
     , m_imageSendData(new ImageSendData(nullptr))
+    , m_circularbuf(200)
 {
     init_crc16_table();
 }
@@ -445,10 +446,21 @@ void SerialPortImage::onSendData(image_send_frame frame) {
 }
 void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 
+
 void SerialPortImage::ExmodeChanged(int mode)
 {
     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息,从维护的环形缓冲区中取出四个数据
+    //维护一个环形缓冲区，每1秒记录一次导引头反馈的角度信息,选择数据发送给转台串口线程
+    //先发送时间同步指令信号，再发送跟踪模式控制信号
+    //以下操作可把一小时转化为0-3599的数值
+    //每3秒发送一次数据
+    QDateTime current = QDateTime::currentDateTime();
+    QTime time = current.time();
+    int value = time.minute() * 60 + time.second();
+    emit reqTimesync();//记得连接槽函数 ，此时为0时刻
 
+    
 }
 
 ImageData* SerialPortImage::imageData() const
@@ -486,9 +498,13 @@ void SerialPortImage::parseData(const QByteArray &rawData)
         return;
     }
 
+    //校验无误后将方位角与俯仰角数据存入环形缓冲区
+    imageExGuideData m_data;
+    m_data.azimuth = pFrame->yaw_frame_angle * 0.002;
+    m_data.pitch = pFrame->pitch_frame_angle * 0.002;
+    m_circularbuf.push(m_data);
+
     emit imageFrameReceived(rawData);
-    // m_imageData->updateFromFrame(rawData);   //发送信号让界面更新
-    // return rawData;
 }
 
 void SerialPortImage::init_crc16_table(uint16_t poly)

@@ -238,6 +238,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
+ E:/QTproject/kylinqt/serialport/circularbuffer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \

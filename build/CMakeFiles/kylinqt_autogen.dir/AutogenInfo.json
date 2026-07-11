@@ -117,6 +117,18 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/kalman/seekKalman.h",
+			"MU",
+			"RHMJYO6DXZ/moc_seekKalman.cpp",
+			null
+		],
+		[
+			"E:/QTproject/kylinqt/serialport/circularbuffer.h",
+			"MU",
+			"YN6D6BICVT/moc_circularbuffer.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/serialport/serialport.h",
 			"MU",
 			"YN6D6BICVT/moc_serialport.cpp",
@@ -223,6 +235,7 @@
 	"SETTINGS_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_BD.cpp", "MU", null ],

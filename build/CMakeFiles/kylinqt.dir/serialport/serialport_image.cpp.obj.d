@@ -234,9 +234,13 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:/QTproject/kylinqt/serialport/circularbuffer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
@@ -244,7 +248,6 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \

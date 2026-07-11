@@ -252,7 +252,9 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
     : SerialPort(parent)
     , m_laserData(new LaserData(nullptr))        // 留在主线程，不随 moveToThread 迁移
     , m_laserSendData(new LaserSendData(nullptr))
+    , m_circularbuf(360)
 {
+
 }
 
 SerialPortLaser::~SerialPortLaser() {
@@ -408,8 +410,13 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
                  << ", Calculated: 0x" << QString("0x%1").arg(calculatedChecksum, 2, 16, QLatin1Char('0')).toUpper();
         return;
     }
-    
-    //  //检验无误后更新数据并刷新QML界面显示
+    //  在经过解析完的每帧数据中保存光轴方位角与光轴俯仰角参数
+    laserExGuideData m_exGuidedata;
+    m_exGuidedata.azimuth = frame.optical_azimuth * 0.01;
+    m_exGuidedata.pitch = frame.optical_pitch * 0.01;
+    //  将导引头反馈的方位角与俯仰角信息存入环形缓冲区，新数据会覆盖老数据
+    m_circularbuf.push(std::move(m_exGuidedata));
+    //  检验无误后更新数据并刷新QML界面显示
    
     emit laserFrameReceived(frame);
 }
