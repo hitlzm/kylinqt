@@ -2924,8 +2924,8 @@ void ImageSendData::requestSendData(image_send_frame _t1)
     QMetaObject::activate(this, &staticMetaObject, 51, _a);
 }
 struct qt_meta_stringdata_SerialPortImage_t {
-    QByteArrayData data[32];
-    char stringdata0[316];
+    QByteArrayData data[36];
+    char stringdata0[356];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2946,32 +2946,37 @@ QT_MOC_LITERAL(8, 74, 5), // "ports"
 QT_MOC_LITERAL(9, 80, 18), // "imageFrameReceived"
 QT_MOC_LITERAL(10, 99, 7), // "rawData"
 QT_MOC_LITERAL(11, 107, 11), // "reqTimesync"
-QT_MOC_LITERAL(12, 119, 6), // "dowork"
-QT_MOC_LITERAL(13, 126, 16), // "init_crc16_table"
-QT_MOC_LITERAL(14, 143, 8), // "uint16_t"
-QT_MOC_LITERAL(15, 152, 4), // "poly"
-QT_MOC_LITERAL(16, 157, 16), // "crc16_ccitt_fast"
-QT_MOC_LITERAL(17, 174, 14), // "const uint8_t*"
-QT_MOC_LITERAL(18, 189, 4), // "data"
-QT_MOC_LITERAL(19, 194, 6), // "size_t"
-QT_MOC_LITERAL(20, 201, 3), // "len"
-QT_MOC_LITERAL(21, 205, 4), // "init"
-QT_MOC_LITERAL(22, 210, 10), // "onOpenPort"
-QT_MOC_LITERAL(23, 221, 8), // "portName"
-QT_MOC_LITERAL(24, 230, 8), // "baudRate"
-QT_MOC_LITERAL(25, 239, 11), // "onClosePort"
-QT_MOC_LITERAL(26, 251, 11), // "onScanPorts"
-QT_MOC_LITERAL(27, 263, 10), // "onSendData"
-QT_MOC_LITERAL(28, 274, 16), // "image_send_frame"
-QT_MOC_LITERAL(29, 291, 5), // "frame"
-QT_MOC_LITERAL(30, 297, 13), // "ExmodeChanged"
-QT_MOC_LITERAL(31, 311, 4) // "mode"
+QT_MOC_LITERAL(12, 119, 9), // "reqExsend"
+QT_MOC_LITERAL(13, 129, 15), // "sendExGuideData"
+QT_MOC_LITERAL(14, 145, 6), // "frame1"
+QT_MOC_LITERAL(15, 152, 6), // "frame2"
+QT_MOC_LITERAL(16, 159, 6), // "dowork"
+QT_MOC_LITERAL(17, 166, 16), // "init_crc16_table"
+QT_MOC_LITERAL(18, 183, 8), // "uint16_t"
+QT_MOC_LITERAL(19, 192, 4), // "poly"
+QT_MOC_LITERAL(20, 197, 16), // "crc16_ccitt_fast"
+QT_MOC_LITERAL(21, 214, 14), // "const uint8_t*"
+QT_MOC_LITERAL(22, 229, 4), // "data"
+QT_MOC_LITERAL(23, 234, 6), // "size_t"
+QT_MOC_LITERAL(24, 241, 3), // "len"
+QT_MOC_LITERAL(25, 245, 4), // "init"
+QT_MOC_LITERAL(26, 250, 10), // "onOpenPort"
+QT_MOC_LITERAL(27, 261, 8), // "portName"
+QT_MOC_LITERAL(28, 270, 8), // "baudRate"
+QT_MOC_LITERAL(29, 279, 11), // "onClosePort"
+QT_MOC_LITERAL(30, 291, 11), // "onScanPorts"
+QT_MOC_LITERAL(31, 303, 10), // "onSendData"
+QT_MOC_LITERAL(32, 314, 16), // "image_send_frame"
+QT_MOC_LITERAL(33, 331, 5), // "frame"
+QT_MOC_LITERAL(34, 337, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(35, 351, 4) // "mode"
 
     },
     "SerialPortImage\0portOpened\0\0success\0"
     "portClosed\0portError\0msg\0portsChanged\0"
     "ports\0imageFrameReceived\0rawData\0"
-    "reqTimesync\0dowork\0init_crc16_table\0"
+    "reqTimesync\0reqExsend\0sendExGuideData\0"
+    "frame1\0frame2\0dowork\0init_crc16_table\0"
     "uint16_t\0poly\0crc16_ccitt_fast\0"
     "const uint8_t*\0data\0size_t\0len\0init\0"
     "onOpenPort\0portName\0baudRate\0onClosePort\0"
@@ -2986,32 +2991,33 @@ static const uint qt_meta_data_SerialPortImage[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      16,   14, // methods
+      17,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       6,       // signalCount
+       7,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   94,    2, 0x06 /* Public */,
-       4,    0,   97,    2, 0x06 /* Public */,
-       5,    1,   98,    2, 0x06 /* Public */,
-       7,    1,  101,    2, 0x06 /* Public */,
-       9,    1,  104,    2, 0x06 /* Public */,
-      11,    0,  107,    2, 0x06 /* Public */,
+       1,    1,   99,    2, 0x06 /* Public */,
+       4,    0,  102,    2, 0x06 /* Public */,
+       5,    1,  103,    2, 0x06 /* Public */,
+       7,    1,  106,    2, 0x06 /* Public */,
+       9,    1,  109,    2, 0x06 /* Public */,
+      11,    0,  112,    2, 0x06 /* Public */,
+      12,    2,  113,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      12,    0,  108,    2, 0x0a /* Public */,
-      13,    1,  109,    2, 0x0a /* Public */,
-      13,    0,  112,    2, 0x2a /* Public | MethodCloned */,
-      16,    3,  113,    2, 0x0a /* Public */,
-      16,    2,  120,    2, 0x2a /* Public | MethodCloned */,
-      22,    2,  125,    2, 0x0a /* Public */,
-      25,    0,  130,    2, 0x0a /* Public */,
-      26,    0,  131,    2, 0x0a /* Public */,
-      27,    1,  132,    2, 0x0a /* Public */,
-      30,    1,  135,    2, 0x0a /* Public */,
+      16,    0,  118,    2, 0x0a /* Public */,
+      17,    1,  119,    2, 0x0a /* Public */,
+      17,    0,  122,    2, 0x2a /* Public | MethodCloned */,
+      20,    3,  123,    2, 0x0a /* Public */,
+      20,    2,  130,    2, 0x2a /* Public | MethodCloned */,
+      26,    2,  135,    2, 0x0a /* Public */,
+      29,    0,  140,    2, 0x0a /* Public */,
+      30,    0,  141,    2, 0x0a /* Public */,
+      31,    1,  142,    2, 0x0a /* Public */,
+      34,    1,  145,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -3020,18 +3026,19 @@ static const uint qt_meta_data_SerialPortImage[] = {
     QMetaType::Void, QMetaType::QStringList,    8,
     QMetaType::Void, QMetaType::QByteArray,   10,
     QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 13, 0x80000000 | 13,   14,   15,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 14,   15,
+    QMetaType::Void, 0x80000000 | 18,   19,
     QMetaType::Void,
-    0x80000000 | 14, 0x80000000 | 17, 0x80000000 | 19, 0x80000000 | 14,   18,   20,   21,
-    0x80000000 | 14, 0x80000000 | 17, 0x80000000 | 19,   18,   20,
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   23,   24,
+    0x80000000 | 18, 0x80000000 | 21, 0x80000000 | 23, 0x80000000 | 18,   22,   24,   25,
+    0x80000000 | 18, 0x80000000 | 21, 0x80000000 | 23,   22,   24,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   27,   28,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 28,   29,
-    QMetaType::Void, QMetaType::Int,   31,
+    QMetaType::Void, 0x80000000 | 32,   33,
+    QMetaType::Void, QMetaType::Int,   35,
 
        0        // eod
 };
@@ -3048,18 +3055,19 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 3: _t->portsChanged((*reinterpret_cast< const QStringList(*)>(_a[1]))); break;
         case 4: _t->imageFrameReceived((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
         case 5: _t->reqTimesync(); break;
-        case 6: _t->dowork(); break;
-        case 7: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
-        case 8: _t->init_crc16_table(); break;
-        case 9: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])),(*reinterpret_cast< uint16_t(*)>(_a[3])));
+        case 6: _t->reqExsend((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
+        case 7: _t->dowork(); break;
+        case 8: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
+        case 9: _t->init_crc16_table(); break;
+        case 10: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])),(*reinterpret_cast< uint16_t(*)>(_a[3])));
             if (_a[0]) *reinterpret_cast< uint16_t*>(_a[0]) = std::move(_r); }  break;
-        case 10: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])));
+        case 11: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< uint16_t*>(_a[0]) = std::move(_r); }  break;
-        case 11: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 12: _t->onClosePort(); break;
-        case 13: _t->onScanPorts(); break;
-        case 14: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
-        case 15: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 13: _t->onClosePort(); break;
+        case 14: _t->onScanPorts(); break;
+        case 15: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
+        case 16: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -3106,6 +3114,13 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
                 return;
             }
         }
+        {
+            using _t = void (SerialPortImage::*)(const sendExGuideData & , const sendExGuideData & );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqExsend)) {
+                *result = 6;
+                return;
+            }
+        }
     }
 }
 
@@ -3138,13 +3153,13 @@ int SerialPortImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 16)
+        if (_id < 17)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 17;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 16)
+        if (_id < 17)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 16;
+        _id -= 17;
     }
     return _id;
 }
@@ -3187,6 +3202,13 @@ void SerialPortImage::imageFrameReceived(const QByteArray & _t1)
 void SerialPortImage::reqTimesync()
 {
     QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
+}
+
+// SIGNAL 6
+void SerialPortImage::reqExsend(const sendExGuideData & _t1, const sendExGuideData & _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 6, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

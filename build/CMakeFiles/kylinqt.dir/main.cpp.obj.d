@@ -294,6 +294,10 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
  E:/QTproject/kylinqt/serialport/circularbuffer.h \
+ E:/QTproject/kylinqt/Kalman/seekKalman.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
+ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
  E:\QTproject\kylinqt\serialport/serialport_image.h \
  E:\QTproject\kylinqt\serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\serialport/serialport_BD.h \

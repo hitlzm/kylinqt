@@ -380,6 +380,11 @@ SerialPortImage::SerialPortImage(QObject *parent)
 }
 
 SerialPortImage::~SerialPortImage() {
+    if (m_exGuideTimer) {
+        m_exGuideTimer->stop();
+        delete m_exGuideTimer;
+        m_exGuideTimer = nullptr;
+    }
     delete m_imageData;
     delete m_imageSendData;
 }
@@ -450,17 +455,40 @@ void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 void SerialPortImage::ExmodeChanged(int mode)
 {
     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
-    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息,从维护的环形缓冲区中取出四个数据
-    //维护一个环形缓冲区，每1秒记录一次导引头反馈的角度信息,选择数据发送给转台串口线程
-    //先发送时间同步指令信号，再发送跟踪模式控制信号
-    //以下操作可把一小时转化为0-3599的数值
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
+    //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
+    exindex = mode;
+    //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
     //每3秒发送一次数据
-    QDateTime current = QDateTime::currentDateTime();
-    QTime time = current.time();
-    int value = time.minute() * 60 + time.second();
-    emit reqTimesync();//记得连接槽函数 ，此时为0时刻
-
-    
+    // QDateTime current = QDateTime::currentDateTime();
+    // QTime time = current.time();
+    // int value = time.minute() * 60 + time.second();
+    if (exindex == 1)
+    {
+        // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
+        if (!m_exGuideTimer) {
+            m_exGuideTimer = new QTimer(this);
+            connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                // 用当前导引头反馈角度重新初始化Kalman滤波器
+                m_kalman.Init(m_azimuth, m_pitch);
+                // 生成方位轴和俯仰轴的3s预测数据包
+                AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
+                AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
+                // 发送时间同步指令（0时刻）
+                emit reqTimesync();
+                // 发送Kalman预测的目标角度给转台串口线程
+                // emit reqExsend(m_tacpkt1, m_tacpkt2);
+            });
+        }
+        m_exGuideTimer->start(3000); // 每3秒触发一次
+    }
+    else
+    {
+        // 非图像导引头外引导源：停止定时器
+        if (m_exGuideTimer) {
+            m_exGuideTimer->stop();
+        }
+    }
 }
 
 ImageData* SerialPortImage::imageData() const
@@ -499,12 +527,18 @@ void SerialPortImage::parseData(const QByteArray &rawData)
     }
 
     //校验无误后将方位角与俯仰角数据存入环形缓冲区
-    imageExGuideData m_data;
-    m_data.azimuth = pFrame->yaw_frame_angle * 0.002;
-    m_data.pitch = pFrame->pitch_frame_angle * 0.002;
-    m_circularbuf.push(m_data);
-
+    // imageExGuideData m_data;
+    // m_data.azimuth = pFrame->yaw_frame_angle * 0.002;
+    // m_data.pitch = pFrame->pitch_frame_angle * 0.002;
+    // m_circularbuf.push(m_data);
+    m_azimuth = pFrame->yaw_frame_angle * 0.002;
+    m_pitch = pFrame->pitch_frame_angle * 0.002;
     emit imageFrameReceived(rawData);
+    //判断图像导引头是否被选中为外引导源，是的话更新数据
+    if(exindex == 1)
+    {
+        m_kalman.FeedSeekerData(0,m_azimuth,m_pitch);
+    }
 }
 
 void SerialPortImage::init_crc16_table(uint16_t poly)

@@ -56,4 +56,14 @@ private slots:
     void handleError(QSerialPort::SerialPortError error);
 };
 
+//外引导模式下，单轴数据
+struct sendExGuideData
+{
+    double angle1;  
+    double angle2;  
+    double angle3;
+    double angle4;
+    uint32_t time;
+};
+
 #endif // SERIALPORT_H

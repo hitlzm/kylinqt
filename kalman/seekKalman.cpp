@@ -149,7 +149,7 @@ SeekerTrackManager::SeekerTrackManager()
 {
     sys_time = 0.0;
     // is_blocked = false;
-    miss_dist = 0.0;
+    // miss_dist = 0.0;
 }
 
 void SeekerTrackManager::Init(double az0, double el0)
@@ -159,10 +159,10 @@ void SeekerTrackManager::Init(double az0, double el0)
     sys_time = 0.0;
 }
 
-void SeekerTrackManager::FeedSeekerData(double t, double az_meas, double el_meas, double miss)
+void SeekerTrackManager::FeedSeekerData(double t, double az_meas, double el_meas)
 {
     sys_time = t;
-    miss_dist = miss;
+    // miss_dist = miss;
     // // 遮挡判定：脱靶量>5像元
     // is_blocked = (fabs(miss) > BLOCK_THRESH);
 

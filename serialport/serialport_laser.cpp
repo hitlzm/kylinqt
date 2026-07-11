@@ -411,14 +411,62 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         return;
     }
     //  在经过解析完的每帧数据中保存光轴方位角与光轴俯仰角参数
-    laserExGuideData m_exGuidedata;
-    m_exGuidedata.azimuth = frame.optical_azimuth * 0.01;
-    m_exGuidedata.pitch = frame.optical_pitch * 0.01;
-    //  将导引头反馈的方位角与俯仰角信息存入环形缓冲区，新数据会覆盖老数据
-    m_circularbuf.push(std::move(m_exGuidedata));
+    // laserExGuideData m_exGuidedata;
+    // m_exGuidedata.azimuth = frame.optical_azimuth * 0.01;
+    // m_exGuidedata.pitch = frame.optical_pitch * 0.01;
+    // //  将导引头反馈的方位角与俯仰角信息存入环形缓冲区，新数据会覆盖老数据
+    // m_circularbuf.push(std::move(m_exGuidedata));
     //  检验无误后更新数据并刷新QML界面显示
-   
+
+    m_azimuth = frame.optical_azimuth * 0.01;
+    m_pitch = frame.optical_pitch * 0.01;
+
     emit laserFrameReceived(frame);
+    
+    //判断激光导引头是否被选中为外引导源，是的话更新kalman管理器数据
+    if(exindex == 1)
+    {
+        m_kalman.FeedSeekerData(0,m_azimuth,m_pitch);
+    }
+}
+
+void SerialPortLaser::ExmodeChanged(int mode)
+{
+    //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
+    //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
+    exindex = mode;
+    //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
+    //每3秒发送一次数据
+    // QDateTime current = QDateTime::currentDateTime();
+    // QTime time = current.time();
+    // int value = time.minute() * 60 + time.second();
+    if (exindex == 1)
+    {
+        // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
+        if (!m_exGuideTimer) {
+            m_exGuideTimer = new QTimer(this);
+            connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                // 用当前导引头反馈角度重新初始化Kalman滤波器
+                m_kalman.Init(m_azimuth, m_pitch);
+                // 生成方位轴和俯仰轴的3s预测数据包
+                AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
+                AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
+                // 发送时间同步指令（0时刻）
+                emit reqTimesync();
+                // 发送Kalman预测的目标角度给转台串口线程
+                // emit reqExsend(m_tacpkt1, m_tacpkt2);
+            });
+        }
+        m_exGuideTimer->start(3000); // 每3秒触发一次
+    }
+    else
+    {
+        // 非图像导引头外引导源：停止定时器
+        if (m_exGuideTimer) {
+            m_exGuideTimer->stop();
+        }
+    }
 }
 
 uint8_t SerialPortLaser::xorChecksumcore(const uint8_t* data, size_t len)

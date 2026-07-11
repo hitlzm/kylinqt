@@ -356,6 +356,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
@@ -380,6 +381,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iterator \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
@@ -433,6 +435,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/process.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_compat.h \
@@ -460,6 +463,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/Kalman/seekKalman.h \
   E:/QTproject/kylinqt/ModeControl/ModeController.h \
   E:/QTproject/kylinqt/handle/myhandle.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
@@ -704,6 +708,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
@@ -728,6 +733,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iterator \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
@@ -781,6 +787,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/process.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_compat.h \
@@ -808,6 +815,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/Kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/ModeControl/ModeController.h \
   E:/QTproject/kylinqt/handle/myhandle.h \
@@ -1470,6 +1478,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdio \
@@ -1491,6 +1500,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iterator \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
@@ -1541,6 +1551,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/process.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_compat.h \
@@ -1568,6 +1579,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/Kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h
@@ -1723,6 +1735,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdio \
@@ -1744,6 +1757,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/initializer_list \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ios \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iosfwd \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/istream \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iterator \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
@@ -1794,6 +1808,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/process.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_compat.h \
@@ -1821,6 +1836,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
+  E:/QTproject/kylinqt/Kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h
@@ -2964,11 +2980,11 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/ctype.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/errno.h:
 
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/propidl.h:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_list.h:
 
 kylinqt_autogen/62PF24DQ2C/moc_myhandle.cpp:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/propidl.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/limits.h:
 
@@ -3457,6 +3473,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/xsavecint
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/avx512ifmaintrin.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/mwaitxintrin.h:
+
+E:/QTproject/kylinqt/Kalman/seekKalman.h:
 
 E:/QTproject/kylinqt/ModeControl/ModeController.h:
 

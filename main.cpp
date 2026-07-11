@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
     //模式控制器的信号连接
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
-    QObject::connect(&m_modeController, &ModeController::modeChanged, laserPort, &SerialPortLaser::Exmodechanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::modeChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, turntablePort, &SerialPortTurntable::ProgramModeChanged, Qt::QueuedConnection);
 
@@ -174,6 +174,12 @@ int main(int argc, char *argv[])
     QObject::connect(m_gamepadBridge, &GamepadBridge::buttonAChange, _myhandle, &Myhandle::buttonAChanged, Qt::QueuedConnection);
     QObject::connect(m_gamepadBridge, &GamepadBridge::buttonBChange, _myhandle, &Myhandle::buttonBChanged, Qt::QueuedConnection);
     QObject::connect(m_gamepadBridge, &GamepadBridge::updateGamepad, _myhandle, &Myhandle::update, Qt::QueuedConnection);
+
+    //为实现外引导模式进行的信号连接
+    QObject::connect(imagePort, &SerialPortImage::reqTimesync, turntablePort, &SerialPortTurntable::sendTimesync, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqTimesync, turntablePort, &SerialPortTurntable::sendTimesync, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqExsend, turntablePort, &SerialPortTurntable::sendTrackMode, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqExsend, turntablePort, &SerialPortTurntable::sendTrackMode, Qt::QueuedConnection);
 
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;

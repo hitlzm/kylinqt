@@ -4,6 +4,7 @@
 #include "serialport.h"
 #include "./circularbuffer.h"
 #include <QDateTime>
+#include "Kalman/seekKalman.h"
 
 struct image_send_frame;
 struct imageExGuideData
@@ -495,6 +496,7 @@ signals:
     void portsChanged(const QStringList &ports);
     void imageFrameReceived(const QByteArray &rawData);
     void reqTimesync();
+    void reqExsend(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
@@ -502,6 +504,7 @@ public slots:
     void onSendData(image_send_frame frame);
 
     void ExmodeChanged(int mode);
+
 protected:
     void parseData(const QByteArray &rawData) override;
     void onReadyRead() override;
@@ -510,7 +513,12 @@ private:
     static uint16_t crc16_table[256];
     //图像导引头每20ms接收一次数据，3s共150组数据，预留200个位置
     CircularBuffer<imageExGuideData> m_circularbuf;
-    //不再存储环形缓冲区，利用卡尔曼滤波器来估计目标位置
+    //不再存储环形缓冲区，利用卡尔曼滤波器来估计目标位置,每三秒重新INIT一次，如果外引导源是图像导引头,利用前三秒数据给转台发送下一个三秒的跟踪角度
+    SeekerTrackManager m_kalman;
+    double m_azimuth = 0.0f;
+    double m_pitch = 0.0f;
+    int exindex = 0;
+    QTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
 };
 
 

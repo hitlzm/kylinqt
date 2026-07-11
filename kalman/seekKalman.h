@@ -37,7 +37,6 @@ public:
     const double H[3] = {1.0, 0.0, 0.0};
     // 当前机动加速度均值 ā(k)
     double a_mean;
-
 public:
     CSKalmanFilter();
     // 初始化滤波器，初始角度init_theta
@@ -65,14 +64,14 @@ private:
     CSKalmanFilter el_filter;  // 俯仰轴滤波器
     double sys_time;           // 系统全局时间戳 s
     // bool is_blocked;           // 是否遮挡标志
-    double miss_dist;          // 当前脱靶量(像元)
+    // double miss_dist;          // 当前脱靶量(像元)
 
 public:
     SeekerTrackManager();
     // 初始化双轴初始角度
     void Init(double az0, double el0);
     // 每20ms调用：接收导引头实测角度+脱靶量，执行滤波
-    void FeedSeekerData(double t, double az_meas, double el_meas, double miss);
+    void FeedSeekerData(double t, double az_meas, double el_meas);
     // 生成单轴3s跟踪数据包：4个预测角度间隔1s
     AxisTrackPacket GenAxisPacket(bool is_az);
     // // 获取遮挡状态

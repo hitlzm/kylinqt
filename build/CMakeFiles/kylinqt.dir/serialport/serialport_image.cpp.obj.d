@@ -239,6 +239,10 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
+ E:/QTproject/kylinqt/Kalman/seekKalman.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
+ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \

@@ -265,6 +265,43 @@ void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
         // }
 }
 
+void SerialPortTurntable::sendTrackCmd(const TrackingSendCmd1 &cmd)
+{
+    if (!m_serialPort->isOpen()) {
+            qWarning() << "串口未打开！";
+            return;
+        }
+        // ---------- 构建数据帧 ----------
+        QString data = "$";
+
+        // 轴号 + v + 加速度（4位十进制，补零）
+        data += "1r";
+        data += QString("%1").arg(cmd.trackTime, 4, 10, QChar('0'));
+
+        // 速度（带符号，4位整数，4位小数）
+        data += formatNumberWithSignAndDecimals(cmd.angle11, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle12, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle13, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle14, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle21, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle22, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle23, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle24, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle31, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle32, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle33, 3, 4);
+        data += formatNumberWithSignAndDecimals(cmd.angle34, 3, 4);
+        // 帧尾
+        data += "\r\n";
+        // 发送 ASCII 流
+        QByteArray frame = data.toLatin1();
+        qint64 bytesWritten = m_serialPort->write(frame);
+        if (bytesWritten == -1) {
+            qCritical() << "跟踪模式发送失败：" << m_serialPort->errorString();
+        } 
+
+}
+
 void SerialPortTurntable::ProgramModeChanged(int mode)
 {
     if(mode==1){
@@ -274,12 +311,31 @@ void SerialPortTurntable::ProgramModeChanged(int mode)
     }
 }
 
-void SerialPortTurntable::sendTrackMode()
+void SerialPortTurntable::sendTrackMode(const sendExGuideData &frame1 , const sendExGuideData &frame2)
 {
-    
+    //读取两轴数据
+    TrackingSendCmd1 m_cmd{};
+    //外框对应方位角,中框对应俯仰角
+    m_cmd.trackTime = frame1.time;
+
+    m_cmd.angle31 = frame1.angle1 + m_current_outter_angle;
+    m_cmd.angle32 = frame1.angle2 + m_current_outter_angle;
+    m_cmd.angle33 = frame1.angle3 + m_current_outter_angle;
+    m_cmd.angle14 = frame1.angle4 + m_current_outter_angle;
+    m_cmd.angle21 = frame2.angle1 + m_current_middle_angle;
+    m_cmd.angle22 = frame2.angle2 + m_current_middle_angle;
+    m_cmd.angle23 = frame2.angle3 + m_current_middle_angle;
+    m_cmd.angle24 = frame2.angle4 + m_current_middle_angle;
+    //默认内框不动
+    m_cmd.angle11 = m_current_inner_angle;
+    m_cmd.angle12 = m_current_inner_angle;
+    m_cmd.angle13 = m_current_inner_angle;
+    m_cmd.angle14 = m_current_inner_angle;
+    //发送数据
+    sendTrackCmd(m_cmd);
 };
 
-void SerialPortTurntable::sendTimesync(int value)
+void SerialPortTurntable::sendTimesync()
 {
     QString data = "$";
     // 轴号 + v + 加速度（4位十进制，补零）
@@ -448,10 +504,7 @@ void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float
 
 }
 
-void SerialPortTurntable::sendTrackCmd(const TrackingSendCmd1 &cmd)
-{
 
-}
 
 void SerialPortTurntable::onOpenPort(const QString &name, int baud) {
     if (SerialPort::open(name, baud))

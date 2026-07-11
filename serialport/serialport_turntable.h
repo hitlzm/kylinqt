@@ -52,7 +52,6 @@ typedef struct SpeedModeCmd1{
 } SpeedModeCmd1;
 
 typedef struct {
-    int axis;          // 轴号 (2字节)
     int trackTime;     // 跟踪时间 (4字节)
     float  angle11;    // 角度11 (9字节)
     float  angle12;    // 角度12 (9字节)
@@ -67,6 +66,8 @@ typedef struct {
     float  angle33;    // 角度33 (9字节)
     float  angle34;    // 角度34 (9字节)
 } TrackingSendCmd1;
+
+
 
 class TurntableData : public QObject
 {
@@ -240,9 +241,10 @@ public slots:
 
     void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号
-    void sendTrackMode();  //跟踪模式指令发送，对应外引导模式
+    //外引导模式槽函数，用于对接两类导引头和CCD相机
+    void sendTrackMode(const sendExGuideData &frame1 , const sendExGuideData &frame2);    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)
 
-    void sendTimesync(int value);
+    void sendTimesync();
 
     void ProgramModeChanged(int mode);  //接收模式控制器的信号，判断是否进入程控模式
 
@@ -258,7 +260,8 @@ public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
     void onScanPorts();
-    
+
+
 protected:
     void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换），后期仍需要加入其他反馈指令解析
     void sendCommands(const QStringList &commands, int repeatTimes = 5);   //开机，停机，回零，复位，程控模式的实现

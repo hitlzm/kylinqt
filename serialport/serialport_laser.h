@@ -4,6 +4,7 @@
 #include "serialport.h"
 #include <QDateTime>
 #include "./circularbuffer.h"
+#include "Kalman/seekKalman.h"
 
 struct laser_send_frame;
 struct laser_recv_frame;
@@ -15,14 +16,6 @@ struct laserExGuideData
     uint32_t time;
 };
 
-struct sendExGuideData
-{
-    double angle1;  
-    double angle2;  
-    double angle3;
-    double angle4;
-    uint32_t time;
-};
 
 class LaserData : public QObject
 {
@@ -292,8 +285,10 @@ signals:
 
     void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
-    void reqTimesync(int value);
-    void reqexguide(const sendExGuideData &frame);
+    //两类导引头的实现相同
+    void reqTimesync();
+    void reqExsend(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──
     void onOpenPort(const QString &portName, int baudRate);
@@ -301,22 +296,7 @@ public slots:
     void onScanPorts();
     void onSendData(laser_send_frame frame);
 
-    void Exmodechanged(int index){
-        //判断外引导信号源是否为激光导引头
-
-        //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息,从维护的环形缓冲区中取出四个数据
-        //维护一个环形缓冲区，每1秒记录一次导引头反馈的角度信息,选择数据发送给转台串口线程
-        //先发送时间同步指令信号，再发送跟踪模式控制信号
-        //以下操作可把一小时转化为0-3599的数值
-        //每3秒发送一次数据
-        QDateTime current = QDateTime::currentDateTime();
-        QTime time = current.time();
-        int value = time.minute() * 60 + time.second();
-        emit reqTimesync(value);//记得连接槽函数 ，此时为0时刻
-        
-        //发送时间与四个角度信息,四个角度信息从环形缓冲区中抽取
-        
-    };
+    void ExmodeChanged(int mode);
 
 protected:
     void parseData(const QByteArray &rawData);
@@ -328,6 +308,12 @@ private:
     //维护一个存储导引头反馈的俯仰角与方位角的数据容器
     //激光导引头数据周期为10ms，3s接收300个数据，环形缓冲区大小设置为360
     CircularBuffer<laserExGuideData> m_circularbuf;
+
+    SeekerTrackManager m_kalman;
+    double m_azimuth = 0.0f;
+    double m_pitch = 0.0f;
+    int exindex = 0;
+    QTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
 };
 
 
