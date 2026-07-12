@@ -301,6 +301,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:\QTproject\kylinqt\serialport/serialport_image.h \
  E:\QTproject\kylinqt\serialport/serialport_turntable.h \
  E:\QTproject\kylinqt\serialport/serialport_BD.h \
+ E:\QTproject\kylinqt\serialport/serialport_CCD.h \
  E:\QTproject\kylinqt\vlcvideo/VlcVideoItem.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickFramebufferObject \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickframebufferobject.h \

@@ -823,6 +823,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QTproject/kylinqt/handle/myhandle.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_BD.h \
+  E:/QTproject/kylinqt/serialport/serialport_CCD.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
   E:/QTproject/kylinqt/serialport/serialport_turntable.h \
