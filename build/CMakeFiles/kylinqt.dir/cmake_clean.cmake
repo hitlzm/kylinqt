@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj"
   "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj"
   "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj"

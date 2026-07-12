@@ -385,8 +385,8 @@ SerialPortImage::~SerialPortImage() {
         delete m_exGuideTimer;
         m_exGuideTimer = nullptr;
     }
-    delete m_imageData;
-    delete m_imageSendData;
+    // delete m_imageData;
+    // delete m_imageSendData;
 }
 
 // ── Worker slots ──
@@ -475,7 +475,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                 AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
                 AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
                 // 发送时间同步指令（0时刻）
-                emit reqTimesync();
+                // emit reqTimesync();
                 // 发送Kalman预测的目标角度给转台串口线程
                 // emit reqExsend(m_tacpkt1, m_tacpkt2);
             });

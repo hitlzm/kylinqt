@@ -3,6 +3,7 @@
 #include "62PF24DQ2C/moc_myhandle.cpp"
 #include "YN6D6BICVT/moc_serialport.cpp"
 #include "YN6D6BICVT/moc_serialport_BD.cpp"
+#include "YN6D6BICVT/moc_serialport_CCD.cpp"
 #include "YN6D6BICVT/moc_serialport_image.cpp"
 #include "YN6D6BICVT/moc_serialport_laser.cpp"
 #include "YN6D6BICVT/moc_serialport_turntable.cpp"

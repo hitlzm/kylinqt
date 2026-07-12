@@ -97,8 +97,8 @@ static const uint qt_meta_data_SerialPort[] = {
       12,    0,  115,    2, 0x0a /* Public */,
       13,    0,  116,    2, 0x0a /* Public */,
       14,    1,  117,    2, 0x0a /* Public */,
-      16,    0,  120,    2, 0x08 /* Private */,
-      17,    1,  121,    2, 0x08 /* Private */,
+      16,    0,  120,    2, 0x0a /* Public */,
+      17,    1,  121,    2, 0x0a /* Public */,
 
  // methods: name, argc, parameters, tag, flags
       20,    2,  124,    2, 0x02 /* Public */,

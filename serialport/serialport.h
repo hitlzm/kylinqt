@@ -41,7 +41,7 @@ protected:
 
     QSerialPort *m_serialPort;
     QStringList m_availablePorts;
-    QTimer *timer;
+    QTimer *timer;   //用于两类导引头发送指令时，多次发送时间间隔的计时
 
 signals:
     // void dataReceived(const QByteArray &parsedData);
@@ -51,7 +51,7 @@ signals:
     void portOpenChanged();
     void availablePortsChanged();
 
-private slots:
+public slots:
     void handleReadyRead();
     void handleError(QSerialPort::SerialPortError error);
 };

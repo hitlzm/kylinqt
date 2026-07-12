@@ -258,8 +258,9 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
 }
 
 SerialPortLaser::~SerialPortLaser() {
-    delete m_laserData;
-    delete m_laserSendData;
+    //由app管理，无需手动释放
+    // delete m_laserData;
+    // delete m_laserSendData;
 }
 
 // ── Worker slots：接收主线程 Data 的请求（QueuedConnection）──
@@ -453,7 +454,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                 AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
                 AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
                 // 发送时间同步指令（0时刻）
-                emit reqTimesync();
+                // emit reqTimesync();
                 // 发送Kalman预测的目标角度给转台串口线程
                 // emit reqExsend(m_tacpkt1, m_tacpkt2);
             });

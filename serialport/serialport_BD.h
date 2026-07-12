@@ -108,7 +108,7 @@ class SerialPortBD : public SerialPort
     Q_OBJECT
 public:
     explicit SerialPortBD(QObject *parent = nullptr);
-    ~SerialPortBD() override{ delete m_bdData; }
+    ~SerialPortBD() override{ }
 
     BDData* bdData() const;
     BDData *m_bdData;

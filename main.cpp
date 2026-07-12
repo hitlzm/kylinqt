@@ -6,6 +6,7 @@
 #include "serialport/serialport_image.h"
 #include "serialport/serialport_turntable.h"
 #include "serialport/serialport_BD.h"
+#include "serialport/serialport_CCD.h"
 #include "vlcvideo/VlcVideoItem.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
@@ -40,12 +41,15 @@ int main(int argc, char *argv[])
     TurntableData * turntableData = new TurntableData(&app);
     TurntableSendData *turntableSendData = new TurntableSendData(&app);
     BDData *bdData = new BDData(&app);
+    CCDData *ccdData = new CCDData(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntable *turntablePort = new SerialPortTurntable;
     SerialPortBD *bdPort = new SerialPortBD;
+    //CCD串口对象留在主线程
+    SerialPortCCD *ccdPort = new SerialPortCCD(&app);
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
@@ -58,7 +62,7 @@ int main(int argc, char *argv[])
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
     ModeController m_modeController(&app);  //释放的信号分别连接到手柄线程和导引头串口线程
-    GamepadBridge *m_gamepadBridge = new GamepadBridge();
+    GamepadBridge *m_gamepadBridge = new GamepadBridge(&app);
 
 
     // ═══ 1) 先加载 QML，建立绑定 ═══
@@ -73,6 +77,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("turntableData", turntableData);
     engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
     engine.rootContext()->setContextProperty("bdData", bdData);
+    engine.rootContext()->setContextProperty("ccdData", ccdData);
     // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
