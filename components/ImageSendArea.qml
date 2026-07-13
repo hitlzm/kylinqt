@@ -8,6 +8,14 @@ Rectangle {
     width: 1200
     height: 560
     color: '#e9f0f9'
+
+    MessagePopup {
+        id: azimuthmsg
+    }
+    MessagePopup {
+        id: pitchmsg
+    }
+
     //下边沿
     Rectangle {
         width: parent.width
@@ -559,9 +567,21 @@ Rectangle {
                     } else if (index === 1) {
                         imageSendData.m_bodyPosZ = parseInt(text)
                     } else if (index === 2) {
-                        imageSendData.m_pitchGimbalPreset = Number(text)
+                        //加入范围判断信息，超出范围时弹窗提示
+                        if(Number(text)>18 || Number(text)< -18)
+                        {
+                                azimuthmsg.message = "偏航角输入范围为-18°~ 18°,请重新输入";  azimuthmsg.open()
+                        }else{
+                                imageSendData.m_pitchGimbalPreset = Number(text)
+                        }
                     } else if (index === 3) {
-                        imageSendData.m_yawGimbalPreset = Number(text)
+                        if(Number(text)>18 || Number(text)< -18)
+                        {
+                                pitchmsg.message = "俯仰角输入范围为-18°~ 18°,请重新输入";  pitchmsg.open()
+                        }else{
+                                imageSendData.m_yawGimbalPreset = Number(text)
+                        }
+                        
                     } else if (index === 4) {
                         imageSendData.m_irIntegrationTime = parseInt(text)
                     } else if (index === 5) {

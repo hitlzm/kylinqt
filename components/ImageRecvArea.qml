@@ -12,6 +12,11 @@ Rectangle {
     property int groupHeight1: 150
     property string lastValidDesc1: "默认值"
     property string lastValidDesc2: "默认值"
+    MsgPopup2
+    {
+        id:trackmsg
+    }
+
     Text {
         id: titleText
         text: "图像导引头接收区"
@@ -240,6 +245,7 @@ Rectangle {
                                 value: {
                                     switch(imageData.opticalWorkState) {
                                         case 0x02: return "搜索状态"
+                                        //跟踪到目标时弹窗提示2-3秒
                                         case 0x03: return "跟踪状态"
                                         case 0x04: return "框架角电锁零位状态"
                                         case 0x05: return "记忆状态"
@@ -286,8 +292,8 @@ Rectangle {
                                     switch(imageData.trackingState) {
                                         case 0x00: return "默认"
                                         case 0x11: return "搜索中"
-                                        case 0x22: return "目标丢失"
-                                        case 0x33: return "目标锁定"
+                                        case 0x22: trackmsg.showToast("目标已丢失"); return "目标丢失"
+                                        case 0x33: trackmsg.showToast("已锁定目标");  return "目标锁定"
                                         case 0x44: return "记忆状态"
                                         default: return "未知状态"
                                     }

@@ -19,5 +19,6 @@
         <file>components/ExGuide.qml</file>
         <file>components/Remotectlmode.qml</file>
         <file>components/MessagePopup.qml</file>
+        <file>components/MsgPopup2.qml</file>
     </qresource>
 </RCC>

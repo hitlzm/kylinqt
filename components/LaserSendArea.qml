@@ -8,6 +8,11 @@ Rectangle {
     width: 1200
     height: 560
     color: '#e9f0f9'
+
+//消息提示框
+    MessagePopup {
+        id: msg
+    }
 //下边沿
     Rectangle {
         width: parent.width
@@ -262,9 +267,14 @@ Rectangle {
                 onEditingFinished: {
                     if (index === 0) {
                         laserSendData.m_laserPeriod = Number(text)
-                        console.log(Number(text))
                     } else if (index === 1) {
-                        laserSendData.m_azimuthAngle = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "方位角输入范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_azimuthAngle = Number(text)
+                        }
+                        
                     }
                 }
             }
@@ -296,9 +306,19 @@ Rectangle {
                 enabled: secondColumn.disabledIndices.indexOf(index) === -1
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSendData.m_elevationAngle = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "俯仰角输入范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_elevationAngle = Number(text)
+                        }
                     } else if (index === 1) {
-                        laserSendData.m_searchCenterAzimuth = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "搜索中心方位角输入范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_searchCenterAzimuth = Number(text)
+                        }  
                     }
                 }
             }
@@ -329,9 +349,19 @@ Rectangle {
                 enabled: thirdColumn.disabledIndices.indexOf(index) === -1
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSendData.m_searchCenterElevation = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "搜索中心俯仰角输入范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_searchCenterElevation = Number(text)
+                        }  
                     } else if (index === 1) {
-                        laserSendData.m_azimuthSearchRange = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "方位搜索范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_azimuthSearchRange = Number(text)
+                        }          
                     }
                 }
             }
@@ -362,9 +392,19 @@ Rectangle {
                 enabled: fourthColumn.disabledIndices.indexOf(index) === -1 
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSendData.m_elevationSearchRange = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "俯仰搜索范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_elevationSearchRange = Number(text)
+                        }          
                     } else if (index === 1) {
-                        laserSendData.m_searchRadius = Number(text)
+                        if(Number(text) > 18 || Number(text) < -18)
+                        {
+                                msg.message = "搜索半径范围为-18°~ 18°,请重新输入";  msg.open()
+                        }else{
+                                laserSendData.m_searchRadius = Number(text)
+                        }          
                     }
                 }
             }
