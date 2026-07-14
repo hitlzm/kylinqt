@@ -15,13 +15,21 @@ Item {
     property alias text: textField.text
     property alias placeholderText: textField.placeholderText
     property alias labeltext: mylabel.text
+
+    // 禁用时：文本框背景变灰，清空内容
+    onEnabledChanged: {
+        if (!enabled) {
+            textField.text = ""
+        }
+    }
+
     Text {
         id: titleText
         anchors.left: parent.left
         anchors.top: parent.top
         font.pixelSize: 14
         font.bold: true
-        color: "#333333"
+        color: root.enabled ? "#333333" : "#BBBBBB"
         }
    RowLayout {
     id: rowLayout
@@ -29,7 +37,7 @@ Item {
     spacing: 8
     anchors.top: titleText.bottom
     anchors.topMargin: 2
-    
+
     CusTextField {
         id: textField
         // Layout.fillWidth: true
@@ -48,9 +56,17 @@ Item {
         text: labeltext
         font.bold: true
         font.pixelSize: textField.font.pixelSize
-        color: '#060000'
+        color: root.enabled ? '#060000' : "#AAAAAA"
         Layout.alignment: Qt.AlignVCenter
     }
 
    }
+
+    // 禁用时：文本框背景变灰
+    Rectangle {
+        anchors.fill: textField
+        color: "#D0D0D0"
+        visible: !root.enabled
+        z: 10
+    }
 }

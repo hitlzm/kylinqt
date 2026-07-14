@@ -7,17 +7,20 @@ Row {
     property string value: ""
     property color valueColor: "#1a73e8"
     property int fontSize: 18
+    property int labelWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
+    property int valueWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
 
     Label {
         text: parent.label
         font.pixelSize: parent.fontSize
-        Layout.preferredWidth: implicitWidth   // 自动
+        width: parent.labelWidth > 0 ? parent.labelWidth : implicitWidth
+        horizontalAlignment: parent.labelWidth > 0 ? Text.AlignRight : Text.AlignLeft
     }
     Text {
         text: parent.value
         font.pixelSize: parent.fontSize
         font.bold: true
         color: parent.valueColor
-        // Layout.preferredWidth: implicitWidth   // 自动
+        width: parent.valueWidth > 0 ? parent.valueWidth : implicitWidth
     }
 }

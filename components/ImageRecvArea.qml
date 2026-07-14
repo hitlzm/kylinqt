@@ -38,11 +38,11 @@ Rectangle {
         anchors.verticalCenter: titleText.verticalCenter
         spacing: 20
 
-        Indicator { label: "红外视频接收"; normal: imageData.selfCheckFlag2 === 1 }
-        Indicator { label: "电视视频接收"; normal: imageData.selfCheckFlag3 === 1 }
-        Indicator { label: "视频输出";     normal: imageData.selfCheckFlag4 === 1 }
-        Indicator { label: "通讯";         normal: imageData.selfCheckFlag5 === 1 }
-        Indicator { label: "伺服自检";     normal: imageData.selfCheckFlag6 === 1 }
+        Indicator { id: indIrVideo;   label: "红外视频接收"; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: trackmsg.showToast(label + "故障") }
+        Indicator { id: indTvVideo;   label: "电视视频接收"; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: trackmsg.showToast(label + "故障") }
+        Indicator { id: indVideoOut;  label: "视频输出";     normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: trackmsg.showToast(label + "故障") }
+        Indicator { id: indComm;      label: "通讯";         normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: trackmsg.showToast(label + "故障") }
+        Indicator { id: indServo;     label: "伺服自检";     normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: trackmsg.showToast(label + "故障") }
     }
 
     // ═══ 数据显示区 ═══
@@ -288,12 +288,17 @@ Rectangle {
                             
                             DataLabel {
                                 label: "跟踪状态:"
+                                property int currentState: imageData.trackingState
+                                onCurrentStateChanged: {
+                                    if (currentState === 0x22) trackmsg.showToast("目标已丢失")
+                                    else if (currentState === 0x33) trackmsg.showToast("已锁定目标")
+                                }
                                 value: {
                                     switch(imageData.trackingState) {
                                         case 0x00: return "默认"
                                         case 0x11: return "搜索中"
-                                        case 0x22: trackmsg.showToast("目标已丢失"); return "目标丢失"
-                                        case 0x33: trackmsg.showToast("已锁定目标");  return "目标锁定"
+                                        case 0x22: return "目标丢失"
+                                        case 0x33: return "目标锁定"
                                         case 0x44: return "记忆状态"
                                         default: return "未知状态"
                                     }

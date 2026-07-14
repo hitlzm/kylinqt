@@ -12,6 +12,18 @@ Rectangle {
     height: myheight
     color: '#e9f0f9'
     property int groupHeight1: 150
+
+    MsgPopup2 {
+        id: faultmsg
+    }
+
+    // 捕捉故障信息变化，出现故障时弹窗
+    property int faultStatus: laserData.faultInfo1
+    onFaultStatusChanged: {
+        if (faultStatus === 0x02) {
+            faultmsg.showToast("激光导引头故障")
+        }
+    }
    
 
     // ═══ 数据显示区 ═══

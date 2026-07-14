@@ -15,7 +15,9 @@ Rectangle {
     MessagePopup {
         id: pitchmsg
     }
-
+    MsgPopup2{
+        id:testmsg
+    }
     //下边沿
     Rectangle {
         width: parent.width
@@ -43,6 +45,10 @@ Rectangle {
 
     property int currentCmd: 0
     property int opticalParamCtrlCmd: 0
+
+    // 输入校验标志（默认 true，未输入不算无效）
+    property bool pitchInputValid: true
+    property bool yawInputValid: true
     Text {
         id: titleText
         text: "图像导引头发送区"
@@ -227,8 +233,11 @@ Rectangle {
             interval: 1  
             onTriggered: {
                 // if (imageData.portOpen) tip.show()
-                if (imageData.portOpen) {msg.message = "串口已打开！"; msg.open()}
-                else tip1.show()
+                if (imageData.portOpen) {
+                    // msg.message = "串口已打开！"; msg.open()
+                    testmsg.showToast("串口已打开")
+                    }
+                else { msg.message = "串口打开失败！"; msg.open() }
             }
         }
         onClicked: {
@@ -237,8 +246,6 @@ Rectangle {
             } else {
                 imageData.openPort(serialComboBox.currentText,
                                     parseInt(baudComboBox.currentText))
-                // if (imageData.portOpen) {tip.show()} 
-                // else{tip1.show()}
                 delayTimer.start()
             }
         }
@@ -250,7 +257,7 @@ Rectangle {
         width: 100
         height: 32
         text: "发送数据"
-        enabled: imageData.portOpen
+        enabled: imageData.portOpen && pitchInputValid && yawInputValid
 
         anchors.top: serialComboBox.top
         anchors.left: openButton.right
@@ -561,27 +568,42 @@ Rectangle {
                 myheight: 60
                 title: modelData.title
                 labeltext: modelData.unit
+
+                // 实时校验：每次按键即刻更新发送按钮状态，超出范围即刻弹窗
+                onTextChanged: {
+                    if (index === 2) {
+                        var val = Number(text)
+                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                            if (root.pitchInputValid)  // 仅在由合法变非法时弹一次
+                                testmsg.showToast("偏航角输入范围为-18°~ 18°,请重新输入")
+                            root.pitchInputValid = false
+                        } else {
+                            root.pitchInputValid = true
+                        }
+                    } else if (index === 3) {
+                        var val = Number(text)
+                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                            if (root.yawInputValid)
+                                testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
+                            root.yawInputValid = false
+                        } else {
+                            root.yawInputValid = true
+                        }
+                    }
+                }
+
                 onEditingFinished: {
                     if (index === 0) {
                         imageSendData.m_bodyPosY = parseInt(text)
                     } else if (index === 1) {
                         imageSendData.m_bodyPosZ = parseInt(text)
                     } else if (index === 2) {
-                        //加入范围判断信息，超出范围时弹窗提示
-                        if(Number(text)>18 || Number(text)< -18)
-                        {
-                                azimuthmsg.message = "偏航角输入范围为-18°~ 18°,请重新输入";  azimuthmsg.open()
-                        }else{
+                        if(Number(text) >= -18 && Number(text) <= 18)
                                 imageSendData.m_pitchGimbalPreset = Number(text)
-                        }
                     } else if (index === 3) {
-                        if(Number(text)>18 || Number(text)< -18)
-                        {
-                                pitchmsg.message = "俯仰角输入范围为-18°~ 18°,请重新输入";  pitchmsg.open()
-                        }else{
+                        if(Number(text) >= -18 && Number(text) <= 18)
                                 imageSendData.m_yawGimbalPreset = Number(text)
-                        }
-                        
+
                     } else if (index === 4) {
                         imageSendData.m_irIntegrationTime = parseInt(text)
                     } else if (index === 5) {
