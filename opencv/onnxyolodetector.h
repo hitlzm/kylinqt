@@ -103,6 +103,11 @@ private:
     int   m_numClasses    = 80;
     int   m_numThreads    = 4;
     bool  m_loaded        = false;
+
+    // LetterBox 预处理参数（detect 时计算，供后处理坐标还原用）
+    float m_letterBoxScale = 1.0f;
+    int   m_letterBoxPadX  = 0;
+    int   m_letterBoxPadY  = 0;
 };
 
 #endif // ONNXYOLODETECTOR_H

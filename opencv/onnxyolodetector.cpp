@@ -24,7 +24,7 @@
 //    f. NMS 去重 → 输出最终检测结果
 //
 // ══════════════════════════════════════════════════════════════════════════════
-
+//  后续可优化部分，替换std::exp，自己实现NMS非极大值抑制
 #include "onnxyolodetector.h"
 #include <onnxruntime_cxx_api.h>
 #include <opencv2/dnn.hpp>
@@ -72,14 +72,30 @@ struct OnnxYoloDetectorImpl {
 // 尺度 0: stride=32, 检测大目标（13×13 网格）
 // 尺度 1: stride=16, 检测小目标（26×26 网格）
 // ══════════════════════════════════════════════════════════════════════════════
-static constexpr float kAnchors[2][3][2] = {
-    // 尺度 0 (13×13) — 大锚点
-    {{116, 90}, {156, 198}, {373, 326}},
-    // 尺度 1 (26×26) — 小锚点
-    {{30, 61}, {62, 45}, {59, 119}}
-};
+// static constexpr float kAnchors[2][3][2] = {
+//     // 尺度 0 (13×13) — 大锚点
+//     {{116, 90}, {156, 198}, {373, 326}},
+//     // 尺度 1 (26×26) — 小锚点
+//     {{30, 61}, {62, 45}, {59, 119}}
+// };
 
-static constexpr int kStrides[2] = {32, 16};
+// static constexpr int kStrides[2] = {32, 16};
+//后续换模型的话，可能还需要按着cfg文件改Anchor
+static constexpr float kAnchors[2][3][2] =
+{
+    {
+        {81.f, 82.f},
+        {135.f,169.f},
+        {344.f,319.f}
+    },
+
+    {
+        {10.f,14.f},
+        {23.f,27.f},
+        {37.f,58.f}
+    }
+};
+static constexpr int kStrides[2] = {32,16};
 
 // ══════════════════════════════════════════════════════════════════════════════
 // 工具函数
@@ -264,17 +280,90 @@ void OnnxYoloDetector::setClassNames(const std::vector<std::string> &names) {
 // 预处理 — BGR 原图 → NCHW float blob
 // ══════════════════════════════════════════════════════════════════════════════
 
-static cv::Mat preprocessFrame(const cv::Mat &frame, int w, int h) {
-    // cv::dnn::blobFromImage 一步完成：
-    //   resize → BGR→RGB(swapRB=true) → scale 1/255 → NCHW
-    return cv::dnn::blobFromImage(
-        frame,
-        1.0 / 255.0,                    // scale: 归一化到 [0,1]
-        cv::Size(w, h),                 // 缩放至网络输入尺寸
-        cv::Scalar(0, 0, 0),            // mean: YOLOv3-tiny 不做均值减法
-        true,                            // swapRB: BGR → RGB
-        false                            // crop: 不裁剪
-    );
+// [保留] 旧版 blobFromImage 预处理（直接 resize，不保持宽高比）
+// static cv::Mat preprocessFrame(const cv::Mat &frame, int w, int h) {
+//     // cv::dnn::blobFromImage 一步完成：
+//     //   resize → BGR→RGB(swapRB=true) → scale 1/255 → NCHW
+//     return cv::dnn::blobFromImage(
+//         frame,
+//         1.0 / 255.0,                    // scale: 归一化到 [0,1]
+//         cv::Size(w, h),                 // 缩放至网络输入尺寸
+//         cv::Scalar(0, 0, 0),            // mean: YOLOv3-tiny 不做均值减法
+//         true,                            // swapRB: BGR → RGB
+//         false                            // crop: 不裁剪
+//     );
+// }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 预处理 — LetterBox + 手动转 NCHW blob（不依赖 opencv_dnn 模块）
+// ══════════════════════════════════════════════════════════════════════════════
+//
+// LetterBox 流程：
+//   ① 计算等比缩放比例 → resize 到 (newW, newH)
+//   ② 居中放置到灰色画布 (w, h)，两侧/上下填充 114
+//   ③ BGR→RGB → 归一化 [0,1] → HWC→NCHW 四维 blob
+//
+// 输出参数 outScale / outPad* 供后处理还原坐标：
+//   orig_x = (lb_x - padX) / scale
+//   orig_y = (lb_y - padY) / scale
+// ══════════════════════════════════════════════════════════════════════════════
+
+static cv::Mat preprocessFrame(const cv::Mat &frame, int w, int h,
+                                float &outScale, int &outPadX, int &outPadY) {
+    // ── ① 计算等比缩放，保持宽高比 ──
+    const float scale = std::min(static_cast<float>(w) / frame.cols,
+                                 static_cast<float>(h) / frame.rows);
+    const int newW = static_cast<int>(std::round(frame.cols * scale));
+    const int newH = static_cast<int>(std::round(frame.rows * scale));
+
+    outScale = scale;
+    outPadX  = (w - newW) / 2;
+    outPadY  = (h - newH) / 2;
+
+    // ── ② 等比缩放 ──
+    cv::Mat resized;
+    cv::resize(frame, resized, cv::Size(newW, newH));
+
+    // ── ③ 放置到灰色画布（YOLO 约定填充值 114）──
+    cv::Mat canvas(h, w, CV_8UC3, cv::Scalar(114, 114, 114));
+    resized.copyTo(canvas(cv::Rect(outPadX, outPadY, newW, newH)));
+
+    // ── ④ BGR → RGB, uint8 → float, 归一化 [0,1] ──
+    // cv::Mat rgb;
+    // cv::cvtColor(canvas, rgb, cv::COLOR_BGR2RGB);
+    // cv::Mat floatMat;
+    // rgb.convertTo(floatMat, CV_32F, 1.0 / 255.0);
+
+    // ── ⑤ HWC → CHW → NCHW（手动构建 4D blob）──
+    // std::vector<cv::Mat> planes(3);
+    // cv::split(floatMat, planes);          // planes[0]=R, planes[1]=G, planes[2]=B
+
+    // int sz[] = {1, 3, h, w};
+    // cv::Mat blob(4, sz, CV_32F);
+    // for (int c = 0; c < 3; ++c) {
+    //     planes[c].copyTo(cv::Mat(h, w, CV_32F, blob.ptr<float>(0, c)));
+    // }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // [备选] ④+⑤ 融合版：一次遍历完成 BGR→RGB + 归一化 + HWC→NCHW
+    // 省掉 cvtColor、convertTo、split 三步中间分配，速度与 blobFromImage 持平
+    // 如需极致性能可替换上方 ④⑤ 步骤，当前版本可读性更好
+    // ═══════════════════════════════════════════════════════════════════════════
+    
+    int sz[] = {1, 3, h, w};
+    cv::Mat blob(4, sz, CV_32F);
+    
+    for (int y = 0; y < h; ++y) {
+        const uint8_t *srcRow = canvas.ptr<uint8_t>(y);
+        for (int x = 0; x < w; ++x) {
+            const uint8_t *px = srcRow + x * 3;
+            blob.ptr<float>(0, 0)[y * w + x] = px[2] / 255.0f;  // R ← BGR[2]
+            blob.ptr<float>(0, 1)[y * w + x] = px[1] / 255.0f;  // G ← BGR[1]
+            blob.ptr<float>(0, 2)[y * w + x] = px[0] / 255.0f;  // B ← BGR[0]
+        }
+    }
+
+    return blob;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -303,6 +392,9 @@ static void decodeYoloScale(
     int stride,                     // 下采样步长
     const float anchors[3][2],      // 该尺度的 3 个锚点
     float confThreshold,
+    float letterBoxScale,           // LetterBox 等比缩放比例
+    int letterBoxPadX,              // LetterBox 水平填充量
+    int letterBoxPadY,              // LetterBox 垂直填充量
     std::vector<int> &classIds,
     std::vector<float> &confidences,
     std::vector<cv::Rect> &boxes)
@@ -348,17 +440,24 @@ static void decodeYoloScale(
                 if (confidence < confThreshold)
                     continue;
 
-                // ── 解码边界框（归一化坐标 0~1）──
+                // ── 解码边界框（归一化坐标 0~1，相对于 LetterBox 画布）──
                 const float bx = (sigmoid(tx) + static_cast<float>(gx)) / static_cast<float>(GW);
                 const float by = (sigmoid(ty) + static_cast<float>(gy)) / static_cast<float>(GH);
                 const float bw = anchors[a][0] * std::exp(tw) / static_cast<float>(IW);
                 const float bh = anchors[a][1] * std::exp(th) / static_cast<float>(IH);
 
-                // ── 映射到原始帧尺寸 ──
-                const int left   = static_cast<int>((bx - bw * 0.5f) * static_cast<float>(FW));
-                const int top    = static_cast<int>((by - bh * 0.5f) * static_cast<float>(FH));
-                const int width  = static_cast<int>(bw * static_cast<float>(FW));
-                const int height = static_cast<int>(bh * static_cast<float>(FH));
+                // ── 从 LetterBox 画布坐标还原为原始图像坐标 ──
+                // lb* = 归一化坐标 × 画布尺寸 → 画布像素
+                // 减去 padding offset → 除以 scale → 原图像素
+                const float lbX = bx * static_cast<float>(IW);
+                const float lbY = by * static_cast<float>(IH);
+                const float lbW = bw * static_cast<float>(IW);
+                const float lbH = bh * static_cast<float>(IH);
+
+                const int left   = static_cast<int>((lbX - lbW * 0.5f - static_cast<float>(letterBoxPadX)) / letterBoxScale);
+                const int top    = static_cast<int>((lbY - lbH * 0.5f - static_cast<float>(letterBoxPadY)) / letterBoxScale);
+                const int width  = static_cast<int>(lbW / letterBoxScale);
+                const int height = static_cast<int>(lbH / letterBoxScale);
 
                 // ── 裁剪到图像范围内 ──
                 const int x1 = std::max(0, left);
@@ -394,8 +493,15 @@ bool OnnxYoloDetector::detect(const cv::Mat &frame, std::vector<OnnxDetection> &
     }
 
     try {
-        // ══ 步骤① 预处理 ══
-        cv::Mat blob = preprocessFrame(frame, m_inputWidth, m_inputHeight);
+        // ══ 步骤① 预处理（LetterBox + NCHW blob）══
+        float letterBoxScale;
+        int letterBoxPadX, letterBoxPadY;
+        cv::Mat blob = preprocessFrame(frame, m_inputWidth, m_inputHeight,
+                                        letterBoxScale, letterBoxPadX, letterBoxPadY);
+        // 保存 LetterBox 参数，供后处理坐标还原使用
+        m_letterBoxScale = letterBoxScale;
+        m_letterBoxPadX  = letterBoxPadX;
+        m_letterBoxPadY  = letterBoxPadY;
 
         // ══ 步骤② 构造输入张量 ══
         Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(
@@ -467,6 +573,9 @@ bool OnnxYoloDetector::detect(const cv::Mat &frame, std::vector<OnnxDetection> &
                 kStrides[s],
                 kAnchors[s],
                 m_confThreshold,
+                m_letterBoxScale,
+                m_letterBoxPadX,
+                m_letterBoxPadY,
                 allClassIds,
                 allConfidences,
                 allBoxes
