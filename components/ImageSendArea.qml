@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 560
+    height: 750
     color: '#e9f0f9'
 
     MessagePopup {
@@ -49,6 +49,10 @@ Rectangle {
     // 输入校验标志（默认 true，未输入不算无效）
     property bool pitchInputValid: true
     property bool yawInputValid: true
+
+    // 接收回告描述缓存（无效值时保持上一次的描述）
+    property string lastValidDesc1: "默认值"
+    property string lastValidDesc2: "默认值"
     Text {
         id: titleText
         text: "图像导引头发送区"
@@ -230,7 +234,7 @@ Rectangle {
         anchors.leftMargin: 20
         Timer {
             id: delayTimer
-            interval: 1  
+            interval: 1
             onTriggered: {
                 // if (imageData.portOpen) tip.show()
                 if (imageData.portOpen) {
@@ -293,103 +297,93 @@ Rectangle {
         anchors.leftMargin: 20
     }
 
-    // 左侧输入框
-    Column {
-        id: leftInputColumn
-        spacing: 3
+    // 框架角预装输入行
+    Row {
+        id: presetInputRow
+        spacing: 30
 
         anchors.top: serialComboBox.bottom
         anchors.topMargin: 10
-        anchors.left:serialComboBox.left
+        anchors.left: serialComboBox.left
 
-        Repeater {
+        MyTextField {
+            id: pitchPresetField
+            mywidth: 120
+            myheight: 60
+            title: "俯仰框架角预装"
+            labeltext: "°"
 
-            model: [
-            { title: "弹目距离", unit: "m" },
-            { title: "导弹速度",  unit: "m/s" },
-            { title: "弹体俯仰角",  unit: "°" },
-            { title: "弹体方位角",  unit: "°" },
-            { title: "弹体滚转角",  unit: "°" },
-            { title: "弹体俯仰角速度",  unit: "°/s" },
-            { title: "修正图像帧序号",  unit: "" }
-
-            ]
-
-            delegate: MyTextField {
-                mywidth: 120
-                myheight: 60
-                title: modelData.title
-                labeltext: modelData.unit
-                onEditingFinished: {
-                    if (index === 0) {
-                        imageSendData.m_missileTargetDistance = Number(text)
-                        console.log("弹目距离:", imageSendData.m_missileTargetDistance)
-                    } else if (index === 1) {
-                        imageSendData.m_missileSpeed = Number(text)
-                    } else if (index === 2) {
-                        imageSendData.m_bodyPitchAngle = Number(text)
-                    } else if (index === 3) {
-                        imageSendData.m_bodyYawAngle = Number(text)
-                    } else if (index === 4) {
-                        imageSendData.m_bodyRollAngle = Number(text)
-                    } else if (index === 5) {
-                        imageSendData.m_bodyPitchRate = Number(text)
-                    } else if (index === 6) {
-                        imageSendData.m_correctionFrameNum = parseInt(text)
-                    }
+            // 实时校验：每次按键即刻更新发送按钮状态，超出范围即刻弹窗
+            onTextChanged: {
+                var val = Number(text)
+                if (!isNaN(val) && (val > 18 || val < -18)) {
+                    if (root.pitchInputValid)  // 仅在由合法变非法时弹一次
+                        testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
+                    root.pitchInputValid = false
+                } else {
+                    root.pitchInputValid = true
                 }
+            }
+
+            onEditingFinished: {
+                if (Number(text) >= -18 && Number(text) <= 18)
+                    imageSendData.m_pitchGimbalPreset = Number(text)
+            }
+        }
+
+        MyTextField {
+            id: yawPresetField
+            mywidth: 120
+            myheight: 60
+            title: "偏航框架角预装"
+            labeltext: "°"
+
+            onTextChanged: {
+                var val = Number(text)
+                if (!isNaN(val) && (val > 18 || val < -18)) {
+                    if (root.yawInputValid)
+                        testmsg.showToast("偏航角输入范围为-18°~ 18°,请重新输入")
+                    root.yawInputValid = false
+                } else {
+                    root.yawInputValid = true
+                }
+            }
+
+            onEditingFinished: {
+                if (Number(text) >= -18 && Number(text) <= 18)
+                    imageSendData.m_yawGimbalPreset = Number(text)
             }
         }
     }
 
-    // 右侧输入框
-    Column {
-        id: rightInputColumn
-        spacing: 3
+    // ═══ 自检状态指示灯（输入框右侧）═══
+    // 数据来源：imageData.selfCheckFlag2~6，1=正常, 其他=故障
+    Row {
+        id: indicatorRow
+        spacing: 20
 
-        anchors.top: sendButton.bottom
-        anchors.topMargin: 10
-        anchors.left: leftInputColumn.right
+        anchors.left: presetInputRow.right
         anchors.leftMargin: 30
-        Repeater {
-            model: [
-            { title: "弹体方位角速度",  unit: "°/s" },
-            { title: "弹体滚转角速度", unit: "m/s" },
-            { title: "弹体X向速度",  unit: "m/s" },
-            { title: "弹体Y向速度",  unit: "m/s" },
-            { title: "弹体Z向速度",  unit: "m/s" },
-            { title: "弹体X坐标",  unit: "m" }
+        anchors.verticalCenter: presetInputRow.verticalCenter
 
-            ]
-            delegate: MyTextField {
-                mywidth: 120
-                myheight: 60
-                title: modelData.title
-                labeltext: modelData.unit
-                onEditingFinished: {
-                    if (index === 0) {
-                        imageSendData.m_bodyYawRate = Number(text)
-                    } else if (index === 1) {
-                        imageSendData.m_bodyRollRate = Number(text)
-                    } else if (index === 2) {
-                        imageSendData.m_bodyVelX = Number(text)
-                    } else if (index === 3) {
-                        imageSendData.m_bodyVelY = Number(text)
-                    } else if (index === 4) {
-                        imageSendData.m_bodyVelZ = Number(text)
-                    } else if (index === 5) {
-                        imageSendData.m_bodyPosX = parseInt(text)
-                    }
-                }
-            }
-        }
-
+        Indicator { id: indIrVideo;   label: "红外视频接收"; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        Indicator { id: indTvVideo;   label: "电视视频接收"; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        Indicator { id: indVideoOut;  label: "视频输出";     normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        Indicator { id: indComm;      label: "通讯";         normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        Indicator { id: indServo;     label: "伺服自检";     normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
     }
-     MyComboBox {
+
+    // 下拉选择框第一行
+    Row {
+        id: comboRow1
+        spacing: 50
+
+        anchors.top: presetInputRow.bottom
+        anchors.topMargin: 10
+        anchors.left: presetInputRow.left
+
+        MyComboBox {
             id: myCombox1
-            anchors.top: rightInputColumn.bottom
-            anchors.topMargin: 3
-            anchors.left: rightInputColumn.left
             mywidth: 180
             myheight: 55
             title: "光学参数装订控制字"
@@ -415,11 +409,8 @@ Rectangle {
                 }
             }
         }
-    MyComboBox {
+        MyComboBox {
             id: myCombox2
-            anchors.top: myCombox1.top
-            anchors.left: myCombox1.right
-            anchors.leftMargin: 50
             mywidth: 90
             myheight: 55
             title: "模板序号"
@@ -430,11 +421,8 @@ Rectangle {
              }
             }
         }
-    MyComboBox {
+        MyComboBox {
             id: myCombox3
-            anchors.top: myCombox2.top
-            anchors.left: myCombox2.right
-            anchors.leftMargin: 50
             mywidth: 140
             myheight: 55
             title: "预装目标类型"
@@ -453,11 +441,8 @@ Rectangle {
              }
             }
         }
-    MyComboBox {
+        MyComboBox {
             id: myCombox4
-            anchors.top: myCombox3.top
-            anchors.left: myCombox3.right
-            anchors.leftMargin: 50
             mywidth: 100
             myheight: 55
             title: "背景类型"
@@ -482,11 +467,19 @@ Rectangle {
              }
             }
         }
-     MyComboBox {
+    }
+
+    // 下拉选择框第二行
+    Row {
+        id: comboRow2
+        spacing: 50
+
+        anchors.top: comboRow1.bottom
+        anchors.topMargin: 10
+        anchors.left: comboRow1.left
+
+        MyComboBox {
             id: myCombox5
-            anchors.top: leftInputColumn.bottom
-            anchors.topMargin:3
-            anchors.left: leftInputColumn.left
             mywidth: 120
             myheight: 55
             title: "目标灰度类型"
@@ -499,9 +492,6 @@ Rectangle {
         }
         MyComboBox {
             id: myCombox6
-            anchors.top: myCombox5.top
-            anchors.left: myCombox5.right
-            anchors.leftMargin: 50
             mywidth: 120
             myheight: 55
             title: "目标动静类型"
@@ -510,14 +500,11 @@ Rectangle {
                if (mycurrentIndex !== -1) {
                imageSendData.m_targetBackgroundType3 = mycurrentIndex;
                }
-             
+
             }
         }
         MyComboBox {
             id: myCombox7
-              anchors.top: myCombox6.top
-            anchors.left: myCombox6.right
-            anchors.leftMargin: 50
             mywidth: 140
             myheight: 55
             title: "修正指令状态"
@@ -530,9 +517,6 @@ Rectangle {
         }
         MyComboBox {
             id: myCombox8
-              anchors.top: myCombox7.top
-            anchors.left: myCombox7.right
-            anchors.leftMargin: 50
             mywidth: 120
             myheight: 55
             title: "波门大小"
@@ -545,196 +529,425 @@ Rectangle {
              }
             }
         }
-    Column {
-        id: thirdInputColumn
-        spacing: 3
+    }
 
-        anchors.top: sendButton.bottom
+    // ═══ 帧信息 / 控制状态信息（来自接收区）═══
+    Row {
+        id: recvInfoRow
+        spacing: 8
+
+        anchors.top: comboRow2.bottom
         anchors.topMargin: 10
-        anchors.left: rightInputColumn.right
-        anchors.leftMargin: 30
-        Repeater {
-            model: [
-            { title: "弹体Y坐标",  unit: "m" },
-            { title: "弹体Z坐标",  unit: "m" },
-            { title: "俯仰框架角预装", unit: "°" },
-            { title: "偏航框架角预装",  unit: "°" },
-            { title: "红外积分时间",  unit: "ms" },
-            { title: "修正后俯仰跟踪位置",  unit: "" }
-            ]
+        anchors.left: commandArea.right
+        anchors.leftMargin: 10
 
-            delegate: MyTextField {
-                mywidth: 120
-                myheight: 60
-                title: modelData.title
-                labeltext: modelData.unit
+        // ── 帧信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "帧信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
 
-                // 实时校验：每次按键即刻更新发送按钮状态，超出范围即刻弹窗
-                onTextChanged: {
-                    if (index === 2) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
-                            if (root.pitchInputValid)  // 仅在由合法变非法时弹一次
-                                testmsg.showToast("偏航角输入范围为-18°~ 18°,请重新输入")
-                            root.pitchInputValid = false
-                        } else {
-                            root.pitchInputValid = true
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Column {
+                spacing: 6
+
+                DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "B帧流水号:"; value: imageData.bFrameSequence }
+                DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "A帧流水号回告:"; value: imageData.aFrameSequenceReply }
+                DataLabel {
+                    fontSize: 16
+                    labelWidth: 120
+                    valueWidth: 60
+                    label: "A帧有效标志:"
+                    value: imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                    valueColor: imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+                }
+            }
+        }
+
+        // ── 控制/状态信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "控制/状态信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
+
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Row {
+                spacing: 8
+
+                Column {
+                    spacing: 6
+
+                    DataLabel {
+                        fontSize: 16
+                        labelWidth: 105
+                        valueWidth: 165
+                        label: "导引头控制字:"
+
+                        value: {
+                            var v = imageData.seekerCtrlReply;
+                            var currentDesc = null;  // null 代表“此次不更新缓存”
+                            switch(v) {
+                                case 0x01: currentDesc = "自检通过"; break;
+                                case 0x02: currentDesc = "射检通过"; break;
+                                case 0x04: currentDesc = "搜索回告"; break;
+                                case 0x06: currentDesc = "发射指令回告"; break;
+                                case 0x41: currentDesc = "解锁回告"; break;
+                                case 0x42: currentDesc = "软件升级成功回告"; break;
+                                case 0x43: currentDesc = "软件升级失败回告"; break;
+                                case 0x44: currentDesc = "软件升级中"; break;
+                                case 0x55: currentDesc = "通讯检查通过"; break;
+                                case 0xE1: currentDesc = "自检中"; break;
+                                case 0xE2: currentDesc = "射检中"; break;
+                                case 0xF1: currentDesc = "自检不通过"; break;
+                                case 0xF2: currentDesc = "射检不通过"; break;
+                                case 0xF4: currentDesc = "通讯检查不通过"; break;
+                                default: break;
+                            }
+                            if (currentDesc !== null) {
+                                root.lastValidDesc1 = currentDesc;
+                            }
+                            return root.lastValidDesc1;
                         }
-                    } else if (index === 3) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
-                            if (root.yawInputValid)
-                                testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
-                            root.yawInputValid = false
-                        } else {
-                            root.yawInputValid = true
+                        valueColor: {
+                            var v = imageData.seekerCtrlReply
+                            if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
+                            if (v >= 0xF0 || v === 0x43) return "#d93025"
+                            return "#1a73e8"
+                        }
+                    }
+                    DataLabel {
+                        fontSize: 16
+                        labelWidth: 105
+                        valueWidth: 165
+                        label: "光学参数装订:"
+
+                        value: {
+                            var v = imageData.opticalParamReply
+                            var currentDesc = null;
+                            switch(v) {
+
+                                case 0xE1: currentDesc = "非卫星图模板装订成功"; break
+                                case 0xE2: currentDesc = "卫星图模板装订成功"; break
+                                case 0xE3: currentDesc = "模板装订中"; break
+                                case 0xE4: currentDesc = "红外非均匀校正成功"; break
+                                case 0xE5: currentDesc = "模板正在擦除"; break
+                                case 0xE6: currentDesc = "模板擦除成功"; break
+                                case 0xE7: currentDesc = "非卫星图模板装订失败"; break
+                                case 0xE8: currentDesc = "卫星图模板装订失败"; break
+                                case 0xE9: currentDesc = "盲元校正成功"; break
+                                default: break
+                            }
+                            if (currentDesc !== null) {
+                                root.lastValidDesc2 = currentDesc;
+                            }
+                            return root.lastValidDesc2;
+                        }
+                        valueColor: {
+                            var v = imageData.opticalParamReply
+                            if (v === 0xE3 || v === 0xE5) return "#e68a00"
+                            if (v === 0xE7 || v === 0xE8) return "#d93025"
+                            return "#1a73e8"
+                        }
+                    }
+                    DataLabel {
+                        fontSize: 16
+                        labelWidth: 105
+                        valueWidth: 165
+                        label: "当前工作通道:"
+                        value: imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
+                    }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 165; label: "自检标志:"; value: "0x" + imageData.selfCheckFlag.toString(16).toUpperCase() }
+                }
+
+                Column {
+                    spacing: 6
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "目标类型:"; value: switch(imageData.m_targetBackgroundType1) {
+                                case 0x00: return "车辆"
+                                case 0x01: return "小型建筑物"
+                                case 0x02: return "坦克"
+                                case 0x04: return "舰船"
+                                case 0x07: return "靶标"
+                                default: return "未知"
+                            } }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "目标灰度类型:"; value: switch(imageData.m_targetBackgroundType2) {
+                                case 0x00: return "亮目标"
+                                case 0x01: return "暗目标"
+                                default: return "未知"
+                            } }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "目标动/静:"; value: switch(imageData.m_targetBackgroundType3) {
+                                case 0x00: return "静目标"
+                                case 0x01: return "动目标"
+                                default: return "未知"
+                            } }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "背景类型:"; value: switch(imageData.m_targetBackgroundType4) {
+                                case 0x00: return "平原"
+                                case 0x01: return "沙漠"
+                                case 0x02: return "岛岸"
+                                case 0x03: return "山地"
+                                case 0x04: return "丛林"
+                                case 0x05: return "公路"
+                                case 0x06: return "城市"
+                                case 0x07: return "湖泊"
+                                default: return "未知"
+                            }  }
+                }
+
+                Column {
+                    spacing: 6
+                    DataLabel {
+                        fontSize: 16
+                        labelWidth: 105
+                        valueWidth: 150
+                        label: "光学工作状态:"
+                        value: {
+                            switch(imageData.opticalWorkState) {
+                                case 0x02: return "搜索状态"
+                                //跟踪到目标时弹窗提示2-3秒
+                                case 0x03: return "跟踪状态"
+                                case 0x04: return "框架角电锁零位状态"
+                                case 0x05: return "记忆状态"
+                                case 0x06: return "解锁状态"
+                                default: return "未知状态"
+                            }
+                        }
+                    }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 150; label: "修正指令状态:"; value: imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态" }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 150; label: "修正指令次数:"; value: imageData.correctionCmdCount }
+                }
+            }
+        }
+    }
+
+    // ═══ 跟踪 / 角度 / 伺服平台信息（来自接收区）═══
+    Row {
+        id: recvInfoRow2
+        spacing: 8
+
+        anchors.top: recvInfoRow.bottom
+        anchors.topMargin: 8
+        anchors.left: recvInfoRow.left
+
+        // ── 跟踪信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "跟踪信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
+
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Column {
+                spacing: 6
+
+                DataLabel {
+                    fontSize: 16
+                    labelWidth: 105
+                    valueWidth: 80
+                    label: "跟踪状态:"
+                    property int currentState: imageData.trackingState
+                    onCurrentStateChanged: {
+                        if (currentState === 0x22) testmsg.showToast("目标已丢失")
+                        else if (currentState === 0x33) testmsg.showToast("已锁定目标")
+                    }
+                    value: {
+                        switch(imageData.trackingState) {
+                            case 0x00: return "默认"
+                            case 0x11: return "搜索中"
+                            case 0x22: return "目标丢失"
+                            case 0x33: return "目标锁定"
+                            case 0x44: return "记忆状态"
+                            default: return "未知状态"
+                        }
+                    }
+                    valueColor: imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
+                }
+                DataLabel {
+                    fontSize: 16
+                    labelWidth: 105
+                    valueWidth: 80
+                    label: "跟踪器状态:"
+                    value: {
+                        switch(imageData.trackerState) {
+                            case 0x00: return "空闲状态"
+                            case 0x01: return "跟踪状态"
+                            case 0x02: return "识别状态"
+                            case 0x03: return "匹配状态"
+                            default: return "未知状态"
                         }
                     }
                 }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "方位偏差像素:"; value: imageData.azimuthDeviationPixel }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰偏差像素:"; value: imageData.pitchDeviationPixel }
+            }
+        }
 
-                onEditingFinished: {
-                    if (index === 0) {
-                        imageSendData.m_bodyPosY = parseInt(text)
-                    } else if (index === 1) {
-                        imageSendData.m_bodyPosZ = parseInt(text)
-                    } else if (index === 2) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
-                                imageSendData.m_pitchGimbalPreset = Number(text)
-                    } else if (index === 3) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
-                                imageSendData.m_yawGimbalPreset = Number(text)
+        // ── 角度信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "角度信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
 
-                    } else if (index === 4) {
-                        imageSendData.m_irIntegrationTime = parseInt(text)
-                    } else if (index === 5) {
-                        imageSendData.m_correctedPitchPos = parseInt(text)
-                    }
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Column {
+                spacing: 6
+
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰框架角:"; value: imageData.pitchFrameAngle.toFixed(2) + "°" }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "偏航框架角:"; value: imageData.yawFrameAngle.toFixed(2) + "°" }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "方位主令:"; value: imageData.azimuthMasterCmd }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰主令:"; value: imageData.pitchMasterCmd }
+            }
+        }
+
+        // ── 伺服/平台信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "伺服/平台信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
+
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Column {
+                spacing: 6
+
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "平台自检结果:"; value: imageData.platformSelfCheck }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "伺服运行时间:"; value: imageData.servoRunningTime + " s" }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "伺服阶跃:"; value: imageData.servoStep }
+            }
+        }
+    }
+
+    // ═══ 角速度陀螺 / 其他信息（来自接收区）═══
+    Row {
+        id: recvInfoRow3
+        spacing: 8
+
+        anchors.top: recvInfoRow2.bottom
+        anchors.topMargin: 8
+        anchors.left: recvInfoRow2.left
+
+        // ── 角速度信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "角速度/陀螺信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
+
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Row {
+                spacing: 8
+
+                Column {
+                    spacing: 6
+                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "俯仰视线角速度:"; value: imageData.pitchLosAngVel.toFixed(2) + "°/s" }
+                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "偏航视线角速度:"; value: imageData.yawLosAngVel.toFixed(2) + "°/s" }
+                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "俯仰陀螺:"; value: imageData.pitchGyro.toFixed(2) + "°/s" }
+                }
+                Column {
+                    spacing: 6
+                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "偏航陀螺:"; value: imageData.yawGyro.toFixed(2) + "°/s" }
+                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "方位陀螺输出:"; value: imageData.azimuthGyroOutput.toFixed(2) + "°/s" }
+                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "俯仰陀螺输出:"; value: imageData.pitchGyroOutput.toFixed(2) + "°/s" }
                 }
             }
         }
 
-    }
-
-    Column {
-        id:fourthInputColumn
-        spacing: 3
-
-        anchors.top: sendButton.bottom
-        anchors.topMargin: 10
-        anchors.left: thirdInputColumn.right
-        anchors.leftMargin: 30
-        Repeater {
-
-            model: [
-            { title: "修正后偏航跟踪位置",  unit: "" },
-            { title: "搜索俯仰角速度",  unit: "°/s" },
-            { title: "搜索方位角速度",  unit: "°/s" },
-            { title: "目标海拔高度",  unit: "m" },
-            { title: "飞机俯仰角",  unit: "°" },
-            { title: "飞机方位角",  unit: "°" },
-            ]
-            delegate: MyTextField {
-                mywidth: 120
-                myheight: 60
-                title: modelData.title
-                labeltext: modelData.unit
-                onEditingFinished: {
-                    if (index === 0) {
-                        imageSendData.m_correctedYawPos = parseInt(text)
-                    } else if (index === 1) {
-                        imageSendData.m_searchPitchRate = Number(text)
-                    } else if (index === 2) {
-                        imageSendData.m_searchYawRate = Number(text)
-                    } else if (index === 3) {
-                        imageSendData.m_targetAltitude = parseInt(text)
-                    } else if (index === 4) {
-                        imageSendData.m_aircraftPitch = Number(text)
-                    } else if (index === 5) {
-                        imageSendData.m_aircraftYaw = Number(text)
-                    }
-                }
+        // ── 其他信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
             }
-        }
-    }
-    Column {
-        id:mInputColumn5
-        spacing: 3
+            title: "其他信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
 
-        anchors.top: sendButton.bottom
-        anchors.topMargin: 10
-        anchors.left: fourthInputColumn.right
-        anchors.leftMargin: 30
-        Repeater {
-            model: [
-            { title: "飞机滚转角",  unit: "°" },
-            { title: "焦距",  unit: "mm" },
-            { title: "吊舱俯仰框架角",  unit: "°" },
-            { title: "吊舱方位框架角",  unit: "°" },
-            { title: "卫星图比例",  unit: "" },
-            { title: "吊舱类型",  unit: "" }
-
-            ]
-
-            delegate: MyTextField {
-                mywidth: 120
-                myheight: 60
-                title: modelData.title
-                labeltext: modelData.unit
-                onEditingFinished: {
-                    if (index === 0) {
-                        imageSendData.m_aircraftRoll = Number(text)
-                    } else if (index === 1) {
-                        imageSendData.m_focalLength = parseInt(text)
-                    } else if (index === 2) {
-                        imageSendData.m_podPitchAngle = Number(text)
-                    } else if (index === 3) {
-                        imageSendData.m_podYawAngle = Number(text)
-                    } else if (index === 4) {
-                        imageSendData.m_satelliteMapScale = parseInt(text)
-                    } else if (index === 5) {
-                        imageSendData.m_podType = parseInt(text)
-                    }
-                }
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
             }
-        }
-    }
-     Column {
-        id:mInputColumn6
-        spacing: 3
 
-        anchors.top: sendButton.bottom
-        anchors.topMargin: 10
-        anchors.left: mInputColumn5.right
-        anchors.leftMargin: 30
-        Repeater {
-            model: [
-            { title: "目标经度",  unit: "°" },
-            { title: "目标纬度",  unit: "°" },
-            { title: "飞机经度",  unit: "°" },
-            { title: "飞机纬度",  unit: "°" },
-            { title: "飞机海拔高度",  unit: "m" },
-            { title: "像元尺寸",  unit: "μm" }
-            ]
+            Row {
+                spacing: 8
 
-            delegate: MyTextField {
-                mywidth: 120
-                myheight: 60
-                title: modelData.title
-                labeltext: modelData.unit
-                onEditingFinished: {
-                    if (index === 0) {
-                        imageSendData.m_targetLongitude = Number(text)
-                    } else if (index === 1) {
-                        imageSendData.m_targetLatitude = Number(text)
-                    } else if (index === 2) {
-                        imageSendData.m_aircraftLongitude = Number(text)
-                    } else if (index === 3) {
-                        imageSendData.m_aircraftLatitude = Number(text)
-                    } else if (index === 4) {
-                        imageSendData.m_aircraftAltitude = parseInt(text)
-                    } else if (index === 5) {
-                        imageSendData.m_pixelSize = parseInt(text)
-                    }
+                Column {
+                    spacing: 6
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "红外帧编号:"; value: imageData.infraredFrameNum }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "红外帧频:"; value: imageData.infraredFrameRate + " Hz" }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "电视帧频:"; value: imageData.tvFrameRate + " Hz" }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "Cbh_tv4405:"; value: imageData.cbhTv4405 }
+                }
+                Column {
+                    spacing: 6
+
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "波门尺寸:"; value: imageData.gateSize }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "软件版本1:"; value: imageData.softwareVersion1 }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "软件版本2:"; value: imageData.softwareVersion2 }
+                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "软件版本3:"; value: imageData.softwareVersion3 }
                 }
             }
         }

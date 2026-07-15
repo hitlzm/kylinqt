@@ -15,7 +15,7 @@ Window {
     Item {
     id:dyt
     width: 1200
-    height: 800
+    height: 900
    
     Column {
         anchors.fill: parent
