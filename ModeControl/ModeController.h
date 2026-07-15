@@ -25,7 +25,6 @@ public:
     }
 
 signals:
-    
     void modeChanged(int newMode); // 新增信号，通知模式已改变
 private slots:
     

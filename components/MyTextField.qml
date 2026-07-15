@@ -38,17 +38,26 @@ Item {
     anchors.top: titleText.bottom
     anchors.topMargin: 2
 
-    CusTextField {
-        id: textField
-        // Layout.fillWidth: true
-        Layout.preferredHeight: myheight - titleText.height - rowLayout.spacing
+    Item {
         Layout.preferredWidth: mywidth - mylabel.width - rowLayout.spacing
-        font.pixelSize: 16
-        // 水平居中
-        horizontalAlignment: TextInput.AlignHCenter
-        // 垂直居中：设置垂直居中对齐和相同的上下内边距
-        verticalAlignment: TextInput.AlignVCenter
-        onEditingFinished: root.editingFinished()
+        Layout.preferredHeight: myheight - titleText.height - rowLayout.spacing
+
+        CusTextField {
+            id: textField
+            anchors.fill: parent
+            font.pixelSize: 16
+            horizontalAlignment: TextInput.AlignHCenter
+            verticalAlignment: TextInput.AlignVCenter
+            onEditingFinished: root.editingFinished()
+        }
+
+        // 灰色覆盖层，现在锚定到父项（即 Item）
+        Rectangle {
+            anchors.fill: parent
+            color: "#D0D0D0"
+            visible: !root.enabled
+            z: 10
+        }
     }
     Label {
         id: mylabel
@@ -62,11 +71,5 @@ Item {
 
    }
 
-    // 禁用时：文本框背景变灰
-    Rectangle {
-        anchors.fill: textField
-        color: "#D0D0D0"
-        visible: !root.enabled
-        z: 10
-    }
+    
 }

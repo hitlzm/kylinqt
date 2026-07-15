@@ -44,6 +44,13 @@ public:
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
 
+    // ── StreamProcessor 接口 ──────────────────────────────
+    /// 获取最新解码帧的深拷贝（线程安全，供外部消费者如 StreamProcessor 调用）
+    QImage grabFrame() const;
+
+    /// 提交处理后的帧用于渲染显示（线程安全，供 StreamProcessor 回传）
+    void submitProcessedFrame(const QImage &frame);
+
     // ---- QQuickFramebufferObject 接口 ----
     Renderer *createRenderer() const override;
 
@@ -83,11 +90,18 @@ private:
     libvlc_media_player_t *m_player = nullptr;
     libvlc_event_manager_t *m_eventManager = nullptr;
 
-    QImage m_frame;
+    // 双缓冲：VLC 写 m_frameBuf[m_writeIdx]，消费者读 m_frameBuf[m_readyIdx]
+    QImage m_frameBuf[2];
+    int    m_writeIdx = 0;
+    int    m_readyIdx = -1;             // -1 = 尚无就绪帧
     mutable QMutex m_frameMutex;
     unsigned m_width = 0;
     unsigned m_height = 0;
     volatile bool m_frameUpdated = false;
+
+    // StreamProcessor 处理后回传的帧
+    QImage m_processedFrame;
+    bool   m_hasProcessedFrame = false;
 
     bool m_playing = false;
     int m_volume = 100;

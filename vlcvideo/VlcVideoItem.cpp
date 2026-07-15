@@ -47,11 +47,18 @@ public:
         // GUI 线程被阻塞，可以安全读 m_item 的属性（不含互斥锁）
         QMutexLocker lock(&m_item->m_frameMutex);
 
-        if (m_item->m_frameUpdated && !m_item->m_frame.isNull()) {
-            m_frameCopy = m_item->m_frame.copy();   // 深拷贝，渲染线程独占
+        if (m_item->m_frameUpdated && m_item->m_readyIdx >= 0) {
+            // 若有 StreamProcessor 处理后的帧则优先显示，否则显示原始解码帧
+            const QImage &rawFrame = m_item->m_frameBuf[m_item->m_readyIdx];
+            const QImage &src = m_item->m_hasProcessedFrame
+                                && !m_item->m_processedFrame.isNull()
+                                ? m_item->m_processedFrame
+                                : rawFrame;
+            m_frameCopy = src.copy();   // 深拷贝，渲染线程独占
             m_videoSize = m_frameCopy.size();
             m_textureDirty = true;
             m_item->m_frameUpdated = false;
+            m_item->m_hasProcessedFrame = false;
         }
 
         // 窗口尺寸变化 → 重新计算 quad 顶点
@@ -327,6 +334,32 @@ qint64 VlcVideoItem::length() const
 
 bool VlcVideoItem::isSeekable() const { return m_seekable; }
 
+// ══════════════════════════════════════════════════════════════════
+// StreamProcessor 接口
+// ══════════════════════════════════════════════════════════════════
+
+QImage VlcVideoItem::grabFrame() const
+{
+    QMutexLocker lock(&m_frameMutex);
+    if (m_readyIdx < 0 || m_frameBuf[m_readyIdx].isNull())
+        return QImage();
+    // 隐式共享（浅拷贝），StreamProcessor 会立即 cvtColor 消费掉
+    return m_frameBuf[m_readyIdx];
+}
+
+void VlcVideoItem::submitProcessedFrame(const QImage &frame)
+{
+    {
+        QMutexLocker lock(&m_frameMutex);
+        m_processedFrame = frame;
+        m_hasProcessedFrame = true;
+        m_frameUpdated = true;   // 复用此标记触发 synchronize → render
+    }
+    // update() 必须在主线程调用，用 QueuedConnection 确保
+    QMetaObject::invokeMethod(const_cast<VlcVideoItem*>(this),
+                              "update", Qt::QueuedConnection);
+}
+
 // ===== 播放控制 =====
 void VlcVideoItem::setSource(const QString &url)
 {
@@ -468,7 +501,7 @@ void* VlcVideoItem::lockCallback(void *opaque, void **planes)
 {
     auto *self = static_cast<VlcVideoItem*>(opaque);
     self->m_frameMutex.lock();
-    *planes = self->m_frame.bits();
+    *planes = self->m_frameBuf[self->m_writeIdx].bits();
     return nullptr;
 }
 
@@ -483,6 +516,9 @@ void VlcVideoItem::displayCallback(void *opaque, void *)
     auto *self = static_cast<VlcVideoItem*>(opaque);
     {
         QMutexLocker lock(&self->m_frameMutex);
+        // 写缓冲就绪 → 翻转索引：刚写完的变成就绪，另一个变成新的写缓冲
+        self->m_readyIdx = self->m_writeIdx;
+        self->m_writeIdx = 1 - self->m_writeIdx;
         self->m_frameUpdated = true;
     }
     // 触发 scene graph → synchronize() → render()
@@ -495,10 +531,18 @@ unsigned VlcVideoItem::setupFormatCallback(void **opaque, char *chroma, unsigned
     auto *self = static_cast<VlcVideoItem*>(*opaque);
     self->m_width = *width;
     self->m_height = *height;
+
+    // 请求 RGBA 格式
     memcpy(chroma, "RGBA", 4);
+
+    // 分配双缓冲（两个同等大小的 RGBA QImage）
     QMutexLocker lock(&self->m_frameMutex);
-    self->m_frame = QImage(*width, *height, QImage::Format_RGBA8888);
-    *pitches = self->m_frame.bytesPerLine();
+    self->m_frameBuf[0] = QImage(*width, *height, QImage::Format_RGBA8888);
+    self->m_frameBuf[1] = QImage(*width, *height, QImage::Format_RGBA8888);
+    self->m_writeIdx = 0;
+    self->m_readyIdx = -1;
+
+    *pitches = self->m_frameBuf[0].bytesPerLine();
     *lines = *height;
     return 1;
 }
