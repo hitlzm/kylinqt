@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 750
+    height: 730
     color: '#e9f0f9'
 
     MessagePopup {
@@ -303,7 +303,7 @@ Rectangle {
         spacing: 30
 
         anchors.top: serialComboBox.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 6
         anchors.left: serialComboBox.left
 
         MyTextField {
@@ -531,49 +531,54 @@ Rectangle {
         }
     }
 
-    // ═══ 帧信息 / 控制状态信息（来自接收区）═══
+    // ═══ 帧信息（下拉框右侧）═══
+    GroupBox {
+        id: frameInfoBox
+        anchors.top: comboRow1.top
+        anchors.left: comboRow1.right
+        anchors.leftMargin: 20
+
+        background: Rectangle {
+            color: "transparent"
+            border.color: "gray"
+            border.width: 4
+            radius: 8
+        }
+        title: "帧信息"
+        font.pixelSize: 18
+        label: Label {
+            text: parent.title
+            font.pixelSize: 18
+
+            leftPadding: 12     //调整标题位置
+            topPadding: 6
+        }
+
+        Column {
+            spacing: 6
+
+            DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "B帧流水号:"; value: imageData.bFrameSequence }
+            DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "A帧流水号回告:"; value: imageData.aFrameSequenceReply }
+            DataLabel {
+                fontSize: 16
+                labelWidth: 120
+                valueWidth: 60
+                label: "A帧有效标志:"
+                value: imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                valueColor: imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+            }
+        }
+    }
+
+    // ═══ 控制/状态信息 + 角度信息（来自接收区）═══
     Row {
         id: recvInfoRow
         spacing: 8
 
         anchors.top: comboRow2.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 6
         anchors.left: commandArea.right
         anchors.leftMargin: 10
-
-        // ── 帧信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "帧信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
-                font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
-            }
-
-            Column {
-                spacing: 6
-
-                DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "B帧流水号:"; value: imageData.bFrameSequence }
-                DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "A帧流水号回告:"; value: imageData.aFrameSequenceReply }
-                DataLabel {
-                    fontSize: 16
-                    labelWidth: 120
-                    valueWidth: 60
-                    label: "A帧有效标志:"
-                    value: imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
-                    valueColor: imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
-                }
-            }
-        }
 
         // ── 控制/状态信息 ──
         GroupBox {
@@ -738,15 +743,43 @@ Rectangle {
                 }
             }
         }
+
+        // ── 角度信息 ──
+        GroupBox {
+            background: Rectangle {
+                color: "transparent"
+                border.color: "gray"
+                border.width: 4
+                radius: 8
+            }
+            title: "角度信息"
+            font.pixelSize: 18
+            label: Label {
+                text: parent.title
+                font.pixelSize: 18
+
+                leftPadding: 12     //调整标题位置
+                topPadding: 6
+            }
+
+            Column {
+                spacing: 6
+
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰框架角:"; value: imageData.pitchFrameAngle.toFixed(2) + "°" }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "偏航框架角:"; value: imageData.yawFrameAngle.toFixed(2) + "°" }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "方位主令:"; value: imageData.azimuthMasterCmd }
+                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰主令:"; value: imageData.pitchMasterCmd }
+            }
+        }
     }
 
-    // ═══ 跟踪 / 角度 / 伺服平台信息（来自接收区）═══
+    // ═══ 跟踪 / 伺服平台 / 角速度信息（来自接收区）═══
     Row {
         id: recvInfoRow2
         spacing: 8
 
         anchors.top: recvInfoRow.bottom
-        anchors.topMargin: 8
+        anchors.topMargin: 5
         anchors.left: recvInfoRow.left
 
         // ── 跟踪信息 ──
@@ -812,34 +845,6 @@ Rectangle {
             }
         }
 
-        // ── 角度信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "角度信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
-                font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
-            }
-
-            Column {
-                spacing: 6
-
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰框架角:"; value: imageData.pitchFrameAngle.toFixed(2) + "°" }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "偏航框架角:"; value: imageData.yawFrameAngle.toFixed(2) + "°" }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "方位主令:"; value: imageData.azimuthMasterCmd }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰主令:"; value: imageData.pitchMasterCmd }
-            }
-        }
-
         // ── 伺服/平台信息 ──
         GroupBox {
             background: Rectangle {
@@ -866,16 +871,6 @@ Rectangle {
                 DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "伺服阶跃:"; value: imageData.servoStep }
             }
         }
-    }
-
-    // ═══ 角速度陀螺 / 其他信息（来自接收区）═══
-    Row {
-        id: recvInfoRow3
-        spacing: 8
-
-        anchors.top: recvInfoRow2.bottom
-        anchors.topMargin: 8
-        anchors.left: recvInfoRow2.left
 
         // ── 角速度信息 ──
         GroupBox {
@@ -912,6 +907,16 @@ Rectangle {
                 }
             }
         }
+    }
+
+    // ═══ 其他信息（最后一行）═══
+    Row {
+        id: recvInfoRow3
+        spacing: 8
+
+        anchors.top: recvInfoRow2.bottom
+        anchors.topMargin: 5
+        anchors.left: recvInfoRow2.left
 
         // ── 其他信息 ──
         GroupBox {

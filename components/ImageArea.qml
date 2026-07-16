@@ -3,7 +3,7 @@ import "."
 Item {
     id: root
     width: 1200
-    height: 850
+    height: 930
 
     ImageSendArea {
         id: sendArea
