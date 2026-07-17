@@ -8,6 +8,7 @@
 #include "serialport/serialport_BD.h"
 #include "serialport/serialport_CCD.h"
 #include "vlcvideo/VlcVideoItem.h"
+#include "vlcvideo/VlcFrameItem.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
 
@@ -82,6 +83,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
+    qmlRegisterType<VlcFrameItem>("VlcVideo", 1, 0, "VlcFrame");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

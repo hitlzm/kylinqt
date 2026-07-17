@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Window 2.12
 import VlcVideo 1.0
 import taoQuick 1.0
 import "./"
@@ -11,6 +12,7 @@ Rectangle {
     color: "#e9f0f9"
 
     property bool _connected: false
+    property var magnifierWindow: null
 
     // ========== 顶部标题栏 ==========
     RowLayout {
@@ -59,15 +61,15 @@ Rectangle {
         z: 1
     }
 
-    // 像素信息显示（悬浮于视频右下角）
-    Text {
-        id: pixelInfo
-        anchors.bottom: videoBorder.bottom; anchors.bottomMargin: 8
-        anchors.right: videoBorder.right; anchors.rightMargin: 12
-        color: "#00FF00"; font.pixelSize: 14
-        text: "点击视频获取像素"
-        z: 2
-    }
+    // // 像素信息显示（悬浮于视频右下角）
+    // Text {
+    //     id: pixelInfo
+    //     anchors.bottom: videoBorder.bottom; anchors.bottomMargin: 8
+    //     anchors.right: videoBorder.right; anchors.rightMargin: 12
+    //     color: "#00FF00"; font.pixelSize: 14
+    //     text: "点击视频获取像素"
+    //     z: 2
+    // }
 
     Text { anchors.centerIn: videoBorder; text: _connected ? "" : "请设置视频源并点击「连接」"; font.pixelSize: 16; color: "#888888" }
 
@@ -93,6 +95,8 @@ Rectangle {
                 videoPlayer.stop()
                 stopOverlay.visible = true
             } }
+        CusButton_Blue { text: "🔍 放大"; Layout.fillWidth: true; height: 40
+            onClicked: toggleMagnifier() }
         Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
         CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 200
             value: videoPlayer.volume; onMoved: videoPlayer.setVolume(value) }
@@ -112,6 +116,47 @@ Rectangle {
     }
 
     function connectToUrl(newUrl) { if (newUrl === "") return; videoPlayer.stop(); videoPlayer.source = newUrl; _connected = true }
+
+    function toggleMagnifier() {
+        if (magnifierWindow) {
+            magnifierWindow.close()
+            magnifierWindow = null
+            console.log("Magnifier: window closed")
+            return
+        }
+
+        console.log("Magnifier: creating component...")
+        var comp = Qt.createComponent("qrc:/components/MagnifierWindow.qml")
+
+        function doCreate() {
+            console.log("Magnifier: component ready, creating window...")
+            // Window 必须用 null 父对象，不能用 root
+            magnifierWindow = comp.createObject(null, { "frameSource": videoPlayer })
+            if (magnifierWindow) {
+                console.log("Magnifier: window created, showing...")
+                magnifierWindow.closing.connect(function() {
+                    console.log("Magnifier: closing")
+                    magnifierWindow = null
+                })
+                magnifierWindow.show()
+            } else {
+                console.warn("Magnifier: createObject returned null! Error:", comp.errorString())
+            }
+        }
+
+        if (comp.status === Component.Ready) {
+            doCreate()
+        } else if (comp.status === Component.Error) {
+            console.warn("Magnifier: load error:", comp.errorString())
+        } else {
+            console.log("Magnifier: loading...")
+            comp.statusChanged.connect(function() {
+                console.log("Magnifier: statusChanged ->", comp.status)
+                if (comp.status === Component.Ready) doCreate()
+                else if (comp.status === Component.Error) console.warn("Magnifier: load error:", comp.errorString())
+            })
+        }
+    }
 
     Connections { target: videoPlayer
         function onPlayingChanged() { console.log("VlcVideo playing:", videoPlayer.playing) }

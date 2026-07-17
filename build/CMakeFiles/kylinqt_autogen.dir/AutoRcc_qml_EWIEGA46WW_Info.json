@@ -28,6 +28,7 @@
 		"E:/QTproject/kylinqt/components/TurnTablestatus.qml",
 		"E:/QTproject/kylinqt/components/MyTextField.qml",
 		"E:/QTproject/kylinqt/components/ExGuide.qml",
+		"E:/QTproject/kylinqt/components/MagnifierWindow.qml",
 		"E:/QTproject/kylinqt/components/Myvideo5.qml"
 	],
 	"LOCK_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",

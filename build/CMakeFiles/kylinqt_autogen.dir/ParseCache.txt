@@ -28,3 +28,6 @@ E:/QTproject/kylinqt/serialport/serialport_BD.h
 E:/QTproject/kylinqt/serialport/serialport_BD.cpp
 E:/QTproject/kylinqt/serialport/serialport_CCD.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp

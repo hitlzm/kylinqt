@@ -7,4 +7,5 @@
 #include "YN6D6BICVT/moc_serialport_image.cpp"
 #include "YN6D6BICVT/moc_serialport_laser.cpp"
 #include "YN6D6BICVT/moc_serialport_turntable.cpp"
+#include "DPWVDNBJWW/moc_VlcFrameItem.cpp"
 #include "DPWVDNBJWW/moc_VlcVideoItem.cpp"

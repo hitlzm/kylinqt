@@ -381,6 +381,30 @@ serialport/serialport_turntable.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s
 .PHONY : serialport/serialport_turntable.cpp.s
 
+vlcvideo/VlcFrameItem.obj: vlcvideo/VlcFrameItem.cpp.obj
+.PHONY : vlcvideo/VlcFrameItem.obj
+
+# target to build an object file
+vlcvideo/VlcFrameItem.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj
+.PHONY : vlcvideo/VlcFrameItem.cpp.obj
+
+vlcvideo/VlcFrameItem.i: vlcvideo/VlcFrameItem.cpp.i
+.PHONY : vlcvideo/VlcFrameItem.i
+
+# target to preprocess a source file
+vlcvideo/VlcFrameItem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.i
+.PHONY : vlcvideo/VlcFrameItem.cpp.i
+
+vlcvideo/VlcFrameItem.s: vlcvideo/VlcFrameItem.cpp.s
+.PHONY : vlcvideo/VlcFrameItem.s
+
+# target to generate assembly for a file
+vlcvideo/VlcFrameItem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.s
+.PHONY : vlcvideo/VlcFrameItem.cpp.s
+
 vlcvideo/VlcVideoItem.obj: vlcvideo/VlcVideoItem.cpp.obj
 .PHONY : vlcvideo/VlcVideoItem.obj
 
@@ -445,6 +469,9 @@ help:
 	@echo ... serialport/serialport_turntable.obj
 	@echo ... serialport/serialport_turntable.i
 	@echo ... serialport/serialport_turntable.s
+	@echo ... vlcvideo/VlcFrameItem.obj
+	@echo ... vlcvideo/VlcFrameItem.i
+	@echo ... vlcvideo/VlcFrameItem.s
 	@echo ... vlcvideo/VlcVideoItem.obj
 	@echo ... vlcvideo/VlcVideoItem.i
 	@echo ... vlcvideo/VlcVideoItem.s

@@ -165,6 +165,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.h",
+			"MU",
+			"DPWVDNBJWW/moc_VlcFrameItem.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h",
 			"MU",
 			"DPWVDNBJWW/moc_VlcVideoItem.cpp",
@@ -253,6 +259,7 @@
 			"MU",
 			null
 		],
+		[ "E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],

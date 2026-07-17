@@ -67,6 +67,7 @@ else()
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
       vlcvideo/VlcVideoItem.cpp
+      vlcvideo/VlcFrameItem.cpp
       handle/myhandle.h
       ModeControl/ModeController.h
       serialport/circularbuffer.h

@@ -53,6 +53,7 @@ protected:
     /// 直接处理鼠标点击，绕过 QML MouseArea 在 FBO 上的事件传递问题
     void mousePressEvent(QMouseEvent *event) override;
 
+public:
     // ── StreamProcessor 接口 ──────────────────────────────
     /// 获取最新解码帧的深拷贝（线程安全，供外部消费者如 StreamProcessor 调用）
     QImage grabFrame() const;
