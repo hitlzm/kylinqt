@@ -293,6 +293,8 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
  E:/QTproject/vlclib/sdk/include/vlc/vlc.h \
  E:/QTproject/vlclib/sdk/include/vlc/libvlc.h \
  E:/QTproject/vlclib/sdk/include/vlc/libvlc_renderer_discoverer.h \
@@ -539,4 +541,10 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcursor.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmldebug.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtMath \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmath.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
+ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMouseEvent \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h

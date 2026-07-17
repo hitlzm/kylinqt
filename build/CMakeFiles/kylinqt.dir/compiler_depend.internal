@@ -227,6 +227,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h
@@ -572,6 +573,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QGuiApplication
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h
@@ -2369,6 +2371,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRect
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRectF
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QScopedPointer
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtMath
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h
@@ -2402,6 +2405,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmath.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h
@@ -2440,8 +2444,10 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMatrix4x4
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMouseEvent
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QOpenGLFunctions
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QSurfaceFormat
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h
@@ -2606,6 +2612,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdio
@@ -2751,6 +2758,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/lzexpand.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h
+ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/mcx.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/memoryapi.h
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/minwinbase.h

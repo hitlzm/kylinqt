@@ -3,6 +3,8 @@
 #include <QOpenGLFunctions>
 #include <QQuickWindow>
 #include <QDebug>
+#include <QtMath>
+#include <QMouseEvent>
 
 // ══════════════════════════════════════════════════════════════════
 // 简易 GLSL Shader，这是 OpenGL ES / OpenGL 的 GLSL 着色器（Shader）代码，作用就是把一张纹理（Texture）绘制到屏幕上
@@ -274,6 +276,9 @@ private:
 VlcVideoItem::VlcVideoItem(QQuickItem *parent)
     : QQuickFramebufferObject(parent)
 {
+    // 接受鼠标事件，确保点击视频画面时能触发像素读取
+    setAcceptedMouseButtons(Qt::LeftButton);
+
     const char *args[] = {
         "--intf", "dummy",
         "--no-video-title-show",
@@ -545,4 +550,80 @@ unsigned VlcVideoItem::setupFormatCallback(void **opaque, char *chroma, unsigned
     *pitches = self->m_frameBuf[0].bytesPerLine();
     *lines = *height;
     return 1;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// 鼠标事件 — 直接处理绕过 QML FBO 事件传递问题
+// ══════════════════════════════════════════════════════════════════
+
+void VlcVideoItem::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        qDebug() << "[VlcVideo] mousePressEvent at" << event->pos();
+        requestPixelAt(event->pos().x(), event->pos().y());
+        event->accept();
+        return;
+    }
+    QQuickFramebufferObject::mousePressEvent(event);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// 像素读取 — 从 CPU 帧缓冲同步读取（做 Letterbox 坐标映射）
+// ══════════════════════════════════════════════════════════════════
+
+void VlcVideoItem::requestPixelAt(int x, int y)
+{
+    // 1. 获取当前视频帧（优先使用 StreamProcessor 处理后的帧）
+    QImage frame;
+    {
+        QMutexLocker lock(&m_frameMutex);
+        if (m_hasProcessedFrame && !m_processedFrame.isNull()) {
+            frame = m_processedFrame;
+        } else if (m_readyIdx >= 0 && !m_frameBuf[m_readyIdx].isNull()) {
+            frame = m_frameBuf[m_readyIdx];
+        }
+    }
+
+    if (frame.isNull()) {
+        qDebug() << "[VlcVideo] requestPixelAt: no frame available";
+        emit errorReadingPixel(QStringLiteral("无可用视频帧"));
+        return;
+    }
+
+    // 2. 坐标映射：控件坐标 → 视频帧坐标（保持与 Renderer 相同的 Letterbox 逻辑）
+    const qreal itemW = static_cast<qreal>(width());
+    const qreal itemH = static_cast<qreal>(height());
+    const qreal videoW = static_cast<qreal>(frame.width());
+    const qreal videoH = static_cast<qreal>(frame.height());
+
+    if (itemW <= 0.0 || itemH <= 0.0 || videoW <= 0.0 || videoH <= 0.0) {
+        emit errorReadingPixel(QStringLiteral("尺寸无效"));
+        return;
+    }
+
+    // 与 VlcVideoRenderer::updateQuadVertices 相同的缩放逻辑
+    const qreal scale = qMin(itemW / videoW, itemH / videoH);
+    const qreal displayW = videoW * scale;
+    const qreal displayH = videoH * scale;
+    const qreal offsetX = (itemW - displayW) / 2.0;
+    const qreal offsetY = (itemH - displayH) / 2.0;
+
+    // 检查点击是否落在视频画面区域内（排除 letterbox 黑边）
+    if (x < offsetX || x > offsetX + displayW ||
+        y < offsetY || y > offsetY + displayH) {
+        qDebug() << "[VlcVideo] click outside video area:" << x << y;
+        emit errorReadingPixel(QStringLiteral("点击位置在视频画面之外"));
+        return;
+    }
+
+    // 映射到视频帧坐标
+    int frameX = qRound((x - offsetX) / displayW * videoW);
+    int frameY = qRound((y - offsetY) / displayH * videoH);
+    frameX = qBound(0, frameX, frame.width() - 1);
+    frameY = qBound(0, frameY, frame.height() - 1);
+
+    QColor color = frame.pixelColor(frameX, frameY);
+    qDebug() << "[VlcVideo] pixelRead at (" << x << "," << y << ") → frame("
+             << frameX << "," << frameY << ") =" << color;
+    emit pixelRead(x, y, color);
 }

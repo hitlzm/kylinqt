@@ -59,6 +59,16 @@ Rectangle {
         z: 1
     }
 
+    // 像素信息显示（悬浮于视频右下角）
+    Text {
+        id: pixelInfo
+        anchors.bottom: videoBorder.bottom; anchors.bottomMargin: 8
+        anchors.right: videoBorder.right; anchors.rightMargin: 12
+        color: "#00FF00"; font.pixelSize: 14
+        text: "点击视频获取像素"
+        z: 2
+    }
+
     Text { anchors.centerIn: videoBorder; text: _connected ? "" : "请设置视频源并点击「连接」"; font.pixelSize: 16; color: "#888888" }
 
     // ========== 控制按钮栏 ==========
@@ -108,5 +118,12 @@ Rectangle {
         function onEnded() { console.log("VlcVideo: 播放结束"); stopOverlay.visible = true }
         function onError(msg) { console.log("VlcVideo error:", msg) }
         function onStopped() { console.log("VlcVideo: 已停止"); stopOverlay.visible = true }
+        function onPixelRead(x, y, color) {
+            pixelInfo.text = "R:" + color.r + " G:" + color.g + " B:" + color.b
+            console.log("像素颜色:", pixelInfo.text)
+        }
+        function onErrorReadingPixel(msg) {
+            console.warn("读取像素失败:", msg)
+        }
     }
 }

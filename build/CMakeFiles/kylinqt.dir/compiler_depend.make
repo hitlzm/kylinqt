@@ -224,6 +224,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
@@ -568,6 +569,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QGuiApplication \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
@@ -2358,6 +2360,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvi
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRect \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRectF \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QScopedPointer \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtMath \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qarraydata.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qatomic.h \
@@ -2391,6 +2394,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvi
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmath.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetatype.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h \
@@ -2429,8 +2433,10 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvi
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMatrix4x4 \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMouseEvent \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QOpenGLFunctions \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QSurfaceFormat \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
@@ -2595,6 +2601,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvi
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cerrno \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/chrono \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/clocale \
+  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdint \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstdio \
@@ -2740,6 +2747,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvi
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/locale.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/lzexpand.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/malloc.h \
+  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/mcx.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/memoryapi.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/minwinbase.h \
@@ -3294,6 +3302,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stddef.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cstddef:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMouseEvent:
+
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdio.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/stdlib.h:
@@ -3470,6 +3480,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmath.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrefcount.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsvalue.h:
@@ -3531,6 +3543,10 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/objidlbase.h:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QColor:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/combaseapi.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/avx5124vnniwintrin.h:
 
@@ -3620,15 +3636,13 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/processenv.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/array:
 
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/oleauto.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_base.h:
 
@@ -3782,9 +3796,9 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlapplicationengine.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcontext.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlengine.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/poppack.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlengine.h:
 
 E:/QTproject/kylinqt/serialport/serialport.cpp:
 
@@ -3807,6 +3821,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRect:
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/pmmintrin.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRectF:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtMath:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qt_windows.h:
 
@@ -3926,8 +3942,6 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/bemapiset.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/cderr.h:
 
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/combaseapi.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/commdlg.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/datetimeapi.h:
@@ -3967,6 +3981,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/nb30.h:
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/oaidl.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/objidl.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/oleauto.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/oleidl.h:
 

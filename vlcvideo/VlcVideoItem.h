@@ -4,6 +4,7 @@
 #include <QtQuick/QQuickFramebufferObject>
 #include <QImage>
 #include <QMutex>
+#include <QColor>
 
 struct libvlc_instance_t;
 struct libvlc_media_t;
@@ -44,6 +45,14 @@ public:
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
 
+    // ── 像素读取接口 ──────────────────────────────────────
+    /// QML 调用，传入控件坐标，同步从帧缓冲读取像素颜色并发射 pixelRead 信号
+    Q_INVOKABLE void requestPixelAt(int x, int y);
+
+protected:
+    /// 直接处理鼠标点击，绕过 QML MouseArea 在 FBO 上的事件传递问题
+    void mousePressEvent(QMouseEvent *event) override;
+
     // ── StreamProcessor 接口 ──────────────────────────────
     /// 获取最新解码帧的深拷贝（线程安全，供外部消费者如 StreamProcessor 调用）
     QImage grabFrame() const;
@@ -65,6 +74,10 @@ signals:
     void ended();
     void error(const QString &errorMsg);
 
+    // ── 像素读取结果信号 ──────────────────────────────────
+    void pixelRead(int x, int y, QColor color);
+    void errorReadingPixel(QString message);
+
 private:
     friend class VlcVideoRenderer;
 
@@ -72,6 +85,8 @@ private:
     void releasePlayer();
     void attachEvents();
     void detachEvents();
+
+private:
 
     // ---- libvlc 视频帧回调 ----
     static void* lockCallback(void *opaque, void **planes);
