@@ -9,6 +9,7 @@ class VlcVideoItem;
 /// 轻量级视频帧查看器 — 不创建独立的 VLC 实例，
 /// 直接从共享的 VlcVideoItem 帧缓冲读取并渲染。
 /// 用在放大镜等"一帧多显"场景。
+/// 后期可增加标志位，当使用CCD视频画面时，grabSourceFrame的逻辑需要改一改，确定什么时候显示导引头，什么时候显示CCD
 class VlcFrameItem : public QQuickFramebufferObject
 {
     Q_OBJECT

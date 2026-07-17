@@ -60,7 +60,9 @@ public:
             m_videoSize = m_frameCopy.size();
             m_textureDirty = true;
             m_item->m_frameUpdated = false;
-            m_item->m_hasProcessedFrame = false;
+            // 注意：不重置 m_hasProcessedFrame！
+            // 否则推理慢（如 15fps）时，处理帧只显示一次就被丢弃，
+            // 导致画面在原始帧和处理帧之间来回闪烁。
         }
 
         // 窗口尺寸变化 → 重新计算 quad 顶点
@@ -396,6 +398,14 @@ void VlcVideoItem::stop()
 {
     releasePlayer();
     m_playing = false;
+
+    // 清理处理后的帧，避免切换视频源时残留旧推理结果
+    {
+        QMutexLocker lock(&m_frameMutex);
+        m_processedFrame = QImage();
+        m_hasProcessedFrame = false;
+    }
+
     emit playingChanged();
     emit stopped();
 }

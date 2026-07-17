@@ -143,6 +143,10 @@ void StreamProcessor::drawDetections(
     cv::Mat &frame,
     const std::vector<OnnxDetection> &detections)
 {
+    // 找置信度最高的检测框，记录其中心坐标
+    const OnnxDetection *bestDet = nullptr;
+    float bestConf = 0.0f;
+
     for (const auto &det : detections) {
         cv::rectangle(frame, det.bbox, m_boxColor, 2);
 
@@ -172,6 +176,21 @@ void StreamProcessor::drawDetections(
                     cv::Point(labelRect.x, labelRect.y + labelSize.height),
                     cv::FONT_HERSHEY_SIMPLEX, fontScale,
                     cv::Scalar(0, 0, 0), thickness, cv::LINE_AA);
+
+        // 追踪最高置信度目标
+        if (det.confidence > bestConf) {
+            bestConf = det.confidence;
+            bestDet = &det;
+        }
+    }
+
+    // 存储最高置信度检测框的中心像素坐标
+    if (bestDet) {
+        m_centerX = bestDet->bbox.x + bestDet->bbox.width / 2;
+        m_centerY = bestDet->bbox.y + bestDet->bbox.height / 2;
+    } else {
+        m_centerX = -1;
+        m_centerY = -1;
     }
 }
 

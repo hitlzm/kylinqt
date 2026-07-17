@@ -90,6 +90,10 @@ public:
     bool isModelLoaded() const { return m_detector.isLoaded(); }
     bool hasVideoSource() const { return m_videoSource != nullptr; }
 
+    /// 最新检测框中置信度最高的目标中心像素坐标（-1 表示无检测结果）
+    int centerX() const { return m_centerX; }
+    int centerY() const { return m_centerY; }
+
 public slots:
     //最后把StreamProcessor放入新线程运行
     void start();
@@ -125,6 +129,11 @@ private:
     bool m_denoise    = false;
     int  m_displayWidth  = 0;
     int  m_displayHeight = 0;
+
+    // 检测框中心点（最高置信度目标）
+    //外引导模式时可根据CCD视场角得到转台的方位角与俯仰角应转动的角度
+    int m_centerX = -1;
+    int m_centerY = -1;
 };
 
 #endif // STREAMPROCESSOR_H
