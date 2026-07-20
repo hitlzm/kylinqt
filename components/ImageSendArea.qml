@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 730
+    height: 700
     color: '#e9f0f9'
 
     MessagePopup {
@@ -532,40 +532,63 @@ Rectangle {
     }
 
     // ═══ 帧信息（下拉框右侧）═══
-    GroupBox {
+    Rectangle {
         id: frameInfoBox
         anchors.top: comboRow1.top
         anchors.left: comboRow1.right
         anchors.leftMargin: 20
+        width: 250
+        height: frameInfoTitle.height + frameInfoList.height + 20
+        color: "transparent"
+        border.color: "gray"
+        border.width: 2
+        radius: 6
 
-        background: Rectangle {
-            color: "transparent"
-            border.color: "gray"
-            border.width: 4
-            radius: 8
-        }
-        title: "帧信息"
-        font.pixelSize: 18
-        label: Label {
-            text: parent.title
+        // 标题
+        Label {
+            id: frameInfoTitle
+            text: "帧信息"
             font.pixelSize: 18
-
-            leftPadding: 12     //调整标题位置
-            topPadding: 6
+            font.bold: true
+            anchors.top: parent.top
+            anchors.topMargin: 6
+            anchors.left: parent.left
+            anchors.leftMargin: 10
         }
 
-        Column {
-            spacing: 6
+        // 帧信息列表
+        CusListView {
+            id: frameInfoList
+            anchors.top: frameInfoTitle.bottom
+            anchors.topMargin: 4
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            height: 82
+            spacing: 4
+            model: 5
 
-            DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "B帧流水号:"; value: imageData.bFrameSequence }
-            DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 60; label: "A帧流水号回告:"; value: imageData.aFrameSequenceReply }
-            DataLabel {
-                fontSize: 16
-                labelWidth: 120
+            delegate: DataLabel {
+                fontSize: 18
+                labelWidth: 150
                 valueWidth: 60
-                label: "A帧有效标志:"
-                value: imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
-                valueColor: imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+                label: {
+                    if (index === 0) return "B帧流水号:"
+                    if (index === 1) return "A帧流水号回告:"
+                    if (index === 2) return "测试"
+                    if (index === 3) return "测试"
+                    return "A帧有效标志:"
+                }
+                value: {
+                    if (index === 0) return imageData.bFrameSequence
+                    if (index === 1) return imageData.aFrameSequenceReply
+                    return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                }
+                valueColor: {
+                    if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+                    return "#1a73e8"
+                }
             }
         }
     }
