@@ -593,7 +593,7 @@ Rectangle {
         }
     }
 
-    // ═══ 控制/状态信息 + 角度信息（来自接收区）═══
+    // ═══ 控制/状态信息 + 角度信息 + 跟踪信息（第一行）═══
     Row {
         id: recvInfoRow
         spacing: 8
@@ -604,38 +604,59 @@ Rectangle {
         anchors.leftMargin: 10
 
         // ── 控制/状态信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "控制/状态信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
+        Rectangle {
+            id: controlStatusBox
+            width: 320
+            height: controlStatusTitle.height + controlStatusList.height + 20
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
+
+            Label {
+                id: controlStatusTitle
+                text: "控制/状态信息"
                 font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
             }
 
-            Row {
-                spacing: 8
+            CusListView {
+                id: controlStatusList
+                anchors.top: controlStatusTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: 110
+                spacing: 4
+                model: 11
 
-                Column {
-                    spacing: 6
-
-                    DataLabel {
-                        fontSize: 16
-                        labelWidth: 105
-                        valueWidth: 165
-                        label: "导引头控制字:"
-
-                        value: {
+                delegate: DataLabel {
+                    fontSize: 16
+                    labelWidth: 130
+                    valueWidth: 170
+                    label: {
+                        if (index === 0) return "导引头控制字:"
+                        if (index === 1) return "光学参数装订:"
+                        if (index === 2) return "当前工作通道:"
+                        if (index === 3) return "自检标志:"
+                        if (index === 4) return "目标类型:"
+                        if (index === 5) return "目标灰度类型:"
+                        if (index === 6) return "目标动/静:"
+                        if (index === 7) return "背景类型:"
+                        if (index === 8) return "光学工作状态:"
+                        if (index === 9) return "修正指令状态:"
+                        return "修正指令次数:"
+                    }
+                    value: {
+                        if (index === 0) {
                             var v = imageData.seekerCtrlReply;
-                            var currentDesc = null;  // null 代表“此次不更新缓存”
+                            var currentDesc = null;
                             switch(v) {
                                 case 0x01: currentDesc = "自检通过"; break;
                                 case 0x02: currentDesc = "射检通过"; break;
@@ -658,24 +679,10 @@ Rectangle {
                             }
                             return root.lastValidDesc1;
                         }
-                        valueColor: {
-                            var v = imageData.seekerCtrlReply
-                            if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
-                            if (v >= 0xF0 || v === 0x43) return "#d93025"
-                            return "#1a73e8"
-                        }
-                    }
-                    DataLabel {
-                        fontSize: 16
-                        labelWidth: 105
-                        valueWidth: 165
-                        label: "光学参数装订:"
-
-                        value: {
+                        if (index === 1) {
                             var v = imageData.opticalParamReply
                             var currentDesc = null;
                             switch(v) {
-
                                 case 0xE1: currentDesc = "非卫星图模板装订成功"; break
                                 case 0xE2: currentDesc = "卫星图模板装订成功"; break
                                 case 0xE3: currentDesc = "模板装订中"; break
@@ -692,44 +699,34 @@ Rectangle {
                             }
                             return root.lastValidDesc2;
                         }
-                        valueColor: {
-                            var v = imageData.opticalParamReply
-                            if (v === 0xE3 || v === 0xE5) return "#e68a00"
-                            if (v === 0xE7 || v === 0xE8) return "#d93025"
-                            return "#1a73e8"
-                        }
-                    }
-                    DataLabel {
-                        fontSize: 16
-                        labelWidth: 105
-                        valueWidth: 165
-                        label: "当前工作通道:"
-                        value: imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
-                    }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 165; label: "自检标志:"; value: "0x" + imageData.selfCheckFlag.toString(16).toUpperCase() }
-                }
-
-                Column {
-                    spacing: 6
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "目标类型:"; value: switch(imageData.m_targetBackgroundType1) {
+                        if (index === 2) return imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
+                        if (index === 3) return "0x" + imageData.selfCheckFlag.toString(16).toUpperCase()
+                        if (index === 4) {
+                            switch(imageData.m_targetBackgroundType1) {
                                 case 0x00: return "车辆"
                                 case 0x01: return "小型建筑物"
                                 case 0x02: return "坦克"
                                 case 0x04: return "舰船"
                                 case 0x07: return "靶标"
                                 default: return "未知"
-                            } }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "目标灰度类型:"; value: switch(imageData.m_targetBackgroundType2) {
+                            }
+                        }
+                        if (index === 5) {
+                            switch(imageData.m_targetBackgroundType2) {
                                 case 0x00: return "亮目标"
                                 case 0x01: return "暗目标"
                                 default: return "未知"
-                            } }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "目标动/静:"; value: switch(imageData.m_targetBackgroundType3) {
+                            }
+                        }
+                        if (index === 6) {
+                            switch(imageData.m_targetBackgroundType3) {
                                 case 0x00: return "静目标"
                                 case 0x01: return "动目标"
                                 default: return "未知"
-                            } }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 85; label: "背景类型:"; value: switch(imageData.m_targetBackgroundType4) {
+                            }
+                        }
+                        if (index === 7) {
+                            switch(imageData.m_targetBackgroundType4) {
                                 case 0x00: return "平原"
                                 case 0x01: return "沙漠"
                                 case 0x02: return "岛岸"
@@ -739,20 +736,11 @@ Rectangle {
                                 case 0x06: return "城市"
                                 case 0x07: return "湖泊"
                                 default: return "未知"
-                            }  }
-                }
-
-                Column {
-                    spacing: 6
-                    DataLabel {
-                        fontSize: 16
-                        labelWidth: 105
-                        valueWidth: 150
-                        label: "光学工作状态:"
-                        value: {
+                            }
+                        }
+                        if (index === 8) {
                             switch(imageData.opticalWorkState) {
                                 case 0x02: return "搜索状态"
-                                //跟踪到目标时弹窗提示2-3秒
                                 case 0x03: return "跟踪状态"
                                 case 0x04: return "框架角电锁零位状态"
                                 case 0x05: return "记忆状态"
@@ -760,43 +748,163 @@ Rectangle {
                                 default: return "未知状态"
                             }
                         }
+                        if (index === 9) return imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态"
+                        return imageData.correctionCmdCount
                     }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 150; label: "修正指令状态:"; value: imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态" }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 150; label: "修正指令次数:"; value: imageData.correctionCmdCount }
+                    valueColor: {
+                        if (index === 0) {
+                            var v = imageData.seekerCtrlReply
+                            if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
+                            if (v >= 0xF0 || v === 0x43) return "#d93025"
+                            return "#1a73e8"
+                        }
+                        if (index === 1) {
+                            var v = imageData.opticalParamReply
+                            if (v === 0xE3 || v === 0xE5) return "#e68a00"
+                            if (v === 0xE7 || v === 0xE8) return "#d93025"
+                            return "#1a73e8"
+                        }
+                        return "#1a73e8"
+                    }
                 }
             }
         }
 
         // ── 角度信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "角度信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
+        Rectangle {
+            id: angleInfoBox
+            width: 210
+            height: controlStatusBox.height
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
+
+            Label {
+                id: angleInfoTitle
+                text: "角度信息"
                 font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
             }
 
-            Column {
-                spacing: 6
+            CusListView {
+                id: angleInfoList
+                anchors.top: angleInfoTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: 82
+                spacing: 4
+                model: 4
 
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰框架角:"; value: imageData.pitchFrameAngle.toFixed(2) + "°" }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "偏航框架角:"; value: imageData.yawFrameAngle.toFixed(2) + "°" }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "方位主令:"; value: imageData.azimuthMasterCmd }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰主令:"; value: imageData.pitchMasterCmd }
+                delegate: DataLabel {
+                    fontSize: 16
+                    labelWidth: 105
+                    valueWidth: 85
+                    label: {
+                        if (index === 0) return "俯仰框架角:"
+                        if (index === 1) return "偏航框架角:"
+                        if (index === 2) return "方位主令:"
+                        return "俯仰主令:"
+                    }
+                    value: {
+                        if (index === 0) return imageData.pitchFrameAngle.toFixed(2) + "°"
+                        if (index === 1) return imageData.yawFrameAngle.toFixed(2) + "°"
+                        if (index === 2) return imageData.azimuthMasterCmd
+                        return imageData.pitchMasterCmd
+                    }
+                }
+            }
+        }
+
+        // ── 跟踪信息 ──
+        Rectangle {
+            id: trackingInfoBox
+            width: 225
+            height: controlStatusBox.height
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
+
+            Label {
+                id: trackingInfoTitle
+                text: "跟踪信息"
+                font.pixelSize: 18
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+            }
+
+            CusListView {
+                id: trackingInfoList
+                anchors.top: trackingInfoTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: 82
+                spacing: 4
+                model: 4
+
+                delegate: DataLabel {
+                    fontSize: 16
+                    labelWidth: 120
+                    valueWidth: 85
+                    label: {
+                        if (index === 0) return "跟踪状态:"
+                        if (index === 1) return "跟踪器状态:"
+                        if (index === 2) return "方位偏差像素:"
+                        return "俯仰偏差像素:"
+                    }
+                    property int currentState: imageData.trackingState
+                    onCurrentStateChanged: {
+                        if (index !== 0) return
+                        if (currentState === 0x22) testmsg.showToast("目标已丢失")
+                        else if (currentState === 0x33) testmsg.showToast("已锁定目标")
+                    }
+                    value: {
+                        if (index === 0) {
+                            switch(imageData.trackingState) {
+                                case 0x00: return "默认"
+                                case 0x11: return "搜索中"
+                                case 0x22: return "目标丢失"
+                                case 0x33: return "目标锁定"
+                                case 0x44: return "记忆状态"
+                                default: return "未知状态"
+                            }
+                        }
+                        if (index === 1) {
+                            switch(imageData.trackerState) {
+                                case 0x00: return "空闲状态"
+                                case 0x01: return "跟踪状态"
+                                case 0x02: return "识别状态"
+                                case 0x03: return "匹配状态"
+                                default: return "未知状态"
+                            }
+                        }
+                        if (index === 2) return imageData.azimuthDeviationPixel
+                        return imageData.pitchDeviationPixel
+                    }
+                    valueColor: {
+                        if (index === 0) return imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
+                        return "#1a73e8"
+                    }
+                }
             }
         }
     }
 
-    // ═══ 跟踪 / 伺服平台 / 角速度信息（来自接收区）═══
+    // ═══ 伺服/平台信息 + 角速度/陀螺信息 + 其他信息（第二行）═══
     Row {
         id: recvInfoRow2
         spacing: 8
@@ -805,177 +913,171 @@ Rectangle {
         anchors.topMargin: 5
         anchors.left: recvInfoRow.left
 
-        // ── 跟踪信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "跟踪信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
-                font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
-            }
-
-            Column {
-                spacing: 6
-
-                DataLabel {
-                    fontSize: 16
-                    labelWidth: 105
-                    valueWidth: 80
-                    label: "跟踪状态:"
-                    property int currentState: imageData.trackingState
-                    onCurrentStateChanged: {
-                        if (currentState === 0x22) testmsg.showToast("目标已丢失")
-                        else if (currentState === 0x33) testmsg.showToast("已锁定目标")
-                    }
-                    value: {
-                        switch(imageData.trackingState) {
-                            case 0x00: return "默认"
-                            case 0x11: return "搜索中"
-                            case 0x22: return "目标丢失"
-                            case 0x33: return "目标锁定"
-                            case 0x44: return "记忆状态"
-                            default: return "未知状态"
-                        }
-                    }
-                    valueColor: imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
-                }
-                DataLabel {
-                    fontSize: 16
-                    labelWidth: 105
-                    valueWidth: 80
-                    label: "跟踪器状态:"
-                    value: {
-                        switch(imageData.trackerState) {
-                            case 0x00: return "空闲状态"
-                            case 0x01: return "跟踪状态"
-                            case 0x02: return "识别状态"
-                            case 0x03: return "匹配状态"
-                            default: return "未知状态"
-                        }
-                    }
-                }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "方位偏差像素:"; value: imageData.azimuthDeviationPixel }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "俯仰偏差像素:"; value: imageData.pitchDeviationPixel }
-            }
-        }
-
         // ── 伺服/平台信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "伺服/平台信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
+        Rectangle {
+            id: servoInfoBox
+            width: 225
+            height: gyroInfoBox.height
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
+
+            Label {
+                id: servoInfoTitle
+                text: "伺服/平台信息"
                 font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
             }
 
-            Column {
-                spacing: 6
+            CusListView {
+                id: servoInfoList
+                anchors.top: servoInfoTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: 70
+                spacing: 4
+                model: 3
 
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "平台自检结果:"; value: imageData.platformSelfCheck }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "伺服运行时间:"; value: imageData.servoRunningTime + " s" }
-                DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "伺服阶跃:"; value: imageData.servoStep }
-            }
-        }
-
-        // ── 角速度信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "角速度/陀螺信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
-                font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
-            }
-
-            Row {
-                spacing: 8
-
-                Column {
-                    spacing: 6
-                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "俯仰视线角速度:"; value: imageData.pitchLosAngVel.toFixed(2) + "°/s" }
-                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "偏航视线角速度:"; value: imageData.yawLosAngVel.toFixed(2) + "°/s" }
-                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "俯仰陀螺:"; value: imageData.pitchGyro.toFixed(2) + "°/s" }
-                }
-                Column {
-                    spacing: 6
-                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "偏航陀螺:"; value: imageData.yawGyro.toFixed(2) + "°/s" }
-                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "方位陀螺输出:"; value: imageData.azimuthGyroOutput.toFixed(2) + "°/s" }
-                    DataLabel { fontSize: 16; labelWidth: 120; valueWidth: 80; label: "俯仰陀螺输出:"; value: imageData.pitchGyroOutput.toFixed(2) + "°/s" }
+                delegate: DataLabel {
+                    fontSize: 16
+                    labelWidth: 120
+                    valueWidth: 85
+                    label: {
+                        if (index === 0) return "平台自检结果:"
+                        if (index === 1) return "伺服运行时间:"
+                        return "伺服阶跃:"
+                    }
+                    value: {
+                        if (index === 0) return imageData.platformSelfCheck
+                        if (index === 1) return imageData.servoRunningTime + " s"
+                        return imageData.servoStep
+                    }
                 }
             }
         }
-    }
 
-    // ═══ 其他信息（最后一行）═══
-    Row {
-        id: recvInfoRow3
-        spacing: 8
+        // ── 角速度/陀螺信息 ──
+        Rectangle {
+            id: gyroInfoBox
+            width: 240
+            height: gyroInfoTitle.height + gyroInfoList.height + 20
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
 
-        anchors.top: recvInfoRow2.bottom
-        anchors.topMargin: 5
-        anchors.left: recvInfoRow2.left
+            Label {
+                id: gyroInfoTitle
+                text: "角速度/陀螺信息"
+                font.pixelSize: 18
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+            }
+
+            CusListView {
+                id: gyroInfoList
+                anchors.top: gyroInfoTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: 100
+                spacing: 4
+                model: 6
+
+                delegate: DataLabel {
+                    fontSize: 16
+                    labelWidth: 130
+                    valueWidth: 85
+                    label: {
+                        if (index === 0) return "俯仰视线角速度:"
+                        if (index === 1) return "偏航视线角速度:"
+                        if (index === 2) return "俯仰陀螺:"
+                        if (index === 3) return "偏航陀螺:"
+                        if (index === 4) return "方位陀螺输出:"
+                        return "俯仰陀螺输出:"
+                    }
+                    value: {
+                        if (index === 0) return imageData.pitchLosAngVel.toFixed(2) + "°/s"
+                        if (index === 1) return imageData.yawLosAngVel.toFixed(2) + "°/s"
+                        if (index === 2) return imageData.pitchGyro.toFixed(2) + "°/s"
+                        if (index === 3) return imageData.yawGyro.toFixed(2) + "°/s"
+                        if (index === 4) return imageData.azimuthGyroOutput.toFixed(2) + "°/s"
+                        return imageData.pitchGyroOutput.toFixed(2) + "°/s"
+                    }
+                }
+            }
+        }
 
         // ── 其他信息 ──
-        GroupBox {
-            background: Rectangle {
-                color: "transparent"
-                border.color: "gray"
-                border.width: 4
-                radius: 8
-            }
-            title: "其他信息"
-            font.pixelSize: 18
-            label: Label {
-                text: parent.title
+        Rectangle {
+            id: otherInfoBox
+            width: 230
+            height: gyroInfoBox.height
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
+
+            Label {
+                id: otherInfoTitle
+                text: "其他信息"
                 font.pixelSize: 18
-
-                leftPadding: 12     //调整标题位置
-                topPadding: 6
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
             }
 
-            Row {
-                spacing: 8
+            CusListView {
+                id: otherInfoList
+                anchors.top: otherInfoTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: 100
+                spacing: 4
+                model: 8
 
-                Column {
-                    spacing: 6
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "红外帧编号:"; value: imageData.infraredFrameNum }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "红外帧频:"; value: imageData.infraredFrameRate + " Hz" }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "电视帧频:"; value: imageData.tvFrameRate + " Hz" }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "Cbh_tv4405:"; value: imageData.cbhTv4405 }
-                }
-                Column {
-                    spacing: 6
-
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "波门尺寸:"; value: imageData.gateSize }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "软件版本1:"; value: imageData.softwareVersion1 }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "软件版本2:"; value: imageData.softwareVersion2 }
-                    DataLabel { fontSize: 16; labelWidth: 105; valueWidth: 80; label: "软件版本3:"; value: imageData.softwareVersion3 }
+                delegate: DataLabel {
+                    fontSize: 16
+                    labelWidth: 120
+                    valueWidth: 85
+                    label: {
+                        if (index === 0) return "红外帧编号:"
+                        if (index === 1) return "红外帧频:"
+                        if (index === 2) return "电视帧频:"
+                        if (index === 3) return "Cbh_tv4405:"
+                        if (index === 4) return "波门尺寸:"
+                        if (index === 5) return "软件版本1:"
+                        if (index === 6) return "软件版本2:"
+                        return "软件版本3:"
+                    }
+                    value: {
+                        if (index === 0) return imageData.infraredFrameNum
+                        if (index === 1) return imageData.infraredFrameRate + " Hz"
+                        if (index === 2) return imageData.tvFrameRate + " Hz"
+                        if (index === 3) return imageData.cbhTv4405
+                        if (index === 4) return imageData.gateSize
+                        if (index === 5) return imageData.softwareVersion1
+                        if (index === 6) return imageData.softwareVersion2
+                        return imageData.softwareVersion3
+                    }
                 }
             }
         }
