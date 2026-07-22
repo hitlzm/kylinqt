@@ -314,9 +314,9 @@ Rectangle {
                 onTextChanged: {
                     if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.azimuthAngleValid)
-                                toastmsg.showToast("方位角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("方位角输入范围为-20°~ 20°,请重新输入")
                             root.azimuthAngleValid = false
                         } else {
                             root.azimuthAngleValid = true
@@ -328,7 +328,7 @@ Rectangle {
                     if (index === 0) {
                         laserSendData.m_laserPeriod = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_azimuthAngle = Number(text)
                     }
                 }
@@ -364,18 +364,18 @@ Rectangle {
                 onTextChanged: {
                     if (index === 0) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.elevationAngleValid)
-                                toastmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("俯仰角输入范围为-20°~ 20°,请重新输入")
                             root.elevationAngleValid = false
                         } else {
                             root.elevationAngleValid = true
                         }
                     } else if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.searchCenterAzimuthValid)
-                                toastmsg.showToast("搜索中心方位角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("搜索中心方位角输入范围为-20°~ 20°,请重新输入")
                             root.searchCenterAzimuthValid = false
                         } else {
                             root.searchCenterAzimuthValid = true
@@ -385,10 +385,10 @@ Rectangle {
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_elevationAngle = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_searchCenterAzimuth = Number(text)
                     }
                 }
@@ -423,18 +423,18 @@ Rectangle {
                 onTextChanged: {
                     if (index === 0) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.searchCenterElevationValid)
-                                toastmsg.showToast("搜索中心俯仰角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("搜索中心俯仰角输入范围为-20°~ 20°,请重新输入")
                             root.searchCenterElevationValid = false
                         } else {
                             root.searchCenterElevationValid = true
                         }
                     } else if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.azimuthSearchRangeValid)
-                                toastmsg.showToast("方位搜索范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("方位搜索范围为-20°~ 20°,请重新输入")
                             root.azimuthSearchRangeValid = false
                         } else {
                             root.azimuthSearchRangeValid = true
@@ -444,10 +444,10 @@ Rectangle {
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_searchCenterElevation = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_azimuthSearchRange = Number(text)
                     }
                 }
@@ -482,18 +482,18 @@ Rectangle {
                 onTextChanged: {
                     if (index === 0) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.elevationSearchRangeValid)
-                                toastmsg.showToast("俯仰搜索范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("俯仰搜索范围为-20°~ 20°,请重新输入")
                             root.elevationSearchRangeValid = false
                         } else {
                             root.elevationSearchRangeValid = true
                         }
                     } else if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.searchRadiusValid)
-                                toastmsg.showToast("搜索半径范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("搜索半径范围为-20°~ 20°,请重新输入")
                             root.searchRadiusValid = false
                         } else {
                             root.searchRadiusValid = true
@@ -503,10 +503,10 @@ Rectangle {
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_elevationSearchRange = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -20 && Number(text) <= 20)
                                 laserSendData.m_searchRadius = Number(text)
                     }
                 }

@@ -3,25 +3,25 @@ E:/QTproject/kylinqt/ModeControl/ModeController.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/handle/myhandle.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/serialport/serialport_laser.h
+ mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_CCD.cpp
 E:/QTproject/kylinqt/serialport/circularbuffer.h
 E:/QTproject/kylinqt/serialport/serialport.h
  mmc:Q_OBJECT
-E:/QTproject/kylinqt/serialport/serialport_laser.h
- mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_image.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/kalman/seekKalman.h
 E:/QTproject/kylinqt/serialport/serialport_turntable.h
  mmc:Q_OBJECT
-E:/QTproject/kylinqt/kalman/seekKalman.h
-E:/QTproject/kylinqt/main.cpp
 E:/QTproject/kylinqt/serialport/serialport.cpp
+E:/QTproject/kylinqt/main.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_image.cpp
 E:/QTproject/kylinqt/serialport/serialport_laser.cpp
-E:/QTproject/kylinqt/kalman/seekKalman.cpp
 E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
+E:/QTproject/kylinqt/kalman/seekKalman.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp
 E:/QTproject/kylinqt/serialport/serialport_BD.h
  mmc:Q_OBJECT

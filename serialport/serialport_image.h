@@ -422,7 +422,7 @@ private:
     int m_aFrameSequence = 0;
     int m_seekerCtrlWord = 0;
     int m_opticalParamCtrl = 0;
-    int m_templateIndex = 0;
+    int m_templateIndex = 0;  //模板序号变成了通道类型，选择电视通道时发送0，选择红外通道时发送1
     // int m_targetBackgroundType = 0;//细分为很多种
     int m_targetBackgroundType1 = 0;
     int m_targetBackgroundType2 = 0;
@@ -452,7 +452,7 @@ private:
     float m_searchPitchRate = 0;
     float m_searchYawRate = 0;
     int m_gateSize = 0;
-    int m_osdSwitch = 0;
+    int m_osdSwitch = 0;    //字符叠加指令消失，后面的61-152字节为预留区
     int m_captureRefImgCmd = 0;
     int m_targetAltitude = 0;
     float m_aircraftPitch = 0;
