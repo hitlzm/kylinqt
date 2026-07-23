@@ -11,7 +11,7 @@ Item {
    
     Gamepad {
         id: myGamepad
-        deviceId: 0
+        deviceId: GamepadManager.connectedGamepads.length > 0 ? GamepadManager.connectedGamepads[0] : -1
         // onAxisLeftXChanged: gamepadBridge.axisLeftXChange(axisLeftX)
         // onAxisLeftYChanged: gamepadBridge.axisLeftYChange(axisLeftY)
         // onAxisRightXChanged: gamepadBridge.axisRightXChange(axisRightX)

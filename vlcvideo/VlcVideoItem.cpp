@@ -549,6 +549,22 @@ unsigned VlcVideoItem::setupFormatCallback(void **opaque, char *chroma, unsigned
 
     // 请求 RGBA 格式
     memcpy(chroma, "RGBA", 4);
+    //输出图片信息
+    qDebug()
+    <<"format="
+    <<QByteArray(chroma,4);
+
+    qDebug()
+    <<"width="
+    <<*width;
+
+    qDebug()
+    <<"height="
+    <<*height;
+
+    qDebug()
+    <<"pitch="
+    <<*pitches;
 
     // 分配双缓冲（两个同等大小的 RGBA QImage）
     QMutexLocker lock(&self->m_frameMutex);

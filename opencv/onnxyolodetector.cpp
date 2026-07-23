@@ -136,9 +136,9 @@ void OnnxYoloDetector::setNumClasses(int n) {
     if (n > 0) m_numClasses = n;
 }
 
-bool OnnxYoloDetector::isLoaded() const {
-    return m_loaded && m_impl->session != nullptr;
-}
+// bool OnnxYoloDetector::isLoaded() const {
+//     return m_loaded && m_impl->session != nullptr;
+// }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // 模型加载
@@ -183,9 +183,11 @@ bool OnnxYoloDetector::loadModel(const std::string &onnxPath) {
             }
 
             // 获取输入名称
-            char *name = m_impl->session->GetInputName(0, allocator);
-            m_impl->inputName = name;
-            allocator.Free(name);
+            // char *name = m_impl->session->GetInputName(0, allocator);
+            // m_impl->inputName = name;
+            // allocator.Free(name);
+            auto namePtr = m_impl->session->GetInputNameAllocated(0, allocator);
+            m_impl->inputName = namePtr.get();
 
             // 获取输入形状
             Ort::TypeInfo typeInfo = m_impl->session->GetInputTypeInfo(0);
@@ -219,9 +221,8 @@ bool OnnxYoloDetector::loadModel(const std::string &onnxPath) {
             m_impl->outputShapes.resize(numOutputs);
 
             for (size_t i = 0; i < numOutputs; ++i) {
-                char *name = m_impl->session->GetOutputName(i, allocator);
-                m_impl->outputNames[i] = name;
-                allocator.Free(name);
+                auto namePtr = m_impl->session->GetOutputNameAllocated(i, allocator);
+                m_impl->outputNames[i] = namePtr.get();
 
                 Ort::TypeInfo typeInfo = m_impl->session->GetOutputTypeInfo(i);
                 auto tensorInfo = typeInfo.GetTensorTypeAndShapeInfo();
