@@ -27,15 +27,12 @@ include(taoQuick.cmake)
 #    endif()
 #endif()
 
-# VLC & VLC-QT 库路径
-set(VLC_ROOT "E:/QTproject/vlclib")
+# libmpv 库路径
+set(MPV_ROOT "E:/QTproject/mpv")
 
-# 引入Opencv4.2.0
-
-
-# VLC SDK 头文件和库
-set(VLC_INCLUDE_DIR "${VLC_ROOT}/sdk/include")
-set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
+# libmpv SDK 头文件和库
+set(MPV_INCLUDE_DIR "${MPV_ROOT}/include")
+set(MPV_LIBRARY_DIR "${MPV_ROOT}/lib")
 
 
 find_package(Qt5 COMPONENTS Core Quick Gui SerialPort  Gamepad REQUIRED)
@@ -78,13 +75,11 @@ else()
 endif()
 
 target_include_directories(kylinqt PRIVATE
-    ${VLC_INCLUDE_DIR}
-    # ${VLCQT_ROOT}/include
+    ${MPV_INCLUDE_DIR}
 )
 
 target_link_directories(kylinqt PRIVATE
-    ${VLC_LIBRARY_DIR}
-    ${VLC_ROOT}
+    ${MPV_LIBRARY_DIR}
 )
 
 target_compile_definitions(kylinqt
@@ -93,7 +88,7 @@ target_compile_definitions(kylinqt
 target_link_libraries(kylinqt
   PRIVATE
     Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad
-    libvlc libvlccore
+    mpv
     ${OpenCV_LIBS}
 )
 
@@ -118,17 +113,9 @@ foreach(DLL ${OPENCV_DLLS})
     )
 endforeach()
 
-# ── 编译后自动复制 DLL 到 exe 目录 ──
+# ── 编译后自动复制 mpv DLL 到 exe 目录 ──
 add_custom_command(TARGET kylinqt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${VLC_ROOT}/libvlc.dll"
-        "${VLC_ROOT}/libvlccore.dll"
+        "${MPV_ROOT}/mpv-2.dll"
         "$<TARGET_FILE_DIR:kylinqt>"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${VLC_ROOT}/axvlc.dll"
-        "${VLC_ROOT}/npvlc.dll"
-        "$<TARGET_FILE_DIR:kylinqt>"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${VLC_ROOT}/plugins"
-        "$<TARGET_FILE_DIR:kylinqt>/plugins"
 )

@@ -4,7 +4,7 @@
 #include "serialport.h"
 #include "./circularbuffer.h"
 #include <QDateTime>
-#include "Kalman/seekKalman.h"
+#include "kalman/seekKalman.h"
 
 struct image_send_frame;
 struct imageExGuideData

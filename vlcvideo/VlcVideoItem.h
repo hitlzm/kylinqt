@@ -6,15 +6,10 @@
 #include <QMutex>
 #include <QColor>
 
-struct libvlc_instance_t;
-struct libvlc_media_t;
-struct libvlc_media_player_t;
-struct libvlc_event_manager_t;
-struct libvlc_event_t;
+struct mpv_handle;
+struct mpv_render_context;
 
 class VlcVideoRenderer;
-
-//后期如果目标主机不支持OPENGL，则可能需要换回QQuickPaintedItem
 
 class VlcVideoItem : public QQuickFramebufferObject
 {
@@ -29,6 +24,12 @@ class VlcVideoItem : public QQuickFramebufferObject
 public:
     explicit VlcVideoItem(QQuickItem *parent = nullptr);
     ~VlcVideoItem() override;
+
+    // QML 组件完成布局后调用
+    void componentComplete() override;
+
+    // 诊断：确认 Qt 场景图是否调度了这个 item
+    QSGNode *updatePaintNode(QSGNode *node, UpdatePaintNodeData *data) override;
 
     QString source() const;
     void setSource(const QString &url);
@@ -79,34 +80,38 @@ signals:
     void pixelRead(int x, int y, QColor color);
     void errorReadingPixel(QString message);
 
+private slots:
+    // 在主线程处理 mpv 事件（invokeMethod 需要 slot 才能找到）
+    void processMpvEvents();
+
+    // 渲染上下文就绪后的回调（由 VlcVideoRenderer 通过 invokeMethod 触发）
+    void onRenderContextReady();
+
 private:
     friend class VlcVideoRenderer;
 
     void setupPlayer();
+    void doSetupPlayer();
     void releasePlayer();
-    void attachEvents();
-    void detachEvents();
+    void ensureMpvCreated();
 
-private:
-
-    // ---- libvlc 视频帧回调 ----
-    static void* lockCallback(void *opaque, void **planes);
-    static void unlockCallback(void *opaque, void *picture, void *const *planes);
-    static void displayCallback(void *opaque, void *picture);
-    static unsigned setupFormatCallback(void **opaque, char *chroma,
-                                        unsigned *width, unsigned *height,
-                                        unsigned *pitches, unsigned *lines);
-
-    // ---- libvlc 事件回调 ----
-    friend void onLibVlcEvent(const libvlc_event_t *event, void *opaque);
+    // ── mpv 回调 ─────────────────────────────────────────
+    static void onMpvWakeup(void *ctx);
 
     QString m_source;
-    libvlc_instance_t *m_vlcInstance = nullptr;
-    libvlc_media_t *m_media = nullptr;
-    libvlc_media_player_t *m_player = nullptr;
-    libvlc_event_manager_t *m_eventManager = nullptr;
 
-    // 双缓冲：VLC 写 m_frameBuf[m_writeIdx]，消费者读 m_frameBuf[m_readyIdx]
+    // mpv 核心句柄：创建/命令/属性访问（线程安全）
+    mpv_handle *m_mpv = nullptr;
+
+    // mpv 渲染上下文：由 VlcVideoRenderer 在渲染线程创建和使用
+    mpv_render_context *m_mpvCtx = nullptr;
+
+    // 渲染上下文是否已创建（loadfile 必须等它为 true）
+    bool m_renderCtxReady = false;
+    int  m_setupRetryCount = 0;
+    bool m_setupInProgress = false;
+
+    // 双缓冲：渲染线程写 m_frameBuf[m_writeIdx]，消费者读 m_frameBuf[m_readyIdx]
     QImage m_frameBuf[2];
     int    m_writeIdx = 0;
     int    m_readyIdx = -1;             // -1 = 尚无就绪帧
