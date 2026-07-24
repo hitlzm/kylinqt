@@ -272,6 +272,18 @@ private:
 };
 
 // ══════════════════════════════════════════════════════════════════
+// VLC 日志回调 —— 打印解码器选择等内部日志
+// ══════════════════════════════════════════════════════════════════
+static void logCallback(void * /*data*/, int level, const libvlc_log_t * /*ctx*/,
+                        const char *fmt, va_list args)
+{
+    char buf[1024];
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    if (level <= LIBVLC_NOTICE)   // 0=INFO, 1=ERROR, 2=WARN, 3=NOTICE
+        qDebug() << "[VLC]" << buf;
+}
+
+// ══════════════════════════════════════════════════════════════════
 // VlcVideoItem — 主线程 / QML 可见部分
 // ══════════════════════════════════════════════════════════════════
 
@@ -285,8 +297,13 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
         "--intf", "dummy",
         "--no-video-title-show",
         "--no-xlib",
+        "--avcodec-hw=none",
     };
     m_vlcInstance = libvlc_new(sizeof(args)/sizeof(args[0]), args);
+
+    // 挂载日志回调，打印解码器选择等信息
+    if (m_vlcInstance)
+        libvlc_log_set(m_vlcInstance, logCallback, nullptr);
 }
 
 VlcVideoItem::~VlcVideoItem()
