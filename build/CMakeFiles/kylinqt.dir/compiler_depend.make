@@ -463,9 +463,9 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
-  E:/QTproject/kylinqt/Kalman/seekKalman.h \
   E:/QTproject/kylinqt/ModeControl/ModeController.h \
   E:/QTproject/kylinqt/handle/myhandle.h \
+  E:/QTproject/kylinqt/kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_BD.h \
@@ -817,7 +817,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
-  E:/QTproject/kylinqt/Kalman/seekKalman.h \
+  E:/QTproject/kylinqt/kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/ModeControl/ModeController.h \
   E:/QTproject/kylinqt/handle/myhandle.h \
@@ -1835,7 +1835,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
-  E:/QTproject/kylinqt/Kalman/seekKalman.h \
+  E:/QTproject/kylinqt/kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_image.h
@@ -2092,7 +2092,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: E:/QTproject/kylinqt
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
-  E:/QTproject/kylinqt/Kalman/seekKalman.h \
+  E:/QTproject/kylinqt/kalman/seekKalman.h \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h
@@ -3735,8 +3735,6 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/xsavecint
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/avx512ifmaintrin.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/mwaitxintrin.h:
-
-E:/QTproject/kylinqt/Kalman/seekKalman.h:
 
 E:/QTproject/kylinqt/ModeControl/ModeController.h:
 

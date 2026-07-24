@@ -159,7 +159,7 @@ Rectangle {
             spacing: 6
 
             DataLabel {
-                fontSize: 16; labelWidth: 70; valueWidth: 220
+                fontSize: 18; labelWidth: 85; valueWidth: 250
                 label: "北斗时间:"
                 value: {
                     if (!bdData.m_isPosValid) return "--"
@@ -168,7 +168,7 @@ Rectangle {
                 }
             }
             DataLabel {
-                fontSize: 16; labelWidth: 70; valueWidth: 220
+                fontSize: 18; labelWidth: 85; valueWidth: 250
                 label: "经度:"
                 value: {
                     if (!bdData.m_isPosValid) return "--"
@@ -178,7 +178,7 @@ Rectangle {
                 }
             }
             DataLabel {
-                fontSize: 16; labelWidth: 70; valueWidth: 220
+                fontSize: 18; labelWidth: 85; valueWidth: 250
                 label: "纬度:"
                 value: {
                     if (!bdData.m_isPosValid) return "--"

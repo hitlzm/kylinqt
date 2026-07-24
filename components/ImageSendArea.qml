@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 700
+    height: 610
     color: '#e9f0f9'
 
     MessagePopup {
@@ -70,7 +70,7 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 460
+        height: 530
         color: '#faf7f7'
         radius: 4
 
@@ -599,14 +599,14 @@ Rectangle {
         spacing: 8
 
         anchors.top: comboRow2.bottom
-        anchors.topMargin: 6
+        anchors.topMargin: 22
         anchors.left: commandArea.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 97
 
         // ── 控制/状态信息 ──
         Rectangle {
             id: controlStatusBox
-            width: 320
+            width: 340
             height: controlStatusTitle.height + controlStatusList.height + 20
             color: "transparent"
             border.color: "gray"
@@ -632,14 +632,14 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 110
+                height: 126
                 spacing: 4
                 model: 11
 
                 delegate: DataLabel {
-                    fontSize: 16
+                    fontSize: 18
                     labelWidth: 130
-                    valueWidth: 170
+                    valueWidth: 185
                     label: {
                         if (index === 0) return "导引头控制字:"
                         if (index === 1) return "光学参数装订:"
@@ -773,7 +773,7 @@ Rectangle {
         // ── 角度信息 ──
         Rectangle {
             id: angleInfoBox
-            width: 210
+            width: 220
             height: controlStatusBox.height
             color: "transparent"
             border.color: "gray"
@@ -799,13 +799,13 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 82
+                height: 90
                 spacing: 4
                 model: 4
 
                 delegate: DataLabel {
-                    fontSize: 16
-                    labelWidth: 105
+                    fontSize: 18
+                    labelWidth: 110
                     valueWidth: 85
                     label: {
                         if (index === 0) return "俯仰框架角:"
@@ -826,7 +826,7 @@ Rectangle {
         // ── 跟踪信息 ──
         Rectangle {
             id: trackingInfoBox
-            width: 225
+            width: 240
             height: controlStatusBox.height
             color: "transparent"
             border.color: "gray"
@@ -852,13 +852,13 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 82
+                height: 90
                 spacing: 4
                 model: 4
 
                 delegate: DataLabel {
-                    fontSize: 16
-                    labelWidth: 120
+                    fontSize: 18
+                    labelWidth: 130
                     valueWidth: 85
                     label: {
                         if (index === 0) return "跟踪状态:"
@@ -911,12 +911,13 @@ Rectangle {
 
         anchors.top: recvInfoRow.bottom
         anchors.topMargin: 5
-        anchors.left: recvInfoRow.left
+        anchors.left: commandArea.right
+        anchors.leftMargin: 137
 
         // ── 伺服/平台信息 ──
         Rectangle {
             id: servoInfoBox
-            width: 225
+            width: 240
             height: gyroInfoBox.height
             color: "transparent"
             border.color: "gray"
@@ -942,13 +943,13 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 70
+                height: 78
                 spacing: 4
                 model: 3
 
                 delegate: DataLabel {
-                    fontSize: 16
-                    labelWidth: 120
+                    fontSize: 18
+                    labelWidth: 130
                     valueWidth: 85
                     label: {
                         if (index === 0) return "平台自检结果:"
@@ -967,7 +968,7 @@ Rectangle {
         // ── 角速度/陀螺信息 ──
         Rectangle {
             id: gyroInfoBox
-            width: 240
+            width: 260
             height: gyroInfoTitle.height + gyroInfoList.height + 20
             color: "transparent"
             border.color: "gray"
@@ -993,14 +994,14 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 100
+                height: 110
                 spacing: 4
                 model: 6
 
                 delegate: DataLabel {
-                    fontSize: 16
-                    labelWidth: 130
-                    valueWidth: 85
+                    fontSize: 18
+                    labelWidth: 145
+                    valueWidth: 90
                     label: {
                         if (index === 0) return "俯仰视线角速度:"
                         if (index === 1) return "偏航视线角速度:"
@@ -1024,7 +1025,7 @@ Rectangle {
         // ── 其他信息 ──
         Rectangle {
             id: otherInfoBox
-            width: 230
+            width: 220
             height: gyroInfoBox.height
             color: "transparent"
             border.color: "gray"
@@ -1050,14 +1051,14 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 100
+                height: 110
                 spacing: 4
                 model: 8
 
                 delegate: DataLabel {
-                    fontSize: 16
-                    labelWidth: 120
-                    valueWidth: 85
+                    fontSize: 18
+                    labelWidth: 115
+                    valueWidth: 80
                     label: {
                         if (index === 0) return "红外帧编号:"
                         if (index === 1) return "红外帧频:"
