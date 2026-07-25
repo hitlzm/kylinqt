@@ -5,19 +5,14 @@ import VlcVideo 1.0
 Window {
     id: magnifierWindow
     width: Screen.width * 0.65
-    // 高度跟随视频宽高比动态适配，消除 letterbox 黑边
-    height: frameSource && frameSource.frameHeight > 0
-            ? width * frameSource.frameHeight / frameSource.frameWidth
-            : Screen.height * 0.65
+    height: Screen.height * 0.65
     title: "视频放大镜"
     flags: Qt.Window | Qt.FramelessWindowHint
     color: "#000000"
     visible: true
 
-    // 由调用方传入
     property var frameSource: null
 
-    // ── 视频填满窗口 ──
     VlcFrame {
         id: magnifier
         anchors.fill: parent
