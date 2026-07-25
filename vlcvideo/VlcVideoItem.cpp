@@ -87,16 +87,24 @@ public:
         QMutexLocker lock(&m_item->m_frameMutex);
 
         if (m_item->m_frameUpdated && m_item->m_readyIdx >= 0) {
-            // 若有 StreamProcessor 处理后的帧则优先显示，否则显示原始解码帧
-            const QImage &rawFrame = m_item->m_frameBuf[m_item->m_readyIdx];
-            const QImage &src = m_item->m_hasProcessedFrame
-                                && !m_item->m_processedFrame.isNull()
-                                ? m_item->m_processedFrame
-                                : rawFrame;
-            m_frameCopy = src.copy();   // 深拷贝，渲染线程独占
-            m_videoSize = m_frameCopy.size();
-            m_textureDirty = true;
-            m_item->m_frameUpdated = false;
+            // 未点击播放前：消费帧但不显示（StreamProcessor 仍可通过 grabFrame 获取）
+            if (!m_item->m_playClicked) {
+                m_item->m_frameUpdated = false;
+            } else {
+                // 若有 StreamProcessor 处理后的帧则优先显示，否则显示原始解码帧
+                const QImage &rawFrame = m_item->m_frameBuf[m_item->m_readyIdx];
+                const QImage &src = m_item->m_hasProcessedFrame
+                                    && !m_item->m_processedFrame.isNull()
+                                    ? m_item->m_processedFrame
+                                    : rawFrame;
+                m_frameCopy = src.copy();
+                m_videoSize = m_frameCopy.size();
+                m_textureDirty = true;
+                m_item->m_frameUpdated = false;
+                static int syncCount = 0;
+                if (syncCount++ < 3)
+                    qDebug() << "[MpvVideo] synchronize picked frame:" << m_videoSize;
+            }
         }
 
         // 窗口尺寸变化 → 重新计算 quad 顶点
@@ -114,6 +122,13 @@ public:
 
         // ── 1. 让 mpv 渲染最新的视频帧到离屏 FBO ──
         renderMpvFrame();
+
+        static int renderCount = 0;
+        if (renderCount++ < 3)
+            qDebug() << "[MpvVideo] render:" << renderCount-1
+                     << "textureDirty:" << m_textureDirty
+                     << "texture:" << m_texture
+                     << "vertices:" << m_vertices.size();
 
         // ── 2. 上载纹理并绘制（与原来完全一致）─────
         if (m_textureDirty && !m_frameCopy.isNull())
@@ -205,88 +220,56 @@ private:
         QMetaObject::invokeMethod(m_item, "onRenderContextReady", Qt::QueuedConnection);
     }
 
-    // ---- 让 mpv 渲染到离屏 FBO，然后读回 CPU 帧缓冲 ----
+    // ---- 让 mpv 渲染到 Qt 当前绑定的 FBO，然后读回 CPU 帧缓冲 ----
     void renderMpvFrame()
     {
         if (!m_item->m_mpvCtx)
             return;
 
-        // 检查是否有新帧就绪
         uint64_t flags = mpv_render_context_update(m_item->m_mpvCtx);
         if (!(flags & MPV_RENDER_UPDATE_FRAME))
             return;
 
-        static int frameCount = 0;
-        if (frameCount == 0) {
-            qDebug() << "[MpvVideo] first frame! flags:" << flags;
-        }
-
-        // 用 item 的当前尺寸作为渲染目标（mpv 会自行缩放适配）
         int w = qMax(16, int(m_item->width()));
         int h = qMax(16, int(m_item->height()));
 
-        // 按需重建离屏 FBO（尺寸变化时）
-        if (w != m_mpvFboWidth || h != m_mpvFboHeight) {
-            m_mpvFboWidth = w;
-            m_mpvFboHeight = h;
-            rebuildOffscreenFbo();
-        }
+        // 获取 Qt 当前绑定的 FBO ID
+        GLint qtFbo = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &qtFbo);
 
-        if (!m_offscreenFbo)
-            return;
+        // 先清屏
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        // 绑定离屏 FBO
-        glBindFramebuffer(GL_FRAMEBUFFER, m_offscreenFbo);
-
-        mpv_opengl_fbo mpvFbo = {
-            .fbo             = static_cast<int>(m_offscreenFbo),
-            .w               = w,
-            .h               = h,
-            .internal_format = 0,
-        };
-
+        // mpv 直接渲染到 Qt 的 FBO
+        mpv_opengl_fbo mpvFbo = { .fbo = qtFbo, .w = w, .h = h, .internal_format = 0 };
         int flipY = 0;
-
         mpv_render_param renderParams[] = {
             {MPV_RENDER_PARAM_OPENGL_FBO, &mpvFbo},
             {MPV_RENDER_PARAM_FLIP_Y,     &flipY},
             {MPV_RENDER_PARAM_INVALID,    nullptr}
         };
 
-        int ret = mpv_render_context_render(m_item->m_mpvCtx, renderParams);
-        if (frameCount == 0) {
-            qDebug() << "[MpvVideo] mpv_render_context_render ret:" << ret
-                     << "FBO:" << m_offscreenFbo << "size:" << w << "x" << h;
-        }
+        mpv_render_context_render(m_item->m_mpvCtx, renderParams);
 
-        // 从离屏 FBO 读取像素到 CPU QImage
+        // mpv 内部可能切换了 FBO，读像素前重新绑定 Qt FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, qtFbo);
+
+        // 读回像素
         {
             QMutexLocker lock(&m_item->m_frameMutex);
-
             QImage &buf = m_item->m_frameBuf[m_item->m_writeIdx];
-            if (buf.width() != w || buf.height() != h || buf.isNull()) {
+            if (buf.width() != w || buf.height() != h || buf.isNull())
                 buf = QImage(w, h, QImage::Format_RGBA8888);
-            }
 
             glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buf.bits());
-
-            if (frameCount == 0) {
-                qDebug() << "[MpvVideo] frame read:" << w << "x" << h
-                         << "first pixel RGBA:" << qRed(buf.pixel(0,0))
-                         << qGreen(buf.pixel(0,0)) << qBlue(buf.pixel(0,0));
-            }
 
             m_item->m_width  = w;
             m_item->m_height = h;
             m_item->m_readyIdx = m_item->m_writeIdx;
             m_item->m_writeIdx = 1 - m_item->m_writeIdx;
             m_item->m_frameUpdated = true;
-
-            frameCount++;
         }
-
-        // 恢复 Qt 的默认 FBO
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     // ---- 重建离屏 FBO（窗口尺寸变化时调用） ----
@@ -324,6 +307,9 @@ private:
     // ---- mpv 帧就绪回调（渲染线程 → 触发 Qt update） ----
     static void onMpvRenderUpdate(void *ctx)
     {
+        static int cbCount = 0;
+        if (++cbCount <= 5 || cbCount % 60 == 0)
+            qDebug() << "[MpvVideo] onMpvRenderUpdate #" << cbCount;
         auto *item = static_cast<VlcVideoItem *>(ctx);
         QMetaObject::invokeMethod(item, "update", Qt::QueuedConnection);
     }
@@ -332,14 +318,24 @@ private:
     void uploadTexture()
     {
         QImage tex = m_frameCopy.convertToFormat(QImage::Format_RGBA8888);
+        int tw = tex.width(), th = tex.height();
 
-        if (!m_texture)
+        if (!m_texture) {
             glGenTextures(1, &m_texture);
+        }
 
         glBindTexture(GL_TEXTURE_2D, m_texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                     tex.width(), tex.height(), 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+
+        // 仅在首次分配或尺寸变化时重新分配 GPU 显存，后续用 glTexSubImage2D
+        if (tw != m_texWidth || th != m_texHeight) {
+            m_texWidth = tw;
+            m_texHeight = th;
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0,
+                         GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+        } else {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, tw, th,
+                            GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+        }
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -457,6 +453,8 @@ private:
     GLuint m_program = 0;
     GLuint m_vbo     = 0;
     bool   m_glInitialized = false;
+    int    m_texWidth  = 0;
+    int    m_texHeight = 0;
 
     // mpv 离屏渲染目标
     GLuint m_offscreenFbo = 0;
@@ -646,28 +644,52 @@ void VlcVideoItem::play()
     if (!m_mpv) return;
     if (m_source.isEmpty()) return;
 
-    // setupPlayer() 已经在 setSource() 中调用过 loadfile，
-    // 这里只需要取消暂停即可（首次播放时 mpv 会自动开始）
-    mpv_set_property_string(m_mpv, "pause", "no");
+    m_playClicked = true;
 
-    // 触发首次渲染 → initGL → 创建 mpv_render_context →
-    // 注册 onMpvRenderUpdate 回调 → 后续帧由回调自动驱动
+    // 使用 MPV_FORMAT_FLAG，避免 "yes"/"no" 字符串解析问题
+    int paused = 0;  // 0 = 不暂停 = 播放
+    mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
+
+    // 校验是否设置成功
+    int check = 1;
+    mpv_get_property(m_mpv, "pause", MPV_FORMAT_FLAG, &check);
+    qDebug() << "[MpvVideo] play() pause =" << check;
+
     update();
+
+    // 兜底：启动一个定时器驱动渲染，防止 onMpvRenderUpdate 回调失效
+    if (!m_playTimer) {
+        m_playTimer = new QTimer(this);
+        m_playTimer->setInterval(33);  // ~30fps
+        connect(m_playTimer, &QTimer::timeout, this, [this]() { update(); });
+    }
+    m_playTimer->start();
 }
 
 void VlcVideoItem::pause()
 {
-    if (m_mpv)
-        mpv_set_property_string(m_mpv, "pause", "yes");
+    if (m_mpv) {
+        int paused = 1;
+        mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
+    }
+    if (m_playTimer)
+        m_playTimer->stop();
 }
 
 void VlcVideoItem::stop()
 {
+    // 不要用 "stop" 命令（会销毁 vo=libmpv，导致后续 loadfile 无法恢复视频输出）
+    // 改用以暂停 + 清画面代替
     if (m_mpv) {
-        mpv_command_string(m_mpv, "stop");
+        int paused = 1;
+        mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
     }
 
     m_playing = false;
+    m_playClicked = false;
+
+    if (m_playTimer)
+        m_playTimer->stop();
 
     {
         QMutexLocker lock(&m_frameMutex);
@@ -736,7 +758,8 @@ void VlcVideoItem::doSetupPlayer()
     qDebug() << "[MpvVideo] doSetupPlayer, loading:" << m_source;
 
     // 先设为暂停状态，等用户点击 play() 再取消暂停
-    mpv_set_property_string(m_mpv, "pause", "yes");
+    int paused = 1;
+    mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
 
     // 观察属性变化以获取播放状态
     mpv_observe_property(m_mpv, 0, "pause",          MPV_FORMAT_FLAG);
@@ -760,7 +783,7 @@ void VlcVideoItem::doSetupPlayer()
 void VlcVideoItem::releasePlayer()
 {
     if (m_mpv) {
-        mpv_command_string(m_mpv, "stop");
+        // 不调 stop（会销毁 vo=libmpv），loadfile 会自动替换当前流
         mpv_unobserve_property(m_mpv, 0);
     }
 
@@ -799,11 +822,15 @@ void VlcVideoItem::processMpvEvents()
 {
     if (!m_mpv) return;
 
+    static int eventPollCount = 0;
+    bool hadEvents = false;
+
     while (true) {
         mpv_event *event = mpv_wait_event(m_mpv, 0.0);  // 非阻塞轮询
         if (event->event_id == MPV_EVENT_NONE)
             break;
 
+        hadEvents = true;
         switch (event->event_id) {
 
         case MPV_EVENT_LOG_MESSAGE: {
@@ -872,6 +899,11 @@ void VlcVideoItem::processMpvEvents()
             break;
         }
     }
+
+    eventPollCount++;
+    if (hadEvents || eventPollCount <= 5 || eventPollCount % 50 == 0)
+        qDebug() << "[MpvVideo] processMpvEvents #" << eventPollCount
+                 << "hadEvents:" << hadEvents << "playing:" << m_playing;
 }
 
 // ══════════════════════════════════════════════════════════════════

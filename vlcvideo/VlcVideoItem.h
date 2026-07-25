@@ -125,6 +125,8 @@ private:
     bool   m_hasProcessedFrame = false;
 
     bool m_playing = false;
+    bool m_playClicked = false;
+    QTimer *m_playTimer = nullptr;
     int m_volume = 100;
     bool m_seekable = false;
 };
