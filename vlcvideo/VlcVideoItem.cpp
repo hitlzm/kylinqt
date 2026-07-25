@@ -86,6 +86,13 @@ public:
         // GUI 线程被阻塞，可以安全读 m_item 的属性（不含互斥锁）
         QMutexLocker lock(&m_item->m_frameMutex);
 
+        // 切换视频源时清空渲染器中上一视频流的残留帧
+        if (m_item->m_needClearDisplay) {
+            m_frameCopy = QImage();
+            m_textureDirty = false;
+            m_item->m_needClearDisplay = false;
+        }
+
         if (m_item->m_frameUpdated && m_item->m_readyIdx >= 0) {
             // 未点击播放前：消费帧但不显示（StreamProcessor 仍可通过 grabFrame 获取）
             if (!m_item->m_playClicked) {
@@ -101,9 +108,9 @@ public:
                 m_videoSize = m_frameCopy.size();
                 m_textureDirty = true;
                 m_item->m_frameUpdated = false;
-                static int syncCount = 0;
-                if (syncCount++ < 3)
-                    qDebug() << "[MpvVideo] synchronize picked frame:" << m_videoSize;
+                // static int syncCount = 0;
+                // if (syncCount++ < 3)
+                //     qDebug() << "[MpvVideo] synchronize picked frame:" << m_videoSize;
             }
         }
 
@@ -123,12 +130,12 @@ public:
         // ── 1. 让 mpv 渲染最新的视频帧到离屏 FBO ──
         renderMpvFrame();
 
-        static int renderCount = 0;
-        if (renderCount++ < 3)
-            qDebug() << "[MpvVideo] render:" << renderCount-1
-                     << "textureDirty:" << m_textureDirty
-                     << "texture:" << m_texture
-                     << "vertices:" << m_vertices.size();
+        // static int renderCount = 0;
+        // if (renderCount++ < 3)
+        //     qDebug() << "[MpvVideo] render:" << renderCount-1
+        //              << "textureDirty:" << m_textureDirty
+        //              << "texture:" << m_texture
+        //              << "vertices:" << m_vertices.size();
 
         // ── 2. 上载纹理并绘制（与原来完全一致）─────
         if (m_textureDirty && !m_frameCopy.isNull())
@@ -321,9 +328,9 @@ private:
     // ---- mpv 帧就绪回调（渲染线程 → 触发 Qt update） ----
     static void onMpvRenderUpdate(void *ctx)
     {
-        static int cbCount = 0;
-        if (++cbCount <= 5 || cbCount % 60 == 0)
-            qDebug() << "[MpvVideo] onMpvRenderUpdate #" << cbCount;
+        // static int cbCount = 0;
+    // if (++cbCount <= 5 || cbCount % 60 == 0)
+    //     qDebug() << "[MpvVideo] onMpvRenderUpdate #" << cbCount;
         auto *item = static_cast<VlcVideoItem *>(ctx);
         QMetaObject::invokeMethod(item, "update", Qt::QueuedConnection);
     }
@@ -567,7 +574,7 @@ QQuickFramebufferObject::Renderer *VlcVideoItem::createRenderer() const
 
 QSGNode *VlcVideoItem::updatePaintNode(QSGNode *node, UpdatePaintNodeData *data)
 {
-    qDebug() << "[MpvVideo] updatePaintNode() called, node:" << (node ? "exists" : "NULL");
+    // qDebug() << "[MpvVideo] updatePaintNode() called, node:" << (node ? "exists" : "NULL");
     return QQuickFramebufferObject::updatePaintNode(node, data);
 }
 
@@ -667,7 +674,7 @@ void VlcVideoItem::play()
     // 校验是否设置成功
     int check = 1;
     mpv_get_property(m_mpv, "pause", MPV_FORMAT_FLAG, &check);
-    qDebug() << "[MpvVideo] play() pause =" << check;
+    // qDebug() << "[MpvVideo] play() pause =" << check;
 
     update();
 
@@ -732,20 +739,13 @@ void VlcVideoItem::setupPlayer()
         }
         m_setupRetryCount++;
 
-        qDebug() << "[MpvVideo] setup retry" << m_setupRetryCount
-                 << "size:" << width() << "x" << height()
-                 << "window:" << (window() ? "yes" : "NULL")
-                 << "visible:" << isVisible()
-                 << "opacity:" << opacity();
-
+        // qDebug() << "[MpvVideo] setup retry" << m_setupRetryCount ...;
         if (width() <= 0 || height() <= 0) {
-            qDebug() << "[MpvVideo] item has zero size, waiting for layout...";
+            // waiting for layout...
         } else if (!window()) {
-            qDebug() << "[MpvVideo] no window yet, waiting...";
+            // no window yet...
         } else {
-            qDebug() << "[MpvVideo] calling update()";
             update();
-            // 也直接触发窗口级刷新
             window()->update();
         }
         QTimer::singleShot(100, this, [this]() {
@@ -802,6 +802,7 @@ void VlcVideoItem::releasePlayer()
     }
 
     m_setupInProgress = false;
+    m_needClearDisplay = true;   // 通知渲染器清空上一视频流的残留帧
 
     // 清空帧缓冲
     {
@@ -836,15 +837,11 @@ void VlcVideoItem::processMpvEvents()
 {
     if (!m_mpv) return;
 
-    static int eventPollCount = 0;
-    bool hadEvents = false;
-
     while (true) {
         mpv_event *event = mpv_wait_event(m_mpv, 0.0);  // 非阻塞轮询
         if (event->event_id == MPV_EVENT_NONE)
             break;
 
-        hadEvents = true;
         switch (event->event_id) {
 
         case MPV_EVENT_LOG_MESSAGE: {
@@ -914,10 +911,10 @@ void VlcVideoItem::processMpvEvents()
         }
     }
 
-    eventPollCount++;
-    if (hadEvents || eventPollCount <= 5 || eventPollCount % 50 == 0)
-        qDebug() << "[MpvVideo] processMpvEvents #" << eventPollCount
-                 << "hadEvents:" << hadEvents << "playing:" << m_playing;
+    // eventPollCount++;
+    // if (hadEvents || eventPollCount <= 5 || eventPollCount % 50 == 0)
+    //     qDebug() << "[MpvVideo] processMpvEvents #" << eventPollCount
+    //              << "hadEvents:" << hadEvents << "playing:" << m_playing;
 }
 
 // ══════════════════════════════════════════════════════════════════

@@ -126,6 +126,7 @@ private:
 
     bool m_playing = false;
     bool m_playClicked = false;
+    bool m_needClearDisplay = false;
     QTimer *m_playTimer = nullptr;
     int m_volume = 100;
     bool m_seekable = false;
