@@ -133,9 +133,9 @@ private:
         m_program = buildProgram(kVertexShader, kFragmentShader);
         glGenBuffers(1, &m_vbo);
         m_glInitialized = true;
-        qDebug() << "Vendor  :" << (const char*)glGetString(GL_VENDOR);
-        qDebug() << "Renderer:" << (const char*)glGetString(GL_RENDERER);
-        qDebug() << "Version :" << (const char*)glGetString(GL_VERSION);
+        // qDebug() << "Vendor  :" << (const char*)glGetString(GL_VENDOR);
+        // qDebug() << "Renderer:" << (const char*)glGetString(GL_RENDERER);
+        // qDebug() << "Version :" << (const char*)glGetString(GL_VERSION);
     }
 
     // ---- 上传 QImage 到 GL 纹理 ----
@@ -279,8 +279,9 @@ static void logCallback(void * /*data*/, int level, const libvlc_log_t * /*ctx*/
 {
     char buf[1024];
     vsnprintf(buf, sizeof(buf), fmt, args);
-    if (level <= LIBVLC_NOTICE)   // 0=INFO, 1=ERROR, 2=WARN, 3=NOTICE
-        qDebug() << "[VLC]" << buf;
+    // 关闭 VLC 内部日志打印，避免频繁刷屏
+    // if (level <= LIBVLC_NOTICE)   // 0=INFO, 1=ERROR, 2=WARN, 3=NOTICE
+    //     qDebug() << "[VLC]" << buf;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -297,7 +298,7 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
         "--intf", "dummy",
         "--no-video-title-show",
         "--no-xlib",
-        "--avcodec-hw=none",
+        // "--avcodec-hw=none",
     };
     m_vlcInstance = libvlc_new(sizeof(args)/sizeof(args[0]), args);
 
@@ -566,22 +567,22 @@ unsigned VlcVideoItem::setupFormatCallback(void **opaque, char *chroma, unsigned
 
     // 请求 RGBA 格式
     memcpy(chroma, "RGBA", 4);
-    //输出图片信息
-    qDebug()
-    <<"format="
-    <<QByteArray(chroma,4);
+    // 输出图片信息（调试时取消注释）
+    // qDebug()
+    // <<"format="
+    // <<QByteArray(chroma,4);
 
-    qDebug()
-    <<"width="
-    <<*width;
+    // qDebug()
+    // <<"width="
+    // <<*width;
 
-    qDebug()
-    <<"height="
-    <<*height;
+    // qDebug()
+    // <<"height="
+    // <<*height;
 
-    qDebug()
-    <<"pitch="
-    <<*pitches;
+    // qDebug()
+    // <<"pitch="
+    // <<*pitches;
 
     // 分配双缓冲（两个同等大小的 RGBA QImage）
     QMutexLocker lock(&self->m_frameMutex);
