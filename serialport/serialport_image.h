@@ -272,8 +272,8 @@ private:
     int m_platformSelfCheck = 0;
     int m_servoRunningTime = 0;
     int m_servoStep = 0;
-    int m_infraredFrameNum = 0;
-    int m_cbhTv4405 = 0;
+    int m_infraredFrameNum = 0;  //红外帧编号
+    int m_cbhTv4405 = 0;   //电视帧编号
     int m_infraredFrameRate = 0;
     int m_tvFrameRate = 0;
     int m_gateSize = 0;

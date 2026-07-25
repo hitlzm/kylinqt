@@ -95,7 +95,7 @@ Rectangle {
                 videoPlayer.stop()
                 stopOverlay.visible = true
             } }
-        CusButton_Blue { text: "🔍 放大"; Layout.fillWidth: true; height: 40
+        CusButton_Blue { text: root.magnifierWindow ? "关闭新窗口" : "🔍 放大"; Layout.fillWidth: true; height: 40
             onClicked: toggleMagnifier() }
         Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
         CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 200

@@ -298,7 +298,7 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
         "--intf", "dummy",
         "--no-video-title-show",
         "--no-xlib",
-        // "--avcodec-hw=none",
+        "--avcodec-hw=none",
     };
     m_vlcInstance = libvlc_new(sizeof(args)/sizeof(args[0]), args);
 

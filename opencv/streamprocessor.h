@@ -94,11 +94,40 @@ public:
     int centerX() const { return m_centerX; }
     int centerY() const { return m_centerY; }
 
+    // ── 图像分辨率与视场角 ────────────────────────────────
+    // void setImageResolution(int width, int height) {
+    //     m_imageWidth  = width;
+    //     m_imageHeight = height;
+    // }
+    // void setFov(float hFov, float vFov) {
+    //     m_hFov = hFov;
+    //     m_vFov = vFov;
+    // }
+    // int imageWidth()  const { return m_imageWidth; }
+    // int imageHeight() const { return m_imageHeight; }
+    // float hFov() const { return m_hFov; }
+    // float vFov() const { return m_vFov; }
+
 public slots:
     //最后把StreamProcessor放入新线程运行
     void start();
     void processFrame();
     void stop();
+    // 这里槽函数监听外引导源切换为CCD相机时，以固定时间间隔发送角度信息给转台线程
+    void CCDguide(){
+        //如果为外引导模式，且外引导源为CCD相机
+
+        //计算对应俯仰角与框架角
+        float Pitchangle = m_centerX / static_cast<float>(m_imageWidth) * m_hFov;
+        float Yawangle   = m_centerY / static_cast<float>(m_imageHeight) * m_vFov;
+
+
+    };
+
+    //监听图像分辨率与焦距变化
+    void imgModeChange(){
+
+    };
 
 signals:
     void frameReady(const QImage &frame);
@@ -131,9 +160,15 @@ private:
     int  m_displayHeight = 0;
 
     // 检测框中心点（最高置信度目标）
-    //外引导模式时可根据CCD视场角得到转台的方位角与俯仰角应转动的角度
+    //外引导模式时可根据CCD视场角得到转台的方位角与俯仰角应转动的角度，广角模式下为55.27，32.26 远焦模式下为2.66，1.51
     int m_centerX = -1;
     int m_centerY = -1;
+
+    // 图像分辨率与视场角（视场角随广角/远焦切换更新）
+    int   m_imageWidth  = 1920;
+    int   m_imageHeight = 1080;
+    float m_hFov = 55.27f;   // 横向视场角（默认广角）
+    float m_vFov = 32.26f;   // 纵向视场角（默认广角）
 };
 
 #endif // STREAMPROCESSOR_H
