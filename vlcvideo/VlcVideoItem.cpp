@@ -220,7 +220,7 @@ private:
         QMetaObject::invokeMethod(m_item, "onRenderContextReady", Qt::QueuedConnection);
     }
 
-    // ---- 让 mpv 渲染到 Qt 当前绑定的 FBO，然后读回 CPU 帧缓冲 ----
+    // ---- 让 mpv 渲染到 1.5x 离屏 FBO，然后读回高清 CPU 帧缓冲 ----
     void renderMpvFrame()
     {
         if (!m_item->m_mpvCtx)
@@ -230,32 +230,42 @@ private:
         if (!(flags & MPV_RENDER_UPDATE_FRAME))
             return;
 
-        int w = qMax(16, int(m_item->width()));
-        int h = qMax(16, int(m_item->height()));
+        // 1.5 倍分辨率离屏渲染：
+        //   mpv → 离屏FBO (1008×444) → glReadPixels → QImage (高清)
+        //   主画面 quad 缩小显示，放大镜 grabFrame() 拿到更高清帧
+        int w = qMax(16, int(m_item->width()))  * 3 / 2;
+        int h = qMax(16, int(m_item->height())) * 3 / 2;
 
-        // 获取 Qt 当前绑定的 FBO ID
-        GLint qtFbo = 0;
+        if (w != m_mpvFboWidth || h != m_mpvFboHeight) {
+            m_mpvFboWidth = w;
+            m_mpvFboHeight = h;
+            rebuildOffscreenFbo();
+        }
+        if (!m_offscreenFbo) return;
+
+        // 保存 Qt 的 FBO + viewport
+        GLint qtFbo = 0, qtVp[4] = {};
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &qtFbo);
+        glGetIntegerv(GL_VIEWPORT, qtVp);
 
-        // 先清屏
+        // ── 离屏渲染 ──
+        glBindFramebuffer(GL_FRAMEBUFFER, m_offscreenFbo);
+        glViewport(0, 0, w, h);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // mpv 直接渲染到 Qt 的 FBO
-        mpv_opengl_fbo mpvFbo = { .fbo = qtFbo, .w = w, .h = h, .internal_format = 0 };
+        mpv_opengl_fbo mpvFbo = { .fbo = static_cast<int>(m_offscreenFbo), .w = w, .h = h, .internal_format = 0 };
         int flipY = 0;
         mpv_render_param renderParams[] = {
             {MPV_RENDER_PARAM_OPENGL_FBO, &mpvFbo},
             {MPV_RENDER_PARAM_FLIP_Y,     &flipY},
             {MPV_RENDER_PARAM_INVALID,    nullptr}
         };
-
         mpv_render_context_render(m_item->m_mpvCtx, renderParams);
 
-        // mpv 内部可能切换了 FBO，读像素前重新绑定 Qt FBO
-        glBindFramebuffer(GL_FRAMEBUFFER, qtFbo);
+        // mpv 可能改了 FBO/状态，读像素前重新绑定离屏 FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, m_offscreenFbo);
 
-        // 读回像素
         {
             QMutexLocker lock(&m_item->m_frameMutex);
             QImage &buf = m_item->m_frameBuf[m_item->m_writeIdx];
@@ -270,6 +280,10 @@ private:
             m_item->m_writeIdx = 1 - m_item->m_writeIdx;
             m_item->m_frameUpdated = true;
         }
+
+        // ── 恢复 Qt FBO + viewport（关键！否则后续绘制错位） ──
+        glBindFramebuffer(GL_FRAMEBUFFER, qtFbo);
+        glViewport(qtVp[0], qtVp[1], qtVp[2], qtVp[3]);
     }
 
     // ---- 重建离屏 FBO（窗口尺寸变化时调用） ----
