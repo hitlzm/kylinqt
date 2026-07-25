@@ -55,7 +55,7 @@ public:
     ~VlcVideoRenderer() override
     {
         if (!m_glInitialized) return;
-        if (m_texture)        glDeleteTextures(1, &m_texture);
+        if (m_texture)        { glDeleteTextures(1, &m_texture); m_item->m_displayTexId = 0; }
         if (m_vbo)            glDeleteBuffers(1, &m_vbo);
         if (m_program)        glDeleteProgram(m_program);
         if (m_offscreenTex)   glDeleteTextures(1, &m_offscreenTex);
@@ -281,8 +281,10 @@ private:
 
             glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buf.bits());
 
+            bool sizeChanged = (m_item->m_width != w || m_item->m_height != h);
             m_item->m_width  = w;
             m_item->m_height = h;
+            if (sizeChanged) emit m_item->frameSizeChanged();
             m_item->m_readyIdx = m_item->m_writeIdx;
             m_item->m_writeIdx = 1 - m_item->m_writeIdx;
             m_item->m_frameUpdated = true;
@@ -365,6 +367,7 @@ private:
 
         glBindTexture(GL_TEXTURE_2D, 0);
         m_textureDirty = false;
+        m_item->m_displayTexId = m_texture;  // 暴露给放大镜直接绑定
     }
 
     // ---- 计算保持宽高比的居中 quad（NDC 坐标） ----

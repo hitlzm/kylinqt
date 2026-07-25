@@ -20,6 +20,8 @@ class VlcVideoItem : public QQuickFramebufferObject
     Q_PROPERTY(float position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(qint64 length READ length NOTIFY lengthChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
+    Q_PROPERTY(qreal frameWidth READ frameWidth NOTIFY frameSizeChanged)
+    Q_PROPERTY(qreal frameHeight READ frameHeight NOTIFY frameSizeChanged)
 
 public:
     explicit VlcVideoItem(QQuickItem *parent = nullptr);
@@ -62,6 +64,12 @@ public:
     /// 提交处理后的帧用于渲染显示（线程安全，供 StreamProcessor 回传）
     void submitProcessedFrame(const QImage &frame);
 
+    /// 返回当前显示的 GL 纹理 ID（放大镜直接绑定，省 GPU→CPU→GPU 拷贝）
+    unsigned int displayTextureId() const { return m_displayTexId; }
+
+    qreal frameWidth() const { return m_width; }
+    qreal frameHeight() const { return m_height; }
+
     // ---- QQuickFramebufferObject 接口 ----
     Renderer *createRenderer() const override;
 
@@ -72,6 +80,7 @@ signals:
     void positionChanged();
     void lengthChanged();
     void seekableChanged();
+    void frameSizeChanged();
     void stopped();
     void ended();
     void error(const QString &errorMsg);
@@ -123,6 +132,8 @@ private:
     // StreamProcessor 处理后回传的帧
     QImage m_processedFrame;
     bool   m_hasProcessedFrame = false;
+
+    unsigned int m_displayTexId = 0;
 
     bool m_playing = false;
     bool m_playClicked = false;

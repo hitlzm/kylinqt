@@ -36,7 +36,7 @@ public:
     ~VlcFrameRenderer() override
     {
         if (!m_glInitialized) return;
-        if (m_texture) glDeleteTextures(1, &m_texture);
+        // m_sharedTexId 是 VlcVideoItem 的纹理，不归我们删除
         if (m_vbo)     glDeleteBuffers(1, &m_vbo);
         if (m_program) glDeleteProgram(m_program);
     }
@@ -48,40 +48,45 @@ public:
         VlcVideoItem *src = m_item->source();
         if (!src) return;
 
-        // 注意：不能用 cacheKey 判断帧变化！
-        // VLC 回调每次都往同一个 QImage 缓冲区覆写像素，
-        // QImage 底层数据指针不变 → cacheKey 永远相同。
-        // 因此必须每帧都拷贝和上传。
-        QImage srcFrame = src->grabFrame();
-        if (srcFrame.isNull()) return;
+        // 直接从 VlcVideoItem 获取共享的 GPU 纹理 ID，省掉 CPU 拷贝
+        unsigned int texId = src->displayTextureId();
+        if (texId == 0) return;
 
-        // ── Zoom 区域计算 ──────────────────────────────
-        QRectF srcRect(0, 0, srcFrame.width(), srcFrame.height());
+        m_sharedTexId = static_cast<GLuint>(texId);
+
+        // 源帧尺寸（从 VlcVideoItem 的离屏 FBO）
+        QImage refFrame = src->grabFrame();
+        if (refFrame.isNull()) return;
+        int fullW = refFrame.width();
+        int fullH = refFrame.height();
+
+        // ── 计算 zoom 区域的纹理坐标（归一化） ──
         qreal zf = m_item->zoomFactor();
+        qreal zx = 0.0, zy = 0.0, zw = fullW, zh = fullH;
         if (zf > 1.0) {
             qreal cx = m_item->centerX();
             qreal cy = m_item->centerY();
-            if (cx < 0) cx = srcFrame.width()  / 2.0;
-            if (cy < 0) cy = srcFrame.height() / 2.0;
-
-            qreal zw = srcFrame.width()  / zf;
-            qreal zh = srcFrame.height() / zf;
-            qreal zx = qBound(0.0, cx - zw / 2.0, srcFrame.width()  - zw);
-            qreal zy = qBound(0.0, cy - zh / 2.0, srcFrame.height() - zh);
-            srcRect = QRectF(zx, zy, zw, zh);
+            if (cx < 0) cx = fullW / 2.0;
+            if (cy < 0) cy = fullH / 2.0;
+            zw = fullW / zf;
+            zh = fullH / zf;
+            zx = qBound(0.0, cx - zw / 2.0, double(fullW) - zw);
+            zy = qBound(0.0, cy - zh / 2.0, double(fullH) - zh);
         }
 
-        // 每帧都强制拷贝（VLC 随时在覆写源帧数据）
-        m_frameCopy = srcFrame.copy(QRect(qRound(srcRect.x()), qRound(srcRect.y()),
-                                          qRound(srcRect.width()), qRound(srcRect.height())));
-        m_videoSize = m_frameCopy.size();
-        m_textureDirty = true;
+        // 纹理坐标变化时重建 quad
+        if (zx != m_texU0 || zy != m_texV0 || zw != m_texW || zh != m_texH ||
+            m_sharedTexWidth != fullW || m_sharedTexHeight != fullH) {
+            m_texU0 = zx; m_texV0 = zy;
+            m_texW  = zw; m_texH  = zh;
+            m_sharedTexWidth = fullW;
+            m_sharedTexHeight = fullH;
+            updateQuadVertices();
+        }
 
-        // 窗口尺寸变化 → 重算 quad 顶点
         QSize curItemSize(int(m_item->width()), int(m_item->height()));
-        if (m_itemSize != curItemSize || m_videoSize != m_lastQuadVideoSize) {
+        if (m_itemSize != curItemSize) {
             m_itemSize = curItemSize;
-            m_lastQuadVideoSize = m_videoSize;
             updateQuadVertices();
         }
     }
@@ -93,13 +98,10 @@ public:
         if (!m_glInitialized)
             initGL();
 
-        if (m_textureDirty && !m_frameCopy.isNull())
-            uploadTexture();
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        if (m_texture && !m_vertices.isEmpty()) {
+        if (m_sharedTexId && !m_vertices.isEmpty()) {
             glUseProgram(m_program);
 
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -107,7 +109,7 @@ public:
                          m_vertices.constData(), GL_DYNAMIC_DRAW);
 
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, m_texture);
+            glBindTexture(GL_TEXTURE_2D, m_sharedTexId);
             glUniform1i(glGetUniformLocation(m_program, "uTexture"), 0);
 
             GLint posLoc = glGetAttribLocation(m_program, "aPosition");
@@ -140,50 +142,39 @@ private:
         m_glInitialized = true;
     }
 
-    void uploadTexture()
-    {
-        QImage tex = m_frameCopy.convertToFormat(QImage::Format_RGBA8888);
-
-        if (!m_texture)
-            glGenTextures(1, &m_texture);
-
-        glBindTexture(GL_TEXTURE_2D, m_texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                     tex.width(), tex.height(), 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        m_textureDirty = false;
-    }
+    // uploadTexture() 已移除 —— 放大镜现在直接绑定主播放器的共享 GL 纹理
 
     void updateQuadVertices()
     {
         m_vertices.clear();
-        if (m_videoSize.isEmpty() || m_itemSize.isEmpty()) return;
+        if (m_sharedTexWidth <= 0 || m_sharedTexHeight <= 0 || m_itemSize.isEmpty())
+            return;
 
-        float videoW = m_videoSize.width();
-        float videoH = m_videoSize.height();
-        float itemW  = m_itemSize.width();
-        float itemH  = m_itemSize.height();
+        // 缩放后的显示尺寸（letterbox，保持宽高比）
+        float zoomW = m_texW;
+        float zoomH = m_texH;
+        float itemW = m_itemSize.width();
+        float itemH = m_itemSize.height();
 
-        float scale = qMin(itemW / videoW, itemH / videoH);
-        float displayW = videoW * scale;
-        float displayH = videoH * scale;
+        float scale = qMin(itemW / zoomW, itemH / zoomH);
+        float displayW = zoomW * scale;
+        float displayH = zoomH * scale;
 
         float halfW = displayW / itemW;
         float halfH = displayH / itemH;
 
+        // 归一化纹理坐标（zoom 区域在完整纹理中的位置）
+        float u0 = m_texU0 / m_sharedTexWidth;
+        float v0 = m_texV0 / m_sharedTexHeight;
+        float u1 = (m_texU0 + zoomW) / m_sharedTexWidth;
+        float v1 = (m_texV0 + zoomH) / m_sharedTexHeight;
+
         // 三角形带：左下 → 右下 → 左上 → 右上
         m_vertices = {
-            -halfW, -halfH,   0.0f, 0.0f,
-             halfW, -halfH,   1.0f, 0.0f,
-            -halfW,  halfH,   0.0f, 1.0f,
-             halfW,  halfH,   1.0f, 1.0f,
+            -halfW, -halfH,   u0, v0,
+             halfW, -halfH,   u1, v0,
+            -halfW,  halfH,   u0, v1,
+             halfW,  halfH,   u1, v1,
         };
     }
 
@@ -245,15 +236,18 @@ private:
 
     VlcFrameItem *m_item;
 
-    QImage   m_frameCopy;
-    QSize    m_videoSize;
-    QSize    m_lastQuadVideoSize;
-    bool     m_textureDirty = false;
+    // 共享纹理（来自 VlcVideoItem，不归我们创建/删除）
+    GLuint m_sharedTexId = 0;
+    int    m_sharedTexWidth  = 0;
+    int    m_sharedTexHeight = 0;
+
+    // Zoom 区域在共享纹理中的位置和大小（像素坐标）
+    double m_texU0 = 0.0, m_texV0 = 0.0;
+    double m_texW  = 0.0, m_texH  = 0.0;
 
     QVector<float> m_vertices;
     QSize m_itemSize;
 
-    GLuint m_texture = 0;
     GLuint m_program = 0;
     GLuint m_vbo     = 0;
     bool   m_glInitialized = false;
