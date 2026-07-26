@@ -120,13 +120,14 @@ public slots:
         //计算对应俯仰角与框架角
         float Pitchangle = m_centerX / static_cast<float>(m_imageWidth) * m_hFov;
         float Yawangle   = m_centerY / static_cast<float>(m_imageHeight) * m_vFov;
-
+        //按一定时间间隔发送
 
     };
 
-    //监听图像分辨率与焦距变化
-    void imgModeChange(){
-
+    //监听图像分辨率与焦距变化，CCD设置发生变化时给出信号
+    void imgSetChange(){
+        //在这里改变图像分辨率与视场角
+        
     };
 
 signals:

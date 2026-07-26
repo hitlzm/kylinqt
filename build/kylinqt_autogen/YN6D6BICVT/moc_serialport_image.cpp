@@ -1345,8 +1345,8 @@ void ImageData::requestScanPorts()
     QMetaObject::activate(this, &staticMetaObject, 52, nullptr);
 }
 struct qt_meta_stringdata_ImageSendData_t {
-    QByteArrayData data[107];
-    char stringdata0[2013];
+    QByteArrayData data[113];
+    char stringdata0[2078];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1411,57 +1411,63 @@ QT_MOC_LITERAL(52, 1111, 16), // "pixelSizeChanged"
 QT_MOC_LITERAL(53, 1128, 15), // "requestSendData"
 QT_MOC_LITERAL(54, 1144, 16), // "image_send_frame"
 QT_MOC_LITERAL(55, 1161, 5), // "frame"
-QT_MOC_LITERAL(56, 1167, 10), // "buildFrame"
-QT_MOC_LITERAL(57, 1178, 13), // "m_frameLength"
-QT_MOC_LITERAL(58, 1192, 16), // "m_aFrameSequence"
-QT_MOC_LITERAL(59, 1209, 16), // "m_seekerCtrlWord"
-QT_MOC_LITERAL(60, 1226, 18), // "m_opticalParamCtrl"
-QT_MOC_LITERAL(61, 1245, 15), // "m_templateIndex"
-QT_MOC_LITERAL(62, 1261, 23), // "m_targetBackgroundType1"
-QT_MOC_LITERAL(63, 1285, 23), // "m_targetBackgroundType2"
-QT_MOC_LITERAL(64, 1309, 23), // "m_targetBackgroundType3"
-QT_MOC_LITERAL(65, 1333, 23), // "m_targetBackgroundType4"
-QT_MOC_LITERAL(66, 1357, 23), // "m_missileTargetDistance"
-QT_MOC_LITERAL(67, 1381, 14), // "m_missileSpeed"
-QT_MOC_LITERAL(68, 1396, 16), // "m_bodyPitchAngle"
-QT_MOC_LITERAL(69, 1413, 14), // "m_bodyYawAngle"
-QT_MOC_LITERAL(70, 1428, 15), // "m_bodyRollAngle"
-QT_MOC_LITERAL(71, 1444, 15), // "m_bodyPitchRate"
-QT_MOC_LITERAL(72, 1460, 13), // "m_bodyYawRate"
-QT_MOC_LITERAL(73, 1474, 14), // "m_bodyRollRate"
-QT_MOC_LITERAL(74, 1489, 10), // "m_bodyVelX"
-QT_MOC_LITERAL(75, 1500, 10), // "m_bodyVelY"
-QT_MOC_LITERAL(76, 1511, 10), // "m_bodyVelZ"
-QT_MOC_LITERAL(77, 1522, 10), // "m_bodyPosX"
-QT_MOC_LITERAL(78, 1533, 10), // "m_bodyPosY"
-QT_MOC_LITERAL(79, 1544, 10), // "m_bodyPosZ"
-QT_MOC_LITERAL(80, 1555, 19), // "m_pitchGimbalPreset"
-QT_MOC_LITERAL(81, 1575, 17), // "m_yawGimbalPreset"
-QT_MOC_LITERAL(82, 1593, 19), // "m_irIntegrationTime"
-QT_MOC_LITERAL(83, 1613, 23), // "m_trackingCorrectionCmd"
-QT_MOC_LITERAL(84, 1637, 20), // "m_correctionFrameNum"
-QT_MOC_LITERAL(85, 1658, 19), // "m_correctedPitchPos"
-QT_MOC_LITERAL(86, 1678, 17), // "m_correctedYawPos"
-QT_MOC_LITERAL(87, 1696, 17), // "m_searchPitchRate"
-QT_MOC_LITERAL(88, 1714, 15), // "m_searchYawRate"
-QT_MOC_LITERAL(89, 1730, 10), // "m_gateSize"
-QT_MOC_LITERAL(90, 1741, 11), // "m_osdSwitch"
-QT_MOC_LITERAL(91, 1753, 18), // "m_captureRefImgCmd"
-QT_MOC_LITERAL(92, 1772, 16), // "m_targetAltitude"
-QT_MOC_LITERAL(93, 1789, 15), // "m_aircraftPitch"
-QT_MOC_LITERAL(94, 1805, 13), // "m_aircraftYaw"
-QT_MOC_LITERAL(95, 1819, 14), // "m_aircraftRoll"
-QT_MOC_LITERAL(96, 1834, 13), // "m_focalLength"
-QT_MOC_LITERAL(97, 1848, 15), // "m_podPitchAngle"
-QT_MOC_LITERAL(98, 1864, 13), // "m_podYawAngle"
-QT_MOC_LITERAL(99, 1878, 19), // "m_satelliteMapScale"
-QT_MOC_LITERAL(100, 1898, 9), // "m_podType"
-QT_MOC_LITERAL(101, 1908, 17), // "m_targetLongitude"
-QT_MOC_LITERAL(102, 1926, 16), // "m_targetLatitude"
-QT_MOC_LITERAL(103, 1943, 19), // "m_aircraftLongitude"
-QT_MOC_LITERAL(104, 1963, 18), // "m_aircraftLatitude"
-QT_MOC_LITERAL(105, 1982, 18), // "m_aircraftAltitude"
-QT_MOC_LITERAL(106, 2001, 11) // "m_pixelSize"
+QT_MOC_LITERAL(56, 1167, 21), // "deviationPixelRelayed"
+QT_MOC_LITERAL(57, 1189, 1), // "x"
+QT_MOC_LITERAL(58, 1191, 1), // "y"
+QT_MOC_LITERAL(59, 1193, 14), // "buildDeviation"
+QT_MOC_LITERAL(60, 1208, 3), // "num"
+QT_MOC_LITERAL(61, 1212, 10), // "buildFrame"
+QT_MOC_LITERAL(62, 1223, 19), // "relayDeviationPixel"
+QT_MOC_LITERAL(63, 1243, 13), // "m_frameLength"
+QT_MOC_LITERAL(64, 1257, 16), // "m_aFrameSequence"
+QT_MOC_LITERAL(65, 1274, 16), // "m_seekerCtrlWord"
+QT_MOC_LITERAL(66, 1291, 18), // "m_opticalParamCtrl"
+QT_MOC_LITERAL(67, 1310, 15), // "m_templateIndex"
+QT_MOC_LITERAL(68, 1326, 23), // "m_targetBackgroundType1"
+QT_MOC_LITERAL(69, 1350, 23), // "m_targetBackgroundType2"
+QT_MOC_LITERAL(70, 1374, 23), // "m_targetBackgroundType3"
+QT_MOC_LITERAL(71, 1398, 23), // "m_targetBackgroundType4"
+QT_MOC_LITERAL(72, 1422, 23), // "m_missileTargetDistance"
+QT_MOC_LITERAL(73, 1446, 14), // "m_missileSpeed"
+QT_MOC_LITERAL(74, 1461, 16), // "m_bodyPitchAngle"
+QT_MOC_LITERAL(75, 1478, 14), // "m_bodyYawAngle"
+QT_MOC_LITERAL(76, 1493, 15), // "m_bodyRollAngle"
+QT_MOC_LITERAL(77, 1509, 15), // "m_bodyPitchRate"
+QT_MOC_LITERAL(78, 1525, 13), // "m_bodyYawRate"
+QT_MOC_LITERAL(79, 1539, 14), // "m_bodyRollRate"
+QT_MOC_LITERAL(80, 1554, 10), // "m_bodyVelX"
+QT_MOC_LITERAL(81, 1565, 10), // "m_bodyVelY"
+QT_MOC_LITERAL(82, 1576, 10), // "m_bodyVelZ"
+QT_MOC_LITERAL(83, 1587, 10), // "m_bodyPosX"
+QT_MOC_LITERAL(84, 1598, 10), // "m_bodyPosY"
+QT_MOC_LITERAL(85, 1609, 10), // "m_bodyPosZ"
+QT_MOC_LITERAL(86, 1620, 19), // "m_pitchGimbalPreset"
+QT_MOC_LITERAL(87, 1640, 17), // "m_yawGimbalPreset"
+QT_MOC_LITERAL(88, 1658, 19), // "m_irIntegrationTime"
+QT_MOC_LITERAL(89, 1678, 23), // "m_trackingCorrectionCmd"
+QT_MOC_LITERAL(90, 1702, 20), // "m_correctionFrameNum"
+QT_MOC_LITERAL(91, 1723, 19), // "m_correctedPitchPos"
+QT_MOC_LITERAL(92, 1743, 17), // "m_correctedYawPos"
+QT_MOC_LITERAL(93, 1761, 17), // "m_searchPitchRate"
+QT_MOC_LITERAL(94, 1779, 15), // "m_searchYawRate"
+QT_MOC_LITERAL(95, 1795, 10), // "m_gateSize"
+QT_MOC_LITERAL(96, 1806, 11), // "m_osdSwitch"
+QT_MOC_LITERAL(97, 1818, 18), // "m_captureRefImgCmd"
+QT_MOC_LITERAL(98, 1837, 16), // "m_targetAltitude"
+QT_MOC_LITERAL(99, 1854, 15), // "m_aircraftPitch"
+QT_MOC_LITERAL(100, 1870, 13), // "m_aircraftYaw"
+QT_MOC_LITERAL(101, 1884, 14), // "m_aircraftRoll"
+QT_MOC_LITERAL(102, 1899, 13), // "m_focalLength"
+QT_MOC_LITERAL(103, 1913, 15), // "m_podPitchAngle"
+QT_MOC_LITERAL(104, 1929, 13), // "m_podYawAngle"
+QT_MOC_LITERAL(105, 1943, 19), // "m_satelliteMapScale"
+QT_MOC_LITERAL(106, 1963, 9), // "m_podType"
+QT_MOC_LITERAL(107, 1973, 17), // "m_targetLongitude"
+QT_MOC_LITERAL(108, 1991, 16), // "m_targetLatitude"
+QT_MOC_LITERAL(109, 2008, 19), // "m_aircraftLongitude"
+QT_MOC_LITERAL(110, 2028, 18), // "m_aircraftLatitude"
+QT_MOC_LITERAL(111, 2047, 18), // "m_aircraftAltitude"
+QT_MOC_LITERAL(112, 2066, 11) // "m_pixelSize"
 
     },
     "ImageSendData\0frameLengthChanged\0\0"
@@ -1495,18 +1501,19 @@ QT_MOC_LITERAL(106, 2001, 11) // "m_pixelSize"
     "targetLatitudeChanged\0aircraftLongitudeChanged\0"
     "aircraftLatitudeChanged\0aircraftAltitudeChanged\0"
     "pixelSizeChanged\0requestSendData\0"
-    "image_send_frame\0frame\0buildFrame\0"
-    "m_frameLength\0m_aFrameSequence\0"
-    "m_seekerCtrlWord\0m_opticalParamCtrl\0"
-    "m_templateIndex\0m_targetBackgroundType1\0"
-    "m_targetBackgroundType2\0m_targetBackgroundType3\0"
-    "m_targetBackgroundType4\0m_missileTargetDistance\0"
-    "m_missileSpeed\0m_bodyPitchAngle\0"
-    "m_bodyYawAngle\0m_bodyRollAngle\0"
-    "m_bodyPitchRate\0m_bodyYawRate\0"
-    "m_bodyRollRate\0m_bodyVelX\0m_bodyVelY\0"
-    "m_bodyVelZ\0m_bodyPosX\0m_bodyPosY\0"
-    "m_bodyPosZ\0m_pitchGimbalPreset\0"
+    "image_send_frame\0frame\0deviationPixelRelayed\0"
+    "x\0y\0buildDeviation\0num\0buildFrame\0"
+    "relayDeviationPixel\0m_frameLength\0"
+    "m_aFrameSequence\0m_seekerCtrlWord\0"
+    "m_opticalParamCtrl\0m_templateIndex\0"
+    "m_targetBackgroundType1\0m_targetBackgroundType2\0"
+    "m_targetBackgroundType3\0m_targetBackgroundType4\0"
+    "m_missileTargetDistance\0m_missileSpeed\0"
+    "m_bodyPitchAngle\0m_bodyYawAngle\0"
+    "m_bodyRollAngle\0m_bodyPitchRate\0"
+    "m_bodyYawRate\0m_bodyRollRate\0m_bodyVelX\0"
+    "m_bodyVelY\0m_bodyVelZ\0m_bodyPosX\0"
+    "m_bodyPosY\0m_bodyPosZ\0m_pitchGimbalPreset\0"
     "m_yawGimbalPreset\0m_irIntegrationTime\0"
     "m_trackingCorrectionCmd\0m_correctionFrameNum\0"
     "m_correctedPitchPos\0m_correctedYawPos\0"
@@ -1528,69 +1535,74 @@ static const uint qt_meta_data_ImageSendData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      53,   14, // methods
-      50,  334, // properties
+      56,   14, // methods
+      50,  366, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      52,       // signalCount
+      53,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  279,    2, 0x06 /* Public */,
-       3,    0,  280,    2, 0x06 /* Public */,
-       4,    0,  281,    2, 0x06 /* Public */,
-       5,    0,  282,    2, 0x06 /* Public */,
-       6,    0,  283,    2, 0x06 /* Public */,
-       7,    0,  284,    2, 0x06 /* Public */,
-       8,    0,  285,    2, 0x06 /* Public */,
-       9,    0,  286,    2, 0x06 /* Public */,
-      10,    0,  287,    2, 0x06 /* Public */,
-      11,    0,  288,    2, 0x06 /* Public */,
-      12,    0,  289,    2, 0x06 /* Public */,
-      13,    0,  290,    2, 0x06 /* Public */,
-      14,    0,  291,    2, 0x06 /* Public */,
-      15,    0,  292,    2, 0x06 /* Public */,
-      16,    0,  293,    2, 0x06 /* Public */,
-      17,    0,  294,    2, 0x06 /* Public */,
-      18,    0,  295,    2, 0x06 /* Public */,
-      19,    0,  296,    2, 0x06 /* Public */,
-      20,    0,  297,    2, 0x06 /* Public */,
-      21,    0,  298,    2, 0x06 /* Public */,
-      22,    0,  299,    2, 0x06 /* Public */,
-      23,    0,  300,    2, 0x06 /* Public */,
-      24,    0,  301,    2, 0x06 /* Public */,
-      25,    0,  302,    2, 0x06 /* Public */,
-      26,    0,  303,    2, 0x06 /* Public */,
-      27,    0,  304,    2, 0x06 /* Public */,
-      28,    0,  305,    2, 0x06 /* Public */,
-      29,    0,  306,    2, 0x06 /* Public */,
-      30,    0,  307,    2, 0x06 /* Public */,
-      31,    0,  308,    2, 0x06 /* Public */,
-      32,    0,  309,    2, 0x06 /* Public */,
-      33,    0,  310,    2, 0x06 /* Public */,
-      34,    0,  311,    2, 0x06 /* Public */,
-      35,    0,  312,    2, 0x06 /* Public */,
-      36,    0,  313,    2, 0x06 /* Public */,
-      37,    0,  314,    2, 0x06 /* Public */,
-      38,    0,  315,    2, 0x06 /* Public */,
-      39,    0,  316,    2, 0x06 /* Public */,
-      40,    0,  317,    2, 0x06 /* Public */,
-      41,    0,  318,    2, 0x06 /* Public */,
-      42,    0,  319,    2, 0x06 /* Public */,
-      43,    0,  320,    2, 0x06 /* Public */,
-      44,    0,  321,    2, 0x06 /* Public */,
-      45,    0,  322,    2, 0x06 /* Public */,
-      46,    0,  323,    2, 0x06 /* Public */,
-      47,    0,  324,    2, 0x06 /* Public */,
-      48,    0,  325,    2, 0x06 /* Public */,
-      49,    0,  326,    2, 0x06 /* Public */,
-      50,    0,  327,    2, 0x06 /* Public */,
-      51,    0,  328,    2, 0x06 /* Public */,
-      52,    0,  329,    2, 0x06 /* Public */,
-      53,    1,  330,    2, 0x06 /* Public */,
+       1,    0,  294,    2, 0x06 /* Public */,
+       3,    0,  295,    2, 0x06 /* Public */,
+       4,    0,  296,    2, 0x06 /* Public */,
+       5,    0,  297,    2, 0x06 /* Public */,
+       6,    0,  298,    2, 0x06 /* Public */,
+       7,    0,  299,    2, 0x06 /* Public */,
+       8,    0,  300,    2, 0x06 /* Public */,
+       9,    0,  301,    2, 0x06 /* Public */,
+      10,    0,  302,    2, 0x06 /* Public */,
+      11,    0,  303,    2, 0x06 /* Public */,
+      12,    0,  304,    2, 0x06 /* Public */,
+      13,    0,  305,    2, 0x06 /* Public */,
+      14,    0,  306,    2, 0x06 /* Public */,
+      15,    0,  307,    2, 0x06 /* Public */,
+      16,    0,  308,    2, 0x06 /* Public */,
+      17,    0,  309,    2, 0x06 /* Public */,
+      18,    0,  310,    2, 0x06 /* Public */,
+      19,    0,  311,    2, 0x06 /* Public */,
+      20,    0,  312,    2, 0x06 /* Public */,
+      21,    0,  313,    2, 0x06 /* Public */,
+      22,    0,  314,    2, 0x06 /* Public */,
+      23,    0,  315,    2, 0x06 /* Public */,
+      24,    0,  316,    2, 0x06 /* Public */,
+      25,    0,  317,    2, 0x06 /* Public */,
+      26,    0,  318,    2, 0x06 /* Public */,
+      27,    0,  319,    2, 0x06 /* Public */,
+      28,    0,  320,    2, 0x06 /* Public */,
+      29,    0,  321,    2, 0x06 /* Public */,
+      30,    0,  322,    2, 0x06 /* Public */,
+      31,    0,  323,    2, 0x06 /* Public */,
+      32,    0,  324,    2, 0x06 /* Public */,
+      33,    0,  325,    2, 0x06 /* Public */,
+      34,    0,  326,    2, 0x06 /* Public */,
+      35,    0,  327,    2, 0x06 /* Public */,
+      36,    0,  328,    2, 0x06 /* Public */,
+      37,    0,  329,    2, 0x06 /* Public */,
+      38,    0,  330,    2, 0x06 /* Public */,
+      39,    0,  331,    2, 0x06 /* Public */,
+      40,    0,  332,    2, 0x06 /* Public */,
+      41,    0,  333,    2, 0x06 /* Public */,
+      42,    0,  334,    2, 0x06 /* Public */,
+      43,    0,  335,    2, 0x06 /* Public */,
+      44,    0,  336,    2, 0x06 /* Public */,
+      45,    0,  337,    2, 0x06 /* Public */,
+      46,    0,  338,    2, 0x06 /* Public */,
+      47,    0,  339,    2, 0x06 /* Public */,
+      48,    0,  340,    2, 0x06 /* Public */,
+      49,    0,  341,    2, 0x06 /* Public */,
+      50,    0,  342,    2, 0x06 /* Public */,
+      51,    0,  343,    2, 0x06 /* Public */,
+      52,    0,  344,    2, 0x06 /* Public */,
+      53,    1,  345,    2, 0x06 /* Public */,
+      56,    2,  348,    2, 0x06 /* Public */,
+
+ // slots: name, argc, parameters, tag, flags
+      59,    3,  353,    2, 0x0a /* Public */,
 
  // methods: name, argc, parameters, tag, flags
-      56,    0,  333,    2, 0x02 /* Public */,
+      61,    0,  360,    2, 0x02 /* Public */,
+      62,    2,  361,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -1645,61 +1657,66 @@ static const uint qt_meta_data_ImageSendData[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 54,   55,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,   57,   58,
+
+ // slots: parameters
+    QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   60,   57,   58,
 
  // methods: parameters
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,   57,   58,
 
  // properties: name, type, flags
-      57, QMetaType::Int, 0x00495003,
-      58, QMetaType::Int, 0x00495003,
-      59, QMetaType::Int, 0x00495003,
-      60, QMetaType::Int, 0x00495003,
-      61, QMetaType::Int, 0x00495003,
-      62, QMetaType::Int, 0x00495003,
       63, QMetaType::Int, 0x00495003,
       64, QMetaType::Int, 0x00495003,
       65, QMetaType::Int, 0x00495003,
       66, QMetaType::Int, 0x00495003,
-      67, QMetaType::Float, 0x00495003,
-      68, QMetaType::Float, 0x00495003,
-      69, QMetaType::Float, 0x00495003,
-      70, QMetaType::Float, 0x00495003,
-      71, QMetaType::Float, 0x00495003,
-      72, QMetaType::Float, 0x00495003,
+      67, QMetaType::Int, 0x00495003,
+      68, QMetaType::Int, 0x00495003,
+      69, QMetaType::Int, 0x00495003,
+      70, QMetaType::Int, 0x00495003,
+      71, QMetaType::Int, 0x00495003,
+      72, QMetaType::Int, 0x00495003,
       73, QMetaType::Float, 0x00495003,
       74, QMetaType::Float, 0x00495003,
       75, QMetaType::Float, 0x00495003,
       76, QMetaType::Float, 0x00495003,
-      77, QMetaType::Int, 0x00495003,
-      78, QMetaType::Int, 0x00495003,
-      79, QMetaType::Int, 0x00495003,
+      77, QMetaType::Float, 0x00495003,
+      78, QMetaType::Float, 0x00495003,
+      79, QMetaType::Float, 0x00495003,
       80, QMetaType::Float, 0x00495003,
       81, QMetaType::Float, 0x00495003,
-      82, QMetaType::Int, 0x00495003,
+      82, QMetaType::Float, 0x00495003,
       83, QMetaType::Int, 0x00495003,
       84, QMetaType::Int, 0x00495003,
       85, QMetaType::Int, 0x00495003,
-      86, QMetaType::Int, 0x00495003,
+      86, QMetaType::Float, 0x00495003,
       87, QMetaType::Float, 0x00495003,
-      88, QMetaType::Float, 0x00495003,
+      88, QMetaType::Int, 0x00495003,
       89, QMetaType::Int, 0x00495003,
       90, QMetaType::Int, 0x00495003,
       91, QMetaType::Int, 0x00495003,
       92, QMetaType::Int, 0x00495003,
       93, QMetaType::Float, 0x00495003,
       94, QMetaType::Float, 0x00495003,
-      95, QMetaType::Float, 0x00495003,
+      95, QMetaType::Int, 0x00495003,
       96, QMetaType::Int, 0x00495003,
-      97, QMetaType::Float, 0x00495003,
-      98, QMetaType::Float, 0x00495003,
-      99, QMetaType::Int, 0x00495003,
-     100, QMetaType::Int, 0x00495003,
-     101, QMetaType::Double, 0x00495003,
-     102, QMetaType::Double, 0x00495003,
-     103, QMetaType::Double, 0x00495003,
-     104, QMetaType::Double, 0x00495003,
+      97, QMetaType::Int, 0x00495003,
+      98, QMetaType::Int, 0x00495003,
+      99, QMetaType::Float, 0x00495003,
+     100, QMetaType::Float, 0x00495003,
+     101, QMetaType::Float, 0x00495003,
+     102, QMetaType::Int, 0x00495003,
+     103, QMetaType::Float, 0x00495003,
+     104, QMetaType::Float, 0x00495003,
      105, QMetaType::Int, 0x00495003,
      106, QMetaType::Int, 0x00495003,
+     107, QMetaType::Double, 0x00495003,
+     108, QMetaType::Double, 0x00495003,
+     109, QMetaType::Double, 0x00495003,
+     110, QMetaType::Double, 0x00495003,
+     111, QMetaType::Int, 0x00495003,
+     112, QMetaType::Int, 0x00495003,
 
  // properties: notify_signal_id
        0,
@@ -1814,7 +1831,10 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 49: _t->aircraftAltitudeChanged(); break;
         case 50: _t->pixelSizeChanged(); break;
         case 51: _t->requestSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
-        case 52: _t->buildFrame(); break;
+        case 52: _t->deviationPixelRelayed((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 53: _t->buildDeviation((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 54: _t->buildFrame(); break;
+        case 55: _t->relayDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -2180,6 +2200,13 @@ void ImageSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
             using _t = void (ImageSendData::*)(image_send_frame );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&ImageSendData::requestSendData)) {
                 *result = 51;
+                return;
+            }
+        }
+        {
+            using _t = void (ImageSendData::*)(int , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&ImageSendData::deviationPixelRelayed)) {
+                *result = 52;
                 return;
             }
         }
@@ -2583,13 +2610,13 @@ int ImageSendData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 53)
+        if (_id < 56)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 53;
+        _id -= 56;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 53)
+        if (_id < 56)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 53;
+        _id -= 56;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
@@ -2923,9 +2950,16 @@ void ImageSendData::requestSendData(image_send_frame _t1)
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 51, _a);
 }
+
+// SIGNAL 52
+void ImageSendData::deviationPixelRelayed(int _t1, int _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 52, _a);
+}
 struct qt_meta_stringdata_SerialPortImage_t {
-    QByteArrayData data[36];
-    char stringdata0[356];
+    QByteArrayData data[41];
+    char stringdata0[405];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2950,38 +2984,44 @@ QT_MOC_LITERAL(12, 119, 9), // "reqExsend"
 QT_MOC_LITERAL(13, 129, 15), // "sendExGuideData"
 QT_MOC_LITERAL(14, 145, 6), // "frame1"
 QT_MOC_LITERAL(15, 152, 6), // "frame2"
-QT_MOC_LITERAL(16, 159, 6), // "dowork"
-QT_MOC_LITERAL(17, 166, 16), // "init_crc16_table"
-QT_MOC_LITERAL(18, 183, 8), // "uint16_t"
-QT_MOC_LITERAL(19, 192, 4), // "poly"
-QT_MOC_LITERAL(20, 197, 16), // "crc16_ccitt_fast"
-QT_MOC_LITERAL(21, 214, 14), // "const uint8_t*"
-QT_MOC_LITERAL(22, 229, 4), // "data"
-QT_MOC_LITERAL(23, 234, 6), // "size_t"
-QT_MOC_LITERAL(24, 241, 3), // "len"
-QT_MOC_LITERAL(25, 245, 4), // "init"
-QT_MOC_LITERAL(26, 250, 10), // "onOpenPort"
-QT_MOC_LITERAL(27, 261, 8), // "portName"
-QT_MOC_LITERAL(28, 270, 8), // "baudRate"
-QT_MOC_LITERAL(29, 279, 11), // "onClosePort"
-QT_MOC_LITERAL(30, 291, 11), // "onScanPorts"
-QT_MOC_LITERAL(31, 303, 10), // "onSendData"
-QT_MOC_LITERAL(32, 314, 16), // "image_send_frame"
-QT_MOC_LITERAL(33, 331, 5), // "frame"
-QT_MOC_LITERAL(34, 337, 13), // "ExmodeChanged"
-QT_MOC_LITERAL(35, 351, 4) // "mode"
+QT_MOC_LITERAL(16, 159, 21), // "reqSendDeviationPixel"
+QT_MOC_LITERAL(17, 181, 3), // "num"
+QT_MOC_LITERAL(18, 185, 1), // "x"
+QT_MOC_LITERAL(19, 187, 1), // "y"
+QT_MOC_LITERAL(20, 189, 6), // "dowork"
+QT_MOC_LITERAL(21, 196, 16), // "init_crc16_table"
+QT_MOC_LITERAL(22, 213, 8), // "uint16_t"
+QT_MOC_LITERAL(23, 222, 4), // "poly"
+QT_MOC_LITERAL(24, 227, 16), // "crc16_ccitt_fast"
+QT_MOC_LITERAL(25, 244, 14), // "const uint8_t*"
+QT_MOC_LITERAL(26, 259, 4), // "data"
+QT_MOC_LITERAL(27, 264, 6), // "size_t"
+QT_MOC_LITERAL(28, 271, 3), // "len"
+QT_MOC_LITERAL(29, 275, 4), // "init"
+QT_MOC_LITERAL(30, 280, 10), // "onOpenPort"
+QT_MOC_LITERAL(31, 291, 8), // "portName"
+QT_MOC_LITERAL(32, 300, 8), // "baudRate"
+QT_MOC_LITERAL(33, 309, 11), // "onClosePort"
+QT_MOC_LITERAL(34, 321, 11), // "onScanPorts"
+QT_MOC_LITERAL(35, 333, 10), // "onSendData"
+QT_MOC_LITERAL(36, 344, 16), // "image_send_frame"
+QT_MOC_LITERAL(37, 361, 5), // "frame"
+QT_MOC_LITERAL(38, 367, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(39, 381, 4), // "mode"
+QT_MOC_LITERAL(40, 386, 18) // "recvDeviationPixel"
 
     },
     "SerialPortImage\0portOpened\0\0success\0"
     "portClosed\0portError\0msg\0portsChanged\0"
     "ports\0imageFrameReceived\0rawData\0"
     "reqTimesync\0reqExsend\0sendExGuideData\0"
-    "frame1\0frame2\0dowork\0init_crc16_table\0"
+    "frame1\0frame2\0reqSendDeviationPixel\0"
+    "num\0x\0y\0dowork\0init_crc16_table\0"
     "uint16_t\0poly\0crc16_ccitt_fast\0"
     "const uint8_t*\0data\0size_t\0len\0init\0"
     "onOpenPort\0portName\0baudRate\0onClosePort\0"
     "onScanPorts\0onSendData\0image_send_frame\0"
-    "frame\0ExmodeChanged\0mode"
+    "frame\0ExmodeChanged\0mode\0recvDeviationPixel"
 };
 #undef QT_MOC_LITERAL
 
@@ -2991,33 +3031,35 @@ static const uint qt_meta_data_SerialPortImage[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      17,   14, // methods
+      19,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       7,       // signalCount
+       8,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   99,    2, 0x06 /* Public */,
-       4,    0,  102,    2, 0x06 /* Public */,
-       5,    1,  103,    2, 0x06 /* Public */,
-       7,    1,  106,    2, 0x06 /* Public */,
-       9,    1,  109,    2, 0x06 /* Public */,
-      11,    0,  112,    2, 0x06 /* Public */,
-      12,    2,  113,    2, 0x06 /* Public */,
+       1,    1,  109,    2, 0x06 /* Public */,
+       4,    0,  112,    2, 0x06 /* Public */,
+       5,    1,  113,    2, 0x06 /* Public */,
+       7,    1,  116,    2, 0x06 /* Public */,
+       9,    1,  119,    2, 0x06 /* Public */,
+      11,    0,  122,    2, 0x06 /* Public */,
+      12,    2,  123,    2, 0x06 /* Public */,
+      16,    3,  128,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      16,    0,  118,    2, 0x0a /* Public */,
-      17,    1,  119,    2, 0x0a /* Public */,
-      17,    0,  122,    2, 0x2a /* Public | MethodCloned */,
-      20,    3,  123,    2, 0x0a /* Public */,
-      20,    2,  130,    2, 0x2a /* Public | MethodCloned */,
-      26,    2,  135,    2, 0x0a /* Public */,
-      29,    0,  140,    2, 0x0a /* Public */,
-      30,    0,  141,    2, 0x0a /* Public */,
-      31,    1,  142,    2, 0x0a /* Public */,
-      34,    1,  145,    2, 0x0a /* Public */,
+      20,    0,  135,    2, 0x0a /* Public */,
+      21,    1,  136,    2, 0x0a /* Public */,
+      21,    0,  139,    2, 0x2a /* Public | MethodCloned */,
+      24,    3,  140,    2, 0x0a /* Public */,
+      24,    2,  147,    2, 0x2a /* Public | MethodCloned */,
+      30,    2,  152,    2, 0x0a /* Public */,
+      33,    0,  157,    2, 0x0a /* Public */,
+      34,    0,  158,    2, 0x0a /* Public */,
+      35,    1,  159,    2, 0x0a /* Public */,
+      38,    1,  162,    2, 0x0a /* Public */,
+      40,    2,  165,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -3027,18 +3069,20 @@ static const uint qt_meta_data_SerialPortImage[] = {
     QMetaType::Void, QMetaType::QByteArray,   10,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 13, 0x80000000 | 13,   14,   15,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   17,   18,   19,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 18,   19,
+    QMetaType::Void, 0x80000000 | 22,   23,
     QMetaType::Void,
-    0x80000000 | 18, 0x80000000 | 21, 0x80000000 | 23, 0x80000000 | 18,   22,   24,   25,
-    0x80000000 | 18, 0x80000000 | 21, 0x80000000 | 23,   22,   24,
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   27,   28,
+    0x80000000 | 22, 0x80000000 | 25, 0x80000000 | 27, 0x80000000 | 22,   26,   28,   29,
+    0x80000000 | 22, 0x80000000 | 25, 0x80000000 | 27,   26,   28,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   31,   32,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 32,   33,
-    QMetaType::Void, QMetaType::Int,   35,
+    QMetaType::Void, 0x80000000 | 36,   37,
+    QMetaType::Void, QMetaType::Int,   39,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,   18,   19,
 
        0        // eod
 };
@@ -3056,18 +3100,20 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 4: _t->imageFrameReceived((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
         case 5: _t->reqTimesync(); break;
         case 6: _t->reqExsend((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
-        case 7: _t->dowork(); break;
-        case 8: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
-        case 9: _t->init_crc16_table(); break;
-        case 10: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])),(*reinterpret_cast< uint16_t(*)>(_a[3])));
+        case 7: _t->reqSendDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 8: _t->dowork(); break;
+        case 9: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
+        case 10: _t->init_crc16_table(); break;
+        case 11: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])),(*reinterpret_cast< uint16_t(*)>(_a[3])));
             if (_a[0]) *reinterpret_cast< uint16_t*>(_a[0]) = std::move(_r); }  break;
-        case 11: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])));
+        case 12: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< uint16_t*>(_a[0]) = std::move(_r); }  break;
-        case 12: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 13: _t->onClosePort(); break;
-        case 14: _t->onScanPorts(); break;
-        case 15: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
-        case 16: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 14: _t->onClosePort(); break;
+        case 15: _t->onScanPorts(); break;
+        case 16: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
+        case 17: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 18: _t->recvDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -3121,6 +3167,13 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
                 return;
             }
         }
+        {
+            using _t = void (SerialPortImage::*)(int , int , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqSendDeviationPixel)) {
+                *result = 7;
+                return;
+            }
+        }
     }
 }
 
@@ -3153,13 +3206,13 @@ int SerialPortImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 17)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 17;
+        _id -= 19;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 17)
+        if (_id < 19)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 17;
+        _id -= 19;
     }
     return _id;
 }
@@ -3209,6 +3262,13 @@ void SerialPortImage::reqExsend(const sendExGuideData & _t1, const sendExGuideDa
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 6, _a);
+}
+
+// SIGNAL 7
+void SerialPortImage::reqSendDeviationPixel(int _t1, int _t2, int _t3)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+    QMetaObject::activate(this, &staticMetaObject, 7, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

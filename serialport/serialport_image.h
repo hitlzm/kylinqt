@@ -346,6 +346,11 @@ public:
 
     Q_INVOKABLE void buildFrame() ;
 
+    int templateIndex() const { return m_templateIndex; }
+
+    // ── 偏差像素桥接：QML → ImageSendData → SerialPortImage ──
+    Q_INVOKABLE void relayDeviationPixel(int x, int y) { emit deviationPixelRelayed(x, y); }
+
 signals:
     void frameLengthChanged();
     void aFrameSequenceChanged();
@@ -400,6 +405,12 @@ signals:
     void pixelSizeChanged();
 
     void requestSendData(image_send_frame frame);
+    void deviationPixelRelayed(int x, int y);
+
+public slots:
+    //用于构建偏差像素发送帧
+    void buildDeviation(int num ,int x ,int y);
+    
 private:
     //把显示数据转化为串口原始数据
     inline qint16 toRawValue_a(float value) const
@@ -497,13 +508,31 @@ signals:
     void imageFrameReceived(const QByteArray &rawData);
     void reqTimesync();
     void reqExsend(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+
+    void reqSendDeviationPixel(int num ,int x , int y);
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
     void onScanPorts();
     void onSendData(image_send_frame frame);
-
     void ExmodeChanged(int mode);
+
+    
+    void recvDeviationPixel(int x ,int y){
+        //后期修改：可以判断串口是否打开，未打开时弹窗提示
+        //获取图像帧序号 or电视帧序号
+        if(m_imageSendData->templateIndex() == 0)
+        {
+            //读取电视帧序号
+            Cbh_tv = m_imageData->cbhTv4405();
+            reqSendDeviationPixel(Cbh_tv,x,y);
+        }else{
+            //读取红外帧序号
+            Infrared_num = m_imageData->infraredFrameNum();
+            reqSendDeviationPixel(Infrared_num,x,y);
+        }
+        // x与y为偏差像素信息
+    };
 
 protected:
     void parseData(const QByteArray &rawData) override;
@@ -516,9 +545,11 @@ private:
     //不再存储环形缓冲区，利用卡尔曼滤波器来估计目标位置,每三秒重新INIT一次，如果外引导源是图像导引头,利用前三秒数据给转台发送下一个三秒的跟踪角度
     SeekerTrackManager m_kalman;
     double m_azimuth = 0.0f;
-    double m_pitch = 0.0f;
-    int exindex = 0;
+    double m_pitch = 0.0f;    //存储图像导引头的方位角与俯仰角
+    int exindex = 0;         //外引导源判断
     QTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
+    int Cbh_tv; //电视帧编号
+    int Infrared_num; //红外帧编号
 };
 
 

@@ -608,6 +608,7 @@ void VlcVideoItem::mousePressEvent(QMouseEvent *event)
         event->accept();
         return;
     }
+    //如果不是左键，默认处理
     QQuickFramebufferObject::mousePressEvent(event);
 }
 
@@ -666,8 +667,8 @@ void VlcVideoItem::requestPixelAt(int x, int y)
     frameX = qBound(0, frameX, frame.width() - 1);
     frameY = qBound(0, frameY, frame.height() - 1);
 
-    QColor color = frame.pixelColor(frameX, frameY);
     qDebug() << "[VlcVideo] pixelRead at (" << x << "," << y << ") → frame("
-             << frameX << "," << frameY << ") =" << color;
-    emit pixelRead(x, y, color);
+             << frameX << "," << frameY << ")";
+    emit pixelRead(frameX, frameY);
+    emit reqDeviationToImg(frameX, frameY);
 }

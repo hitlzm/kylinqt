@@ -124,6 +124,10 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::portsChanged, imageData, &ImageData::setPortList, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::imageFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
 
+    // ── 偏差像素链：QML点击 → VlcVideoItem → imageSendData(桥) → imagePort → imageSendData ──
+    QObject::connect(imageSendData, &ImageSendData::deviationPixelRelayed, imagePort, &SerialPortImage::recvDeviationPixel, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqSendDeviationPixel, imageSendData, &ImageSendData::buildDeviation, Qt::QueuedConnection);
+
     // ── Turntable: 主线程 Data → 工作线程 Worker ──
     QObject::connect(turntableData, &TurntableData::requestOpenPort,  turntablePort, &SerialPortTurntable::onOpenPort,  Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableData::requestClosePort, turntablePort, &SerialPortTurntable::onClosePort, Qt::QueuedConnection);

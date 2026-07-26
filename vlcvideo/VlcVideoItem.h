@@ -46,7 +46,7 @@ public:
     Q_INVOKABLE void stop();
 
     // ── 像素读取接口 ──────────────────────────────────────
-    /// QML 调用，传入控件坐标，同步从帧缓冲读取像素颜色并发射 pixelRead 信号
+    /// QML 调用，传入控件坐标，映射为视频帧坐标并发射 pixelRead 信号
     Q_INVOKABLE void requestPixelAt(int x, int y);
 
 protected:
@@ -76,8 +76,11 @@ signals:
     void error(const QString &errorMsg);
 
     // ── 像素读取结果信号 ──────────────────────────────────
-    void pixelRead(int x, int y, QColor color);
+    void pixelRead(int frameX, int frameY);
     void errorReadingPixel(QString message);
+
+    //通知图像导引头立刻发送偏差像素数据，以实现人工点选功能
+    void reqDeviationToImg(int x ,int y);
 
 private:
     friend class VlcVideoRenderer;

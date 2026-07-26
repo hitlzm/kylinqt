@@ -311,6 +311,7 @@ void ImageSendData::buildFrame()
     frame.optical_param_ctrl = static_cast<quint8>(m_opticalParamCtrl);
     frame.template_index = static_cast<quint8>(m_templateIndex);
     // frame.target_background_type = static_cast<quint8>(m_targetBackgroundType);
+    // 后面不发送信息可以置0
     frame.target_background_type = static_cast<quint8>(
         (m_targetBackgroundType4 << 5) | (m_targetBackgroundType3 << 4) |
         (m_targetBackgroundType2 << 3) | m_targetBackgroundType1);
@@ -331,6 +332,7 @@ void ImageSendData::buildFrame()
     frame.pitch_gimbal_preset = static_cast<qint16>(toRawValue_c(m_pitchGimbalPreset));
     frame.yaw_gimbal_preset = static_cast<qint16>(toRawValue_c(m_yawGimbalPreset));
     frame.ir_integration_time = static_cast<quint8>(toRawValue_a(m_irIntegrationTime));
+    memset(frame.reserved1, 0, sizeof(frame.reserved1));
     frame.tracking_correction_cmd = static_cast<quint8>(m_trackingCorrectionCmd);
     frame.correction_frame_num[0] = static_cast<quint8>(m_correctionFrameNum & 0xFF);
     frame.correction_frame_num[1] = static_cast<quint8>((m_correctionFrameNum >> 8) & 0xFF);
@@ -339,9 +341,11 @@ void ImageSendData::buildFrame()
     frame.corrected_yaw_pos = static_cast<quint16>(m_correctedYawPos);
     frame.search_pitch_rate = static_cast<qint16>(toRawValue_b(m_searchPitchRate));
     frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
+    frame.reserved2 = 0;
     frame.gate_size = static_cast<quint8>(m_gateSize);
     frame.osd_switch = static_cast<quint8>(m_osdSwitch);
     frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
+    memset(frame.reserved3, 0, sizeof(frame.reserved3));
     frame.target_altitude = static_cast<qint16>(m_targetAltitude);
     frame.aircraft_pitch = static_cast<qint16>(toRawValue_b(m_aircraftPitch));
     frame.aircraft_yaw = static_cast<qint16>(toRawValue_b(m_aircraftYaw));
@@ -350,6 +354,7 @@ void ImageSendData::buildFrame()
     frame.pod_pitch_angle = static_cast<qint16>(toRawValue_b(m_podPitchAngle));
     //预留位置
     frame.pod_yaw_angle = static_cast<qint16>(toRawValue_b(m_podYawAngle));
+    memset(frame.reserved4, 0, sizeof(frame.reserved4));
     frame.satellite_map_scale = static_cast<quint8>(toRawValue_a(m_satelliteMapScale));
     frame.pod_type = static_cast<quint8>(m_podType);
     frame.target_longitude = static_cast<qint32>(m_targetLongitude);
@@ -358,13 +363,80 @@ void ImageSendData::buildFrame()
     frame.aircraft_latitude = static_cast<qint32>(m_aircraftLatitude);
     frame.aircraft_altitude = static_cast<qint16>(m_aircraftAltitude);
     frame.pixel_size = static_cast<quint8>(m_pixelSize);
-
     // uint16_t crc = SerialPortImage::crc16_ccitt_fast(
     //     reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     // frame.crc16 = crc;
     //将校验位计算移到工作线程
     emit requestSendData(frame);
 }
+
+void ImageSendData::buildDeviation(int num ,int x ,int y)
+{
+    image_send_frame frame = {};
+
+    frame.frame_header1 = 0x77;
+    frame.frame_header2 = 0xAA;
+    frame.frame_length = static_cast<quint8>(m_frameLength);
+    frame.a_frame_sequence = static_cast<quint16>(m_aFrameSequence);
+    frame.seeker_ctrl_word = static_cast<quint8>(m_seekerCtrlWord);
+    frame.optical_param_ctrl = static_cast<quint8>(m_opticalParamCtrl);
+    frame.template_index = static_cast<quint8>(m_templateIndex);
+    // frame.target_background_type = static_cast<quint8>(m_targetBackgroundType);
+    // 后面不发送信息可以置0
+    frame.target_background_type = static_cast<quint8>(
+        (m_targetBackgroundType4 << 5) | (m_targetBackgroundType3 << 4) |
+        (m_targetBackgroundType2 << 3) | m_targetBackgroundType1);
+    frame.missile_target_distance = static_cast<quint16>(m_missileTargetDistance);
+    frame.missile_speed = static_cast<quint16>(toRawValue_a(m_missileSpeed));
+    frame.body_pitch_angle = static_cast<qint16>(toRawValue_b(m_bodyPitchAngle));
+    frame.body_yaw_angle = static_cast<qint16>(toRawValue_b(m_bodyYawAngle));
+    frame.body_roll_angle = static_cast<qint16>(toRawValue_b(m_bodyRollAngle));
+    frame.body_pitch_rate = static_cast<qint16>(toRawValue_b(m_bodyPitchRate));
+    frame.body_yaw_rate = static_cast<qint16>(toRawValue_b(m_bodyYawRate));
+    frame.body_roll_rate = static_cast<qint16>(toRawValue_b(m_bodyRollRate));
+    frame.body_vel_x = static_cast<qint16>(toRawValue_a(m_bodyVelX));
+    frame.body_vel_y = static_cast<qint16>(toRawValue_a(m_bodyVelY));
+    frame.body_vel_z = static_cast<qint16>(toRawValue_a(m_bodyVelZ));
+    frame.body_pos_x = static_cast<qint16>(m_bodyPosX);
+    frame.body_pos_y = static_cast<qint16>(m_bodyPosY);
+    frame.body_pos_z = static_cast<qint16>(m_bodyPosZ);
+    frame.pitch_gimbal_preset = static_cast<qint16>(toRawValue_c(m_pitchGimbalPreset));
+    frame.yaw_gimbal_preset = static_cast<qint16>(toRawValue_c(m_yawGimbalPreset));
+    frame.ir_integration_time = static_cast<quint8>(toRawValue_a(m_irIntegrationTime));
+    memset(frame.reserved1, 0, sizeof(frame.reserved1));
+    frame.tracking_correction_cmd = 1;  //修正帧序号置1 ,只发送一拍
+    frame.correction_frame_num[0] = static_cast<quint8>(num & 0xFF);
+    frame.correction_frame_num[1] = static_cast<quint8>((num >> 8) & 0xFF);
+    frame.correction_frame_num[2] = static_cast<quint8>((num >> 16) & 0xFF);
+    frame.corrected_pitch_pos = static_cast<quint16>(y);
+    frame.corrected_yaw_pos = static_cast<quint16>(x); 
+    frame.search_pitch_rate = static_cast<qint16>(toRawValue_b(m_searchPitchRate));
+    frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
+    frame.reserved2 = 0;
+    frame.gate_size = static_cast<quint8>(m_gateSize);
+    frame.osd_switch = static_cast<quint8>(m_osdSwitch);
+    frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
+    memset(frame.reserved3, 0, sizeof(frame.reserved3));
+    frame.target_altitude = static_cast<qint16>(m_targetAltitude);
+    frame.aircraft_pitch = static_cast<qint16>(toRawValue_b(m_aircraftPitch));
+    frame.aircraft_yaw = static_cast<qint16>(toRawValue_b(m_aircraftYaw));
+    frame.aircraft_roll = static_cast<qint16>(toRawValue_b(m_aircraftRoll));
+    frame.focal_length = static_cast<quint16>(m_focalLength);
+    frame.pod_pitch_angle = static_cast<qint16>(toRawValue_b(m_podPitchAngle));
+    //预留位置
+    frame.pod_yaw_angle = static_cast<qint16>(toRawValue_b(m_podYawAngle));
+    memset(frame.reserved4, 0, sizeof(frame.reserved4));
+    frame.satellite_map_scale = static_cast<quint8>(toRawValue_a(m_satelliteMapScale));
+    frame.pod_type = static_cast<quint8>(m_podType);
+    frame.target_longitude = static_cast<qint32>(m_targetLongitude);
+    frame.target_latitude = static_cast<qint32>(m_targetLatitude);
+    frame.aircraft_longitude = static_cast<qint32>(m_aircraftLongitude);
+    frame.aircraft_latitude = static_cast<qint32>(m_aircraftLatitude);
+    frame.aircraft_altitude = static_cast<qint16>(m_aircraftAltitude);
+    frame.pixel_size = static_cast<quint8>(m_pixelSize);
+    emit requestSendData(frame);
+}
+
 
 // ─────────────────────────────────────────────
 // SerialPortImage
@@ -427,7 +499,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         
         //发一拍处理
         if(sendCount >= 1){
-            data[46]=0x00;
+            data[46]=0x00; //跟踪修正指令
         }
         //加入发三拍处理
         if(sendCount >= 3){
