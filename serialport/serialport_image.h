@@ -6,6 +6,8 @@
 #include <QDateTime>
 #include "Kalman/seekKalman.h"
 
+//默认视频拉流地址：rtsp://192.168.1.100:554/stream
+
 struct image_send_frame;
 struct imageExGuideData
 {

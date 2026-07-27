@@ -272,8 +272,8 @@ void StreamProcessor::processFrame() {
     // ── 提取最高置信度检测框中心（原始测量值，供卡尔曼滤波用）──
     float rawCenterX = -1.0f;
     float rawCenterY = -1.0f;
+    const OnnxDetection *bestDet = nullptr;
     if (!detections.empty()) {
-        const OnnxDetection *bestDet = nullptr;
         float bestConf = 0.0f;
         for (const auto &det : detections) {
             if (det.confidence > bestConf) {
@@ -291,7 +291,13 @@ void StreamProcessor::processFrame() {
 
     // ── ④ 绘制检测框 ──
     if (m_drawBoxes && !detections.empty()) {
-        drawDetections(frame, detections);
+        if (m_trackSingleTarget && bestDet) {
+            // 单目标模式：只画最高置信度目标
+            drawDetections(frame, {*bestDet});
+        } else {
+            // 多目标模式：画全部检测结果
+            drawDetections(frame, detections);
+        }
     }
 
     // ── ④½ 卡尔曼滤波：消除检测框抖动，输出平滑坐标 ──

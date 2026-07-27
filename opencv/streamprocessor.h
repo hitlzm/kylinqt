@@ -75,6 +75,7 @@ public:
     void setInputSize(int width, int height);
 
     void setDrawBoxes(bool draw) { m_drawBoxes = draw; }
+    void setTrackSingleTarget(bool v) { m_trackSingleTarget = v; }
     void setBoxColor(int b, int g, int r) {
         m_boxColor = cv::Scalar(b, g, r);
     }
@@ -157,6 +158,7 @@ private:
 
     // 绘制参数
     bool m_drawBoxes = true;
+    bool m_trackSingleTarget = true;     // 默认只跟踪/绘制最高置信度目标，只会有一个显示框
     cv::Scalar m_boxColor = cv::Scalar(0, 255, 0);
 
     // 图像处理参数
