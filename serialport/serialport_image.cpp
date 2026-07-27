@@ -484,7 +484,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     
     timer->setInterval(20); // 20ms
     // 连接定时器的超时信号
-    connect(timer, &QTimer::timeout, this, [=]() mutable {
+    connect(timer, &PreciseTimer::timeout, this, [=]() mutable {
         // 发送数据
         qint64 count=SerialPort::send(data);
         //增加帧流水号改变
@@ -539,8 +539,8 @@ void SerialPortImage::ExmodeChanged(int mode)
     {
         // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
         if (!m_exGuideTimer) {
-            m_exGuideTimer = new QTimer(this);
-            connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+            m_exGuideTimer = new PreciseTimer(this);
+            connect(m_exGuideTimer, &PreciseTimer::timeout, this, [this]() {
                 // 用当前导引头反馈角度重新初始化Kalman滤波器
                 m_kalman.Init(m_azimuth, m_pitch);
                 // 生成方位轴和俯仰轴的3s预测数据包

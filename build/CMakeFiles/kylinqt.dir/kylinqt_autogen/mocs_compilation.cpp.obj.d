@@ -259,6 +259,8 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_precisetimer.cpp \
+ E:/QTproject/kylinqt/serialport/precisetimer.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport.cpp \
  E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
@@ -270,6 +272,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
+ E:/QTproject/kylinqt/serialport/precisetimer.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_BD.cpp \
  E:/QTproject/kylinqt/serialport/serialport_BD.h \
  E:/QTproject/kylinqt/serialport/serialport.h \

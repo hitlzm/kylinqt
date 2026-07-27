@@ -135,6 +135,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/serialport/precisetimer.h",
+			"MU",
+			"YN6D6BICVT/moc_precisetimer.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/serialport/serialport.h",
 			"MU",
 			"YN6D6BICVT/moc_serialport.cpp",
@@ -234,7 +240,7 @@
 	"MOC_PREDEFS_CMD" : 
 	[
 		"E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe",
-		"-std=gnu++11",
+		"-std=gnu++14",
 		"-w",
 		"-dM",
 		"-E",
@@ -256,6 +262,7 @@
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/opencv/pixelkalmantracker.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/serialport/precisetimer.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_BD.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_CCD.cpp", "MU", null ],

@@ -231,9 +231,16 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:\QTproject\kylinqt\serialport\precisetimer.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
+ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
@@ -248,7 +255,6 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
@@ -258,4 +264,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h

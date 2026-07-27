@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/kylinqt.dir/main.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj"
   "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/precisetimer.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/precisetimer.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj"
   "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj"

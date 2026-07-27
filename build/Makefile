@@ -261,6 +261,30 @@ opencv/pixelkalmantracker.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.s
 .PHONY : opencv/pixelkalmantracker.cpp.s
 
+serialport/precisetimer.obj: serialport/precisetimer.cpp.obj
+.PHONY : serialport/precisetimer.obj
+
+# target to build an object file
+serialport/precisetimer.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/precisetimer.cpp.obj
+.PHONY : serialport/precisetimer.cpp.obj
+
+serialport/precisetimer.i: serialport/precisetimer.cpp.i
+.PHONY : serialport/precisetimer.i
+
+# target to preprocess a source file
+serialport/precisetimer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/precisetimer.cpp.i
+.PHONY : serialport/precisetimer.cpp.i
+
+serialport/precisetimer.s: serialport/precisetimer.cpp.s
+.PHONY : serialport/precisetimer.s
+
+# target to generate assembly for a file
+serialport/precisetimer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/precisetimer.cpp.s
+.PHONY : serialport/precisetimer.cpp.s
+
 serialport/serialport.obj: serialport/serialport.cpp.obj
 .PHONY : serialport/serialport.obj
 
@@ -478,6 +502,9 @@ help:
 	@echo ... opencv/pixelkalmantracker.obj
 	@echo ... opencv/pixelkalmantracker.i
 	@echo ... opencv/pixelkalmantracker.s
+	@echo ... serialport/precisetimer.obj
+	@echo ... serialport/precisetimer.i
+	@echo ... serialport/precisetimer.s
 	@echo ... serialport/serialport.obj
 	@echo ... serialport/serialport.i
 	@echo ... serialport/serialport.s
