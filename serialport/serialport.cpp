@@ -1,5 +1,6 @@
 #include "serialport.h"
 #include <QDebug>
+#include <QThread>
 
 SerialPort::SerialPort(QObject *parent)
     : QObject(parent)
@@ -10,9 +11,19 @@ SerialPort::SerialPort(QObject *parent)
 
 SerialPort::~SerialPort()
 {
-    delete m_serialPort;
-    delete timer;
-    close();
+    close();  // 先关串口（m_serialPort 还活着）
+
+    // m_serialPort 和 timer 在 dowork() 中于工作线程创建，
+    // 但析构可能发生在主线程。moveToThread 后再 delete 避免跨线程销毁报错。
+    auto safeDelete = [](QObject *&obj) {
+        if (!obj) return;
+        if (QThread::currentThread() != obj->thread())
+            obj->moveToThread(QThread::currentThread());
+        delete obj;
+        obj = nullptr;
+    };
+    safeDelete(reinterpret_cast<QObject *&>(m_serialPort));
+    safeDelete(reinterpret_cast<QObject *&>(timer));
 }
 
 void SerialPort::dowork()
