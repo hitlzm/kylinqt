@@ -269,9 +269,43 @@ void StreamProcessor::processFrame() {
         m_detector.detect(frame, detections);
     }
 
+    // ── 提取最高置信度检测框中心（原始测量值，供卡尔曼滤波用）──
+    float rawCenterX = -1.0f;
+    float rawCenterY = -1.0f;
+    if (!detections.empty()) {
+        const OnnxDetection *bestDet = nullptr;
+        float bestConf = 0.0f;
+        for (const auto &det : detections) {
+            if (det.confidence > bestConf) {
+                bestConf = det.confidence;
+                bestDet  = &det;
+            }
+        }
+        if (bestDet) {
+            rawCenterX = static_cast<float>(bestDet->bbox.x
+                                            + bestDet->bbox.width  / 2);
+            rawCenterY = static_cast<float>(bestDet->bbox.y
+                                            + bestDet->bbox.height / 2);
+        }
+    }
+
     // ── ④ 绘制检测框 ──
     if (m_drawBoxes && !detections.empty()) {
         drawDetections(frame, detections);
+    }
+
+    // ── ④½ 卡尔曼滤波：消除检测框抖动，输出平滑坐标 ──
+    {
+        float dt = 0.0f;
+        if (m_kalmanFirstFrame) {
+            m_kalmanTimer.start();
+            m_kalmanFirstFrame = false;
+        } else {
+            dt = static_cast<float>(m_kalmanTimer.restart()) / 1000.0f;
+        }
+        m_tracker.feed(rawCenterX, rawCenterY, dt);
+        m_centerX = static_cast<int>(m_tracker.filteredX());
+        m_centerY = static_cast<int>(m_tracker.filteredY());
     }
 
     // ── ⑤ 显示缩放（仅影响最终输出，不改变 ONNX 输入分辨率）──

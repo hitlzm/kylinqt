@@ -35,8 +35,10 @@
 #include <QObject>
 #include <QImage>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <atomic>
 #include "onnxyolodetector.h"
+#include "pixelkalmantracker.h"
 
 class VlcVideoItem;  // 前向声明
 
@@ -117,6 +119,10 @@ public slots:
     void CCDguide(){
         //如果为外引导模式，且外引导源为CCD相机
 
+        // 目标无效（未检测到或长时间丢失），不发送角度指令
+        if (m_centerX < 0 || m_centerY < 0)
+            return;
+
         //计算对应俯仰角与框架角
         float Pitchangle = m_centerX / static_cast<float>(m_imageWidth) * m_hFov;
         float Yawangle   = m_centerY / static_cast<float>(m_imageHeight) * m_vFov;
@@ -160,10 +166,15 @@ private:
     int  m_displayWidth  = 0;
     int  m_displayHeight = 0;
 
-    // 检测框中心点（最高置信度目标）
-    //外引导模式时可根据CCD视场角得到转台的方位角与俯仰角应转动的角度，广角模式下为55.27，32.26 远焦模式下为2.66，1.51
+    // 检测框中心点（最高置信度目标，经卡尔曼滤波后输出）
+    // 外引导模式时可根据CCD视场角得到转台的方位角与俯仰角应转动的角度，广角模式下为55.27，32.26 远焦模式下为2.66，1.51
     int m_centerX = -1;
     int m_centerY = -1;
+
+    // ── 像素坐标卡尔曼跟踪器 ──
+    PixelKalmanTracker m_tracker;
+    QElapsedTimer m_kalmanTimer;
+    bool m_kalmanFirstFrame = true;
 
     // 图像分辨率与视场角（视场角随广角/远焦切换更新）
     int   m_imageWidth  = 1920;

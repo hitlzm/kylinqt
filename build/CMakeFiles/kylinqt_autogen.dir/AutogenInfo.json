@@ -123,6 +123,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/opencv/pixelkalmantracker.h",
+			"MU",
+			"IBQRWEGK53/moc_pixelkalmantracker.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/serialport/circularbuffer.h",
 			"MU",
 			"YN6D6BICVT/moc_circularbuffer.cpp",
@@ -249,6 +255,7 @@
 	[
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/opencv/pixelkalmantracker.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_BD.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_CCD.cpp", "MU", null ],

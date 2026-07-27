@@ -237,6 +237,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+opencv/pixelkalmantracker.obj: opencv/pixelkalmantracker.cpp.obj
+.PHONY : opencv/pixelkalmantracker.obj
+
+# target to build an object file
+opencv/pixelkalmantracker.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj
+.PHONY : opencv/pixelkalmantracker.cpp.obj
+
+opencv/pixelkalmantracker.i: opencv/pixelkalmantracker.cpp.i
+.PHONY : opencv/pixelkalmantracker.i
+
+# target to preprocess a source file
+opencv/pixelkalmantracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.i
+.PHONY : opencv/pixelkalmantracker.cpp.i
+
+opencv/pixelkalmantracker.s: opencv/pixelkalmantracker.cpp.s
+.PHONY : opencv/pixelkalmantracker.s
+
+# target to generate assembly for a file
+opencv/pixelkalmantracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.s
+.PHONY : opencv/pixelkalmantracker.cpp.s
+
 serialport/serialport.obj: serialport/serialport.cpp.obj
 .PHONY : serialport/serialport.obj
 
@@ -451,6 +475,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... opencv/pixelkalmantracker.obj
+	@echo ... opencv/pixelkalmantracker.i
+	@echo ... opencv/pixelkalmantracker.s
 	@echo ... serialport/serialport.obj
 	@echo ... serialport/serialport.i
 	@echo ... serialport/serialport.s

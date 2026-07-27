@@ -670,5 +670,5 @@ void VlcVideoItem::requestPixelAt(int x, int y)
     qDebug() << "[VlcVideo] pixelRead at (" << x << "," << y << ") → frame("
              << frameX << "," << frameY << ")";
     emit pixelRead(frameX, frameY);
-    emit reqDeviationToImg(frameX, frameY);
+    emit reqDeviationToImg(frameX, frameY);  //发送偏差像素信号，通知图像导引头串口线程发送修正指令
 }

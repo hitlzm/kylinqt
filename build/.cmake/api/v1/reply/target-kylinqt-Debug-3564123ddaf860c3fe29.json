@@ -47,13 +47,13 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 85,
+				"line" : 86,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 93,
+				"line" : 94,
 				"parent" : 0
 			},
 			{
@@ -113,7 +113,7 @@
 			{
 				"command" : 7,
 				"file" : 0,
-				"line" : 90,
+				"line" : 91,
 				"parent" : 0
 			},
 			{
@@ -135,13 +135,13 @@
 			{
 				"command" : 10,
 				"file" : 0,
-				"line" : 80,
+				"line" : 81,
 				"parent" : 0
 			},
 			{
 				"command" : 10,
 				"file" : 0,
-				"line" : 100,
+				"line" : 101,
 				"parent" : 0
 			}
 		]
@@ -288,7 +288,8 @@
 				9,
 				10,
 				14,
-				15
+				15,
+				16
 			]
 		}
 	],
@@ -614,7 +615,8 @@
 				9,
 				10,
 				14,
-				15
+				15,
+				16
 			]
 		},
 		{
@@ -637,7 +639,7 @@
 			"name" : "CMake Rules",
 			"sourceIndexes" : 
 			[
-				16
+				17
 			]
 		}
 	],
@@ -728,6 +730,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "kalman/seekKalman.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "opencv/pixelkalmantracker.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
