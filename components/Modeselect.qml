@@ -6,7 +6,7 @@ import "./"
 
 Item{
     id: root
-    property int myindex: 0
+    property int myindex: -1
     GroupBox {
         background: Rectangle {
         color: "transparent"
@@ -24,16 +24,19 @@ Item{
             color: 'black'
             anchors.verticalCenter: parent.verticalCenter
         }
+        ButtonGroup { id: modeGroup }
     CusRadioButton {
         id: radio1
         width: 160
         text: qsTr("外引导模式")
         font.pixelSize: 20
+        checked: false
+        ButtonGroup.group: modeGroup
         onCheckedChanged: {
             if (checked) {
                 root.myindex = 0
-                //在这里发送信号，通知模式已改变为外引导模式
-                modeController.modeChanged(0)  // 假设外引导模式对应的索引为0
+                modeController.setCurrentMode(0)
+                modeController.modeChanged(0)
             }
         }
     }
@@ -42,10 +45,13 @@ Item{
         width: 160
         text: qsTr("程控模式")
         font.pixelSize: 20
+        checked: false
+        ButtonGroup.group: modeGroup
         onCheckedChanged: {
             if (checked) {
                 root.myindex = 1
-                modeController.modeChanged(1)  // 假设程控模式对应的索引为1
+                modeController.setCurrentMode(1)
+                modeController.modeChanged(1)
             }
         }
     }
@@ -54,10 +60,13 @@ Item{
         width: 160
         text: qsTr("遥控模式")
         font.pixelSize: 20
+        checked: false
+        ButtonGroup.group: modeGroup
         onCheckedChanged: {
             if (checked) {
                 root.myindex = 2
-                modeController.modeChanged(2)  // 假设遥控模式对应的索引为2
+                modeController.setCurrentMode(2)
+                modeController.modeChanged(2)
             }
         }
     }

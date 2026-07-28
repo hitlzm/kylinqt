@@ -25,8 +25,52 @@ Item {
         logModel.clear()
     }
 
+    // 外引导源选择
+    Row {
+        id: guideSourceRow
+        anchors.top: parent.top
+        anchors.topMargin: 4
+        // anchors.left: parent.left
+        // anchors.leftMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 12
+
+        Text {
+            text: "外引导源选择:"
+            font.pixelSize: 17
+            font.bold: true
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        ButtonGroup { id: guideSourceGroup }
+        CusRadioButton {
+            id: guideLaser
+            width: 140
+            text: "激光导引头"
+            font.pixelSize: 16
+            ButtonGroup.group: guideSourceGroup
+        }
+        CusRadioButton {
+            id: guideImage
+            width: 140
+            text: "图像导引头"
+            font.pixelSize: 16
+            ButtonGroup.group: guideSourceGroup
+        }
+        CusRadioButton {
+            id: guideCCD
+            width: 120
+            text: "CCD相机"
+            font.pixelSize: 16
+            ButtonGroup.group: guideSourceGroup
+        }
+    }
+
     Rectangle {
-        anchors.fill: parent
+        anchors.top: guideSourceRow.bottom
+        anchors.topMargin: 4
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
         color: '#ebe7e7'
         border.color: "#505050"
         border.width: 1

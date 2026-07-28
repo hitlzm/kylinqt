@@ -15,22 +15,31 @@
 class ModeController : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int currentMode READ currentMode NOTIFY currentModeChanged)
 public:
     explicit ModeController(QObject *parent = nullptr) : QObject(parent) {
-        
+
     }
 
     ~ModeController() {
-       
+
+    }
+
+    int currentMode() const { return m_currentMode; }
+
+public slots:
+    void setCurrentMode(int mode) {
+        if (m_currentMode != mode) {
+            m_currentMode = mode;
+            emit currentModeChanged();
+        }
     }
 
 signals:
     void modeChanged(int newMode); // 新增信号，通知模式已改变
-private slots:
-    
-
+    void currentModeChanged();
 private:
-    
+    int m_currentMode = -1;
 };
 
 #endif // MODECONTROLLER_H

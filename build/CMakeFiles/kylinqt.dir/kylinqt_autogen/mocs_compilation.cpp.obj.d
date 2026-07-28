@@ -280,7 +280,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_image.cpp \
  E:/QTproject/kylinqt/serialport/serialport_image.h \
  E:/QTproject/kylinqt/serialport/circularbuffer.h \
- E:/QTproject/kylinqt/Kalman/seekKalman.h \
+ E:/QTproject/kylinqt/kalman/seekKalman.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \

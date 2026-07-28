@@ -487,7 +487,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 发送数据
         qint64 count=SerialPort::send(data);
-        //增加帧流水号改变
+        //增加帧流水号改变,如果发送字节数没问题
         if(count >= 224){
         //计算流水号      
             num += 1;
