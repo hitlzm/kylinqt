@@ -17,7 +17,7 @@ SerialPortCCD::SerialPortCCD(QObject *parent)
     connect(m_ccdData, &CCDData::reqdigZoomclose,   this, &SerialPortCCD::senddigZoomclose);
     connect(m_ccdData, &CCDData::reqBacklightopen,  this, &SerialPortCCD::sendBacklightopen);
     connect(m_ccdData, &CCDData::reqBacklightclose, this, &SerialPortCCD::sendBacklightclose);
-    connect(m_ccdData, &CCDData::reqResolutionchange, this, &SerialPortCCD::sendResolutionchange);
+    connect(m_ccdData, &CCDData::reqResolutionchange, this, [this](int index) { sendResolutionchange(index); });
 }
 
 void SerialPortCCD::send30XFocus()
@@ -47,9 +47,17 @@ void SerialPortCCD::sendBacklightclose()
 {
     qint64 bytesWritten = m_serialPort->write(cmd_Backlightclose);
 }
-void SerialPortCCD::sendResolutionchange()
+void SerialPortCCD::sendResolutionchange(int index)
 {
-    qint64 bytesWritten = m_serialPort->write(cmd_Resolutionchange1);
+    QByteArray cmd;
+    switch (index) {
+        case 0: cmd = cmd_Resolutionchange1; break;          // 1080P 30帧
+        case 1: cmd = cmd_Resolutionchange_1080p25; break;   // 1080P 25帧
+        case 2: cmd = cmd_Resolutionchange2; break;           // 720P 30帧
+        case 3: cmd = cmd_Resolutionchange_720p25; break;     // 720P 25帧
+        default: return;
+    }
+    m_serialPort->write(cmd);
 }
 
 // 串口操作槽函数
@@ -75,3 +83,30 @@ void CCDData::scanPorts()                                     { emit requestScan
 void CCDData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
 void CCDData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
 void CCDData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+
+void CCDData::setFocusMode(int mode) {
+    if (m_focusMode != mode) {
+        m_focusMode = mode;
+        emit focusModeChanged();
+        if (mode == 0) emit req30XFocus();
+        else emit req1XFocus();
+    }
+}
+
+void CCDData::setBacklight(bool on) {
+    if (m_backlightOn != on) {
+        m_backlightOn = on;
+        emit backlightOnChanged();
+        if (on) emit reqBacklightopen();
+        else emit reqBacklightclose();
+    }
+}
+
+void CCDData::setResolution(int index) {
+    if (index < 0 || index > 3) return;
+    if (m_resolutionIndex != index) {
+        m_resolutionIndex = index;
+        emit resolutionIndexChanged();
+        emit reqResolutionchange(index);
+    }
+}

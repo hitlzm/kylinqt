@@ -160,6 +160,19 @@ int main(int argc, char *argv[])
     QObject::connect(bdPort, &SerialPortBD::portsChanged, bdData, &BDData::setPortList, Qt::QueuedConnection);
     QObject::connect(bdPort, &SerialPortBD::bdFrameReceived, bdData, &BDData::updateFromFrame, Qt::QueuedConnection);
 
+    // ── CCD: 主线程 Data → 主线程 Worker (CCD 留在主线程，DirectConnection) ──
+    QObject::connect(ccdData, &CCDData::requestOpenPort,  ccdPort, &SerialPortCCD::onOpenPort);
+    QObject::connect(ccdData, &CCDData::requestClosePort, ccdPort, &SerialPortCCD::onClosePort);
+    QObject::connect(ccdData, &CCDData::requestScanPorts, ccdPort, &SerialPortCCD::onScanPorts);
+
+    // ── CCD: Worker → Data ──
+    QObject::connect(ccdPort, &SerialPortCCD::portOpened,   ccdData, &CCDData::setPortOpen);
+    QObject::connect(ccdPort, &SerialPortCCD::portClosed,   ccdData, [ccdData]{ ccdData->setPortOpen(false); });
+    QObject::connect(ccdPort, &SerialPortCCD::portError,    ccdData, &CCDData::setError);
+    QObject::connect(ccdPort, &SerialPortCCD::portsChanged, ccdData, &CCDData::setPortList);
+
+    // 信号连接建立后，触发一次初始扫描（构造函数中的扫描在连接之前，信号未被接收）
+    ccdData->scanPorts();
 
     //模式控制器的信号连接
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);

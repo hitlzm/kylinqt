@@ -55,11 +55,11 @@ Rectangle {
     property string lastValidDesc2: "默认值"
     Text {
         id: titleText
-        text: "图像导引头发送区"
+        text: "图像导引头\n控制与状态显示"
         font.pixelSize: 24
         font.bold: true
         color: "#000000"
-
+        horizontalAlignment: Text.AlignHCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top
@@ -70,7 +70,7 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 530
+        height: 450
         color: '#faf7f7'
         radius: 4
 

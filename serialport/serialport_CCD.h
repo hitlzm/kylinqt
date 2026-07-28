@@ -15,6 +15,11 @@ class CCDData : public QObject
     Q_PROPERTY(QStringList availablePorts READ availablePorts NOTIFY availablePortsChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
 
+    // ── CCD 控制状态属性 ──
+    Q_PROPERTY(int focusMode READ focusMode NOTIFY focusModeChanged)           // 0=30X, 1=1X
+    Q_PROPERTY(bool backlightOn READ backlightOn NOTIFY backlightOnChanged)
+    Q_PROPERTY(int resolutionIndex READ resolutionIndex NOTIFY resolutionIndexChanged)  // 0=1080p/30, 1=1080p/25, 2=720p/30, 3=720p/25
+
 public:
     explicit CCDData(QObject *parent = nullptr);
 
@@ -26,12 +31,20 @@ public:
     QStringList availablePorts() const { return m_availablePorts; }
     QString errorString() const { return m_errorString; }
 
+    // CCD 控制状态访问器（内联）
+    int focusMode() const { return m_focusMode; }
+    bool backlightOn() const { return m_backlightOn; }
+    int resolutionIndex() const { return m_resolutionIndex; }
+
     // ── QML 可调用方法 ──
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
     Q_INVOKABLE void closePort();
     Q_INVOKABLE void scanPorts();
 
-    // CCD 指令方法（发射请求信号到工作线程）
+    // CCD 指令触发方法（QML 可调用，发射请求信号到 CCD 串口）
+    Q_INVOKABLE void setFocusMode(int mode);       // 0=30X, 1=1X
+    Q_INVOKABLE void setBacklight(bool on);        // true=开, false=关
+    Q_INVOKABLE void setResolution(int index);     // 0=1080p/30, 1=1080p/25, 2=720p/30, 3=720p/25
 
 signals:
 
@@ -52,7 +65,12 @@ signals:
     void reqdigZoomclose();
     void reqBacklightopen();
     void reqBacklightclose();
-    void reqResolutionchange();
+    void reqResolutionchange(int index);
+
+    // CCD 控制状态变化信号
+    void focusModeChanged();
+    void backlightOnChanged();
+    void resolutionIndexChanged();
 
 public slots:
     // ── 工作线程回推状态（QueuedConnection）──
@@ -68,6 +86,11 @@ private:
     bool m_portOpen = false;
     QStringList m_availablePorts;
     QString m_errorString;
+
+    // CCD 控制状态成员
+    int m_focusMode = 0;         // 0=30X, 1=1X
+    bool m_backlightOn = false;
+    int m_resolutionIndex = 0;   // 0=1080p/30, 1=1080p/25, 2=720p/30, 3=720p/25
 
     // bool m_isValid = false;             // 数据有效标识
     // TODO: 补充 CCD 数据成员
@@ -103,7 +126,7 @@ public slots:
     void senddigZoomclose();
     void sendBacklightopen();
     void sendBacklightclose();
-    void sendResolutionchange();
+    void sendResolutionchange(int index);
 
 protected:
     void parseData(const QByteArray &rawData) override{};
@@ -117,6 +140,8 @@ private:
     const QByteArray cmd_Backlightclose = QByteArray::fromHex("8101043303FF");
     const QByteArray cmd_Resolutionchange1 = QByteArray::fromHex("81010424730007FF");  //1080P 30帧
     const QByteArray cmd_Resolutionchange2 = QByteArray::fromHex("8101042473000FFF");  //720P 30帧
+    const QByteArray cmd_Resolutionchange_1080p25 = QByteArray::fromHex("81010424730003FF");  //1080P 25帧 (TODO: 确认协议)
+    const QByteArray cmd_Resolutionchange_720p25 = QByteArray::fromHex("8101042473000BFF");   //720P 25帧 (TODO: 确认协议)
 
 };
 

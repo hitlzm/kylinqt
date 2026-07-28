@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 560
+    height: 610
     color: '#e9f0f9'
 
 //消息提示框
@@ -50,11 +50,11 @@ Rectangle {
 
     Text {
         id: titleText
-        text: "激光导引头收发区"
+        text: "激光导引头\n控制与状态显示"
         font.pixelSize: 24
         font.bold: true
         color: "#000000"
-
+        horizontalAlignment: Text.AlignHCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top

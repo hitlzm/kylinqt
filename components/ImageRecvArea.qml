@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 200
+    height: 310
     color: '#e9f0f9'
 
     // 报警弹窗（内框/中框/外框）
@@ -14,23 +14,25 @@ Rectangle {
     MsgPopup2 { id: middlemsg }
     MsgPopup2 { id: outmsg }
 
-    // 串口与北斗信息显示框
+    // ═══════════════════════════════════════════════════════════════
+    // 第一行左侧：串口与北斗信息显示框（水平布局：蓝色方框 + 北斗数据）
+    // ═══════════════════════════════════════════════════════════════
     GroupBox {
         id: serialBDBox
-        width: 420
+        width: 550
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 10
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        height: 120
         topPadding: 25
 
-        title: "串口与北斗信息"
+        title: "北斗信息"
         font.pixelSize: 18
         label: Label {
             text: parent.title
             font.pixelSize: 18
+            font.bold: true
             leftPadding: 12
             topPadding: 6
         }
@@ -42,15 +44,14 @@ Rectangle {
             radius: 8
         }
 
-        // 蓝色边框 - 串口选择区域
+        // 蓝色边框 - 串口选择区域（左侧）
         Rectangle {
             id: serialRect
             anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.leftMargin: 3
             anchors.top: parent.top
             anchors.topMargin: 0
+            width: 360
             height: 78
             color: "#e8f0fe"
             border.color: "#1a73e8"
@@ -84,11 +85,10 @@ Rectangle {
                     }
                     CusComboBox {
                         id: baudComboBox
-                        width: 85
+                        width: 110
                         height: 28
                         model: ["9600"]
                         font.pixelSize: 14
-                        currentIndex: 4  // 默认115200
                     }
                 }
 
@@ -125,41 +125,18 @@ Rectangle {
             }
         }
 
-        // // 红色按钮区域
-        // Rectangle {
-        //     id: buttonRect
-        //     anchors.left: parent.left
-        //     anchors.leftMargin: 10
-        //     anchors.right: parent.right
-        //     anchors.rightMargin: 10
-        //     anchors.top: serialRect.bottom
-        //     anchors.topMargin: 8
-        //     height: 40
-        //     color: "#fce8e6"
-        //     border.color: "#d93025"
-        //     border.width: 2
-        //     radius: 4
-
-        //     Row {
-        //         anchors.centerIn: parent
-        //         spacing: 15
-                
-        //     }
-        // }
-
-        // 北斗数据区域
+        // 北斗数据区域（放在蓝色方框右侧）
         Column {
             id: beidouColumn
-            anchors.left: parent.left
-            anchors.leftMargin: 12
+            anchors.left: serialRect.right
+            anchors.leftMargin: 20
             anchors.right: parent.right
-            anchors.rightMargin: 12
-            anchors.top: serialRect.bottom
-            anchors.topMargin: 10
-            spacing: 6
+            anchors.rightMargin: 8
+            anchors.verticalCenter: serialRect.verticalCenter
+            spacing: 4
 
             DataLabel {
-                fontSize: 18; labelWidth: 85; valueWidth: 250
+                fontSize: 16; labelWidth: 52; valueWidth: 140; labelBold: true
                 label: "北斗时间:"
                 value: {
                     if (!bdData.m_isPosValid) return "--"
@@ -168,7 +145,7 @@ Rectangle {
                 }
             }
             DataLabel {
-                fontSize: 18; labelWidth: 85; valueWidth: 250
+                fontSize: 16; labelWidth: 52; valueWidth: 140; labelBold: true
                 label: "经度:"
                 value: {
                     if (!bdData.m_isPosValid) return "--"
@@ -178,7 +155,7 @@ Rectangle {
                 }
             }
             DataLabel {
-                fontSize: 18; labelWidth: 85; valueWidth: 250
+                fontSize: 16; labelWidth: 52; valueWidth: 140; labelBold: true
                 label: "纬度:"
                 value: {
                     if (!bdData.m_isPosValid) return "--"
@@ -190,22 +167,186 @@ Rectangle {
         }
     }
 
-    // 转台状态显示框
+    // ═══════════════════════════════════════════════════════════════
+    // 第一行右侧：CCD 控制区（无蓝色边框，紧凑布局）
+    // ═══════════════════════════════════════════════════════════════
     GroupBox {
-        id: statusBox
-        width: 565
+        id: ccdBox
         anchors.left: serialBDBox.right
         anchors.leftMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
         anchors.top: parent.top
+        anchors.topMargin: 10
+        height: 120
+        topPadding: 25
+
+        title: "CCD控制区"
+        font.pixelSize: 18
+        label: Label {
+            text: parent.title
+            font.pixelSize: 18
+            font.bold: true
+            leftPadding: 12
+            topPadding: 6
+        }
+
+        background: Rectangle {
+            color: "#e1d8d8"
+            border.color: "gray"
+            border.width: 4
+            radius: 8
+        }
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 12
+            spacing: 6
+
+            // 第一行：串口号 + 波特率 + 扫描串口 + 打开串口
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 8
+                Text {
+                    text: "串口号:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusComboBox {
+                    id: ccdPortComboBox
+                    width: 110
+                    height: 28
+                    model: ccdData.availablePorts
+                    font.pixelSize: 14
+                }
+                Text {
+                    text: "波特率:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusComboBox {
+                    id: ccdBaudComboBox
+                    width: 110
+                    height: 28
+                    model: ["115200"]
+                    font.pixelSize: 14
+                    currentIndex: 0
+                }
+                CusButton_Blue {
+                    text: "扫描串口"
+                    font.pixelSize: 15
+                    width: 100
+                    height: 28
+                    onClicked: {
+                        ccdData.scanPorts()
+                    }
+                }
+                CusButton_Blue {
+                    text: ccdData.portOpen ? "关闭串口" : "打开串口"
+                    font.pixelSize: 15
+                    width: 100
+                    height: 28
+                    onClicked: {
+                        if (ccdData.portOpen) {
+                            ccdData.closePort()
+                        } else {
+                            ccdData.openPort(ccdPortComboBox.currentText,
+                                             parseInt(ccdBaudComboBox.currentText))
+                        }
+                    }
+                }
+            }
+
+            // 第二行：焦距 + 背光补偿 + 分辨率
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 12
+                Text {
+                    text: "焦距:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                ButtonGroup { id: focusGroup }
+                CusRadioButton {
+                    id: focal30X
+                    width: 75
+                    text: "30X"
+                    font.pixelSize: 14
+                    ButtonGroup.group: focusGroup
+                    checked: ccdData.focusMode === 0
+                    onCheckedChanged: {
+                        if (checked) { ccdData.setFocusMode(0) }
+                    }
+                }
+                CusRadioButton {
+                    id: focal1X
+                    width: 75
+                    text: "1X"
+                    font.pixelSize: 14
+                    ButtonGroup.group: focusGroup
+                    checked: ccdData.focusMode === 1
+                    onCheckedChanged: {
+                        if (checked) { ccdData.setFocusMode(1) }
+                    }
+                }
+                Text {
+                    text: "背光补偿:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusSwitch {
+                    id: backlightSwitch
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked: ccdData.backlightOn
+                    onCheckedChanged: {
+                        ccdData.setBacklight(checked)
+                    }
+                }
+                Text {
+                    text: "分辨率:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusComboBox {
+                    id: resolutionComboBox
+                    width: 110
+                    height: 28
+                    model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
+                    font.pixelSize: 14
+                    currentIndex: ccdData.resolutionIndex
+                    onCurrentIndexChanged: {
+                        ccdData.setResolution(currentIndex)
+                    }
+                }
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // 第二行：转台状态显示框（下移）
+    // ═══════════════════════════════════════════════════════════════
+    GroupBox {
+        id: statusBox
+        width: 710
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.top: serialBDBox.bottom
         anchors.topMargin: 10
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
+        topPadding: 18
 
         title: "转台状态显示"
         font.pixelSize: 18
         label: Label {
             text: parent.title
             font.pixelSize: 18
+            font.bold: true
             leftPadding: 12
             topPadding: 6
         }
@@ -225,15 +366,15 @@ Rectangle {
             // 第一行：时间和序号
             Row {
                 spacing: 8
-                DataLabel { fontSize: 15; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; value: turntableData.time }
-                DataLabel { fontSize: 15; labelWidth: 40;  valueWidth: 30; label: "序号:";   value: turntableData.ctlnumber }
+                DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
+                DataLabel { fontSize: 18; labelWidth: 40;  valueWidth: 30; label: "序号:";   labelBold: true; value: turntableData.ctlnumber }
             }
 
             // 第二行：内框
             Row {
                 spacing: 6
                 DataLabel {
-                    fontSize: 15; labelWidth: 68; valueWidth: 125
+                    fontSize: 18; labelWidth: 68; valueWidth: 150; labelBold: true
                     label: "内框状态:"
                     property int innerstatus: turntableData.inner_statusnumber
                     onInnerstatusChanged: {
@@ -276,15 +417,15 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { fontSize: 15; labelWidth: 82; valueWidth: 65; label: "内框角度值:"; value: String(turntableData.inner_angle) }
-                DataLabel { fontSize: 15; labelWidth: 95; valueWidth: 65; label: "内框控制偏差:"; value: String(turntableData.inner_ctlDeviation) }
+                DataLabel { fontSize: 18; labelWidth: 82; valueWidth: 65; labelBold: true; label: "内框角度值:"; value: String(turntableData.inner_angle) }
+                DataLabel { fontSize: 18; labelWidth: 95; valueWidth: 65; labelBold: true; label: "内框控制偏差:"; value: String(turntableData.inner_ctlDeviation) }
             }
 
             // 第三行：中框
             Row {
                 spacing: 6
                 DataLabel {
-                    fontSize: 15; labelWidth: 68; valueWidth: 125
+                    fontSize: 18; labelWidth: 68; valueWidth: 150; labelBold: true
                     label: "中框状态:"
                     property int middlestatus: turntableData.middle_statusnumber
                     onMiddlestatusChanged: {
@@ -327,15 +468,15 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { fontSize: 15; labelWidth: 82; valueWidth: 65; label: "中框角度值:"; value: turntableData.middle_angle }
-                DataLabel { fontSize: 15; labelWidth: 95; valueWidth: 65; label: "中框控制偏差:"; value: turntableData.middle_ctlDeviation }
+                DataLabel { fontSize: 18; labelWidth: 82; valueWidth: 65; labelBold: true; label: "中框角度值:"; value: turntableData.middle_angle }
+                DataLabel { fontSize: 18; labelWidth: 95; valueWidth: 65; labelBold: true; label: "中框控制偏差:"; value: turntableData.middle_ctlDeviation }
             }
 
             // 第四行：外框
             Row {
                 spacing: 6
                 DataLabel {
-                    fontSize: 15; labelWidth: 68; valueWidth: 125
+                    fontSize: 18; labelWidth: 68; valueWidth: 150; labelBold: true
                     label: "外框状态:"
                     property int outterstatus: turntableData.outter_statusnumber
                     onOutterstatusChanged: {
@@ -378,8 +519,147 @@ Rectangle {
                         }
                     }
                 }
-                DataLabel { fontSize: 15; labelWidth: 82; valueWidth: 65; label: "外框角度值:"; value: turntableData.outter_angle }
-                DataLabel { fontSize: 15; labelWidth: 95; valueWidth: 65; label: "外框控制偏差:"; value: turntableData.outter_ctlDeviation }
+                DataLabel { fontSize: 18; labelWidth: 82; valueWidth: 65; labelBold: true; label: "外框角度值:"; value: turntableData.outter_angle }
+                DataLabel { fontSize: 18; labelWidth: 95; valueWidth: 65; labelBold: true; label: "外框控制偏差:"; value: turntableData.outter_ctlDeviation }
+            }
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // 第二行右侧：系统运行状态显示框
+    // ═══════════════════════════════════════════════════════════════
+    GroupBox {
+        id: systemStatusBox
+        anchors.left: statusBox.right
+        anchors.leftMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        anchors.top: serialBDBox.bottom
+        anchors.topMargin: 10
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        topPadding: 18
+
+        title: "系统运行状态"
+        font.pixelSize: 18
+        label: Label {
+            text: parent.title
+            font.pixelSize: 18
+            font.bold: true
+            leftPadding: 12
+            topPadding: 6
+        }
+
+        background: Rectangle {
+            color: "#e1d8d8"
+            border.color: "gray"
+            border.width: 4
+            radius: 8
+        }
+
+        Column {
+            anchors.centerIn: parent
+            spacing: 8
+
+            // 系统运行模式
+            Row {
+                spacing: 8
+                Text {
+                    text: "系统运行模式:"
+                    font.pixelSize: 18
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: {
+                        switch (modeController.currentMode) {
+                            case 0: return "外引导模式"
+                            case 1: return "程控模式"
+                            case 2: return "遥控模式"
+                            default: return "--"
+                        }
+                    }
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: "#1a73e8"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            // 当前使用导引头
+            Row {
+                spacing: 8
+                Text {
+                    text: "当前使用导引头:"
+                    font.pixelSize: 18
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: {
+                        if (imageData.portOpen) return "图像导引头"
+                        if (laserData.portOpen) return "激光导引头"
+                        return "未连接导引头"
+                    }
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: (imageData.portOpen || laserData.portOpen) ? "#1a73e8" : "#d93025"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            // 转台连接状态
+            Row {
+                spacing: 8
+                Text {
+                    text: "转台连接状态:"
+                    font.pixelSize: 18
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: turntableData.portOpen ? "已连接" : "未连接"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: turntableData.portOpen ? "#1a73e8" : "#d93025"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            // 北斗模块连接状态
+            Row {
+                spacing: 8
+                Text {
+                    text: "北斗模块连接状态:"
+                    font.pixelSize: 18
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: bdData.portOpen ? "已连接" : "未连接"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: bdData.portOpen ? "#1a73e8" : "#d93025"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            // CCD连接状态
+            Row {
+                spacing: 8
+                Text {
+                    text: "CCD连接状态:"
+                    font.pixelSize: 18
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Text {
+                    text: ccdData.portOpen ? "已连接" : "未连接"
+                    font.pixelSize: 18
+                    font.bold: true
+                    color: ccdData.portOpen ? "#1a73e8" : "#d93025"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
             }
         }
     }
