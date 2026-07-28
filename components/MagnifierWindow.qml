@@ -11,10 +11,8 @@ Window {
     color: "#000000"
     visible: true
 
-    // 由调用方传入
     property var frameSource: null
 
-    // ── 视频填满窗口 ──
     VlcFrame {
         id: magnifier
         anchors.fill: parent
