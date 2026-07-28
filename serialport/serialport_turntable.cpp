@@ -1,6 +1,7 @@
 #include "serialport_turntable.h"
 #include <QDebug>
 #include <QByteArray>
+#include <QThread>
 #include <cmath>
 
 #define MAX_SPEED 12.0f
@@ -10,7 +11,12 @@ SerialPortTurntable::SerialPortTurntable(QObject *parent)
 }
 
 SerialPortTurntable::~SerialPortTurntable() {
-    delete m_turntableData;
+    if (m_turntableData) {
+        if (QThread::currentThread() != m_turntableData->thread())
+            m_turntableData->moveToThread(QThread::currentThread());
+        delete m_turntableData;
+        m_turntableData = nullptr;
+    }
 };
 
 void SerialPortTurntable::parseData(const QByteArray &rawData)

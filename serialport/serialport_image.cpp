@@ -1,6 +1,7 @@
 #include "serialport_image.h"
 #include <QDebug>
 #include <QString>
+#include <QThread>
 #include <QTimer>
 // ─────────────────────────────────────────────
 // ImageData
@@ -453,6 +454,8 @@ SerialPortImage::SerialPortImage(QObject *parent)
 
 SerialPortImage::~SerialPortImage() {
     if (m_exGuideTimer) {
+        if (QThread::currentThread() != m_exGuideTimer->thread())
+            m_exGuideTimer->moveToThread(QThread::currentThread());
         m_exGuideTimer->stop();
         delete m_exGuideTimer;
         m_exGuideTimer = nullptr;
