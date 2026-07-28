@@ -27,12 +27,12 @@ Window {
 
             TabButton {
                 text: qsTr("图像导引头")
-                font.pixelSize: 20
+                font.pixelSize: cusConfig.fontPixel + 6
             }
 
             TabButton {
                 text: qsTr("激光导引头")
-                font.pixelSize: 20
+                font.pixelSize: cusConfig.fontPixel + 6
             }
         }
         // ===== 页面区域 =====

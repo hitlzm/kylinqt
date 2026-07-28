@@ -989,5 +989,5 @@ void VlcVideoItem::requestPixelAt(int x, int y)
     QColor color = frame.pixelColor(frameX, frameY);
     qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → frame("
              << frameX << "," << frameY << ") =" << color;
-    emit pixelRead(x, y, color);
+    emit pixelRead(x, y);
 }

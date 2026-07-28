@@ -5,7 +5,15 @@ import QtQml 2.0
 QtObject {
     id: cusConfig
     objectName: "cusConfig"
-    property string fontFamily: "微软雅黑"
+    // 跨平台字体：Windows 用微软雅黑，Linux 用 Noto Sans CJK / 文泉驿
+    property string fontFamily: {
+        if (Qt.platform.os === "windows") {
+            return "微软雅黑"
+        } else {
+            // Linux (银河麒麟) 常见中文字体回退链
+            return "Noto Sans CJK SC, WenQuanYi Micro Hei, Sans-serif"
+        }
+    }
     property string transString: typeof (trans) != "undefined" ? trans.transString : ""
     property int fontPixel: 14
     property int fixedHeight: 30

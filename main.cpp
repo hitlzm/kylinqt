@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QThread>
+#include <QFont>
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
 #include "serialport/serialport_turntable.h"
@@ -22,8 +23,25 @@ extern "C"
 
 int main(int argc, char *argv[])
 {
+    // ── DPI 缩放：Windows 依赖系统缩放比例，Linux 可通过环境变量 QT_SCALE_FACTOR 覆盖 ──
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    // Qt 5.14+ 提供更精确的高 DPI 处理策略
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+        Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
     QGuiApplication app(argc, argv);
+
+    // ── 跨平台默认字体：Linux 上不存在微软雅黑，设置可用回退字体 ──
+    QFont defaultFont = app.font();
+#ifdef _WIN32
+    defaultFont.setFamily("Microsoft YaHei");
+#else
+    // 银河麒麟 V10 常见中文字体
+    defaultFont.setFamily("Noto Sans CJK SC");
+    defaultFont.setPixelSize(defaultFont.pixelSize());
+#endif
+    app.setFont(defaultFont);
 
     // 注册自定义结构体到 Qt 元对象系统（QueuedConnection 跨线程传递必需）
     qRegisterMetaType<laser_send_frame>("laser_send_frame");
