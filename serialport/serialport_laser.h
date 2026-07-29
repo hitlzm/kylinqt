@@ -8,6 +8,7 @@
 
 struct laser_send_frame;
 struct laser_recv_frame;
+
 //使用40ms跟踪模式时直接以固定间隔发送角度数据给转台
 struct laserExGuideData
 {
