@@ -172,6 +172,7 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::modeChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, turntablePort, &SerialPortTurntable::ProgramModeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::modeChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
 
     //手柄信号连接
     QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntable::sendHandleMode, Qt::QueuedConnection);
@@ -189,8 +190,13 @@ int main(int argc, char *argv[])
     //为实现外引导模式进行的信号连接
     QObject::connect(imagePort, &SerialPortImage::reqTimesync, turntablePort, &SerialPortTurntable::sendTimesync, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::reqTimesync, turntablePort, &SerialPortTurntable::sendTimesync, Qt::QueuedConnection);
-    QObject::connect(imagePort, &SerialPortImage::reqExsend, turntablePort, &SerialPortTurntable::sendTrackMode, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::reqExsend, turntablePort, &SerialPortTurntable::sendTrackMode, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqExsend_3s, turntablePort, &SerialPortTurntable::sendTrackMode_3s, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqExsend_3s, turntablePort, &SerialPortTurntable::sendTrackMode_3s, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_3s, turntablePort, &SerialPortTurntable::sendTrackMode_3s, Qt::QueuedConnection);
+
+    QObject::connect(imagePort, &SerialPortImage::reqExsend_40ms, turntablePort, &SerialPortTurntable::sendTrackMode_40ms, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqExsend_40ms, turntablePort, &SerialPortTurntable::sendTrackMode_40ms, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_40ms, turntablePort, &SerialPortTurntable::sendTrackMode_40ms, Qt::QueuedConnection);
 
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;

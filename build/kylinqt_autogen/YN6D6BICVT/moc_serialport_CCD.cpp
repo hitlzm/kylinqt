@@ -425,8 +425,8 @@ void CCDData::reqResolutionchange()
     QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
 }
 struct qt_meta_stringdata_SerialPortCCD_t {
-    QByteArrayData data[21];
-    char stringdata0[247];
+    QByteArrayData data[23];
+    char stringdata0[266];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -455,7 +455,9 @@ QT_MOC_LITERAL(16, 156, 15), // "senddigZoomopen"
 QT_MOC_LITERAL(17, 172, 16), // "senddigZoomclose"
 QT_MOC_LITERAL(18, 189, 17), // "sendBacklightopen"
 QT_MOC_LITERAL(19, 207, 18), // "sendBacklightclose"
-QT_MOC_LITERAL(20, 226, 20) // "sendResolutionchange"
+QT_MOC_LITERAL(20, 226, 20), // "sendResolutionchange"
+QT_MOC_LITERAL(21, 247, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(22, 261, 4) // "mode"
 
     },
     "SerialPortCCD\0portOpened\0\0success\0"
@@ -464,7 +466,8 @@ QT_MOC_LITERAL(20, 226, 20) // "sendResolutionchange"
     "onClosePort\0onScanPorts\0send30XFocus\0"
     "send1XFocus\0senddigZoomopen\0"
     "senddigZoomclose\0sendBacklightopen\0"
-    "sendBacklightclose\0sendResolutionchange"
+    "sendBacklightclose\0sendResolutionchange\0"
+    "ExmodeChanged\0mode"
 };
 #undef QT_MOC_LITERAL
 
@@ -474,7 +477,7 @@ static const uint qt_meta_data_SerialPortCCD[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -482,22 +485,23 @@ static const uint qt_meta_data_SerialPortCCD[] = {
        4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   84,    2, 0x06 /* Public */,
-       4,    0,   87,    2, 0x06 /* Public */,
-       5,    1,   88,    2, 0x06 /* Public */,
-       7,    1,   91,    2, 0x06 /* Public */,
+       1,    1,   89,    2, 0x06 /* Public */,
+       4,    0,   92,    2, 0x06 /* Public */,
+       5,    1,   93,    2, 0x06 /* Public */,
+       7,    1,   96,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       9,    2,   94,    2, 0x0a /* Public */,
-      12,    0,   99,    2, 0x0a /* Public */,
-      13,    0,  100,    2, 0x0a /* Public */,
-      14,    0,  101,    2, 0x0a /* Public */,
-      15,    0,  102,    2, 0x0a /* Public */,
-      16,    0,  103,    2, 0x0a /* Public */,
-      17,    0,  104,    2, 0x0a /* Public */,
-      18,    0,  105,    2, 0x0a /* Public */,
-      19,    0,  106,    2, 0x0a /* Public */,
-      20,    0,  107,    2, 0x0a /* Public */,
+       9,    2,   99,    2, 0x0a /* Public */,
+      12,    0,  104,    2, 0x0a /* Public */,
+      13,    0,  105,    2, 0x0a /* Public */,
+      14,    0,  106,    2, 0x0a /* Public */,
+      15,    0,  107,    2, 0x0a /* Public */,
+      16,    0,  108,    2, 0x0a /* Public */,
+      17,    0,  109,    2, 0x0a /* Public */,
+      18,    0,  110,    2, 0x0a /* Public */,
+      19,    0,  111,    2, 0x0a /* Public */,
+      20,    0,  112,    2, 0x0a /* Public */,
+      21,    1,  113,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -516,6 +520,7 @@ static const uint qt_meta_data_SerialPortCCD[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,   22,
 
        0        // eod
 };
@@ -540,6 +545,7 @@ void SerialPortCCD::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 11: _t->sendBacklightopen(); break;
         case 12: _t->sendBacklightclose(); break;
         case 13: _t->sendResolutionchange(); break;
+        case 14: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -604,13 +610,13 @@ int SerialPortCCD::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 15)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 14;
+        _id -= 15;
     }
     return _id;
 }

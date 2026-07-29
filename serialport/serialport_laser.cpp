@@ -73,9 +73,9 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
     if (m_detectorStatus != pFrame.detector_status) {
         m_detectorStatus = pFrame.detector_status;   //写位操作函数细分，qml端判断应该显示什么
         //单独定义几个变量并使用位操作赋值
-        m_detectorStatus1 = convertAndGetBit(m_detectorStatus,4,4);
-        m_detectorStatus2 = convertAndGetBit(m_detectorStatus,2,3);
-        m_detectorStatus3 = convertAndGetBit(m_detectorStatus,0,1);
+        m_detectorStatus1 = getBitsFromQint8(m_detectorStatus,4,4);
+        m_detectorStatus2 = getBitsFromQint8(m_detectorStatus,2,3);
+        m_detectorStatus3 = getBitsFromQint8(m_detectorStatus,0,1);
         emit detectorStatusChanged();
         emit detectorStatus1Changed();
         emit detectorStatus2Changed();
@@ -83,8 +83,8 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
     }
     if (m_faultInfo != pFrame.fault_info) {
         m_faultInfo = pFrame.fault_info;             //写位操作函数细分，qml端判断应该显示什么
-        m_faultInfo1 = convertAndGetBit(m_faultInfo,6,7);
-        m_faultInfo2 = convertAndGetBit(m_faultInfo,0,5);
+        m_faultInfo1 = getBitsFromQint8(m_faultInfo,6,7);
+        m_faultInfo2 = getBitsFromQint8(m_faultInfo,0,5);
         emit faultInfoChanged();
         emit faultInfo1Changed();
         emit faultInfo2Changed();
@@ -455,7 +455,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                 // 发送时间同步指令（0时刻）
                 // emit reqTimesync();
                 // 发送Kalman预测的目标角度给转台串口线程
-                // emit reqExsend(m_tacpkt1, m_tacpkt2);
+                // emit reqExsend_3s(m_tacpkt1, m_tacpkt2);
             });
         }
         m_exGuideTimer->start(3000); // 每3秒触发一次

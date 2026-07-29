@@ -52,6 +52,17 @@ void SerialPortCCD::sendResolutionchange()
     qint64 bytesWritten = m_serialPort->write(cmd_Resolutionchange1);
 }
 
+void SerialPortCCD::ExmodeChanged(int mode)
+{
+    // CCD 模式切换处理
+    // 判断当前模式：
+    //   0 — 外引导模式
+    //   1 — 程控模式
+    //   2 — 遥控模式
+    // TODO: 根据模式执行对应的 CCD 操作（如切换分辨率、变倍等）
+    Q_UNUSED(mode);
+}
+
 // 串口操作槽函数
 void SerialPortCCD::onOpenPort(const QString &name, int baud) {
     if (SerialPort::open(name, baud))

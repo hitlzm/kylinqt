@@ -154,34 +154,33 @@ private:
             * 0.001f;
     }
     //int转qint8
-    qint8 intToQint8Saturated(int value)
-    {
-    if (value > 127) return 127;
-    if (value < -128) return -128;
-    return static_cast<qint8>(value);
-    }
+    // qint8 intToQint8Saturated(int value)
+    // {
+    // if (value > 127) return 127;
+    // if (value < -128) return -128;
+    // return static_cast<qint8>(value);
+    // }
     //取出一个字节对应位置的函数
     int getBitsFromQint8(qint8 value, int startBit, int endBit);
     //做转换并取出对应位
-    int convertAndGetBit(int value, int startPos,int endPos)
-    {
-    qint8 converted = intToQint8Saturated(value);
-    return getBitsFromQint8(converted, startPos,endPos);
-    }
+    // int convertAndGetBit(quint8 value, int startPos,int endPos)
+    // {
+    // return getBitsFromQint8(value, startPos,endPos);
+    // }
 
     int m_frameStatus = 0;
     int m_frameStatus1 = 0;//帧长
     int m_frameStatus2 = 0; //帧计数器
     int m_frameId = 0x25;
     int m_dytStatus = 0;
-    int m_detectorStatus = 0;  //细分为三种
-    int m_detectorStatus1 = 0;
-    int m_detectorStatus2 = 0;
-    int m_detectorStatus3 = 0;
+    quint8 m_detectorStatus = 0;  //细分为三种
+    quint8 m_detectorStatus1 = 0;
+    quint8 m_detectorStatus2 = 0;
+    quint8 m_detectorStatus3 = 0;
 
-    int m_faultInfo = 0;  //细分为2种
-    int m_faultInfo1 = 0;  
-    int m_faultInfo2 = 0;  
+    quint8 m_faultInfo = 0;  //细分为2种
+    quint8 m_faultInfo1 = 0;  
+    quint8 m_faultInfo2 = 0;  
     float m_opticalAzimuth = 0;
     float m_opticalPitch = 0;
     float m_gyroAzimuthRate = 0;
@@ -288,7 +287,8 @@ signals:
 
     //两类导引头的实现相同
     void reqTimesync();
-    void reqExsend(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_3s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_40ms(int time ,int angle1 ,int angle2 );
 
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──

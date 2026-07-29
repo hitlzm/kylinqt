@@ -6,6 +6,11 @@
 // ─────────────────────────────────────────────
 // ImageData
 // ─────────────────────────────────────────────
+#define ExguideMode 0
+#define ExguideSrcImg 3
+#define Exguide_40ms 6
+#define Exguide_3s 7
+#define Maxsendcount 10000
 
 uint16_t SerialPortImage::crc16_table[256] = {0};
 
@@ -528,38 +533,109 @@ void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 
 
 void SerialPortImage::ExmodeChanged(int mode)
-{
+{   
+    //1:外引导  2：程控模式 3：遥控模式  //还需要判断外引导源  //判断跟踪模式
     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
-    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S或40ms发送一次跟踪数据信息
     //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
-    exindex = mode;
-    //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
-    //每3秒发送一次数据
-    // QDateTime current = QDateTime::currentDateTime();
-    // QTime time = current.time();
-    // int value = time.minute() * 60 + time.second();
-    if (exindex == 1)
+    if(mode < 3)
+    exindex = mode;  //模式索引赋值
+    if(mode > 2 && mode < 6)
+    exsrcindex = mode;  //外引导源索引赋值
+    if(mode >5)
+    exguidesetting = mode; //外引导发送时间间隔选择
+
+    if (exindex == ExguideMode) //判断是否为外引导模式
     {
-        // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
-        if (!m_exGuideTimer) {
-            m_exGuideTimer = new QTimer(this);
-            connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
-                // 用当前导引头反馈角度重新初始化Kalman滤波器
-                m_kalman.Init(m_azimuth, m_pitch);
-                // 生成方位轴和俯仰轴的3s预测数据包
-                AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
-                AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
-                // 发送时间同步指令（0时刻）
-                // emit reqTimesync();
-                // 发送Kalman预测的目标角度给转台串口线程
-                // emit reqExsend(m_tacpkt1, m_tacpkt2);
-            });
+        // 图像导引头被选为外引导源：启动定时器，每3秒或40ms发送一次跟踪数据
+        if(exsrcindex == ExguideSrcImg )
+        {
+            // 只有时间间隔设置改变时才重新绑定
+            if(m_lastexguidesetting != exguidesetting)
+            {
+                // 先解绑旧连接并停止定时器
+                if(m_lastexguidesetting > 0)
+                {
+                    m_exGuideTimer->stop();
+                    disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                    m_sendCount_40ms == 0;
+                    m_sendCount_3s == 0;
+                }
+                // 延迟创建定时器
+                if (!m_exGuideTimer) {
+                    m_exGuideTimer = new QTimer(this);
+                }
+                // 判断跟踪模式（40ms模式或者3秒跟踪模式）
+                if(exguidesetting == Exguide_40ms)
+                {
+                    connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        // 发送时间同步指令（0时刻）
+                        //每发送完固定次数后，重新发送时间同步信号，并重新计时
+                        if(m_sendCount_40ms == 0) 
+                        {
+                            emit reqTimesync(); 
+                            //记录一下起始时间
+                            m_dateTime = QDateTime::currentDateTime();
+                            m_startTime = m_dateTime.time();
+                            m_startvalue = (m_startTime.minute() * 60 + m_startTime.second()) * 100 + m_startTime.msec() / 20;
+                        } 
+                        //计算时间数据
+                        //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
+                        //计算理论时间与实际时间的差值，如果差值大于20ms，则重新进行时间同步并发送数据，保证每次数据都落在转台的40ms周期内
+                        int throry_time = m_startvalue + (m_sendCount_40ms + 1) * 2;
+                        //最后两位最大为49
+                        int m_throry_time = (throry_time/50) * 100 +  (throry_time%50);
+                        QTime realTime = QTime::currentTime();
+                        // 理论时间和真实时间都转为毫秒，计算差值
+                        int theory_ms = (m_throry_time / 100) * 1000 + (m_throry_time % 100) * 20;
+                        int real_ms   = (realTime.minute() * 60 + realTime.second()) * 1000 + realTime.msec();
+                        int diff_ms   = qAbs(theory_ms - real_ms);
+                        if(diff_ms > 20)
+                        {   //重新进行时间同步
+                            emit reqTimesync(); 
+                            //记录一下起始时间
+                            m_dateTime = QDateTime::currentDateTime();
+                            m_startTime = m_dateTime.time();
+                            m_startvalue = (m_startTime.minute() * 60 + m_startTime.second()) * 100 + m_startTime.msec() / 20;
+                        }
+                        //发送角度数据
+                        reqExsend_40ms(m_throry_time,m_azimuth,m_pitch);
+                        if(++m_sendCount_40ms == Maxsendcount)  m_sendCount_40ms=0;  //发送Maxsendcount次数后，重新进行时间同步
+                    });
+                    m_exGuideTimer->start(40); // 每40ms触发一次
+                    m_lastexguidesetting = Exguide_40ms;
+                }
+                else if(exguidesetting == Exguide_3s)
+                {
+                    connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        // 发送时间同步指令（0时刻）
+                        if(m_sendCount_3s == 0)  
+                        {
+                            emit reqTimesync();
+                            m_dateTime = QDateTime::currentDateTime();
+                            m_startTime = m_dateTime.time();
+                        }
+                        //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
+                        int value = m_startTime.minute() * 60 + m_startTime.second();
+                        //进行数据预测
+
+                        //发送角度数据
+                        // reqExsend_3s(value,m_azimuth,m_pitch);
+                        if(m_sendCount_3s++ == Maxsendcount)  m_sendCount_3s=0;
+                    });
+                    m_exGuideTimer->start(3000); // 每3秒触发一次
+                    m_lastexguidesetting = Exguide_3s;
+                }
+            } 
         }
-        m_exGuideTimer->start(3000); // 每3秒触发一次
+        else
+        {
+            m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+        }
     }
     else
     {
-        // 非图像导引头外引导源：停止定时器
+        // 非外引导模式：停止定时器
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }
@@ -609,7 +685,8 @@ void SerialPortImage::parseData(const QByteArray &rawData)
     m_azimuth = pFrame->yaw_frame_angle * 0.002;
     m_pitch = pFrame->pitch_frame_angle * 0.002;
     emit imageFrameReceived(rawData);
-    //判断图像导引头是否被选中为外引导源，是的话更新数据
+
+    //判断图像导引头是否被选中为外引导源，是的话更新数据。（3s跟踪模式）
     if(exindex == 1)
     {
         m_kalman.FeedSeekerData(0,m_azimuth,m_pitch);
@@ -638,3 +715,42 @@ uint16_t SerialPortImage::crc16_ccitt_fast(const uint8_t *data, size_t len, uint
     }
     return crc;
 }
+
+// void SerialPortImage::ExmodeChanged(int mode)
+// {
+//     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
+//     //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
+//     //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
+//     exindex = mode;
+//     //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
+//     //每3秒发送一次数据
+//     // QDateTime current = QDateTime::currentDateTime();
+//     // QTime time = current.time();
+//     // int value = time.minute() * 60 + time.second();
+//     if (exindex == 1)
+//     {
+//         // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
+//         if (!m_exGuideTimer) {
+//             m_exGuideTimer = new QTimer(this);
+//             connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+//                 // 用当前导引头反馈角度重新初始化Kalman滤波器
+//                 m_kalman.Init(m_azimuth, m_pitch);
+//                 // 生成方位轴和俯仰轴的3s预测数据包
+//                 AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
+//                 AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
+//                 // 发送时间同步指令（0时刻）
+//                 // emit reqTimesync();
+//                 // 发送Kalman预测的目标角度给转台串口线程
+//                 // emit reqExsend_3s(m_tacpkt1, m_tacpkt2);
+//             });
+//         }
+//         m_exGuideTimer->start(3000); // 每3秒触发一次
+//     }
+//     else
+//     {
+//         // 非图像导引头外引导源：停止定时器
+//         if (m_exGuideTimer) {
+//             m_exGuideTimer->stop();
+//         }
+//     }
+// }

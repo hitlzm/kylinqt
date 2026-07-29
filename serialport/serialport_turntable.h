@@ -67,6 +67,13 @@ typedef struct {
     float  angle34;    // 角度34 (9字节)
 } TrackingSendCmd1;
 
+typedef struct {
+    int trackTime;     // 跟踪时间 (4字节)
+    float  angle1;    // 角度11 (9字节) 外框：方位角
+    float  angle2;    // 角度12 (9字节) 中框：俯仰角
+    float  angle3;    // 角度13 (9字节) 内框：默认为0
+} TrackingSendCmd2;
+
 
 
 class TurntableData : public QObject
@@ -242,7 +249,8 @@ public slots:
     void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号
     //外引导模式槽函数，用于对接两类导引头和CCD相机
-    void sendTrackMode(const sendExGuideData &frame1 , const sendExGuideData &frame2);    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)
+    void sendTrackMode_3s(const sendExGuideData &frame1 , const sendExGuideData &frame2);    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)
+    void sendTrackMode_40ms(int time , int yawangle , int pitchangle );
 
     void sendTimesync();
 
@@ -267,11 +275,12 @@ protected:
     void sendCommands(const QStringList &commands, int repeatTimes = 5);   //开机，停机，回零，复位，程控模式的实现
     void sendPositionCmd(const PositionModeCmd1 &cmd);    //位置模式指令发送
     void sendVecCmd(const SpeedModeCmd1 &cmd);     //速度模式指令发送
-    void sendTrackCmd(const TrackingSendCmd1 &cmd);   //跟踪模式指令发送，对应外引导模式
+    void sendTrackCmd_3s(const TrackingSendCmd1 &cmd);   //跟踪模式指令发送，对应外引导模式
+    void sendTrackCmd_40ms(const TrackingSendCmd2 &cmd);   //40ms跟踪模式指令发送，对应外引导模式
 
     QString formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits);
 private:
-    bool m_isProgramMode;  //标志位，判断是否进入程控模式
+    bool m_isProgramMode;  //标志位，判断是否进入程控模式 ， 其中遥控模式是在handle相关的文件夹中设置的
     //需要保存现在的转台角度数据
     float m_current_inner_angle;
     float m_current_middle_angle;

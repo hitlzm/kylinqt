@@ -91,6 +91,10 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
 
+    // 外引导模式请求信号（连接转台串口线程）
+    void reqExsend_3s(const sendExGuideData &frame1, const sendExGuideData &frame2);
+    void reqExsend_40ms(int time, int angle1, int angle2);
+
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
@@ -104,6 +108,8 @@ public slots:
     void sendBacklightopen();
     void sendBacklightclose();
     void sendResolutionchange();
+
+    void ExmodeChanged(int mode);
 
 protected:
     void parseData(const QByteArray &rawData) override{};

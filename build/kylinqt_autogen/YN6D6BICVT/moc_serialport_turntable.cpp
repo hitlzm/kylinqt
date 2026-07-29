@@ -1213,8 +1213,8 @@ void TurntableSendData::reqresetTurntable()
     QMetaObject::activate(this, &staticMetaObject, 16, nullptr);
 }
 struct qt_meta_stringdata_SerialPortTurntable_t {
-    QByteArrayData data[46];
-    char stringdata0[512];
+    QByteArrayData data[50];
+    char stringdata0[559];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1252,23 +1252,27 @@ QT_MOC_LITERAL(25, 285, 7), // "buttonA"
 QT_MOC_LITERAL(26, 293, 7), // "buttonB"
 QT_MOC_LITERAL(27, 301, 6), // "Acount"
 QT_MOC_LITERAL(28, 308, 6), // "Bcount"
-QT_MOC_LITERAL(29, 315, 13), // "sendTrackMode"
-QT_MOC_LITERAL(30, 329, 15), // "sendExGuideData"
-QT_MOC_LITERAL(31, 345, 6), // "frame1"
-QT_MOC_LITERAL(32, 352, 6), // "frame2"
-QT_MOC_LITERAL(33, 359, 12), // "sendTimesync"
-QT_MOC_LITERAL(34, 372, 18), // "ProgramModeChanged"
-QT_MOC_LITERAL(35, 391, 4), // "mode"
-QT_MOC_LITERAL(36, 396, 6), // "dowork"
-QT_MOC_LITERAL(37, 403, 15), // "recvinner_angle"
-QT_MOC_LITERAL(38, 419, 5), // "angle"
-QT_MOC_LITERAL(39, 425, 16), // "recvmiddle_angle"
-QT_MOC_LITERAL(40, 442, 16), // "recvoutter_angle"
-QT_MOC_LITERAL(41, 459, 10), // "onOpenPort"
-QT_MOC_LITERAL(42, 470, 8), // "portName"
-QT_MOC_LITERAL(43, 479, 8), // "baudRate"
-QT_MOC_LITERAL(44, 488, 11), // "onClosePort"
-QT_MOC_LITERAL(45, 500, 11) // "onScanPorts"
+QT_MOC_LITERAL(29, 315, 16), // "sendTrackMode_3s"
+QT_MOC_LITERAL(30, 332, 15), // "sendExGuideData"
+QT_MOC_LITERAL(31, 348, 6), // "frame1"
+QT_MOC_LITERAL(32, 355, 6), // "frame2"
+QT_MOC_LITERAL(33, 362, 18), // "sendTrackMode_40ms"
+QT_MOC_LITERAL(34, 381, 4), // "time"
+QT_MOC_LITERAL(35, 386, 8), // "yawangle"
+QT_MOC_LITERAL(36, 395, 10), // "pitchangle"
+QT_MOC_LITERAL(37, 406, 12), // "sendTimesync"
+QT_MOC_LITERAL(38, 419, 18), // "ProgramModeChanged"
+QT_MOC_LITERAL(39, 438, 4), // "mode"
+QT_MOC_LITERAL(40, 443, 6), // "dowork"
+QT_MOC_LITERAL(41, 450, 15), // "recvinner_angle"
+QT_MOC_LITERAL(42, 466, 5), // "angle"
+QT_MOC_LITERAL(43, 472, 16), // "recvmiddle_angle"
+QT_MOC_LITERAL(44, 489, 16), // "recvoutter_angle"
+QT_MOC_LITERAL(45, 506, 10), // "onOpenPort"
+QT_MOC_LITERAL(46, 517, 8), // "portName"
+QT_MOC_LITERAL(47, 526, 8), // "baudRate"
+QT_MOC_LITERAL(48, 535, 11), // "onClosePort"
+QT_MOC_LITERAL(49, 547, 11) // "onScanPorts"
 
     },
     "SerialPortTurntable\0requpdateframe\0\0"
@@ -1280,12 +1284,13 @@ QT_MOC_LITERAL(45, 500, 11) // "onScanPorts"
     "programSend_frame\0frame\0sendHandleMode\0"
     "axisLeftX\0axisLeftY\0axisRightX\0buttonL2\0"
     "buttonR2\0buttonA\0buttonB\0Acount\0Bcount\0"
-    "sendTrackMode\0sendExGuideData\0frame1\0"
-    "frame2\0sendTimesync\0ProgramModeChanged\0"
-    "mode\0dowork\0recvinner_angle\0angle\0"
-    "recvmiddle_angle\0recvoutter_angle\0"
-    "onOpenPort\0portName\0baudRate\0onClosePort\0"
-    "onScanPorts"
+    "sendTrackMode_3s\0sendExGuideData\0"
+    "frame1\0frame2\0sendTrackMode_40ms\0time\0"
+    "yawangle\0pitchangle\0sendTimesync\0"
+    "ProgramModeChanged\0mode\0dowork\0"
+    "recvinner_angle\0angle\0recvmiddle_angle\0"
+    "recvoutter_angle\0onOpenPort\0portName\0"
+    "baudRate\0onClosePort\0onScanPorts"
 };
 #undef QT_MOC_LITERAL
 
@@ -1295,7 +1300,7 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      21,   14, // methods
+      22,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -1303,29 +1308,30 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  119,    2, 0x06 /* Public */,
-       5,    1,  122,    2, 0x06 /* Public */,
-       7,    0,  125,    2, 0x06 /* Public */,
-       8,    1,  126,    2, 0x06 /* Public */,
-      10,    1,  129,    2, 0x06 /* Public */,
+       1,    1,  124,    2, 0x06 /* Public */,
+       5,    1,  127,    2, 0x06 /* Public */,
+       7,    0,  130,    2, 0x06 /* Public */,
+       8,    1,  131,    2, 0x06 /* Public */,
+      10,    1,  134,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      12,    0,  132,    2, 0x0a /* Public */,
-      13,    0,  133,    2, 0x0a /* Public */,
-      14,    0,  134,    2, 0x0a /* Public */,
-      15,    0,  135,    2, 0x0a /* Public */,
-      16,    1,  136,    2, 0x0a /* Public */,
-      19,    9,  139,    2, 0x0a /* Public */,
-      29,    2,  158,    2, 0x0a /* Public */,
-      33,    0,  163,    2, 0x0a /* Public */,
-      34,    1,  164,    2, 0x0a /* Public */,
-      36,    0,  167,    2, 0x0a /* Public */,
-      37,    1,  168,    2, 0x0a /* Public */,
-      39,    1,  171,    2, 0x0a /* Public */,
-      40,    1,  174,    2, 0x0a /* Public */,
-      41,    2,  177,    2, 0x0a /* Public */,
-      44,    0,  182,    2, 0x0a /* Public */,
-      45,    0,  183,    2, 0x0a /* Public */,
+      12,    0,  137,    2, 0x0a /* Public */,
+      13,    0,  138,    2, 0x0a /* Public */,
+      14,    0,  139,    2, 0x0a /* Public */,
+      15,    0,  140,    2, 0x0a /* Public */,
+      16,    1,  141,    2, 0x0a /* Public */,
+      19,    9,  144,    2, 0x0a /* Public */,
+      29,    2,  163,    2, 0x0a /* Public */,
+      33,    3,  168,    2, 0x0a /* Public */,
+      37,    0,  175,    2, 0x0a /* Public */,
+      38,    1,  176,    2, 0x0a /* Public */,
+      40,    0,  179,    2, 0x0a /* Public */,
+      41,    1,  180,    2, 0x0a /* Public */,
+      43,    1,  183,    2, 0x0a /* Public */,
+      44,    1,  186,    2, 0x0a /* Public */,
+      45,    2,  189,    2, 0x0a /* Public */,
+      48,    0,  194,    2, 0x0a /* Public */,
+      49,    0,  195,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -1342,13 +1348,14 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
     QMetaType::Void, 0x80000000 | 17,   18,
     QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::Int,   20,   21,   22,   23,   24,   25,   26,   27,   28,
     QMetaType::Void, 0x80000000 | 30, 0x80000000 | 30,   31,   32,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   34,   35,   36,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   35,
+    QMetaType::Void, QMetaType::Int,   39,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Float,   38,
-    QMetaType::Void, QMetaType::Float,   38,
-    QMetaType::Void, QMetaType::Float,   38,
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   42,   43,
+    QMetaType::Void, QMetaType::Float,   42,
+    QMetaType::Void, QMetaType::Float,   42,
+    QMetaType::Void, QMetaType::Float,   42,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   46,   47,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -1372,16 +1379,17 @@ void SerialPortTurntable::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         case 8: _t->zeroTurntable(); break;
         case 9: _t->sendProgramMode((*reinterpret_cast< programSend_frame(*)>(_a[1]))); break;
         case 10: _t->sendHandleMode((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5])),(*reinterpret_cast< bool(*)>(_a[6])),(*reinterpret_cast< bool(*)>(_a[7])),(*reinterpret_cast< int(*)>(_a[8])),(*reinterpret_cast< int(*)>(_a[9]))); break;
-        case 11: _t->sendTrackMode((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
-        case 12: _t->sendTimesync(); break;
-        case 13: _t->ProgramModeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 14: _t->dowork(); break;
-        case 15: _t->recvinner_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 16: _t->recvmiddle_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 17: _t->recvoutter_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 18: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 19: _t->onClosePort(); break;
-        case 20: _t->onScanPorts(); break;
+        case 11: _t->sendTrackMode_3s((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
+        case 12: _t->sendTrackMode_40ms((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 13: _t->sendTimesync(); break;
+        case 14: _t->ProgramModeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 15: _t->dowork(); break;
+        case 16: _t->recvinner_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 17: _t->recvmiddle_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 18: _t->recvoutter_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 19: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 20: _t->onClosePort(); break;
+        case 21: _t->onScanPorts(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -1453,13 +1461,13 @@ int SerialPortTurntable::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 21)
+        if (_id < 22)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 21;
+        _id -= 22;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 21)
+        if (_id < 22)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 21;
+        _id -= 22;
     }
     return _id;
 }
