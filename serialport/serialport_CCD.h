@@ -140,8 +140,8 @@ private:
     const QByteArray cmd_Backlightclose = QByteArray::fromHex("8101043303FF");
     const QByteArray cmd_Resolutionchange1 = QByteArray::fromHex("81010424730007FF");  //1080P 30帧
     const QByteArray cmd_Resolutionchange2 = QByteArray::fromHex("8101042473000FFF");  //720P 30帧
-    const QByteArray cmd_Resolutionchange_1080p25 = QByteArray::fromHex("81010424730003FF");  //1080P 25帧 (TODO: 确认协议)
-    const QByteArray cmd_Resolutionchange_720p25 = QByteArray::fromHex("8101042473000BFF");   //720P 25帧 (TODO: 确认协议)
+    const QByteArray cmd_Resolutionchange_1080p25 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧 (TODO: 确认协议)
+    const QByteArray cmd_Resolutionchange_720p25 = QByteArray::fromHex("81010424730011FF");   //720P 25帧 (TODO: 确认协议)
 
 };
 
