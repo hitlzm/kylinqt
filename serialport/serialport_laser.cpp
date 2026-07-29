@@ -292,13 +292,13 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
     //断开上一次的连接
-    disconnect(timer, &QTimer::timeout, this, nullptr);
+    disconnect(timer, &PreciseTimer::timeout, this, nullptr);
 
     int sendCount = 0;
     static quint8 datacount=0;
     timer->setInterval(10); // 10ms
     // 连接定时器的超时信号
-    connect(timer, &QTimer::timeout, this, [=]() mutable {
+    connect(timer, &PreciseTimer::timeout, this, [=]() mutable {
         // 发送数据
         SerialPort::send(data);
         
@@ -445,8 +445,8 @@ void SerialPortLaser::ExmodeChanged(int mode)
     {
         // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
         if (!m_exGuideTimer) {
-            m_exGuideTimer = new QTimer(this);
-            connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+            m_exGuideTimer = new PreciseTimer(this);
+            connect(m_exGuideTimer, &PreciseTimer::timeout, this, [this]() {
                 // 用当前导引头反馈角度重新初始化Kalman滤波器
                 m_kalman.Init(m_azimuth, m_pitch);
                 // 生成方位轴和俯仰轴的3s预测数据包

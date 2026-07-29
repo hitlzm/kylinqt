@@ -1,6 +1,8 @@
 #include "serialport.h"
 #include <QDebug>
 #include <QThread>
+#include <cstring>
+//#include <sys/mman.h>
 
 SerialPort::SerialPort(QObject *parent)
     : QObject(parent)
@@ -12,26 +14,33 @@ SerialPort::SerialPort(QObject *parent)
 
 SerialPort::~SerialPort()
 {
-    // 析构可能发生在主线程，但 m_serialPort/timer 在工作线程创建。
-    // 必须先迁回当前线程再操作，否则 close() 内部停止 QSerialPort 的 timer 会跨线程报错。
-    if (m_serialPort && QThread::currentThread() != m_serialPort->thread())
-        m_serialPort->moveToThread(QThread::currentThread());
-    if (timer && QThread::currentThread() != timer->thread())
-        timer->moveToThread(QThread::currentThread());
+    close();  // 先关串口（m_serialPort 还活着）
 
-    close();  // 现在安全了，m_serialPort 已在当前线程
-
-    delete m_serialPort;
-    m_serialPort = nullptr;
-    delete timer;
-    timer = nullptr;
+    // m_serialPort 和 timer 在 dowork() 中于工作线程创建，
+    // 但析构可能发生在主线程。moveToThread 后再 delete 避免跨线程销毁报错。
+    auto safeDelete = [](QObject *&obj) {
+        if (!obj) return;
+        if (QThread::currentThread() != obj->thread())
+            obj->moveToThread(QThread::currentThread());
+        delete obj;
+        obj = nullptr;
+    };
+    safeDelete(reinterpret_cast<QObject *&>(m_serialPort));
+    safeDelete(reinterpret_cast<QObject *&>(timer));
 }
 
 void SerialPort::dowork()
 {
+    // ── 实时调度（部署到麒麟 + RT 内核后取消注释）──
+    // struct sched_param param;
+    // param.sched_priority = 80;   // 1-99，越高越优先
+    // if (sched_setscheduler(0, SCHED_FIFO, &param) != 0)
+    //     qWarning("SCHED_FIFO failed: %s", strerror(errno));
+    // mlockall(MCL_CURRENT | MCL_FUTURE);  // 锁定内存，防止缺页延迟
+
     // QSerialPort 在工作线程中创建，避免主线程创建后被 moveToThread 迁移
     m_serialPort = new QSerialPort(this);
-    timer = new QTimer(this); 
+    timer = new PreciseTimer(this);
     connect(m_serialPort, &QSerialPort::readyRead,
             this, &SerialPort::handleReadyRead);
     connect(m_serialPort, &QSerialPort::errorOccurred,

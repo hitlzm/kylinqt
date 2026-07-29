@@ -313,7 +313,7 @@ private:
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;
     int exindex = 0;
-    QTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
+    PreciseTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
 };
 
 

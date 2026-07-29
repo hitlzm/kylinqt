@@ -549,7 +549,7 @@ private:
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;    //存储图像导引头的方位角与俯仰角
     int exindex = 0;         //外引导源判断
-    QTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
+    PreciseTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
     int Cbh_tv; //电视帧编号
     int Infrared_num; //红外帧编号
 };

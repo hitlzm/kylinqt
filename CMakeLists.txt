@@ -8,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(OpenCV_DIR "E:/opencv-4.2.0/DNN/install")
@@ -51,6 +51,7 @@ if(ANDROID)
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
+      serialport/precisetimer.cpp
       video/vlcplayer.cpp
     )
 else()
@@ -61,6 +62,7 @@ else()
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
+      serialport/precisetimer.cpp
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
       vlcvideo/VlcVideoItem.cpp
