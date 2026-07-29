@@ -41,25 +41,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 60,
+				"line" : 57,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 86,
+				"line" : 82,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 94,
+				"line" : 89,
 				"parent" : 0
 			},
 			{
 				"command" : 5,
 				"file" : 0,
-				"line" : 41,
+				"line" : 38,
 				"parent" : 0
 			},
 			{
@@ -113,7 +113,7 @@
 			{
 				"command" : 7,
 				"file" : 0,
-				"line" : 91,
+				"line" : 86,
 				"parent" : 0
 			},
 			{
@@ -135,13 +135,13 @@
 			{
 				"command" : 10,
 				"file" : 0,
-				"line" : 81,
+				"line" : 78,
 				"parent" : 0
 			},
 			{
 				"command" : 10,
 				"file" : 0,
-				"line" : 101,
+				"line" : 96,
 				"parent" : 0
 			}
 		]
@@ -208,7 +208,7 @@
 				},
 				{
 					"backtrace" : 18,
-					"path" : "E:/QTproject/vlclib/sdk/include"
+					"path" : "E:/QTproject/mpv/include"
 				},
 				{
 					"backtrace" : 19,
@@ -311,12 +311,7 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LE:\\QTproject\\vlclib\\sdk\\lib",
-				"role" : "libraryPath"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "-LE:\\QTproject\\vlclib",
+				"fragment" : "-LE:\\QTproject\\mpv\\lib",
 				"role" : "libraryPath"
 			},
 			{
@@ -336,12 +331,7 @@
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "-llibvlc",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
-				"fragment" : "-llibvlccore",
+				"fragment" : "-lmpv",
 				"role" : "libraries"
 			},
 			{

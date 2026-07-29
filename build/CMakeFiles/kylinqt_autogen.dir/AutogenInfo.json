@@ -209,7 +209,7 @@
 	[
 		"E:/QTproject/kylinqt/build",
 		"E:/QTproject/kylinqt",
-		"E:/QTproject/vlclib/sdk/include",
+		"E:/QTproject/mpv/include",
 		"E:/opencv-4.2.0/DNN/install/include",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include",
 		"E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore",
