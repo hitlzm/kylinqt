@@ -274,7 +274,7 @@ protected:
     void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换）
 
     void sendCommands(const QStringList &commands, int repeatTimes = 5);   //开机，停机，回零，复位，程控模式的实现
-    //位置模式
+    
     void sendPositionCmd(const PositionModeCmd1 &cmd);    //位置模式指令发送
     void sendVecCmd(const SpeedModeCmd1 &cmd);     //速度模式指令发送
     void sendTrackCmd_1s(const TrackingSendCmd1 &cmd);   //跟踪模式指令发送，对应外引导模式

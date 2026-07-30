@@ -18,7 +18,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "E:/QTproject/kylinqt/serialport/serialport_CCD.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport_image.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport_laser.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj.d"
-  "E:/QTproject/kylinqt/serialport/serialport_turntable.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj.d"
+  "E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj.d"
   "E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp" "CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj.d"
   "E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp" "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj.d"
   )

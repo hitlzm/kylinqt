@@ -425,8 +425,8 @@ void CCDData::reqResolutionchange()
     QMetaObject::activate(this, &staticMetaObject, 12, nullptr);
 }
 struct qt_meta_stringdata_SerialPortCCD_t {
-    QByteArrayData data[23];
-    char stringdata0[266];
+    QByteArrayData data[31];
+    char stringdata0[342];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -444,27 +444,37 @@ QT_MOC_LITERAL(5, 45, 9), // "portError"
 QT_MOC_LITERAL(6, 55, 3), // "msg"
 QT_MOC_LITERAL(7, 59, 12), // "portsChanged"
 QT_MOC_LITERAL(8, 72, 5), // "ports"
-QT_MOC_LITERAL(9, 78, 10), // "onOpenPort"
-QT_MOC_LITERAL(10, 89, 8), // "portName"
-QT_MOC_LITERAL(11, 98, 8), // "baudRate"
-QT_MOC_LITERAL(12, 107, 11), // "onClosePort"
-QT_MOC_LITERAL(13, 119, 11), // "onScanPorts"
-QT_MOC_LITERAL(14, 131, 12), // "send30XFocus"
-QT_MOC_LITERAL(15, 144, 11), // "send1XFocus"
-QT_MOC_LITERAL(16, 156, 15), // "senddigZoomopen"
-QT_MOC_LITERAL(17, 172, 16), // "senddigZoomclose"
-QT_MOC_LITERAL(18, 189, 17), // "sendBacklightopen"
-QT_MOC_LITERAL(19, 207, 18), // "sendBacklightclose"
-QT_MOC_LITERAL(20, 226, 20), // "sendResolutionchange"
-QT_MOC_LITERAL(21, 247, 13), // "ExmodeChanged"
-QT_MOC_LITERAL(22, 261, 4) // "mode"
+QT_MOC_LITERAL(9, 78, 12), // "reqExsend_1s"
+QT_MOC_LITERAL(10, 91, 15), // "sendExGuideData"
+QT_MOC_LITERAL(11, 107, 6), // "frame1"
+QT_MOC_LITERAL(12, 114, 6), // "frame2"
+QT_MOC_LITERAL(13, 121, 13), // "reqExsend_5ms"
+QT_MOC_LITERAL(14, 135, 4), // "time"
+QT_MOC_LITERAL(15, 140, 6), // "angle1"
+QT_MOC_LITERAL(16, 147, 6), // "angle2"
+QT_MOC_LITERAL(17, 154, 10), // "onOpenPort"
+QT_MOC_LITERAL(18, 165, 8), // "portName"
+QT_MOC_LITERAL(19, 174, 8), // "baudRate"
+QT_MOC_LITERAL(20, 183, 11), // "onClosePort"
+QT_MOC_LITERAL(21, 195, 11), // "onScanPorts"
+QT_MOC_LITERAL(22, 207, 12), // "send30XFocus"
+QT_MOC_LITERAL(23, 220, 11), // "send1XFocus"
+QT_MOC_LITERAL(24, 232, 15), // "senddigZoomopen"
+QT_MOC_LITERAL(25, 248, 16), // "senddigZoomclose"
+QT_MOC_LITERAL(26, 265, 17), // "sendBacklightopen"
+QT_MOC_LITERAL(27, 283, 18), // "sendBacklightclose"
+QT_MOC_LITERAL(28, 302, 20), // "sendResolutionchange"
+QT_MOC_LITERAL(29, 323, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(30, 337, 4) // "mode"
 
     },
     "SerialPortCCD\0portOpened\0\0success\0"
     "portClosed\0portError\0msg\0portsChanged\0"
-    "ports\0onOpenPort\0portName\0baudRate\0"
-    "onClosePort\0onScanPorts\0send30XFocus\0"
-    "send1XFocus\0senddigZoomopen\0"
+    "ports\0reqExsend_1s\0sendExGuideData\0"
+    "frame1\0frame2\0reqExsend_5ms\0time\0"
+    "angle1\0angle2\0onOpenPort\0portName\0"
+    "baudRate\0onClosePort\0onScanPorts\0"
+    "send30XFocus\0send1XFocus\0senddigZoomopen\0"
     "senddigZoomclose\0sendBacklightopen\0"
     "sendBacklightclose\0sendResolutionchange\0"
     "ExmodeChanged\0mode"
@@ -477,40 +487,44 @@ static const uint qt_meta_data_SerialPortCCD[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      15,   14, // methods
+      17,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       4,       // signalCount
+       6,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   89,    2, 0x06 /* Public */,
-       4,    0,   92,    2, 0x06 /* Public */,
-       5,    1,   93,    2, 0x06 /* Public */,
-       7,    1,   96,    2, 0x06 /* Public */,
+       1,    1,   99,    2, 0x06 /* Public */,
+       4,    0,  102,    2, 0x06 /* Public */,
+       5,    1,  103,    2, 0x06 /* Public */,
+       7,    1,  106,    2, 0x06 /* Public */,
+       9,    2,  109,    2, 0x06 /* Public */,
+      13,    3,  114,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       9,    2,   99,    2, 0x0a /* Public */,
-      12,    0,  104,    2, 0x0a /* Public */,
-      13,    0,  105,    2, 0x0a /* Public */,
-      14,    0,  106,    2, 0x0a /* Public */,
-      15,    0,  107,    2, 0x0a /* Public */,
-      16,    0,  108,    2, 0x0a /* Public */,
-      17,    0,  109,    2, 0x0a /* Public */,
-      18,    0,  110,    2, 0x0a /* Public */,
-      19,    0,  111,    2, 0x0a /* Public */,
-      20,    0,  112,    2, 0x0a /* Public */,
-      21,    1,  113,    2, 0x0a /* Public */,
+      17,    2,  121,    2, 0x0a /* Public */,
+      20,    0,  126,    2, 0x0a /* Public */,
+      21,    0,  127,    2, 0x0a /* Public */,
+      22,    0,  128,    2, 0x0a /* Public */,
+      23,    0,  129,    2, 0x0a /* Public */,
+      24,    0,  130,    2, 0x0a /* Public */,
+      25,    0,  131,    2, 0x0a /* Public */,
+      26,    0,  132,    2, 0x0a /* Public */,
+      27,    0,  133,    2, 0x0a /* Public */,
+      28,    0,  134,    2, 0x0a /* Public */,
+      29,    1,  135,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString,    6,
     QMetaType::Void, QMetaType::QStringList,    8,
+    QMetaType::Void, 0x80000000 | 10, 0x80000000 | 10,   11,   12,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   14,   15,   16,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   10,   11,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   18,   19,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -520,7 +534,7 @@ static const uint qt_meta_data_SerialPortCCD[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Int,   30,
 
        0        // eod
 };
@@ -535,17 +549,19 @@ void SerialPortCCD::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 1: _t->portClosed(); break;
         case 2: _t->portError((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 3: _t->portsChanged((*reinterpret_cast< const QStringList(*)>(_a[1]))); break;
-        case 4: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 5: _t->onClosePort(); break;
-        case 6: _t->onScanPorts(); break;
-        case 7: _t->send30XFocus(); break;
-        case 8: _t->send1XFocus(); break;
-        case 9: _t->senddigZoomopen(); break;
-        case 10: _t->senddigZoomclose(); break;
-        case 11: _t->sendBacklightopen(); break;
-        case 12: _t->sendBacklightclose(); break;
-        case 13: _t->sendResolutionchange(); break;
-        case 14: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 4: _t->reqExsend_1s((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
+        case 5: _t->reqExsend_5ms((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 6: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 7: _t->onClosePort(); break;
+        case 8: _t->onScanPorts(); break;
+        case 9: _t->send30XFocus(); break;
+        case 10: _t->send1XFocus(); break;
+        case 11: _t->senddigZoomopen(); break;
+        case 12: _t->senddigZoomclose(); break;
+        case 13: _t->sendBacklightopen(); break;
+        case 14: _t->sendBacklightclose(); break;
+        case 15: _t->sendResolutionchange(); break;
+        case 16: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -575,6 +591,20 @@ void SerialPortCCD::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
             using _t = void (SerialPortCCD::*)(const QStringList & );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortCCD::portsChanged)) {
                 *result = 3;
+                return;
+            }
+        }
+        {
+            using _t = void (SerialPortCCD::*)(const sendExGuideData & , const sendExGuideData & );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortCCD::reqExsend_1s)) {
+                *result = 4;
+                return;
+            }
+        }
+        {
+            using _t = void (SerialPortCCD::*)(int , int , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortCCD::reqExsend_5ms)) {
+                *result = 5;
                 return;
             }
         }
@@ -610,13 +640,13 @@ int SerialPortCCD::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 15)
+        if (_id < 17)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 15;
+        _id -= 17;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 15)
+        if (_id < 17)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 15;
+        _id -= 17;
     }
     return _id;
 }
@@ -646,6 +676,20 @@ void SerialPortCCD::portsChanged(const QStringList & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 3, _a);
+}
+
+// SIGNAL 4
+void SerialPortCCD::reqExsend_1s(const sendExGuideData & _t1, const sendExGuideData & _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 4, _a);
+}
+
+// SIGNAL 5
+void SerialPortCCD::reqExsend_5ms(int _t1, int _t2, int _t3)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+    QMetaObject::activate(this, &staticMetaObject, 5, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

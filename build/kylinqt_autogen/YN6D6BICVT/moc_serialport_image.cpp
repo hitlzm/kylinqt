@@ -2958,8 +2958,8 @@ void ImageSendData::deviationPixelRelayed(int _t1, int _t2)
     QMetaObject::activate(this, &staticMetaObject, 52, _a);
 }
 struct qt_meta_stringdata_SerialPortImage_t {
-    QByteArrayData data[41];
-    char stringdata0[405];
+    QByteArrayData data[45];
+    char stringdata0[441];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -2980,42 +2980,47 @@ QT_MOC_LITERAL(8, 74, 5), // "ports"
 QT_MOC_LITERAL(9, 80, 18), // "imageFrameReceived"
 QT_MOC_LITERAL(10, 99, 7), // "rawData"
 QT_MOC_LITERAL(11, 107, 11), // "reqTimesync"
-QT_MOC_LITERAL(12, 119, 9), // "reqExsend"
-QT_MOC_LITERAL(13, 129, 15), // "sendExGuideData"
-QT_MOC_LITERAL(14, 145, 6), // "frame1"
-QT_MOC_LITERAL(15, 152, 6), // "frame2"
-QT_MOC_LITERAL(16, 159, 21), // "reqSendDeviationPixel"
-QT_MOC_LITERAL(17, 181, 3), // "num"
-QT_MOC_LITERAL(18, 185, 1), // "x"
-QT_MOC_LITERAL(19, 187, 1), // "y"
-QT_MOC_LITERAL(20, 189, 6), // "dowork"
-QT_MOC_LITERAL(21, 196, 16), // "init_crc16_table"
-QT_MOC_LITERAL(22, 213, 8), // "uint16_t"
-QT_MOC_LITERAL(23, 222, 4), // "poly"
-QT_MOC_LITERAL(24, 227, 16), // "crc16_ccitt_fast"
-QT_MOC_LITERAL(25, 244, 14), // "const uint8_t*"
-QT_MOC_LITERAL(26, 259, 4), // "data"
-QT_MOC_LITERAL(27, 264, 6), // "size_t"
-QT_MOC_LITERAL(28, 271, 3), // "len"
-QT_MOC_LITERAL(29, 275, 4), // "init"
-QT_MOC_LITERAL(30, 280, 10), // "onOpenPort"
-QT_MOC_LITERAL(31, 291, 8), // "portName"
-QT_MOC_LITERAL(32, 300, 8), // "baudRate"
-QT_MOC_LITERAL(33, 309, 11), // "onClosePort"
-QT_MOC_LITERAL(34, 321, 11), // "onScanPorts"
-QT_MOC_LITERAL(35, 333, 10), // "onSendData"
-QT_MOC_LITERAL(36, 344, 16), // "image_send_frame"
-QT_MOC_LITERAL(37, 361, 5), // "frame"
-QT_MOC_LITERAL(38, 367, 13), // "ExmodeChanged"
-QT_MOC_LITERAL(39, 381, 4), // "mode"
-QT_MOC_LITERAL(40, 386, 18) // "recvDeviationPixel"
+QT_MOC_LITERAL(12, 119, 12), // "reqExsend_1s"
+QT_MOC_LITERAL(13, 132, 15), // "sendExGuideData"
+QT_MOC_LITERAL(14, 148, 6), // "frame1"
+QT_MOC_LITERAL(15, 155, 6), // "frame2"
+QT_MOC_LITERAL(16, 162, 13), // "reqExsend_5ms"
+QT_MOC_LITERAL(17, 176, 4), // "time"
+QT_MOC_LITERAL(18, 181, 6), // "angle1"
+QT_MOC_LITERAL(19, 188, 6), // "angle2"
+QT_MOC_LITERAL(20, 195, 21), // "reqSendDeviationPixel"
+QT_MOC_LITERAL(21, 217, 3), // "num"
+QT_MOC_LITERAL(22, 221, 1), // "x"
+QT_MOC_LITERAL(23, 223, 1), // "y"
+QT_MOC_LITERAL(24, 225, 6), // "dowork"
+QT_MOC_LITERAL(25, 232, 16), // "init_crc16_table"
+QT_MOC_LITERAL(26, 249, 8), // "uint16_t"
+QT_MOC_LITERAL(27, 258, 4), // "poly"
+QT_MOC_LITERAL(28, 263, 16), // "crc16_ccitt_fast"
+QT_MOC_LITERAL(29, 280, 14), // "const uint8_t*"
+QT_MOC_LITERAL(30, 295, 4), // "data"
+QT_MOC_LITERAL(31, 300, 6), // "size_t"
+QT_MOC_LITERAL(32, 307, 3), // "len"
+QT_MOC_LITERAL(33, 311, 4), // "init"
+QT_MOC_LITERAL(34, 316, 10), // "onOpenPort"
+QT_MOC_LITERAL(35, 327, 8), // "portName"
+QT_MOC_LITERAL(36, 336, 8), // "baudRate"
+QT_MOC_LITERAL(37, 345, 11), // "onClosePort"
+QT_MOC_LITERAL(38, 357, 11), // "onScanPorts"
+QT_MOC_LITERAL(39, 369, 10), // "onSendData"
+QT_MOC_LITERAL(40, 380, 16), // "image_send_frame"
+QT_MOC_LITERAL(41, 397, 5), // "frame"
+QT_MOC_LITERAL(42, 403, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(43, 417, 4), // "mode"
+QT_MOC_LITERAL(44, 422, 18) // "recvDeviationPixel"
 
     },
     "SerialPortImage\0portOpened\0\0success\0"
     "portClosed\0portError\0msg\0portsChanged\0"
     "ports\0imageFrameReceived\0rawData\0"
-    "reqTimesync\0reqExsend\0sendExGuideData\0"
-    "frame1\0frame2\0reqSendDeviationPixel\0"
+    "reqTimesync\0reqExsend_1s\0sendExGuideData\0"
+    "frame1\0frame2\0reqExsend_5ms\0time\0"
+    "angle1\0angle2\0reqSendDeviationPixel\0"
     "num\0x\0y\0dowork\0init_crc16_table\0"
     "uint16_t\0poly\0crc16_ccitt_fast\0"
     "const uint8_t*\0data\0size_t\0len\0init\0"
@@ -3031,35 +3036,36 @@ static const uint qt_meta_data_SerialPortImage[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      19,   14, // methods
+      20,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       8,       // signalCount
+       9,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  109,    2, 0x06 /* Public */,
-       4,    0,  112,    2, 0x06 /* Public */,
-       5,    1,  113,    2, 0x06 /* Public */,
-       7,    1,  116,    2, 0x06 /* Public */,
-       9,    1,  119,    2, 0x06 /* Public */,
-      11,    0,  122,    2, 0x06 /* Public */,
-      12,    2,  123,    2, 0x06 /* Public */,
-      16,    3,  128,    2, 0x06 /* Public */,
+       1,    1,  114,    2, 0x06 /* Public */,
+       4,    0,  117,    2, 0x06 /* Public */,
+       5,    1,  118,    2, 0x06 /* Public */,
+       7,    1,  121,    2, 0x06 /* Public */,
+       9,    1,  124,    2, 0x06 /* Public */,
+      11,    0,  127,    2, 0x06 /* Public */,
+      12,    2,  128,    2, 0x06 /* Public */,
+      16,    3,  133,    2, 0x06 /* Public */,
+      20,    3,  140,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      20,    0,  135,    2, 0x0a /* Public */,
-      21,    1,  136,    2, 0x0a /* Public */,
-      21,    0,  139,    2, 0x2a /* Public | MethodCloned */,
-      24,    3,  140,    2, 0x0a /* Public */,
-      24,    2,  147,    2, 0x2a /* Public | MethodCloned */,
-      30,    2,  152,    2, 0x0a /* Public */,
-      33,    0,  157,    2, 0x0a /* Public */,
-      34,    0,  158,    2, 0x0a /* Public */,
-      35,    1,  159,    2, 0x0a /* Public */,
-      38,    1,  162,    2, 0x0a /* Public */,
-      40,    2,  165,    2, 0x0a /* Public */,
+      24,    0,  147,    2, 0x0a /* Public */,
+      25,    1,  148,    2, 0x0a /* Public */,
+      25,    0,  151,    2, 0x2a /* Public | MethodCloned */,
+      28,    3,  152,    2, 0x0a /* Public */,
+      28,    2,  159,    2, 0x2a /* Public | MethodCloned */,
+      34,    2,  164,    2, 0x0a /* Public */,
+      37,    0,  169,    2, 0x0a /* Public */,
+      38,    0,  170,    2, 0x0a /* Public */,
+      39,    1,  171,    2, 0x0a /* Public */,
+      42,    1,  174,    2, 0x0a /* Public */,
+      44,    2,  177,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -3070,19 +3076,20 @@ static const uint qt_meta_data_SerialPortImage[] = {
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 13, 0x80000000 | 13,   14,   15,
     QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   17,   18,   19,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   21,   22,   23,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 22,   23,
+    QMetaType::Void, 0x80000000 | 26,   27,
     QMetaType::Void,
-    0x80000000 | 22, 0x80000000 | 25, 0x80000000 | 27, 0x80000000 | 22,   26,   28,   29,
-    0x80000000 | 22, 0x80000000 | 25, 0x80000000 | 27,   26,   28,
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   31,   32,
+    0x80000000 | 26, 0x80000000 | 29, 0x80000000 | 31, 0x80000000 | 26,   30,   32,   33,
+    0x80000000 | 26, 0x80000000 | 29, 0x80000000 | 31,   30,   32,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   35,   36,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 36,   37,
-    QMetaType::Void, QMetaType::Int,   39,
-    QMetaType::Void, QMetaType::Int, QMetaType::Int,   18,   19,
+    QMetaType::Void, 0x80000000 | 40,   41,
+    QMetaType::Void, QMetaType::Int,   43,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,   22,   23,
 
        0        // eod
 };
@@ -3099,21 +3106,22 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 3: _t->portsChanged((*reinterpret_cast< const QStringList(*)>(_a[1]))); break;
         case 4: _t->imageFrameReceived((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
         case 5: _t->reqTimesync(); break;
-        case 6: _t->reqExsend((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
-        case 7: _t->reqSendDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
-        case 8: _t->dowork(); break;
-        case 9: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
-        case 10: _t->init_crc16_table(); break;
-        case 11: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])),(*reinterpret_cast< uint16_t(*)>(_a[3])));
+        case 6: _t->reqExsend_1s((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
+        case 7: _t->reqExsend_5ms((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 8: _t->reqSendDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
+        case 9: _t->dowork(); break;
+        case 10: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
+        case 11: _t->init_crc16_table(); break;
+        case 12: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])),(*reinterpret_cast< uint16_t(*)>(_a[3])));
             if (_a[0]) *reinterpret_cast< uint16_t*>(_a[0]) = std::move(_r); }  break;
-        case 12: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])));
+        case 13: { uint16_t _r = _t->crc16_ccitt_fast((*reinterpret_cast< const uint8_t*(*)>(_a[1])),(*reinterpret_cast< size_t(*)>(_a[2])));
             if (_a[0]) *reinterpret_cast< uint16_t*>(_a[0]) = std::move(_r); }  break;
-        case 13: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 14: _t->onClosePort(); break;
-        case 15: _t->onScanPorts(); break;
-        case 16: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
-        case 17: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 18: _t->recvDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 14: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 15: _t->onClosePort(); break;
+        case 16: _t->onScanPorts(); break;
+        case 17: _t->onSendData((*reinterpret_cast< image_send_frame(*)>(_a[1]))); break;
+        case 18: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: _t->recvDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -3162,15 +3170,22 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         }
         {
             using _t = void (SerialPortImage::*)(const sendExGuideData & , const sendExGuideData & );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqExsend)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqExsend_1s)) {
                 *result = 6;
                 return;
             }
         }
         {
             using _t = void (SerialPortImage::*)(int , int , int );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqSendDeviationPixel)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqExsend_5ms)) {
                 *result = 7;
+                return;
+            }
+        }
+        {
+            using _t = void (SerialPortImage::*)(int , int , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqSendDeviationPixel)) {
+                *result = 8;
                 return;
             }
         }
@@ -3206,13 +3221,13 @@ int SerialPortImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 19)
+        if (_id < 20)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 19;
+        _id -= 20;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 19)
+        if (_id < 20)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 19;
+        _id -= 20;
     }
     return _id;
 }
@@ -3258,17 +3273,24 @@ void SerialPortImage::reqTimesync()
 }
 
 // SIGNAL 6
-void SerialPortImage::reqExsend(const sendExGuideData & _t1, const sendExGuideData & _t2)
+void SerialPortImage::reqExsend_1s(const sendExGuideData & _t1, const sendExGuideData & _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 6, _a);
 }
 
 // SIGNAL 7
-void SerialPortImage::reqSendDeviationPixel(int _t1, int _t2, int _t3)
+void SerialPortImage::reqExsend_5ms(int _t1, int _t2, int _t3)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
     QMetaObject::activate(this, &staticMetaObject, 7, _a);
+}
+
+// SIGNAL 8
+void SerialPortImage::reqSendDeviationPixel(int _t1, int _t2, int _t3)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+    QMetaObject::activate(this, &staticMetaObject, 8, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

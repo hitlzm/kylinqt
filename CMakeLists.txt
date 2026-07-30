@@ -53,7 +53,7 @@ if(ANDROID)
       serialport/serialport.cpp
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
-      serialport/serialport_turntable.cpp
+      serialport/serialport_turntable_HEX.cpp
       video/vlcplayer.cpp
     )
 else()
@@ -63,7 +63,7 @@ else()
       serialport/serialport.cpp
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
-      serialport/serialport_turntable.cpp
+      serialport/serialport_turntable_HEX.cpp
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
       vlcvideo/VlcVideoItem.cpp

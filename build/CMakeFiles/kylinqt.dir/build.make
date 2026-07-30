@@ -174,20 +174,20 @@ CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.s"
 	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\QTproject\kylinqt\serialport\serialport_laser.cpp -o CMakeFiles\kylinqt.dir\serialport\serialport_laser.cpp.s
 
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj: CMakeFiles/kylinqt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj"
-	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj -MF CMakeFiles\kylinqt.dir\serialport\serialport_turntable.cpp.obj.d -o CMakeFiles\kylinqt.dir\serialport\serialport_turntable.cpp.obj -c E:\QTproject\kylinqt\serialport\serialport_turntable.cpp
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.cpp
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: CMakeFiles/kylinqt.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj"
+	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj -MF CMakeFiles\kylinqt.dir\serialport\serialport_turntable_HEX.cpp.obj.d -o CMakeFiles\kylinqt.dir\serialport\serialport_turntable_HEX.cpp.obj -c E:\QTproject\kylinqt\serialport\serialport_turntable_HEX.cpp
 
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.i"
-	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\QTproject\kylinqt\serialport\serialport_turntable.cpp > CMakeFiles\kylinqt.dir\serialport\serialport_turntable.cpp.i
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.i"
+	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\QTproject\kylinqt\serialport\serialport_turntable_HEX.cpp > CMakeFiles\kylinqt.dir\serialport\serialport_turntable_HEX.cpp.i
 
-CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s"
-	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\QTproject\kylinqt\serialport\serialport_turntable.cpp -o CMakeFiles\kylinqt.dir\serialport\serialport_turntable.cpp.s
+CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.s"
+	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\QTproject\kylinqt\serialport\serialport_turntable_HEX.cpp -o CMakeFiles\kylinqt.dir\serialport\serialport_turntable_HEX.cpp.s
 
 CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
 CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
@@ -301,7 +301,7 @@ kylinqt_OBJECTS = \
 "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj" \
 "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj" \
 "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj" \
-"CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj" \
+"CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj" \
 "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj" \
 "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj" \
 "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj" \
@@ -318,7 +318,7 @@ kylinqt.exe: CMakeFiles/kylinqt.dir/main.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj
-kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj
+kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj

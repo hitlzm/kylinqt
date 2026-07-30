@@ -381,29 +381,29 @@ serialport/serialport_laser.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.s
 .PHONY : serialport/serialport_laser.cpp.s
 
-serialport/serialport_turntable.obj: serialport/serialport_turntable.cpp.obj
-.PHONY : serialport/serialport_turntable.obj
+serialport/serialport_turntable_HEX.obj: serialport/serialport_turntable_HEX.cpp.obj
+.PHONY : serialport/serialport_turntable_HEX.obj
 
 # target to build an object file
-serialport/serialport_turntable.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj
-.PHONY : serialport/serialport_turntable.cpp.obj
+serialport/serialport_turntable_HEX.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj
+.PHONY : serialport/serialport_turntable_HEX.cpp.obj
 
-serialport/serialport_turntable.i: serialport/serialport_turntable.cpp.i
-.PHONY : serialport/serialport_turntable.i
+serialport/serialport_turntable_HEX.i: serialport/serialport_turntable_HEX.cpp.i
+.PHONY : serialport/serialport_turntable_HEX.i
 
 # target to preprocess a source file
-serialport/serialport_turntable.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.i
-.PHONY : serialport/serialport_turntable.cpp.i
+serialport/serialport_turntable_HEX.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.i
+.PHONY : serialport/serialport_turntable_HEX.cpp.i
 
-serialport/serialport_turntable.s: serialport/serialport_turntable.cpp.s
-.PHONY : serialport/serialport_turntable.s
+serialport/serialport_turntable_HEX.s: serialport/serialport_turntable_HEX.cpp.s
+.PHONY : serialport/serialport_turntable_HEX.s
 
 # target to generate assembly for a file
-serialport/serialport_turntable.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.s
-.PHONY : serialport/serialport_turntable.cpp.s
+serialport/serialport_turntable_HEX.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.s
+.PHONY : serialport/serialport_turntable_HEX.cpp.s
 
 vlcvideo/VlcFrameItem.obj: vlcvideo/VlcFrameItem.cpp.obj
 .PHONY : vlcvideo/VlcFrameItem.obj
@@ -493,9 +493,9 @@ help:
 	@echo ... serialport/serialport_laser.obj
 	@echo ... serialport/serialport_laser.i
 	@echo ... serialport/serialport_laser.s
-	@echo ... serialport/serialport_turntable.obj
-	@echo ... serialport/serialport_turntable.i
-	@echo ... serialport/serialport_turntable.s
+	@echo ... serialport/serialport_turntable_HEX.obj
+	@echo ... serialport/serialport_turntable_HEX.i
+	@echo ... serialport/serialport_turntable_HEX.s
 	@echo ... vlcvideo/VlcFrameItem.obj
 	@echo ... vlcvideo/VlcFrameItem.i
 	@echo ... vlcvideo/VlcFrameItem.s

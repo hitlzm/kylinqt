@@ -4,7 +4,7 @@
 #include <QThread>
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
-#include "serialport/serialport_turntable.h"
+#include "serialport/serialport_turntable_HEX.h"
 #include "serialport/serialport_BD.h"
 #include "serialport/serialport_CCD.h"
 #include "vlcvideo/VlcVideoItem.h"
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<laser_recv_frame>("laser_recv_frame");
     qRegisterMetaType<image_send_frame>("image_send_frame");
     qRegisterMetaType<image_recv_frame>("image_recv_frame");
-    qRegisterMetaType<programSend_frame>("programSend_frame");
-    qRegisterMetaType<StatusFeedback>("StatusFeedback");
+    qRegisterMetaType<programSend_frameHex>("programSend_frameHex");
+    qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
     qRegisterMetaType<RMCData>("RMCData");
 
     // ═══ 主线程对象：QML 直接访问 ═══
@@ -39,15 +39,15 @@ int main(int argc, char *argv[])
     LaserSendData *laserSendData = new LaserSendData(&app);
     ImageData *imageData = new ImageData(&app);
     ImageSendData *imageSendData = new ImageSendData(&app);
-    TurntableData * turntableData = new TurntableData(&app);
-    TurntableSendData *turntableSendData = new TurntableSendData(&app);
+    TurntableDataHex * turntableData = new TurntableDataHex(&app);
+    TurntableSendDataHex *turntableSendData = new TurntableSendDataHex(&app);
     BDData *bdData = new BDData(&app);
     CCDData *ccdData = new CCDData(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
     SerialPortImage *imagePort = new SerialPortImage;
-    SerialPortTurntable *turntablePort = new SerialPortTurntable;
+    SerialPortTurntableHex *turntablePort = new SerialPortTurntableHex;
     SerialPortBD *bdPort = new SerialPortBD;
     //CCD串口对象留在主线程
     SerialPortCCD *ccdPort = new SerialPortCCD(&app);
@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
     laserPort->m_laserSendData = laserSendData;
     imagePort->m_imageData = imageData;
     imagePort->m_imageSendData = imageSendData;
-    turntablePort->m_turntableData = turntableData;
-    turntablePort->m_turntableSendData = turntableSendData;
+    turntablePort->m_turntableDataHex = turntableData;
+    turntablePort->m_turntableSendDataHex = turntableSendData;
     //创建手柄对象
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
@@ -129,30 +129,30 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::reqSendDeviationPixel, imageSendData, &ImageSendData::buildDeviation, Qt::QueuedConnection);
 
     // ── Turntable: 主线程 Data → 工作线程 Worker ──
-    QObject::connect(turntableData, &TurntableData::requestOpenPort,  turntablePort, &SerialPortTurntable::onOpenPort,  Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::requestClosePort, turntablePort, &SerialPortTurntable::onClosePort, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::requestScanPorts, turntablePort, &SerialPortTurntable::onScanPorts, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::requestOpenPort,  turntablePort, &SerialPortTurntableHex::onOpenPort,  Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::requestClosePort, turntablePort, &SerialPortTurntableHex::onClosePort, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::requestScanPorts, turntablePort, &SerialPortTurntableHex::onScanPorts, Qt::QueuedConnection);
 
     // ── Turntable: 工作线程 Worker → 主线程 Data ──
-    QObject::connect(turntablePort, &SerialPortTurntable::portOpened,   turntableData, &TurntableData::setPortOpen, Qt::QueuedConnection);
-    QObject::connect(turntablePort, &SerialPortTurntable::portClosed,   turntableData, [turntableData]{ turntableData->setPortOpen(false); }, Qt::QueuedConnection);
-    QObject::connect(turntablePort, &SerialPortTurntable::portError,    turntableData, &TurntableData::setError,    Qt::QueuedConnection);
-    QObject::connect(turntablePort, &SerialPortTurntable::portsChanged, turntableData, &TurntableData::setPortList, Qt::QueuedConnection);
+    QObject::connect(turntablePort, &SerialPortTurntableHex::portOpened,   turntableData, &TurntableDataHex::setPortOpen, Qt::QueuedConnection);
+    QObject::connect(turntablePort, &SerialPortTurntableHex::portClosed,   turntableData, [turntableData]{ turntableData->setPortOpen(false); }, Qt::QueuedConnection);
+    QObject::connect(turntablePort, &SerialPortTurntableHex::portError,    turntableData, &TurntableDataHex::setError,    Qt::QueuedConnection);
+    QObject::connect(turntablePort, &SerialPortTurntableHex::portsChanged, turntableData, &TurntableDataHex::setPortList, Qt::QueuedConnection);
 
     //Turntable 信号与槽连接
-    QObject::connect(turntableSendData, &TurntableSendData::requestSendProgramMode,   turntablePort, &SerialPortTurntable::sendProgramMode, Qt::QueuedConnection);
-    QObject::connect(turntableSendData, &TurntableSendData::reqopenTurntable,   turntablePort, &SerialPortTurntable::openTurntable, Qt::QueuedConnection);
-    QObject::connect(turntableSendData, &TurntableSendData::reqzeroTurntable,   turntablePort, &SerialPortTurntable::zeroTurntable, Qt::QueuedConnection);
-    QObject::connect(turntableSendData, &TurntableSendData::reqresetTurntable,   turntablePort, &SerialPortTurntable::resetTurntable, Qt::QueuedConnection);
-    QObject::connect(turntableSendData, &TurntableSendData::reqcloseTurntable,   turntablePort, &SerialPortTurntable::closeTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::requestSendProgramMode,   turntablePort, &SerialPortTurntableHex::sendProgramMode, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqopenTurntable,   turntablePort, &SerialPortTurntableHex::openTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqzeroTurntable,   turntablePort, &SerialPortTurntableHex::zeroTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqresetTurntable,   turntablePort, &SerialPortTurntableHex::resetTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqcloseTurntable,   turntablePort, &SerialPortTurntableHex::closeTurntable, Qt::QueuedConnection);
 
-    QObject::connect(turntablePort, &SerialPortTurntable::requpdateframe,   turntableData, &TurntableData::updateframe, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::myinner_angleChanged,  turntableSendData, &TurntableSendData::recvinner_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::myinner_angleChanged,  turntablePort, &SerialPortTurntable::recvinner_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::mymiddle_angleChanged,  turntableSendData, &TurntableSendData::recvmiddle_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::mymiddle_angleChanged,  turntablePort, &SerialPortTurntable::recvmiddle_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::myoutter_angleChanged,  turntableSendData, &TurntableSendData::recvoutter_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableData::myoutter_angleChanged,  turntablePort, &SerialPortTurntable::recvoutter_angle, Qt::QueuedConnection);
+    QObject::connect(turntablePort, &SerialPortTurntableHex::requpdateframe,   turntableData, &TurntableDataHex::updateframe, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntableSendData, &TurntableSendDataHex::recvinner_angle, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntablePort, &SerialPortTurntableHex::recvinner_angle, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntableSendData, &TurntableSendDataHex::recvmiddle_angle, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntablePort, &SerialPortTurntableHex::recvmiddle_angle, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntableSendData, &TurntableSendDataHex::recvoutter_angle, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntablePort, &SerialPortTurntableHex::recvoutter_angle, Qt::QueuedConnection);
 
     // ── BD: 主线程 Data → 工作线程 Worker ──
     QObject::connect(bdData, &BDData::requestOpenPort,  bdPort, &SerialPortBD::onOpenPort,  Qt::QueuedConnection);
@@ -171,11 +171,11 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
-    QObject::connect(&m_modeController, &ModeController::modeChanged, turntablePort, &SerialPortTurntable::ProgramModeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::modeChanged, turntablePort, &SerialPortTurntableHex::ProgramModeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
 
     //手柄信号连接
-    QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntable::sendHandleMode, Qt::QueuedConnection);
+    QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntableHex::sendHandleMode, Qt::QueuedConnection);
 
     //QML gamepad与手柄信号连接
     QObject::connect(m_gamepadBridge, &GamepadBridge::axisLeftXChange, _myhandle, &Myhandle::axisLeftXChanged, Qt::QueuedConnection);
@@ -188,15 +188,15 @@ int main(int argc, char *argv[])
     QObject::connect(m_gamepadBridge, &GamepadBridge::updateGamepad, _myhandle, &Myhandle::update, Qt::QueuedConnection);
 
     //为实现外引导模式进行的信号连接
-    QObject::connect(imagePort, &SerialPortImage::reqTimesync, turntablePort, &SerialPortTurntable::sendTimesync, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::reqTimesync, turntablePort, &SerialPortTurntable::sendTimesync, Qt::QueuedConnection);
-    QObject::connect(imagePort, &SerialPortImage::reqExsend_1s, turntablePort, &SerialPortTurntable::sendTrackMode_1s, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::reqExsend_1s, turntablePort, &SerialPortTurntable::sendTrackMode_1s, Qt::QueuedConnection);
-    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_1s, turntablePort, &SerialPortTurntable::sendTrackMode_1s, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
 
-    QObject::connect(imagePort, &SerialPortImage::reqExsend_5ms, turntablePort, &SerialPortTurntable::sendTrackMode_5ms, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::reqExsend_5ms, turntablePort, &SerialPortTurntable::sendTrackMode_5ms, Qt::QueuedConnection);
-    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_5ms, turntablePort, &SerialPortTurntable::sendTrackMode_5ms, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
 
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
-    QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntable::dowork);
+    QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntableHex::dowork);
     QObject::connect(BDthread, &QThread::started, bdPort, &SerialPortBD::dowork);
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身

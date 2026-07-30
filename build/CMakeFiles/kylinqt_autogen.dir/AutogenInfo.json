@@ -165,9 +165,9 @@
 			null
 		],
 		[
-			"E:/QTproject/kylinqt/serialport/serialport_turntable.h",
+			"E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.h",
 			"MU",
-			"YN6D6BICVT/moc_serialport_turntable.cpp",
+			"YN6D6BICVT/moc_serialport_turntable_HEX.cpp",
 			null
 		],
 		[
@@ -262,7 +262,7 @@
 		[ "E:/QTproject/kylinqt/serialport/serialport_image.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_laser.cpp", "MU", null ],
 		[
-			"E:/QTproject/kylinqt/serialport/serialport_turntable.cpp",
+			"E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.cpp",
 			"MU",
 			null
 		],
