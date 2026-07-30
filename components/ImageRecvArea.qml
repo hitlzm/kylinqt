@@ -7,7 +7,7 @@ Rectangle {
     id: root
     width: 1200
     height: 310
-    color: '#e9f0f9'
+    color: '#1a1d23'
 
     // 报警弹窗（内框/中框/外框）
     MsgPopup2 { id: innermsg }
@@ -33,13 +33,14 @@ Rectangle {
             text: parent.title
             font.pixelSize: 18
             font.bold: true
+            color: "#e8e8e8"
             leftPadding: 12
             topPadding: 6
         }
 
         background: Rectangle {
-            color: "#e1d8d8"
-            border.color: "gray"
+            color: "#242730"
+            border.color: "#3a3f4a"
             border.width: 4
             radius: 8
         }
@@ -53,8 +54,8 @@ Rectangle {
             anchors.topMargin: 0
             width: 360
             height: 78
-            color: "#e8f0fe"
-            border.color: "#1a73e8"
+            color: "#1e2d3d"
+            border.color: "#5b9bd5"
             border.width: 2
             radius: 4
 
@@ -69,6 +70,7 @@ Rectangle {
                     Text {
                         text: "串口号:"
                         font.pixelSize: 15
+                        color: "#c0c0c0"
                         anchors.verticalCenter: parent.verticalCenter
                     }
                     CusComboBox {
@@ -81,6 +83,7 @@ Rectangle {
                     Text {
                         text: "波特率:"
                         font.pixelSize: 15
+                        color: "#c0c0c0"
                         anchors.verticalCenter: parent.verticalCenter
                     }
                     CusComboBox {
@@ -187,13 +190,14 @@ Rectangle {
             text: parent.title
             font.pixelSize: 18
             font.bold: true
+            color: "#e8e8e8"
             leftPadding: 12
             topPadding: 6
         }
 
         background: Rectangle {
-            color: "#e1d8d8"
-            border.color: "gray"
+            color: "#242730"
+            border.color: "#3a3f4a"
             border.width: 4
             radius: 8
         }
@@ -211,6 +215,7 @@ Rectangle {
                     text: "串口号:"
                     font.pixelSize: 15
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
@@ -224,6 +229,7 @@ Rectangle {
                     text: "波特率:"
                     font.pixelSize: 15
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
@@ -267,6 +273,7 @@ Rectangle {
                     text: "焦距:"
                     font.pixelSize: 15
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 ButtonGroup { id: focusGroup }
@@ -296,6 +303,7 @@ Rectangle {
                     text: "背光补偿:"
                     font.pixelSize: 15
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusSwitch {
@@ -310,6 +318,7 @@ Rectangle {
                     text: "分辨率:"
                     font.pixelSize: 15
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
@@ -347,13 +356,14 @@ Rectangle {
             text: parent.title
             font.pixelSize: 18
             font.bold: true
+            color: "#e8e8e8"
             leftPadding: 12
             topPadding: 6
         }
 
         background: Rectangle {
-            color: "#e1d8d8"
-            border.color: "gray"
+            color: "#242730"
+            border.color: "#3a3f4a"
             border.width: 4
             radius: 8
         }
@@ -546,13 +556,14 @@ Rectangle {
             text: parent.title
             font.pixelSize: 18
             font.bold: true
+            color: "#e8e8e8"
             leftPadding: 12
             topPadding: 6
         }
 
         background: Rectangle {
-            color: "#e1d8d8"
-            border.color: "gray"
+            color: "#242730"
+            border.color: "#3a3f4a"
             border.width: 4
             radius: 8
         }
@@ -568,6 +579,7 @@ Rectangle {
                     text: "系统运行模式:"
                     font.pixelSize: 18
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
@@ -581,7 +593,7 @@ Rectangle {
                     }
                     font.pixelSize: 18
                     font.bold: true
-                    color: "#1a73e8"
+                    color: "#5b9bd5"
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -593,6 +605,7 @@ Rectangle {
                     text: "当前使用导引头:"
                     font.pixelSize: 18
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
@@ -603,7 +616,7 @@ Rectangle {
                     }
                     font.pixelSize: 18
                     font.bold: true
-                    color: (imageData.portOpen || laserData.portOpen) ? "#1a73e8" : "#d93025"
+                    color: (imageData.portOpen || laserData.portOpen) ? "#5b9bd5" : "#f44747"
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -615,13 +628,14 @@ Rectangle {
                     text: "转台连接状态:"
                     font.pixelSize: 18
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
                     text: turntableData.portOpen ? "已连接" : "未连接"
                     font.pixelSize: 18
                     font.bold: true
-                    color: turntableData.portOpen ? "#1a73e8" : "#d93025"
+                    color: turntableData.portOpen ? "#5b9bd5" : "#f44747"
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -633,13 +647,14 @@ Rectangle {
                     text: "北斗模块连接状态:"
                     font.pixelSize: 18
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
                     text: bdData.portOpen ? "已连接" : "未连接"
                     font.pixelSize: 18
                     font.bold: true
-                    color: bdData.portOpen ? "#1a73e8" : "#d93025"
+                    color: bdData.portOpen ? "#5b9bd5" : "#f44747"
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -651,13 +666,14 @@ Rectangle {
                     text: "CCD连接状态:"
                     font.pixelSize: 18
                     font.bold: true
+                    color: "#c0c0c0"
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Text {
                     text: ccdData.portOpen ? "已连接" : "未连接"
                     font.pixelSize: 18
                     font.bold: true
-                    color: ccdData.portOpen ? "#1a73e8" : "#d93025"
+                    color: ccdData.portOpen ? "#5b9bd5" : "#f44747"
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }

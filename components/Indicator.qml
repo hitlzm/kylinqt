@@ -34,13 +34,13 @@ Item {
             width: 10
             height: 10
             radius: 5
-            color: root.normal ? "#4CAF50" : "#F44336"
+            color: root.normal ? "#4CAF50" : "#f44747"
             anchors.verticalCenter: parent.verticalCenter
         }
         Text {
             text: root.label
             font.pixelSize: root.fontSize
-            color: root.normal ? "#333333" : "#d93025"
+            color: root.normal ? "#c0c0c0" : "#f44747"
             anchors.verticalCenter: parent.verticalCenter
         }
     }

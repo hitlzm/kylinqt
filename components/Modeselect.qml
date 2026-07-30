@@ -10,7 +10,7 @@ Item{
     GroupBox {
         background: Rectangle {
         color: "transparent"
-        border.color: "gray"
+        border.color: "#3a3f4a"
         border.width: 4
         radius: 8
     }
@@ -21,7 +21,7 @@ Item{
             text: qsTr("控制模式选择")
             font.pixelSize: 20
             font.bold: true
-            color: 'black'
+            color: '#c0c0c0'
             anchors.verticalCenter: parent.verticalCenter
         }
         ButtonGroup { id: modeGroup }

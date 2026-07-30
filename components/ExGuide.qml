@@ -39,6 +39,7 @@ Item {
             text: "外引导源选择:"
             font.pixelSize: 17
             font.bold: true
+            color: "#c0c0c0"
             anchors.verticalCenter: parent.verticalCenter
         }
         ButtonGroup { id: guideSourceGroup }
@@ -71,8 +72,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        color: '#ebe7e7'
-        border.color: "#505050"
+        color: '#1e2128'
+        border.color: "#3a3f4a"
         border.width: 1
         radius: 4
 
@@ -80,7 +81,7 @@ Item {
         Text {
             anchors.top: parent.top; anchors.topMargin: 4
             anchors.left: parent.left; anchors.leftMargin: 10
-            text: "日志"; font.pixelSize: 18; color: '#000000'
+            text: "日志"; font.pixelSize: 18; color: '#e8e8e8'
         }
 
         // 日志列表
@@ -98,7 +99,7 @@ Item {
             delegate: Text {
                 text: model.text
                 font.pixelSize: 12; font.family: "Consolas"
-                color: '#1e0101'
+                color: '#c0c0c0'
                 width: logList.width
                 wrapMode: Text.Wrap
             }
@@ -108,7 +109,7 @@ Item {
                 policy: ScrollBar.AsNeeded
                 width: 6
                 contentItem: Rectangle {
-                    color: "#555555"; radius: 3
+                    color: "#606060"; radius: 3
                 }
             }
         }

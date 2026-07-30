@@ -10,7 +10,7 @@ Rectangle {
     property int myheight:320
     width: mywidth
     height: myheight
-    color: '#e9f0f9'
+    color: '#1a1d23'
     property int groupHeight1: 150
 
     MsgPopup2 {
@@ -36,7 +36,7 @@ Rectangle {
         anchors.topMargin: 16
         // anchors.bottom: parent.bottom
         // anchors.bottomMargin: 10
-        color: '#e1d8d8'
+        color: '#242730'
 
         ColumnLayout {
             anchors.fill: parent
@@ -50,7 +50,7 @@ Rectangle {
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
-                        border.color: "gray"
+                        border.color: "#3a3f4a"
                         border.width: 4
                         radius: 8
                     }
@@ -61,6 +61,7 @@ Rectangle {
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
+                        color: "#e8e8e8"
                         leftPadding: 12
                         topPadding: 6
                     }
@@ -100,7 +101,7 @@ Rectangle {
                                         case 0x02: return "有故障"
                                         default: return "NA"
                                     }
-                                valueColor: laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
+                                valueColor: laserData.faultInfo1 === 1 ? "#5b9bd5" : "#f44747"
                             }
                              DataLabel {
                                 label: "故障码:"
@@ -110,7 +111,7 @@ Rectangle {
                                         case 0x02: return "0x" + laserData.faultInfo2.toString(16).toUpperCase()
                                         default: return "NA"
                                     }
-                                valueColor:"#d93025"
+                                valueColor:"#f44747"
                             }
                         }
                     }
@@ -120,7 +121,7 @@ Rectangle {
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
-                        border.color: "gray"
+                        border.color: "#3a3f4a"
                         border.width: 4
                         radius: 8
                     }
@@ -131,6 +132,7 @@ Rectangle {
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
+                        color: "#e8e8e8"
                         leftPadding: 12
                         topPadding: 6
                     }
@@ -154,7 +156,7 @@ Rectangle {
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
-                        border.color: "gray"
+                        border.color: "#3a3f4a"
                         border.width: 4
                         radius: 8
                     }
@@ -165,6 +167,7 @@ Rectangle {
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
+                        color: "#e8e8e8"
                         leftPadding: 12
                         topPadding: 6
                     }
@@ -192,7 +195,7 @@ Rectangle {
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
-                        border.color: "gray"
+                        border.color: "#3a3f4a"
                         border.width: 4
                         radius: 8
                     }
@@ -203,6 +206,7 @@ Rectangle {
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
+                        color: "#e8e8e8"
                         leftPadding: 12
                         topPadding: 6
                     }
@@ -225,7 +229,7 @@ Rectangle {
                 GroupBox {
                     background: Rectangle {
                         color: "transparent"
-                        border.color: "gray"
+                        border.color: "#3a3f4a"
                         border.width: 4
                         radius: 8
                     }
@@ -236,6 +240,7 @@ Rectangle {
                     label: Label {
                         text: parent.title
                         font.pixelSize: 18
+                        color: "#e8e8e8"
                         leftPadding: 12
                         topPadding: 6
                     }

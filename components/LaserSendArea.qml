@@ -7,7 +7,7 @@ Rectangle {
     id: root
     width: 1200
     height: 610
-    color: '#e9f0f9'
+    color: '#1a1d23'
 
 //消息提示框
     MessagePopup {
@@ -29,7 +29,7 @@ Rectangle {
     Rectangle {
         width: parent.width
         height: 1
-        color: "black"
+        color: "#3a3f4a"
         anchors.bottom: parent.bottom   // 贴在主矩形下边沿
     }
     property var commandList: [
@@ -53,7 +53,7 @@ Rectangle {
         text: "激光导引头\n控制与状态显示"
         font.pixelSize: 24
         font.bold: true
-        color: "#000000"
+        color: "#c0c0c0"
         horizontalAlignment: Text.AlignHCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
@@ -66,7 +66,7 @@ Rectangle {
         id: commandArea
         width: 140
         height: 400
-        color: '#faf7f7'
+        color: '#2a2d35'
         radius: 4
 
         anchors.left: parent.left
@@ -82,7 +82,7 @@ Rectangle {
                 text: "激光导引头控制字"
                 font.pixelSize: 16
                 font.bold: true
-                color: "#000000"
+                color: "#c0c0c0"
             }
             Repeater {
                 model: root.commandList
@@ -98,7 +98,7 @@ Rectangle {
                     contentItem: Text {
                         text: parent.text
                         font.pixelSize: 16
-                        color: "#000000"
+                        color: "#c0c0c0"
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: 30
                     }

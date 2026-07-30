@@ -37,14 +37,14 @@ Item {
         Rectangle {
             Layout.preferredWidth: 200
             Layout.preferredHeight: 2
-            color: "#cccccc"
+            color: "#3a3f4a"
         }
 
         Text {
             text: "左摇杆 (Left Stick)"
             font.pixelSize: 16
             font.bold: true
-            color: "#555555"
+            color: "#909090"
         }
 
         DataLabel {
@@ -63,14 +63,14 @@ Item {
         Rectangle {
             Layout.preferredWidth: 200
             Layout.preferredHeight: 2
-            color: "#cccccc"
+            color: "#3a3f4a"
         }
 
         Text {
             text: "右摇杆 (Right Stick)"
             font.pixelSize: 16
             font.bold: true
-            color: "#555555"
+            color: "#909090"
         }
 
         DataLabel {
@@ -96,14 +96,14 @@ ColumnLayout {
         Rectangle {
             Layout.preferredWidth: 200
             Layout.preferredHeight: 2
-            color: "#cccccc"
+            color: "#3a3f4a"
         }
 
         Text {
             text: "扳机 (Triggers)"
             font.pixelSize: 16
             font.bold: true
-            color: "#555555"
+            color: "#909090"
         }
 
         DataLabel {
@@ -122,7 +122,7 @@ ColumnLayout {
         Rectangle {
             Layout.preferredWidth: 200
             Layout.preferredHeight: 2
-            color: "#cccccc"
+            color: "#3a3f4a"
         }
 
         Text {
@@ -161,13 +161,13 @@ ColumnLayout {
         Rectangle {
             Layout.preferredWidth: 200
             Layout.preferredHeight: 2
-            color: "#cccccc"
+            color: "#3a3f4a"
         }
         Text {
             text: "按键"
             font.pixelSize: 16
             font.bold: true
-            color: "#555555"
+            color: "#909090"
         }
         DataLabel {
             label: "A:"

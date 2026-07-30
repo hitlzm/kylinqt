@@ -43,8 +43,8 @@ Popup {
     // 背景
     background: Rectangle {
         radius: 10
-        color: "white"
-        border.color: "#D0D0D0"
+        color: "#242730"
+        border.color: "#3a3f4a"
         border.width: 1
         layer.enabled: true
         layer.effect: DropShadow {
@@ -70,7 +70,7 @@ Popup {
             wrapMode: Text.WordWrap
             font.pixelSize: 22
             font.bold: true
-            color: "#333333"
+            color: "#c0c0c0"
             text: "提示信息"
         }
     }

@@ -10,7 +10,7 @@ Rectangle {
     property int myheight: 450
     width: mywidth
     height: myheight
-    color: '#e9f0f9'
+    color: '#1a1d23'
     property int stacklayoutindex: 0
     //消息提示框
     MessagePopup {
@@ -31,7 +31,7 @@ Rectangle {
             text: "转台控制区"
             font.pixelSize: 24
             font.bold: true
-            color: "#000000"
+            color: "#e8e8e8"
             Layout.alignment: Qt.AlignVCenter
         }
 

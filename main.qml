@@ -10,6 +10,7 @@ Window {
     width: Screen.width
     height: Screen.height
     title: qsTr("kylin-qt")
+    color: "#1a1d23"
 
 
     Item {

@@ -8,7 +8,7 @@ import "./"
 Rectangle {
     id: root
     width: 700; height: 430
-    color: "#e9f0f9"
+    color: "#1a1d23"
 
     property bool _connected: false
 
@@ -20,14 +20,14 @@ Rectangle {
         anchors.top: parent.top;     anchors.topMargin: 10
         spacing: 12
 
-        Text { text: "导引头视频"; font.pixelSize: 22; font.bold: true; color: "#000000"; Layout.alignment: Qt.AlignVCenter }
+        Text { text: "导引头视频"; font.pixelSize: 22; font.bold: true; color: "#e8e8e8"; Layout.alignment: Qt.AlignVCenter }
         Item { Layout.fillWidth: true }
 
         Row {
             spacing: 6; Layout.alignment: Qt.AlignVCenter
             Rectangle { width: 12; height: 12; radius: 6; anchors.verticalCenter: parent.verticalCenter
                 color: videoPlayer.playing ? "#4CAF50" : (_connected ? "#FF9800" : "#F44336") }
-            Text { anchors.verticalCenter: parent.verticalCenter; font.pixelSize: 16; color: "#333333"
+            Text { anchors.verticalCenter: parent.verticalCenter; font.pixelSize: 16; color: "#c0c0c0"
                 text: videoPlayer.playing ? "播放中" : (_connected ? "已就绪" : "未连接") }
         }
     }
@@ -39,7 +39,7 @@ Rectangle {
         anchors.right: parent.right; anchors.rightMargin: 12
         anchors.top: titleBar.bottom; anchors.topMargin: 8
         height: 300
-        color: "#202020"; border.color: "#505050"; border.width: 2; radius: 8
+        color: "#121418"; border.color: "#3a3f4a"; border.width: 2; radius: 8
     }
 
     VlcVideo {
@@ -59,7 +59,7 @@ Rectangle {
         z: 1
     }
 
-    Text { anchors.centerIn: videoBorder; text: _connected ? "" : "请设置视频源并点击「连接」"; font.pixelSize: 16; color: "#888888" }
+    Text { anchors.centerIn: videoBorder; text: _connected ? "" : "请设置视频源并点击「连接」"; font.pixelSize: 16; color: "#707070" }
 
     // ========== 控制按钮栏 ==========
     RowLayout {
@@ -96,7 +96,7 @@ Rectangle {
         anchors.right: parent.right; anchors.rightMargin: 12
         anchors.top: controlRow.bottom; anchors.topMargin: 10
         spacing: 10
-        Text { text: "RTSP:"; font.pixelSize: 16; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
+        Text { text: "RTSP:"; font.pixelSize: 16; color: "#c0c0c0"; Layout.alignment: Qt.AlignVCenter }
         CusTextField { id: urlInput; Layout.fillWidth: true; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
         CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; height: 36; onClicked: connectToUrl(urlInput.text.trim()) }
     }

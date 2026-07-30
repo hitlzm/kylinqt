@@ -25,7 +25,7 @@ QtObject {
         if (typeof (taoQuickImportPath) != "undefined" && taoQuickImportPath !== null && taoQuickImportPath.length > 0) {
             imagePathPrefix = taoQuickImportPath + "TaoQuick/Images/"
         }
-        currentTheme = 0
+        currentTheme = 6  // 默认使用暗色主题
     }
     property color themeColor
     property color backgroundColor
@@ -235,6 +235,28 @@ QtObject {
             imageColor_disabled: "#9f9fcf"
             scrollBarBackgroundColor: "#e0e0e0"
             scrollBarBackgroundColor_hovered: "#cfcfd1"
+        }
+        ListElement {
+            name: "Dark"
+            themeColor: "#5b9bd5"
+            backgroundColor: "#1a1d23"
+            textColor: "#e0e0e0"
+
+            splitLineColor:"#3a3f4a"
+            invalidColor: "#f44747"
+            alterColor: "#ffab40"
+            tipBackgroundColor: "#2a2d35"
+            tipBorderColor: "#5b9bd5"
+
+            textColor_disabled: "#606060"
+            textColor_hovered: "#ffffff"
+            textColor_pressed: "#ffffff"
+            controlColor: "#2a2d35"
+            controlBorderColor: "#3a3f4a"
+            imageColor: "#c0c0c0"
+            imageColor_disabled: "#505050"
+            scrollBarBackgroundColor: "#2a2d35"
+            scrollBarBackgroundColor_hovered: "#3a3f4a"
         }
     }
 }

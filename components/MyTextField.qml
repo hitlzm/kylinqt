@@ -29,7 +29,7 @@ Item {
         anchors.top: parent.top
         font.pixelSize: 14
         font.bold: true
-        color: root.enabled ? "#333333" : "#BBBBBB"
+        color: root.enabled ? "#c0c0c0" : "#606060"
         }
    RowLayout {
     id: rowLayout
@@ -54,7 +54,7 @@ Item {
         // 灰色覆盖层，现在锚定到父项（即 Item）
         Rectangle {
             anchors.fill: parent
-            color: "#D0D0D0"
+            color: "#3a3f4a"
             visible: !root.enabled
             z: 10
         }
@@ -65,7 +65,7 @@ Item {
         text: labeltext
         font.bold: true
         font.pixelSize: textField.font.pixelSize
-        color: root.enabled ? '#060000' : "#AAAAAA"
+        color: root.enabled ? '#c0c0c0' : "#606060"
         Layout.alignment: Qt.AlignVCenter
     }
 

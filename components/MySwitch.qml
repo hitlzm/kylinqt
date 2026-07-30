@@ -14,7 +14,7 @@ Item {
     anchors.verticalCenter: parent.verticalCenter   // 替代 anchors.top
     font.pixelSize: 16
     font.bold: true
-    color: 'black'
+    color: '#c0c0c0'
     }
     
     CusSwitch{

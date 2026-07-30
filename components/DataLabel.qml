@@ -5,7 +5,8 @@ Row {
     spacing: 5
     property string label: ""
     property string value: ""
-    property color valueColor: "#1a73e8"
+    property color valueColor: "#5b9bd5"
+    property color labelColor: "#c0c0c0"
     property int fontSize: 18
     property int labelWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
     property int valueWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
@@ -15,6 +16,7 @@ Row {
         text: parent.label
         font.pixelSize: parent.fontSize
         font.bold: parent.labelBold
+        color: parent.labelColor
         width: parent.labelWidth > 0 ? parent.labelWidth : implicitWidth
         horizontalAlignment: parent.labelWidth > 0 ? Text.AlignRight : Text.AlignLeft
     }

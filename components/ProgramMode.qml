@@ -48,7 +48,7 @@ ColumnLayout{
             text: "起点(度)"
             font.pixelSize: 20
             font.bold: true
-            color: "#000000"
+            color: "#e8e8e8"
             Layout.preferredWidth: 150
             horizontalAlignment: Text.AlignHCenter
         }
@@ -56,7 +56,7 @@ ColumnLayout{
             text: "终点(度)"
             font.pixelSize: 20
             font.bold: true
-            color: "#000000"
+            color: "#e8e8e8"
             Layout.preferredWidth: 150
             horizontalAlignment: Text.AlignHCenter
         }
@@ -64,7 +64,7 @@ ColumnLayout{
             text: "运动时间（秒）"
             font.pixelSize: 20
             font.bold: true
-            color: "#000000"
+            color: "#e8e8e8"
             Layout.preferredWidth: 150
             horizontalAlignment: Text.AlignHCenter
         }
@@ -82,7 +82,7 @@ ColumnLayout{
                 text: controlNames[index]
                 font.pixelSize: 20
                 font.bold: true
-                color: '#000000'
+                color: '#e8e8e8'
                 Layout.preferredWidth: 80
             }
 

@@ -7,7 +7,7 @@ Rectangle {
     id: root
     width: 1200
     height: 610
-    color: '#e9f0f9'
+    color: '#1a1d23'
 
     MessagePopup {
         id: azimuthmsg
@@ -22,7 +22,7 @@ Rectangle {
     Rectangle {
         width: parent.width
         height: 1
-        color: "black"
+        color: "#3a3f4a"
         anchors.bottom: parent.bottom   // 贴在主矩形下边沿
     }
     property var commandList: [
@@ -58,7 +58,7 @@ Rectangle {
         text: "图像导引头\n控制与状态显示"
         font.pixelSize: 24
         font.bold: true
-        color: "#000000"
+        color: "#e8e8e8"
         horizontalAlignment: Text.AlignHCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
@@ -71,7 +71,7 @@ Rectangle {
         id: commandArea
         width: 160
         height: 450
-        color: '#faf7f7'
+        color: '#2a2d35'
         radius: 4
 
         anchors.left: parent.left
@@ -88,7 +88,7 @@ Rectangle {
                 text: "图像导引头控制字"
                 font.pixelSize: 16
                 font.bold: true
-                color: "#000000"
+                color: "#c0c0c0"
             }
             Repeater {
                 model: root.commandList
@@ -104,7 +104,7 @@ Rectangle {
                     contentItem: Text {
                         text: parent.text
                         font.pixelSize: 16
-                        color: "#000000"
+                        color: "#c0c0c0"
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: 30
                     }
@@ -186,10 +186,10 @@ Rectangle {
             id: tip
             backgroundWidth: 200
             backgroundHeight: 80
-            barColor:"lightgray"
+            barColor:"#3a3f4a"
             contentItem:Column {
             spacing: 10
-            Text { text: "串口已打开！" }
+            Text { text: "串口已打开！"; color: "#c0c0c0" }
             CusButton_Blue { text: "确定"; onClicked: tip.hide() }
             }
         }
@@ -200,10 +200,10 @@ Rectangle {
         id: tip1
         backgroundWidth: 200
         backgroundHeight: 80
-        barColor:"lightgray"
+        barColor:"#3a3f4a"
         contentItem:Column {
         spacing: 10
-        Text { text: "串口打开失败！" }
+        Text { text: "串口打开失败！"; color: "#c0c0c0" }
         CusButton_Blue { text: "确定"; onClicked: tip1.hide() }
         }
     }
@@ -540,7 +540,7 @@ Rectangle {
         width: 250
         height: frameInfoTitle.height + frameInfoList.height + 20
         color: "transparent"
-        border.color: "gray"
+        border.color: "#3a3f4a"
         border.width: 2
         radius: 6
 
@@ -550,6 +550,7 @@ Rectangle {
             text: "帧信息"
             font.pixelSize: 18
             font.bold: true
+            color: "#e8e8e8"
             anchors.top: parent.top
             anchors.topMargin: 6
             anchors.left: parent.left
@@ -586,8 +587,8 @@ Rectangle {
                     return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
                 }
                 valueColor: {
-                    if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
-                    return "#1a73e8"
+                    if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#5b9bd5" : "#f44747"
+                    return "#5b9bd5"
                 }
             }
         }
@@ -609,7 +610,7 @@ Rectangle {
             width: 340
             height: controlStatusTitle.height + controlStatusList.height + 20
             color: "transparent"
-            border.color: "gray"
+            border.color: "#3a3f4a"
             border.width: 2
             radius: 6
 
@@ -618,6 +619,7 @@ Rectangle {
                 text: "控制/状态信息"
                 font.pixelSize: 18
                 font.bold: true
+                color: "#e8e8e8"
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -754,17 +756,17 @@ Rectangle {
                     valueColor: {
                         if (index === 0) {
                             var v = imageData.seekerCtrlReply
-                            if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
-                            if (v >= 0xF0 || v === 0x43) return "#d93025"
-                            return "#1a73e8"
+                            if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#ffab40"
+                            if (v >= 0xF0 || v === 0x43) return "#f44747"
+                            return "#5b9bd5"
                         }
                         if (index === 1) {
                             var v = imageData.opticalParamReply
-                            if (v === 0xE3 || v === 0xE5) return "#e68a00"
-                            if (v === 0xE7 || v === 0xE8) return "#d93025"
-                            return "#1a73e8"
+                            if (v === 0xE3 || v === 0xE5) return "#ffab40"
+                            if (v === 0xE7 || v === 0xE8) return "#f44747"
+                            return "#5b9bd5"
                         }
-                        return "#1a73e8"
+                        return "#5b9bd5"
                     }
                 }
             }
@@ -776,7 +778,7 @@ Rectangle {
             width: 220
             height: controlStatusBox.height
             color: "transparent"
-            border.color: "gray"
+            border.color: "#3a3f4a"
             border.width: 2
             radius: 6
 
@@ -785,6 +787,7 @@ Rectangle {
                 text: "角度信息"
                 font.pixelSize: 18
                 font.bold: true
+                color: "#e8e8e8"
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -829,7 +832,7 @@ Rectangle {
             width: 240
             height: controlStatusBox.height
             color: "transparent"
-            border.color: "gray"
+            border.color: "#3a3f4a"
             border.width: 2
             radius: 6
 
@@ -838,6 +841,7 @@ Rectangle {
                 text: "跟踪信息"
                 font.pixelSize: 18
                 font.bold: true
+                color: "#e8e8e8"
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -896,8 +900,8 @@ Rectangle {
                         return imageData.pitchDeviationPixel
                     }
                     valueColor: {
-                        if (index === 0) return imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
-                        return "#1a73e8"
+                        if (index === 0) return imageData.trackingState === 0x22 ? "#f44747" : "#5b9bd5"
+                        return "#5b9bd5"
                     }
                 }
             }
@@ -920,7 +924,7 @@ Rectangle {
             width: 240
             height: gyroInfoBox.height
             color: "transparent"
-            border.color: "gray"
+            border.color: "#3a3f4a"
             border.width: 2
             radius: 6
 
@@ -929,6 +933,7 @@ Rectangle {
                 text: "伺服/平台信息"
                 font.pixelSize: 18
                 font.bold: true
+                color: "#e8e8e8"
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -971,7 +976,7 @@ Rectangle {
             width: 260
             height: gyroInfoTitle.height + gyroInfoList.height + 20
             color: "transparent"
-            border.color: "gray"
+            border.color: "#3a3f4a"
             border.width: 2
             radius: 6
 
@@ -980,6 +985,7 @@ Rectangle {
                 text: "角速度/陀螺信息"
                 font.pixelSize: 18
                 font.bold: true
+                color: "#e8e8e8"
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -1028,7 +1034,7 @@ Rectangle {
             width: 220
             height: gyroInfoBox.height
             color: "transparent"
-            border.color: "gray"
+            border.color: "#3a3f4a"
             border.width: 2
             radius: 6
 
@@ -1037,6 +1043,7 @@ Rectangle {
                 text: "其他信息"
                 font.pixelSize: 18
                 font.bold: true
+                color: "#e8e8e8"
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
