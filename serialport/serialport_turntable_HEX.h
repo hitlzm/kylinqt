@@ -112,36 +112,36 @@ typedef struct {
 
 
 // ════════════════════════ HEX协议打包结构体 (packed) ════════════════════════
-#pragma pack(push,1)
+// #pragma pack(push,1)
 
-// 控制指令发送帧 (19字节)
-typedef struct ControlCmdHex {
-    uint8_t  header1;           // 0x55
-    uint8_t  header2;           // 0xAA
-    uint8_t  axis_cmd;          // 高2位=轴号, 低6位=指令代号
-    uint8_t  params[14];        // 参数1-14
-    uint16_t checksum;          // bytes2-16累加和 (大端)
-} ControlCmdHex;
+// // 控制指令发送帧 (19字节)
+// typedef struct ControlCmdHex {
+//     uint8_t  header1;           // 0x55
+//     uint8_t  header2;           // 0xAA
+//     uint8_t  axis_cmd;          // 高2位=轴号, 低6位=指令代号
+//     uint8_t  params[14];        // 参数1-14
+//     uint16_t checksum;          // bytes2-16累加和 (大端)
+// } ControlCmdHex;
 
-// 状态反馈接收帧 (29字节)
-typedef struct StatusFeedbackRawHex {
-    uint8_t  header1;               // 0x55
-    uint8_t  header2;               // 0xAA
-    uint8_t  time[3];               // 毫秒时间 高-中-低
-    uint8_t  innerAlarmStatus;      // 内框: 高4位报警 + 低4位状态
-    uint8_t  innerAngle[3];         // 内框角度 高-中-低 (有符号, 单位0.0001°)
-    uint8_t  innerDeviation[3];     // 内框偏差
-    uint8_t  middleAlarmStatus;     // 中框
-    uint8_t  middleAngle[3];
-    uint8_t  middleDeviation[3];
-    uint8_t  outerAlarmStatus;      // 外框
-    uint8_t  outerAngle[3];
-    uint8_t  outerDeviation[3];
-    uint8_t  pulseAndHint;          // bit7:秒脉冲, bit5-0:指令提示
-    uint16_t checksum;              // bytes2-26累加和
-} StatusFeedbackRawHex;
+// // 状态反馈接收帧 (29字节)
+// typedef struct StatusFeedbackRawHex {
+//     uint8_t  header1;               // 0x55
+//     uint8_t  header2;               // 0xAA
+//     uint8_t  time[3];               // 毫秒时间 高-中-低
+//     uint8_t  innerAlarmStatus;      // 内框: 高4位报警 + 低4位状态
+//     uint8_t  innerAngle[3];         // 内框角度 高-中-低 (有符号, 单位0.0001°)
+//     uint8_t  innerDeviation[3];     // 内框偏差
+//     uint8_t  middleAlarmStatus;     // 中框
+//     uint8_t  middleAngle[3];
+//     uint8_t  middleDeviation[3];
+//     uint8_t  outerAlarmStatus;      // 外框
+//     uint8_t  outerAngle[3];
+//     uint8_t  outerDeviation[3];
+//     uint8_t  pulseAndHint;          // bit7:秒脉冲, bit5-0:指令提示
+//     uint16_t checksum;              // bytes2-26累加和
+// } StatusFeedbackRawHex;
 
-#pragma pack(pop)
+// #pragma pack(pop)
 
 
 // ════════════════════════ 数据类（主线程, QML可用）═══════════════════════════
