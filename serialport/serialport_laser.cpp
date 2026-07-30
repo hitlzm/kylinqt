@@ -455,7 +455,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                 // 发送时间同步指令（0时刻）
                 // emit reqTimesync();
                 // 发送Kalman预测的目标角度给转台串口线程
-                // emit reqExsend_3s(m_tacpkt1, m_tacpkt2);
+                // emit reqExsend_1s(m_tacpkt1, m_tacpkt2);
             });
         }
         m_exGuideTimer->start(3000); // 每3秒触发一次

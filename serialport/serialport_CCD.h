@@ -92,8 +92,8 @@ signals:
     void portsChanged(const QStringList &ports);
 
     // 外引导模式请求信号（连接转台串口线程）
-    void reqExsend_3s(const sendExGuideData &frame1, const sendExGuideData &frame2);
-    void reqExsend_40ms(int time, int angle1, int angle2);
+    void reqExsend_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);
+    void reqExsend_5ms(int time, int angle1, int angle2);
 
 public slots:
     void onOpenPort(const QString &portName, int baudRate);

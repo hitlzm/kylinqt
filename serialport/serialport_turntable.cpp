@@ -271,7 +271,7 @@ void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
         // }
 }
 
-void SerialPortTurntable::sendTrackCmd_3s(const TrackingSendCmd1 &cmd)
+void SerialPortTurntable::sendTrackCmd_1s(const TrackingSendCmd1 &cmd)
 {
     if (!m_serialPort->isOpen()) {
             // qWarning() << "串口未打开！";
@@ -307,7 +307,7 @@ void SerialPortTurntable::sendTrackCmd_3s(const TrackingSendCmd1 &cmd)
         } 
 }
 
-void SerialPortTurntable::sendTrackCmd_40ms(const TrackingSendCmd2 &cmd)   //40ms跟踪模式指令发送，对应外引导模式
+void SerialPortTurntable::sendTrackCmd_5ms(const TrackingSendCmd2 &cmd)   //5ms跟踪模式指令发送，对应外引导模式
 {
     if (!m_serialPort->isOpen()) {
             // qWarning() << "串口未打开！";
@@ -343,7 +343,7 @@ void SerialPortTurntable::ProgramModeChanged(int mode)
     }
 }
 
-void SerialPortTurntable::sendTrackMode_3s(const sendExGuideData &frame1 , const sendExGuideData &frame2)
+void SerialPortTurntable::sendTrackMode_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2)
 {
     //读取两轴数据
     TrackingSendCmd1 m_cmd{};
@@ -364,10 +364,10 @@ void SerialPortTurntable::sendTrackMode_3s(const sendExGuideData &frame1 , const
     m_cmd.angle13 = m_current_inner_angle;
     m_cmd.angle14 = m_current_inner_angle;
     //发送数据
-    sendTrackCmd_3s(m_cmd);
+    sendTrackCmd_1s(m_cmd);
 };
 
-void SerialPortTurntable::sendTrackMode_40ms(int time , int yawangle , int pitchangle )
+void SerialPortTurntable::sendTrackMode_5ms(int time , int yawangle , int pitchangle )
 {
     //读取两轴数据
     TrackingSendCmd2 m_cmd{};
@@ -377,7 +377,7 @@ void SerialPortTurntable::sendTrackMode_40ms(int time , int yawangle , int pitch
     m_cmd.angle2 = m_current_middle_angle + pitchangle;
     m_cmd.angle3 = m_current_outter_angle + yawangle;
     
-    sendTrackCmd_40ms(m_cmd);
+    sendTrackCmd_5ms(m_cmd);
 }
 
 void SerialPortTurntable::sendTimesync()

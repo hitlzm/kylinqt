@@ -9,7 +9,7 @@ brief:1.转台串口类负责实时接收转台状态反馈信息
         程控模式下，线程内部实现计算并发送数据
         外引导模式下，接收指定导引头传来的角度数据，使用转台的跟踪模式
 */
-
+//发送信号为大端序（高位在低地址）
 #include "serialport.h"
 
 //转台信息反馈结构体
@@ -249,8 +249,8 @@ public slots:
     void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号
     //外引导模式槽函数，用于对接两类导引头和CCD相机
-    void sendTrackMode_3s(const sendExGuideData &frame1 , const sendExGuideData &frame2);    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)
-    void sendTrackMode_40ms(int time , int yawangle , int pitchangle );
+    void sendTrackMode_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2);    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)
+    void sendTrackMode_5ms(int time , int yawangle , int pitchangle );
 
     void sendTimesync();
 
@@ -271,12 +271,14 @@ public slots:
 
 
 protected:
-    void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换），后期仍需要加入其他反馈指令解析
+    void parseData(const QByteArray &rawData) override;  //解析转台的反馈数据（实现ASCII字符向数字的转换）
+
     void sendCommands(const QStringList &commands, int repeatTimes = 5);   //开机，停机，回零，复位，程控模式的实现
+    //位置模式
     void sendPositionCmd(const PositionModeCmd1 &cmd);    //位置模式指令发送
     void sendVecCmd(const SpeedModeCmd1 &cmd);     //速度模式指令发送
-    void sendTrackCmd_3s(const TrackingSendCmd1 &cmd);   //跟踪模式指令发送，对应外引导模式
-    void sendTrackCmd_40ms(const TrackingSendCmd2 &cmd);   //40ms跟踪模式指令发送，对应外引导模式
+    void sendTrackCmd_1s(const TrackingSendCmd1 &cmd);   //跟踪模式指令发送，对应外引导模式
+    void sendTrackCmd_5ms(const TrackingSendCmd2 &cmd);   //5ms跟踪模式指令发送，对应外引导模式
 
     QString formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits);
 private:

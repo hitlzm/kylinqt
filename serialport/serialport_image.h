@@ -9,7 +9,7 @@
 //默认视频拉流地址：rtsp://192.168.1.100:554/stream
 
 struct image_send_frame;
-//使用40ms模式进行外引导
+//使用5ms模式进行外引导
 struct imageExGuideData
 {
     double pitch;  //俯仰角
@@ -510,8 +510,8 @@ signals:
     void portsChanged(const QStringList &ports);
     void imageFrameReceived(const QByteArray &rawData);
     void reqTimesync();
-    void reqExsend_3s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
-    void reqExsend_40ms(int time ,int angle1 ,int angle2 );
+    void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_5ms(int time ,int angle1 ,int angle2 );
 
     void reqSendDeviationPixel(int num ,int x , int y);
 public slots:
@@ -544,7 +544,7 @@ protected:
 
 private:
     static uint16_t crc16_table[256];
-    //图像导引头每20ms接收一次数据，3s共150组数据，预留200个位置
+    //图像导引头每20ms接收一次数据，1s共50组数据，预留200个位置
     CircularBuffer<imageExGuideData> m_circularbuf;
     //不再存储环形缓冲区，利用卡尔曼滤波器来估计目标位置,每三秒重新INIT一次，如果外引导源是图像导引头,利用前三秒数据给转台发送下一个三秒的跟踪角度
     SeekerTrackManager m_kalman;
@@ -556,8 +556,8 @@ private:
     int exsrcindex = -1;      //外引导源标志
     int exguidesetting = -1;  //跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  //记录上一次的时间间隔
-    int m_sendCount_40ms = 0;
-    int m_sendCount_3s = 0;
+    int m_sendCount_5ms = 0;
+    int m_sendCount_1s = 0;
     QTime m_startTime = {};
     QDateTime m_dateTime = {};
     int m_startvalue =0 ;

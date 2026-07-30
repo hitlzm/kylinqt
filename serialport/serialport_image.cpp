@@ -8,8 +8,8 @@
 // ─────────────────────────────────────────────
 #define ExguideMode 0
 #define ExguideSrcImg 3
-#define Exguide_40ms 6
-#define Exguide_3s 7
+#define Exguide_5ms 6
+#define Exguide_1s 7
 #define Maxsendcount 10000
 
 uint16_t SerialPortImage::crc16_table[256] = {0};
@@ -485,12 +485,13 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     frame.crc16 = crc;
     auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
 
-    // SerialPort::send(data); 
     //引入定时器，每20ms发送一次
     int sendCount = 0;
     static quint16 num=0;
     
     timer->setInterval(20); // 20ms
+    // 先断开旧连接，避免重复绑定导致 lambda 被多次触发
+    disconnect(timer, &QTimer::timeout, this, nullptr);
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 发送数据
@@ -536,7 +537,7 @@ void SerialPortImage::ExmodeChanged(int mode)
 {   
     //1:外引导  2：程控模式 3：遥控模式  //还需要判断外引导源  //判断跟踪模式
     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
-    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S或40ms发送一次跟踪数据信息
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每1秒或5ms发送一次跟踪数据信息
     //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
     if(mode < 3)
     exindex = mode;  //模式索引赋值
@@ -547,7 +548,7 @@ void SerialPortImage::ExmodeChanged(int mode)
 
     if (exindex == ExguideMode) //判断是否为外引导模式
     {
-        // 图像导引头被选为外引导源：启动定时器，每3秒或40ms发送一次跟踪数据
+        // 图像导引头被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcImg )
         {
             // 只有时间间隔设置改变时才重新绑定
@@ -558,20 +559,20 @@ void SerialPortImage::ExmodeChanged(int mode)
                 {
                     m_exGuideTimer->stop();
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
-                    m_sendCount_40ms == 0;
-                    m_sendCount_3s == 0;
+                    m_sendCount_5ms = 0;
+                    m_sendCount_1s = 0;
                 }
                 // 延迟创建定时器
                 if (!m_exGuideTimer) {
                     m_exGuideTimer = new QTimer(this);
                 }
-                // 判断跟踪模式（40ms模式或者3秒跟踪模式）
-                if(exguidesetting == Exguide_40ms)
+                // 判断跟踪模式（5ms模式或者1秒跟踪模式）
+                if(exguidesetting == Exguide_5ms)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 发送时间同步指令（0时刻）
                         //每发送完固定次数后，重新发送时间同步信号，并重新计时
-                        if(m_sendCount_40ms == 0) 
+                        if(m_sendCount_5ms == 0) 
                         {
                             emit reqTimesync(); 
                             //记录一下起始时间
@@ -581,8 +582,8 @@ void SerialPortImage::ExmodeChanged(int mode)
                         } 
                         //计算时间数据
                         //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
-                        //计算理论时间与实际时间的差值，如果差值大于20ms，则重新进行时间同步并发送数据，保证每次数据都落在转台的40ms周期内
-                        int throry_time = m_startvalue + (m_sendCount_40ms + 1) * 2;
+                        //计算理论时间与实际时间的差值，如果差值大于20ms，则重新进行时间同步并发送数据，保证每次数据都落在转台的5ms周期内
+                        int throry_time = m_startvalue + (m_sendCount_5ms++) * 2;
                         //最后两位最大为49
                         int m_throry_time = (throry_time/50) * 100 +  (throry_time%50);
                         QTime realTime = QTime::currentTime();
@@ -590,26 +591,27 @@ void SerialPortImage::ExmodeChanged(int mode)
                         int theory_ms = (m_throry_time / 100) * 1000 + (m_throry_time % 100) * 20;
                         int real_ms   = (realTime.minute() * 60 + realTime.second()) * 1000 + realTime.msec();
                         int diff_ms   = qAbs(theory_ms - real_ms);
-                        if(diff_ms > 20)
+                        if(diff_ms < 20)  //时间差小于20ms说明实际时间在5ms周期的后半段
                         {   //重新进行时间同步
                             emit reqTimesync(); 
                             //记录一下起始时间
                             m_dateTime = QDateTime::currentDateTime();
                             m_startTime = m_dateTime.time();
                             m_startvalue = (m_startTime.minute() * 60 + m_startTime.second()) * 100 + m_startTime.msec() / 20;
+                            m_sendCount_5ms =0;
                         }
                         //发送角度数据
-                        reqExsend_40ms(m_throry_time,m_azimuth,m_pitch);
-                        if(++m_sendCount_40ms == Maxsendcount)  m_sendCount_40ms=0;  //发送Maxsendcount次数后，重新进行时间同步
+                        reqExsend_5ms(m_throry_time,m_azimuth,m_pitch);
+                        // if(++m_sendCount_5ms == Maxsendcount)  m_sendCount_5ms=0;  //发送Maxsendcount次数后，重新进行时间同步
                     });
-                    m_exGuideTimer->start(40); // 每40ms触发一次
-                    m_lastexguidesetting = Exguide_40ms;
+                    m_exGuideTimer->start(5); // 每5ms触发一次
+                    m_lastexguidesetting = Exguide_5ms;
                 }
-                else if(exguidesetting == Exguide_3s)
+                else if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 发送时间同步指令（0时刻）
-                        if(m_sendCount_3s == 0)  
+                        if(m_sendCount_1s == 0)  
                         {
                             emit reqTimesync();
                             m_dateTime = QDateTime::currentDateTime();
@@ -620,11 +622,11 @@ void SerialPortImage::ExmodeChanged(int mode)
                         //进行数据预测
 
                         //发送角度数据
-                        // reqExsend_3s(value,m_azimuth,m_pitch);
-                        if(m_sendCount_3s++ == Maxsendcount)  m_sendCount_3s=0;
+                        // reqExsend_1s(value,m_azimuth,m_pitch);
+                        if(m_sendCount_1s++ == Maxsendcount)  m_sendCount_1s=0;
                     });
-                    m_exGuideTimer->start(3000); // 每3秒触发一次
-                    m_lastexguidesetting = Exguide_3s;
+                    m_exGuideTimer->start(1000); // 每1秒触发一次
+                    m_lastexguidesetting = Exguide_1s;
                 }
             } 
         }
@@ -741,10 +743,10 @@ uint16_t SerialPortImage::crc16_ccitt_fast(const uint8_t *data, size_t len, uint
 //                 // 发送时间同步指令（0时刻）
 //                 // emit reqTimesync();
 //                 // 发送Kalman预测的目标角度给转台串口线程
-//                 // emit reqExsend_3s(m_tacpkt1, m_tacpkt2);
+//                 // emit reqExsend_1s(m_tacpkt1, m_tacpkt2);
 //             });
 //         }
-//         m_exGuideTimer->start(3000); // 每3秒触发一次
+//         m_exGuideTimer->start(1000); // 每1秒触发一次
 //     }
 //     else
 //     {

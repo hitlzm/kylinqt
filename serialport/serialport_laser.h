@@ -9,7 +9,7 @@
 struct laser_send_frame;
 struct laser_recv_frame;
 
-//使用40ms跟踪模式时直接以固定间隔发送角度数据给转台
+//使用5ms跟踪模式时直接以固定间隔发送角度数据给转台
 struct laserExGuideData
 {
     double pitch;  //俯仰角
@@ -287,8 +287,8 @@ signals:
 
     //两类导引头的实现相同
     void reqTimesync();
-    void reqExsend_3s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
-    void reqExsend_40ms(int time ,int angle1 ,int angle2 );
+    void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_5ms(int time ,int angle1 ,int angle2 );
 
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──
