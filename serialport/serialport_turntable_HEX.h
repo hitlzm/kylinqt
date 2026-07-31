@@ -327,7 +327,7 @@ public slots:
 
     // ── 外引导模式 ──
     void sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);
-    void sendTrackMode_5ms(int yawangle, int pitchangle);
+    void sendTrackMode_5ms(double yawangle, double pitchangle);
 
     // ── 时间同步 ──
     void sendTimesync(int seconds);

@@ -511,7 +511,7 @@ signals:
     void imageFrameReceived(const QByteArray &rawData);
     void reqTimesync(int seconds);
     void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
-    void reqExsend_5ms(int angle1 ,int angle2 );
+    void reqExsend_5ms(double angle1 ,double angle2 );
 
     void reqSendDeviationPixel(int num ,int x , int y);
 public slots:

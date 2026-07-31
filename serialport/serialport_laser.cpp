@@ -486,7 +486,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                         sendExGuideData az_pkt = m_abMgr.GenAxisPacket(true,  m_sendCount_1s);  // 方位轴
                         sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s);  // 俯仰轴
                         // 发送预测角度给转台
-                        // emit reqExsend_1s(az_pkt, el_pkt);
+                        emit reqExsend_1s(az_pkt, el_pkt);
                         if(++m_sendCount_1s >= Maxsendcount) {  // 10分钟重同步
                             m_sendCount_1s = 0;
                         }
@@ -498,7 +498,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 5ms模式直接发送角度数据
-                        // emit reqExsend_5ms(m_azimuth, m_pitch);
+                        emit reqExsend_5ms(m_azimuth, m_pitch);
                     });
                     m_exGuideTimer->start(5); // 每5ms触发一次
                     m_lastexguidesetting = Exguide_5ms;

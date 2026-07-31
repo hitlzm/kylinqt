@@ -283,12 +283,12 @@ signals:
     void portsChanged(const QStringList &ports);
     void laserFrameReceived(const laser_recv_frame &frame);
 
-    void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
+    // void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
     //两类导引头的实现相同
     void reqTimesync(int seconds = 0);
     void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
-    void reqExsend_5ms(int time ,int angle1 ,int angle2 );
+    void reqExsend_5ms(double angle1 ,double angle2 );
 
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──

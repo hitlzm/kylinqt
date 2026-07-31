@@ -630,7 +630,7 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
 }
 
 
-void SerialPortTurntableHex::sendTrackMode_5ms(int yawangle, int pitchangle)
+void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangle)
 {
     // 5ms跟踪模式 (联合指令, 一帧包含三轴数据)
     TrackingSendCmd2Hex m_cmd;

@@ -312,6 +312,7 @@ void StreamProcessor::processFrame() {
         m_tracker.feed(rawCenterX, rawCenterY, dt);
         m_centerX = static_cast<int>(m_tracker.filteredX());
         m_centerY = static_cast<int>(m_tracker.filteredY());
+        emit targetCenterChanged(m_centerX, m_centerY);
     }
 
     // ── ⑤ 显示缩放（仅影响最终输出，不改变 ONNX 输入分辨率）──

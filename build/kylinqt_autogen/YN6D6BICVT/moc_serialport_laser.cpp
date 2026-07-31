@@ -1348,8 +1348,8 @@ void LaserSendData::requestSendData(laser_send_frame _t1)
     QMetaObject::activate(this, &staticMetaObject, 11, _a);
 }
 struct qt_meta_stringdata_SerialPortLaser_t {
-    QByteArrayData data[35];
-    char stringdata0[365];
+    QByteArrayData data[31];
+    char stringdata0[320];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1370,41 +1370,36 @@ QT_MOC_LITERAL(8, 74, 5), // "ports"
 QT_MOC_LITERAL(9, 80, 18), // "laserFrameReceived"
 QT_MOC_LITERAL(10, 99, 16), // "laser_recv_frame"
 QT_MOC_LITERAL(11, 116, 5), // "frame"
-QT_MOC_LITERAL(12, 122, 14), // "reqExguideSend"
-QT_MOC_LITERAL(13, 137, 19), // "std::vector<float>&"
-QT_MOC_LITERAL(14, 157, 4), // "data"
-QT_MOC_LITERAL(15, 162, 11), // "reqTimesync"
-QT_MOC_LITERAL(16, 174, 7), // "seconds"
-QT_MOC_LITERAL(17, 182, 12), // "reqExsend_1s"
-QT_MOC_LITERAL(18, 195, 15), // "sendExGuideData"
-QT_MOC_LITERAL(19, 211, 6), // "frame1"
-QT_MOC_LITERAL(20, 218, 6), // "frame2"
-QT_MOC_LITERAL(21, 225, 13), // "reqExsend_5ms"
-QT_MOC_LITERAL(22, 239, 4), // "time"
-QT_MOC_LITERAL(23, 244, 6), // "angle1"
-QT_MOC_LITERAL(24, 251, 6), // "angle2"
-QT_MOC_LITERAL(25, 258, 6), // "dowork"
-QT_MOC_LITERAL(26, 265, 10), // "onOpenPort"
-QT_MOC_LITERAL(27, 276, 8), // "portName"
-QT_MOC_LITERAL(28, 285, 8), // "baudRate"
-QT_MOC_LITERAL(29, 294, 11), // "onClosePort"
-QT_MOC_LITERAL(30, 306, 11), // "onScanPorts"
-QT_MOC_LITERAL(31, 318, 10), // "onSendData"
-QT_MOC_LITERAL(32, 329, 16), // "laser_send_frame"
-QT_MOC_LITERAL(33, 346, 13), // "ExmodeChanged"
-QT_MOC_LITERAL(34, 360, 4) // "mode"
+QT_MOC_LITERAL(12, 122, 11), // "reqTimesync"
+QT_MOC_LITERAL(13, 134, 7), // "seconds"
+QT_MOC_LITERAL(14, 142, 12), // "reqExsend_1s"
+QT_MOC_LITERAL(15, 155, 15), // "sendExGuideData"
+QT_MOC_LITERAL(16, 171, 6), // "frame1"
+QT_MOC_LITERAL(17, 178, 6), // "frame2"
+QT_MOC_LITERAL(18, 185, 13), // "reqExsend_5ms"
+QT_MOC_LITERAL(19, 199, 6), // "angle1"
+QT_MOC_LITERAL(20, 206, 6), // "angle2"
+QT_MOC_LITERAL(21, 213, 6), // "dowork"
+QT_MOC_LITERAL(22, 220, 10), // "onOpenPort"
+QT_MOC_LITERAL(23, 231, 8), // "portName"
+QT_MOC_LITERAL(24, 240, 8), // "baudRate"
+QT_MOC_LITERAL(25, 249, 11), // "onClosePort"
+QT_MOC_LITERAL(26, 261, 11), // "onScanPorts"
+QT_MOC_LITERAL(27, 273, 10), // "onSendData"
+QT_MOC_LITERAL(28, 284, 16), // "laser_send_frame"
+QT_MOC_LITERAL(29, 301, 13), // "ExmodeChanged"
+QT_MOC_LITERAL(30, 315, 4) // "mode"
 
     },
     "SerialPortLaser\0portOpened\0\0success\0"
     "portClosed\0portError\0msg\0portsChanged\0"
     "ports\0laserFrameReceived\0laser_recv_frame\0"
-    "frame\0reqExguideSend\0std::vector<float>&\0"
-    "data\0reqTimesync\0seconds\0reqExsend_1s\0"
+    "frame\0reqTimesync\0seconds\0reqExsend_1s\0"
     "sendExGuideData\0frame1\0frame2\0"
-    "reqExsend_5ms\0time\0angle1\0angle2\0"
-    "dowork\0onOpenPort\0portName\0baudRate\0"
-    "onClosePort\0onScanPorts\0onSendData\0"
-    "laser_send_frame\0ExmodeChanged\0mode"
+    "reqExsend_5ms\0angle1\0angle2\0dowork\0"
+    "onOpenPort\0portName\0baudRate\0onClosePort\0"
+    "onScanPorts\0onSendData\0laser_send_frame\0"
+    "ExmodeChanged\0mode"
 };
 #undef QT_MOC_LITERAL
 
@@ -1414,32 +1409,31 @@ static const uint qt_meta_data_SerialPortLaser[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      16,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      10,       // signalCount
+       9,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   94,    2, 0x06 /* Public */,
-       4,    0,   97,    2, 0x06 /* Public */,
-       5,    1,   98,    2, 0x06 /* Public */,
-       7,    1,  101,    2, 0x06 /* Public */,
-       9,    1,  104,    2, 0x06 /* Public */,
-      12,    1,  107,    2, 0x06 /* Public */,
-      15,    1,  110,    2, 0x06 /* Public */,
-      15,    0,  113,    2, 0x26 /* Public | MethodCloned */,
-      17,    2,  114,    2, 0x06 /* Public */,
-      21,    3,  119,    2, 0x06 /* Public */,
+       1,    1,   89,    2, 0x06 /* Public */,
+       4,    0,   92,    2, 0x06 /* Public */,
+       5,    1,   93,    2, 0x06 /* Public */,
+       7,    1,   96,    2, 0x06 /* Public */,
+       9,    1,   99,    2, 0x06 /* Public */,
+      12,    1,  102,    2, 0x06 /* Public */,
+      12,    0,  105,    2, 0x26 /* Public | MethodCloned */,
+      14,    2,  106,    2, 0x06 /* Public */,
+      18,    2,  111,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      25,    0,  126,    2, 0x0a /* Public */,
-      26,    2,  127,    2, 0x0a /* Public */,
-      29,    0,  132,    2, 0x0a /* Public */,
-      30,    0,  133,    2, 0x0a /* Public */,
-      31,    1,  134,    2, 0x0a /* Public */,
-      33,    1,  137,    2, 0x0a /* Public */,
+      21,    0,  116,    2, 0x0a /* Public */,
+      22,    2,  117,    2, 0x0a /* Public */,
+      25,    0,  122,    2, 0x0a /* Public */,
+      26,    0,  123,    2, 0x0a /* Public */,
+      27,    1,  124,    2, 0x0a /* Public */,
+      29,    1,  127,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -1447,19 +1441,18 @@ static const uint qt_meta_data_SerialPortLaser[] = {
     QMetaType::Void, QMetaType::QString,    6,
     QMetaType::Void, QMetaType::QStringList,    8,
     QMetaType::Void, 0x80000000 | 10,   11,
-    QMetaType::Void, 0x80000000 | 13,   14,
-    QMetaType::Void, QMetaType::Int,   16,
+    QMetaType::Void, QMetaType::Int,   13,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 18, 0x80000000 | 18,   19,   20,
-    QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   22,   23,   24,
+    QMetaType::Void, 0x80000000 | 15, 0x80000000 | 15,   16,   17,
+    QMetaType::Void, QMetaType::Double, QMetaType::Double,   19,   20,
 
  // slots: parameters
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   27,   28,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   23,   24,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 32,   11,
-    QMetaType::Void, QMetaType::Int,   34,
+    QMetaType::Void, 0x80000000 | 28,   11,
+    QMetaType::Void, QMetaType::Int,   30,
 
        0        // eod
 };
@@ -1475,17 +1468,16 @@ void SerialPortLaser::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 2: _t->portError((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 3: _t->portsChanged((*reinterpret_cast< const QStringList(*)>(_a[1]))); break;
         case 4: _t->laserFrameReceived((*reinterpret_cast< const laser_recv_frame(*)>(_a[1]))); break;
-        case 5: _t->reqExguideSend((*reinterpret_cast< std::vector<float>(*)>(_a[1]))); break;
-        case 6: _t->reqTimesync((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 7: _t->reqTimesync(); break;
-        case 8: _t->reqExsend_1s((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
-        case 9: _t->reqExsend_5ms((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
-        case 10: _t->dowork(); break;
-        case 11: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 12: _t->onClosePort(); break;
-        case 13: _t->onScanPorts(); break;
-        case 14: _t->onSendData((*reinterpret_cast< laser_send_frame(*)>(_a[1]))); break;
-        case 15: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 5: _t->reqTimesync((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: _t->reqTimesync(); break;
+        case 7: _t->reqExsend_1s((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
+        case 8: _t->reqExsend_5ms((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
+        case 9: _t->dowork(); break;
+        case 10: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 11: _t->onClosePort(); break;
+        case 12: _t->onScanPorts(); break;
+        case 13: _t->onSendData((*reinterpret_cast< laser_send_frame(*)>(_a[1]))); break;
+        case 14: _t->ExmodeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -1526,30 +1518,23 @@ void SerialPortLaser::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
             }
         }
         {
-            using _t = void (SerialPortLaser::*)(std::vector<float> & );
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortLaser::reqExguideSend)) {
-                *result = 5;
-                return;
-            }
-        }
-        {
             using _t = void (SerialPortLaser::*)(int );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortLaser::reqTimesync)) {
-                *result = 6;
+                *result = 5;
                 return;
             }
         }
         {
             using _t = void (SerialPortLaser::*)(const sendExGuideData & , const sendExGuideData & );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortLaser::reqExsend_1s)) {
-                *result = 8;
+                *result = 7;
                 return;
             }
         }
         {
-            using _t = void (SerialPortLaser::*)(int , int , int );
+            using _t = void (SerialPortLaser::*)(double , double );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortLaser::reqExsend_5ms)) {
-                *result = 9;
+                *result = 8;
                 return;
             }
         }
@@ -1585,13 +1570,13 @@ int SerialPortLaser::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 16)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 16;
+        _id -= 15;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 16)
+        if (_id < 15)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 16;
+        _id -= 15;
     }
     return _id;
 }
@@ -1631,31 +1616,24 @@ void SerialPortLaser::laserFrameReceived(const laser_recv_frame & _t1)
 }
 
 // SIGNAL 5
-void SerialPortLaser::reqExguideSend(std::vector<float> & _t1)
+void SerialPortLaser::reqTimesync(int _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 5, _a);
 }
 
-// SIGNAL 6
-void SerialPortLaser::reqTimesync(int _t1)
-{
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
-    QMetaObject::activate(this, &staticMetaObject, 6, _a);
-}
-
-// SIGNAL 8
+// SIGNAL 7
 void SerialPortLaser::reqExsend_1s(const sendExGuideData & _t1, const sendExGuideData & _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
-    QMetaObject::activate(this, &staticMetaObject, 8, _a);
+    QMetaObject::activate(this, &staticMetaObject, 7, _a);
 }
 
-// SIGNAL 9
-void SerialPortLaser::reqExsend_5ms(int _t1, int _t2, int _t3)
+// SIGNAL 8
+void SerialPortLaser::reqExsend_5ms(double _t1, double _t2)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
-    QMetaObject::activate(this, &staticMetaObject, 9, _a);
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 8, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

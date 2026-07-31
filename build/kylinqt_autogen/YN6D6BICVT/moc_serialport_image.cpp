@@ -3076,7 +3076,7 @@ static const uint qt_meta_data_SerialPortImage[] = {
     QMetaType::Void, QMetaType::QByteArray,   10,
     QMetaType::Void, QMetaType::Int,   12,
     QMetaType::Void, 0x80000000 | 14, 0x80000000 | 14,   15,   16,
-    QMetaType::Void, QMetaType::Int, QMetaType::Int,   18,   19,
+    QMetaType::Void, QMetaType::Double, QMetaType::Double,   18,   19,
     QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int,   21,   22,   23,
 
  // slots: parameters
@@ -3108,7 +3108,7 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         case 4: _t->imageFrameReceived((*reinterpret_cast< const QByteArray(*)>(_a[1]))); break;
         case 5: _t->reqTimesync((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 6: _t->reqExsend_1s((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
-        case 7: _t->reqExsend_5ms((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 7: _t->reqExsend_5ms((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
         case 8: _t->reqSendDeviationPixel((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3]))); break;
         case 9: _t->dowork(); break;
         case 10: _t->init_crc16_table((*reinterpret_cast< uint16_t(*)>(_a[1]))); break;
@@ -3177,7 +3177,7 @@ void SerialPortImage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
             }
         }
         {
-            using _t = void (SerialPortImage::*)(int , int );
+            using _t = void (SerialPortImage::*)(double , double );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&SerialPortImage::reqExsend_5ms)) {
                 *result = 7;
                 return;
@@ -3282,7 +3282,7 @@ void SerialPortImage::reqExsend_1s(const sendExGuideData & _t1, const sendExGuid
 }
 
 // SIGNAL 7
-void SerialPortImage::reqExsend_5ms(int _t1, int _t2)
+void SerialPortImage::reqExsend_5ms(double _t1, double _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 7, _a);

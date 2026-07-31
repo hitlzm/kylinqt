@@ -2,14 +2,14 @@
 #define SERIALPORT_CCD_H
 
 #include "serialport.h"
+#include "Kalman/AlphaBetaTracker.h"
 #include <QDateTime>
+#include <QTimer>
 
 // ── CCD 接收数据类（主线程，QML 直接读取）────────────────────────────
 class CCDData : public QObject
 {
     Q_OBJECT
-
-
     // ── 串口状态属性 ──
     Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
     Q_PROPERTY(QStringList availablePorts READ availablePorts NOTIFY availablePortsChanged)
@@ -67,11 +67,6 @@ signals:
     void reqBacklightclose();
     void reqResolutionchange(int index);
 
-    // CCD 控制状态变化信号
-    void focusModeChanged();
-    void backlightOnChanged();
-    void resolutionIndexChanged();
-
 public slots:
     // ── 工作线程回推状态（QueuedConnection）──
     void setPortOpen(bool open);
@@ -107,7 +102,6 @@ public:
 
     CCDData* ccdData() const;
     CCDData *m_ccdData;
-    // 初始化串口对象，并扫描可用串口，CCD串口类留在主线程
 signals:
     void portOpened(bool success);
     void portClosed();
@@ -115,8 +109,9 @@ signals:
     void portsChanged(const QStringList &ports);
 
     // 外引导模式请求信号（连接转台串口线程）
+    void reqTimesync(int seconds = 0);
     void reqExsend_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);
-    void reqExsend_5ms(int time, int angle1, int angle2);
+    void reqExsend_5ms(double angle1, double angle2);
 
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
@@ -132,10 +127,16 @@ public slots:
     void sendBacklightclose();
     void sendResolutionchange(int index);
 
+    void ExmodeChanged(int mode);
+
+    void recvTargetCenter(int centerX, int centerY);  // 接收目标中心像素坐标
+
 protected:
     void parseData(const QByteArray &rawData) override{};
     void onReadyRead() override{};
 private:
+    void updateFovLimits();  // 焦距切换时同步更新滤波器限幅
+
     const QByteArray cmd_30X = QByteArray::fromHex("81010983140001020CFF");
     const QByteArray cmd_1X = QByteArray::fromHex("81010983140000000AFF");
     const QByteArray cmd_digZoomopen = QByteArray::fromHex("8101040602FF");
@@ -146,9 +147,30 @@ private:
     const QByteArray cmd_Resolutionchange2 = QByteArray::fromHex("8101042473000FFF");  //720P 30帧
     const QByteArray cmd_Resolutionchange3 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧
     const QByteArray cmd_Resolutionchange4 = QByteArray::fromHex("81010424730101FF");  //720P 25帧
-    const QByteArray cmd_Resolutionchange_1080p25 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧 (TODO: 确认协议)
-    const QByteArray cmd_Resolutionchange_720p25 = QByteArray::fromHex("81010424730011FF");   //720P 25帧 (TODO: 确认协议)
 
+    // Alpha-Beta 跟踪管理器：每帧图像更新滤波，1s定时器外推预测角度
+    ABTrackManager m_abMgr{SeekerType::CCD_Wide};
+
+    // 目标中心像素坐标（由 StreamProcessor 同步）
+    int m_targetCenterX = -1;
+    int m_targetCenterY = -1;
+    double m_azimuth = 0.0f;
+    double m_pitch = 0.0f;
+
+    // 外引导模式状态
+    int exindex = -1;               // 外引导模式标志
+    int exsrcindex = -1;            // 外引导源标志
+    int exguidesetting = -1;        // 跟踪模式时间间隔选择
+    int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
+    int m_sendCount_1s = 0;
+    QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
+
+    // 图像分辨率与视场角（视场角随广角/远焦切换更新）
+    // TODO:后期默认值可能需要根据CCD相机开机默认设置更改
+    int   m_imageWidth  = 1920;
+    int   m_imageHeight = 1080;
+    float m_hFov = 55.27f;   // 横向视场角（默认广角）
+    float m_vFov = 32.26f;   // 纵向视场角（默认广角）
 };
 
 
