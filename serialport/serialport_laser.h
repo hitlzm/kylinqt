@@ -321,6 +321,7 @@ private:
     int exguidesetting = -1;        // 跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
     int m_sendCount_1s = 0;
+    
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
 };
 
