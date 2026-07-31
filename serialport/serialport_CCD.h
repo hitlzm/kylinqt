@@ -123,6 +123,8 @@ private:
     const QByteArray cmd_Backlightclose = QByteArray::fromHex("8101043303FF");
     const QByteArray cmd_Resolutionchange1 = QByteArray::fromHex("81010424730007FF");  //1080P 30帧
     const QByteArray cmd_Resolutionchange2 = QByteArray::fromHex("8101042473000FFF");  //720P 30帧
+    const QByteArray cmd_Resolutionchange3 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧
+    const QByteArray cmd_Resolutionchange4 = QByteArray::fromHex("81010424730101FF");  //720P 25帧
 
 };
 
