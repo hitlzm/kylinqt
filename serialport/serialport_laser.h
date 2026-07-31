@@ -4,11 +4,12 @@
 #include "serialport.h"
 #include <QDateTime>
 #include "./circularbuffer.h"
-#include "kalman/seekKalman.h"
+#include "Kalman/AlphaBetaTracker.h"
 
 struct laser_send_frame;
 struct laser_recv_frame;
-//使用40ms跟踪模式时直接以固定间隔发送角度数据给转台
+
+//使用5ms跟踪模式时直接以固定间隔发送角度数据给转台
 struct laserExGuideData
 {
     double pitch;  //俯仰角
@@ -153,34 +154,33 @@ private:
             * 0.001f;
     }
     //int转qint8
-    qint8 intToQint8Saturated(int value)
-    {
-    if (value > 127) return 127;
-    if (value < -128) return -128;
-    return static_cast<qint8>(value);
-    }
+    // qint8 intToQint8Saturated(int value)
+    // {
+    // if (value > 127) return 127;
+    // if (value < -128) return -128;
+    // return static_cast<qint8>(value);
+    // }
     //取出一个字节对应位置的函数
     int getBitsFromQint8(qint8 value, int startBit, int endBit);
     //做转换并取出对应位
-    int convertAndGetBit(int value, int startPos,int endPos)
-    {
-    qint8 converted = intToQint8Saturated(value);
-    return getBitsFromQint8(converted, startPos,endPos);
-    }
+    // int convertAndGetBit(quint8 value, int startPos,int endPos)
+    // {
+    // return getBitsFromQint8(value, startPos,endPos);
+    // }
 
     int m_frameStatus = 0;
     int m_frameStatus1 = 0;//帧长
     int m_frameStatus2 = 0; //帧计数器
     int m_frameId = 0x25;
     int m_dytStatus = 0;
-    int m_detectorStatus = 0;  //细分为三种
-    int m_detectorStatus1 = 0;
-    int m_detectorStatus2 = 0;
-    int m_detectorStatus3 = 0;
+    quint8 m_detectorStatus = 0;  //细分为三种
+    quint8 m_detectorStatus1 = 0;
+    quint8 m_detectorStatus2 = 0;
+    quint8 m_detectorStatus3 = 0;
 
-    int m_faultInfo = 0;  //细分为2种
-    int m_faultInfo1 = 0;  
-    int m_faultInfo2 = 0;  
+    quint8 m_faultInfo = 0;  //细分为2种
+    quint8 m_faultInfo1 = 0;  
+    quint8 m_faultInfo2 = 0;  
     float m_opticalAzimuth = 0;
     float m_opticalPitch = 0;
     float m_gyroAzimuthRate = 0;
@@ -286,8 +286,9 @@ signals:
     void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
     //两类导引头的实现相同
-    void reqTimesync();
-    void reqExsend(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqTimesync(int seconds = 0);
+    void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_5ms(int time ,int angle1 ,int angle2 );
 
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──
@@ -309,11 +310,19 @@ private:
     //激光导引头数据周期为10ms，3s接收300个数据，环形缓冲区大小设置为360
     CircularBuffer<laserExGuideData> m_circularbuf;
 
-    SeekerTrackManager m_kalman;
+    // Alpha-Beta 跟踪管理器：每10ms更新滤波，1s定时器外推预测角度
+    ABTrackManager m_abMgr{SeekerType::Laser};
+    qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每10ms+10
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;
-    int exindex = 0;
-    PreciseTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
+
+    int exindex = -1;               // 外引导模式标志
+    int exsrcindex = -1;            // 外引导源标志
+    int exguidesetting = -1;        // 跟踪模式时间间隔选择
+    int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
+    int m_sendCount_1s = 0;
+    
+    QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
 };
 
 

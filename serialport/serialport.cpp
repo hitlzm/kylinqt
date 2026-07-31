@@ -14,19 +14,19 @@ SerialPort::SerialPort(QObject *parent)
 
 SerialPort::~SerialPort()
 {
-    close();  // 先关串口（m_serialPort 还活着）
+    // 析构可能发生在主线程，但 m_serialPort/timer 在工作线程创建。
+    // 必须先迁回当前线程再操作，否则 close() 内部停止 QSerialPort 的 timer 会跨线程报错。
+    if (m_serialPort && QThread::currentThread() != m_serialPort->thread())
+        m_serialPort->moveToThread(QThread::currentThread());
+    if (timer && QThread::currentThread() != timer->thread())
+        timer->moveToThread(QThread::currentThread());
 
-    // m_serialPort 和 timer 在 dowork() 中于工作线程创建，
-    // 但析构可能发生在主线程。moveToThread 后再 delete 避免跨线程销毁报错。
-    auto safeDelete = [](QObject *&obj) {
-        if (!obj) return;
-        if (QThread::currentThread() != obj->thread())
-            obj->moveToThread(QThread::currentThread());
-        delete obj;
-        obj = nullptr;
-    };
-    safeDelete(reinterpret_cast<QObject *&>(m_serialPort));
-    safeDelete(reinterpret_cast<QObject *&>(timer));
+    close();  // 现在安全了，m_serialPort 已在当前线程
+
+    delete m_serialPort;
+    m_serialPort = nullptr;
+    delete timer;
+    timer = nullptr;
 }
 
 void SerialPort::dowork()

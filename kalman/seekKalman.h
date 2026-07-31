@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
-
+#include "../serialport/serialport.h"  // sendExGuideData
 // 系统参数（论文固定配置）
 const double DT = 0.02;        // 导引头采样周期20ms
 const double ALPHA = 0.1;      // 加速度时间常数倒数α
@@ -13,11 +13,11 @@ const double R_MEAS = 0.001;   // 编码器观测噪声方差R
 // const double BLOCK_THRESH = 5; // 遮挡判定阈值(像元)
 
 // 下发转台数据包：单轴4点角度
-struct AxisTrackPacket
-{
-    double time_start;   // 数据包基准起始时间戳 s
-    double angle[4];     // t0, t0+1, t0+2, t0+3 预测角度
-};
+// struct AxisTrackPacket
+// {
+//     double time_start;   // 数据包基准起始时间戳 s
+//     double angle[4];     // t0, t0+1, t0+2, t0+3 预测角度
+// };
 
 // 当前统计模型CS自适应卡尔曼（单轴角度专用：状态[θ, dθ, ddθ]）
 class CSKalmanFilter
@@ -73,7 +73,7 @@ public:
     // 每20ms调用：接收导引头实测角度+脱靶量，执行滤波
     void FeedSeekerData(double t, double az_meas, double el_meas);
     // 生成单轴3s跟踪数据包：4个预测角度间隔1s
-    AxisTrackPacket GenAxisPacket(bool is_az);
+    sendExGuideData GenAxisPacket(bool is_az);
     // // 获取遮挡状态
     // bool IsBlocked() const { return is_blocked; }
 };

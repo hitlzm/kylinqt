@@ -114,6 +114,10 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
 
+    // 外引导模式请求信号（连接转台串口线程）
+    void reqExsend_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);
+    void reqExsend_5ms(int time, int angle1, int angle2);
+
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
@@ -140,6 +144,8 @@ private:
     const QByteArray cmd_Backlightclose = QByteArray::fromHex("8101043303FF");
     const QByteArray cmd_Resolutionchange1 = QByteArray::fromHex("81010424730007FF");  //1080P 30帧
     const QByteArray cmd_Resolutionchange2 = QByteArray::fromHex("8101042473000FFF");  //720P 30帧
+    const QByteArray cmd_Resolutionchange3 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧
+    const QByteArray cmd_Resolutionchange4 = QByteArray::fromHex("81010424730101FF");  //720P 25帧
     const QByteArray cmd_Resolutionchange_1080p25 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧 (TODO: 确认协议)
     const QByteArray cmd_Resolutionchange_720p25 = QByteArray::fromHex("81010424730011FF");   //720P 25帧 (TODO: 确认协议)
 

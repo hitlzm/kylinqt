@@ -36,8 +36,12 @@ public slots:
     }
 
 signals:
-    void modeChanged(int newMode); // 新增信号，通知模式已改变
-    void currentModeChanged();
+    void modeChanged(int newMode); // 新增信号，通知模式已改变，数值取0，1，2
+    void exguideSrcChanged(int exsrc);  //通知外引导源变化， 数值取3，4，5
+    void exguideSettingChanged(int setting); //通知外引导发送时间间隔变化 6,7
+private slots:
+    
+
 private:
     int m_currentMode = -1;
 };

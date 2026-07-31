@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj"
+  "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj"
+  "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
+  "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj"
+  "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/main.cpp.obj"
+  "CMakeFiles/kylinqt.dir/main.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj"
+  "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj"
+  "CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj"
+  "CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj"
+  "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj.d"
+  "CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/kylinqt_autogen.dir/ParseCache.txt"
+  "kylinqt_autogen"
+  "kylinqt.exe"
+  "kylinqt.exe.manifest"
+  "kylinqt.pdb"
+  "kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp"
+  "libkylinqt.dll.a"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/kylinqt.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

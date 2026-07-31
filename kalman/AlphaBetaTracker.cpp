@@ -90,7 +90,8 @@ int AlphaBetaTracker::missCount() const
 
 void AlphaBetaTracker::setAlpha(double alpha)
 {
-    alpha = std::clamp(alpha, 0.0, 1.0);
+    if (alpha < 0.0) alpha = 0.0;
+    if (alpha > 1.0) alpha = 1.0;
 
     m_alpha = alpha;
 }
@@ -371,5 +372,72 @@ double AlphaBetaTracker::angleResidual(
     }
 
     return measurement - prediction;
+}
+
+// ===================== Alpha-Beta 跟踪管理器实现 =====================
+ABTrackManager::ABTrackManager(SeekerType type)
+    : sys_time(0)
+{
+    double az_limit, el_limit;
+
+    switch (type)
+    {
+    case SeekerType::Laser:
+        az_limit = 20.0;
+        el_limit = 20.0;
+        break;
+    case SeekerType::Image:
+        az_limit = 18.0;
+        el_limit = 18.0;
+        break;
+    case SeekerType::CCD_Wide:
+        az_limit = 27.0;
+        el_limit = 16.0;
+        break;
+    case SeekerType::CCD_Tele:
+        az_limit = 1.33;
+        el_limit = 0.75;
+        break;
+    }
+
+    az_tracker.setAngleMode(AngleMode::Clamp);
+    az_tracker.setClampRange(-az_limit, az_limit);
+
+    el_tracker.setAngleMode(AngleMode::Clamp);
+    el_tracker.setClampRange(-el_limit, el_limit);
+}
+
+void ABTrackManager::Init(double az0, double el0, qint64 timestampMs)
+{
+    az_tracker.init(az0, timestampMs);
+    el_tracker.init(el0, timestampMs);
+    sys_time = timestampMs;
+}
+
+void ABTrackManager::FeedData(qint64 t, double az_meas, double el_meas)
+{
+    sys_time = t;
+
+    // 方位轴：Predict + Correct
+    az_tracker.update(true, az_meas, t);
+
+    // 俯仰轴：Predict + Correct
+    el_tracker.update(true, el_meas, t);
+}
+
+sendExGuideData ABTrackManager::GenAxisPacket(bool is_az, qint64 packetTime)
+{
+    sendExGuideData pkt;
+    pkt.time = static_cast<uint32_t>(packetTime);
+
+    AlphaBetaTracker& tracker = is_az ? az_tracker : el_tracker;
+
+    // 4个点：t+0.25, t+0.5, t+0.75, t+1.0 秒预测
+    pkt.angle1 = tracker.predict(0.25);
+    pkt.angle2 = tracker.predict(0.50);
+    pkt.angle3 = tracker.predict(0.75);
+    pkt.angle4 = tracker.predict(1.00);
+
+    return pkt;
 }
 

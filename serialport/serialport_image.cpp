@@ -1,10 +1,16 @@
 #include "serialport_image.h"
 #include <QDebug>
 #include <QString>
+#include <QThread>
 #include <QTimer>
 // ─────────────────────────────────────────────
 // ImageData
 // ─────────────────────────────────────────────
+#define ExguideMode 0
+#define ExguideSrcImg 3
+#define Exguide_5ms 6
+#define Exguide_1s 7
+#define Maxsendcount 600 //每10分钟进行一次时间同步
 
 uint16_t SerialPortImage::crc16_table[256] = {0};
 
@@ -453,6 +459,8 @@ SerialPortImage::SerialPortImage(QObject *parent)
 
 SerialPortImage::~SerialPortImage() {
     if (m_exGuideTimer) {
+        if (QThread::currentThread() != m_exGuideTimer->thread())
+            m_exGuideTimer->moveToThread(QThread::currentThread());
         m_exGuideTimer->stop();
         delete m_exGuideTimer;
         m_exGuideTimer = nullptr;
@@ -477,12 +485,13 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     frame.crc16 = crc;
     auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
 
-    // SerialPort::send(data); 
     //引入定时器，每20ms发送一次
     int sendCount = 0;
     static quint16 num=0;
     
     timer->setInterval(20); // 20ms
+    // 先断开旧连接，避免重复绑定导致 lambda 被多次触发
+    disconnect(timer, &QTimer::timeout, this, nullptr);
     // 连接定时器的超时信号
     connect(timer, &PreciseTimer::timeout, this, [=]() mutable {
         // 发送数据
@@ -525,38 +534,79 @@ void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
 
 
 void SerialPortImage::ExmodeChanged(int mode)
-{
+{   
+    //1:外引导  2：程控模式 3：遥控模式  //还需要判断外引导源  //判断跟踪模式
     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
-    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每1秒或5ms发送一次跟踪数据信息
     //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
-    exindex = mode;
-    //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
-    //每3秒发送一次数据
-    // QDateTime current = QDateTime::currentDateTime();
-    // QTime time = current.time();
-    // int value = time.minute() * 60 + time.second();
-    if (exindex == 1)
+    if(mode < 3)
+    exindex = mode;  //模式索引赋值
+    if(mode > 2 && mode < 6)
+    exsrcindex = mode;  //外引导源索引赋值 索引分别为3，4，5
+    if(mode >5)
+    exguidesetting = mode; //外引导发送时间间隔选择  索引为6，7
+
+    if (exindex == ExguideMode) //判断是否为外引导模式
     {
-        // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
-        if (!m_exGuideTimer) {
-            m_exGuideTimer = new PreciseTimer(this);
-            connect(m_exGuideTimer, &PreciseTimer::timeout, this, [this]() {
-                // 用当前导引头反馈角度重新初始化Kalman滤波器
-                m_kalman.Init(m_azimuth, m_pitch);
-                // 生成方位轴和俯仰轴的3s预测数据包
-                AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
-                AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
-                // 发送时间同步指令（0时刻）
-                // emit reqTimesync();
-                // 发送Kalman预测的目标角度给转台串口线程
-                // emit reqExsend(m_tacpkt1, m_tacpkt2);
-            });
+        // 图像导引头被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
+        if(exsrcindex == ExguideSrcImg )
+        {
+            // 只有时间间隔设置改变时才重新绑定
+            if(m_lastexguidesetting != exguidesetting)
+            {
+                // 先解绑旧连接并停止定时器
+                if(m_lastexguidesetting > 0)
+                {
+                    m_exGuideTimer->stop();
+                    disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                    //清空发送计数
+                    m_sendCount_1s = 0;
+                }
+                // 延迟创建定时器
+                if (!m_exGuideTimer) {
+                    m_exGuideTimer = new QTimer(this);
+                    m_exGuideTimer->setTimerType(Qt::PreciseTimer);
+                }
+                // 判断跟踪模式（5ms模式或者1秒跟踪模式）
+                if(exguidesetting == Exguide_1s)
+                {
+                    connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        // 每发送完固定次数后，重新发送时间同步信号并重新计时
+                        if(m_sendCount_1s == 0)
+                        {
+                            emit reqTimesync(0);
+                        }
+                        // 生成预测数据包：4点外推（0.25s, 0.5s, 0.75s, 1.0s），time = 发包计数
+                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(true,  m_sendCount_1s + 1);  // 方位轴
+                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s +1);  // 俯仰轴
+                        // 发送预测角度给转台
+                        reqExsend_1s(az_pkt, el_pkt);
+                        if(++m_sendCount_1s >= Maxsendcount) {  // 1小时重同步
+                            m_sendCount_1s = 0;
+                        }
+                    });
+                    m_exGuideTimer->start(1000); // 每1s触发一次
+                    m_lastexguidesetting = Exguide_1s;
+                }
+                else if(exguidesetting == Exguide_5ms)
+                {
+                    connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        // 5ms模式只发送方位角与俯仰角即可
+                        reqExsend_5ms(m_azimuth,m_pitch);    
+                    });
+                    m_exGuideTimer->start(5); // 每5ms触发一次
+                    m_lastexguidesetting = Exguide_5ms;
+                }
+            } 
         }
-        m_exGuideTimer->start(3000); // 每3秒触发一次
+        else
+        {
+            m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+        }
     }
     else
     {
-        // 非图像导引头外引导源：停止定时器
+        // 非外引导模式：停止定时器
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }
@@ -606,10 +656,12 @@ void SerialPortImage::parseData(const QByteArray &rawData)
     m_azimuth = pFrame->yaw_frame_angle * 0.002;
     m_pitch = pFrame->pitch_frame_angle * 0.002;
     emit imageFrameReceived(rawData);
-    //判断图像导引头是否被选中为外引导源，是的话更新数据
-    if(exindex == 1)
+
+    //判断图像导引头是否被选中为外引导源，是的话更新数据（1s跟踪模式）
+    if(exindex == 0)
     {
-        m_kalman.FeedSeekerData(0,m_azimuth,m_pitch);
+        m_filterTime += 20;
+        m_abMgr.FeedData(m_filterTime, m_azimuth, m_pitch);
     }
 }
 
@@ -635,3 +687,42 @@ uint16_t SerialPortImage::crc16_ccitt_fast(const uint8_t *data, size_t len, uint
     }
     return crc;
 }
+
+// void SerialPortImage::ExmodeChanged(int mode)
+// {
+//     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
+//     //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每3S发送一次跟踪数据信息
+//     //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
+//     exindex = mode;
+//     //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
+//     //每3秒发送一次数据
+//     // QDateTime current = QDateTime::currentDateTime();
+//     // QTime time = current.time();
+//     // int value = time.minute() * 60 + time.second();
+//     if (exindex == 1)
+//     {
+//         // 图像导引头被选为外引导源：启动定时器，每3秒发送一次跟踪数据
+//         if (!m_exGuideTimer) {
+//             m_exGuideTimer = new QTimer(this);
+//             connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+//                 // 用当前导引头反馈角度重新初始化Kalman滤波器
+//                 m_kalman.Init(m_azimuth, m_pitch);
+//                 // 生成方位轴和俯仰轴的3s预测数据包
+//                 AxisTrackPacket m_tacpkt1 = m_kalman.GenAxisPacket(true);   // 方位轴
+//                 AxisTrackPacket m_tacpkt2 = m_kalman.GenAxisPacket(false);  // 俯仰轴
+//                 // 发送时间同步指令（0时刻）
+//                 // emit reqTimesync();
+//                 // 发送Kalman预测的目标角度给转台串口线程
+//                 // emit reqExsend_1s(m_tacpkt1, m_tacpkt2);
+//             });
+//         }
+//         m_exGuideTimer->start(1000); // 每1秒触发一次
+//     }
+//     else
+//     {
+//         // 非图像导引头外引导源：停止定时器
+//         if (m_exGuideTimer) {
+//             m_exGuideTimer->stop();
+//         }
+//     }
+// }

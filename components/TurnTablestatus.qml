@@ -97,7 +97,7 @@ Rectangle {
             id: baudComboBox
             Layout.fillWidth: true
             Layout.preferredHeight: 32
-            model: ["115200"]
+            model: ["230400"]
         }
         //扫描串口按钮
         CusButton_Blue {
