@@ -408,42 +408,42 @@ void SerialPortTurntable::sendProgramMode(programSend_frame frame)
         if(frame.index==0){
             PositionModeCmd1 cmd1;
             cmd1.axis = 1; // 内框
-            cmd1.acceleration = 1000; // 示例加速度
+            cmd1.acceleration = TURNTABLE_DEFAULT_ACCELERATION; // 示例加速度
             cmd1.velocity = (frame.current_inner_angle-frame.inner_endangle)/frame.runtime; // 使用当前角度作为速度示例
             cmd1.anglePos = frame.inner_endangle; // 使用结束角度作为目标位置示例
             sendPositionCmd(cmd1);
 
             PositionModeCmd1 cmd2;
             cmd2.axis = 2; // 中框
-            cmd2.acceleration = 1000;
+            cmd2.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
             cmd2.velocity = (frame.current_middle_angle-frame.middle_endangle)/frame.runtime;
             cmd2.anglePos = frame.middle_endangle;
             sendPositionCmd(cmd2);
 
             PositionModeCmd1 cmd3;
             cmd3.axis = 3; // 外框
-            cmd3.acceleration = 1000;
+            cmd3.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
             cmd3.velocity = (frame.current_outter_angle-frame.outter_endangle)/frame.runtime;
             cmd3.anglePos = frame.outter_endangle;
             sendPositionCmd(cmd3);
         }else if(frame.index==1){
             PositionModeCmd1 cmd1;
             cmd1.axis = 1; // 内框
-            cmd1.acceleration = 1000; // 示例加速度
+            cmd1.acceleration = TURNTABLE_DEFAULT_ACCELERATION; // 示例加速度
             cmd1.velocity = (frame.current_inner_angle-frame.inner_endangle)/frame.runtime; // 使用当前角度作为速度示例
             cmd1.anglePos = frame.inner_endangle; // 使用结束角度作为目标位置示例
             sendPositionCmd(cmd1);
         }else if(frame.index==2){
             PositionModeCmd1 cmd2;
             cmd2.axis = 2; // 中框
-            cmd2.acceleration = 1000;
+            cmd2.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
             cmd2.velocity = (frame.current_middle_angle-frame.middle_endangle)/frame.runtime;
             cmd2.anglePos = frame.middle_endangle;
             sendPositionCmd(cmd2);
         }else if(frame.index==3){
             PositionModeCmd1 cmd3;
             cmd3.axis = 3; // 外框
-            cmd3.acceleration = 1000;
+            cmd3.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
             cmd3.velocity = (frame.current_outter_angle-frame.outter_endangle)/frame.runtime;
             cmd3.anglePos = frame.outter_endangle;
             sendPositionCmd(cmd3);
@@ -462,7 +462,7 @@ void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float
         if(buttonR2 >0.9 && buttonL2 >0.9){
             PositionModeCmd1 cmd;
             cmd.axis = 1; // 内框
-            cmd.acceleration = 1000;
+            cmd.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
             if(buttonA)
             {
                 if(Acount>=1)
@@ -483,7 +483,7 @@ void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float
         }else if(buttonL2!=0){
             PositionModeCmd1 cmd;
             cmd.axis = 3; // 外框框
-            cmd.acceleration = 1000; // 示例加速度
+            cmd.acceleration = TURNTABLE_DEFAULT_ACCELERATION; // 示例加速度
             //判断步进还是步减，每次变动角度为3度
             if(buttonA)
             {   
@@ -506,7 +506,7 @@ void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float
         }else if(buttonR2!=0){
             PositionModeCmd1 cmd;
             cmd.axis = 2; // 中框
-            cmd.acceleration = 1000;
+            cmd.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
             if(buttonA)
             {   
                 if(Acount>=1)
@@ -534,13 +534,13 @@ void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float
         SpeedModeCmd1 middlecmd;
         SpeedModeCmd1 outtercmd;
         innercmd.axis = 1;
-        innercmd.acceleration = 1000;
+        innercmd.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
         innercmd.velocity = axisRightX*MAX_SPEED;
         middlecmd.axis = 2;
-        middlecmd.acceleration = 1000;
+        middlecmd.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
         middlecmd.velocity = axisLeftY*MAX_SPEED;
         outtercmd.axis= 3;
-        outtercmd.acceleration = 1000;
+        outtercmd.acceleration = TURNTABLE_DEFAULT_ACCELERATION;
         outtercmd.velocity = axisLeftX*MAX_SPEED;
         sendVecCmd(innercmd);
         sendVecCmd(middlecmd);

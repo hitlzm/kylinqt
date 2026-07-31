@@ -72,6 +72,7 @@ else()
       ModeControl/ModeController.h
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
+      kalman/AlphaBetaTracker.cpp
       opencv/pixelkalmantracker.cpp
     #   opencv/cvconvert.h
       ${TaoQuickRes}

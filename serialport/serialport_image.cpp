@@ -10,7 +10,7 @@
 #define ExguideSrcImg 3
 #define Exguide_5ms 6
 #define Exguide_1s 7
-#define Maxsendcount 10000
+#define Maxsendcount 600 //每10分钟进行一次时间同步
 
 uint16_t SerialPortImage::crc16_table[256] = {0};
 
@@ -542,9 +542,9 @@ void SerialPortImage::ExmodeChanged(int mode)
     if(mode < 3)
     exindex = mode;  //模式索引赋值
     if(mode > 2 && mode < 6)
-    exsrcindex = mode;  //外引导源索引赋值
+    exsrcindex = mode;  //外引导源索引赋值 索引分别为3，4，5
     if(mode >5)
-    exguidesetting = mode; //外引导发送时间间隔选择
+    exguidesetting = mode; //外引导发送时间间隔选择  索引为6，7
 
     if (exindex == ExguideMode) //判断是否为外引导模式
     {
@@ -559,74 +559,43 @@ void SerialPortImage::ExmodeChanged(int mode)
                 {
                     m_exGuideTimer->stop();
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
-                    m_sendCount_5ms = 0;
+                    //清空发送计数
                     m_sendCount_1s = 0;
                 }
                 // 延迟创建定时器
                 if (!m_exGuideTimer) {
                     m_exGuideTimer = new QTimer(this);
+                    m_exGuideTimer->setTimerType(Qt::PreciseTimer);
                 }
                 // 判断跟踪模式（5ms模式或者1秒跟踪模式）
-                if(exguidesetting == Exguide_5ms)
+                if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
-                        // 发送时间同步指令（0时刻）
-                        //每发送完固定次数后，重新发送时间同步信号，并重新计时
-                        if(m_sendCount_5ms == 0) 
+                        // 每发送完固定次数后，重新发送时间同步信号并重新计时
+                        if(m_sendCount_1s == 0)
                         {
-                            emit reqTimesync(); 
-                            //记录一下起始时间
-                            m_dateTime = QDateTime::currentDateTime();
-                            m_startTime = m_dateTime.time();
-                            m_startvalue = (m_startTime.minute() * 60 + m_startTime.second()) * 100 + m_startTime.msec() / 20;
-                        } 
-                        //计算时间数据
-                        //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
-                        //计算理论时间与实际时间的差值，如果差值大于20ms，则重新进行时间同步并发送数据，保证每次数据都落在转台的5ms周期内
-                        int throry_time = m_startvalue + (m_sendCount_5ms++) * 2;
-                        //最后两位最大为49
-                        int m_throry_time = (throry_time/50) * 100 +  (throry_time%50);
-                        QTime realTime = QTime::currentTime();
-                        // 理论时间和真实时间都转为毫秒，计算差值
-                        int theory_ms = (m_throry_time / 100) * 1000 + (m_throry_time % 100) * 20;
-                        int real_ms   = (realTime.minute() * 60 + realTime.second()) * 1000 + realTime.msec();
-                        int diff_ms   = qAbs(theory_ms - real_ms);
-                        if(diff_ms < 20)  //时间差小于20ms说明实际时间在5ms周期的后半段
-                        {   //重新进行时间同步
-                            emit reqTimesync(); 
-                            //记录一下起始时间
-                            m_dateTime = QDateTime::currentDateTime();
-                            m_startTime = m_dateTime.time();
-                            m_startvalue = (m_startTime.minute() * 60 + m_startTime.second()) * 100 + m_startTime.msec() / 20;
-                            m_sendCount_5ms =0;
+                            emit reqTimesync(0);
                         }
-                        //发送角度数据
-                        reqExsend_5ms(m_throry_time,m_azimuth,m_pitch);
-                        // if(++m_sendCount_5ms == Maxsendcount)  m_sendCount_5ms=0;  //发送Maxsendcount次数后，重新进行时间同步
+                        // 生成预测数据包：4点外推（0.25s, 0.5s, 0.75s, 1.0s），time = 发包计数
+                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(true,  m_sendCount_1s + 1);  // 方位轴
+                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s +1);  // 俯仰轴
+                        // 发送预测角度给转台
+                        reqExsend_1s(az_pkt, el_pkt);
+                        if(++m_sendCount_1s >= Maxsendcount) {  // 1小时重同步
+                            m_sendCount_1s = 0;
+                        }
+                    });
+                    m_exGuideTimer->start(1000); // 每1s触发一次
+                    m_lastexguidesetting = Exguide_1s;
+                }
+                else if(exguidesetting == Exguide_5ms)
+                {
+                    connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        // 5ms模式只发送方位角与俯仰角即可
+                        reqExsend_5ms(m_azimuth,m_pitch);    
                     });
                     m_exGuideTimer->start(5); // 每5ms触发一次
                     m_lastexguidesetting = Exguide_5ms;
-                }
-                else if(exguidesetting == Exguide_1s)
-                {
-                    connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
-                        // 发送时间同步指令（0时刻）
-                        if(m_sendCount_1s == 0)  
-                        {
-                            emit reqTimesync();
-                            m_dateTime = QDateTime::currentDateTime();
-                            m_startTime = m_dateTime.time();
-                        }
-                        //以下操作可把一小时转化为0-3599的数值，给发送的数据提供时间戳
-                        int value = m_startTime.minute() * 60 + m_startTime.second();
-                        //进行数据预测
-
-                        //发送角度数据
-                        // reqExsend_1s(value,m_azimuth,m_pitch);
-                        if(m_sendCount_1s++ == Maxsendcount)  m_sendCount_1s=0;
-                    });
-                    m_exGuideTimer->start(1000); // 每1秒触发一次
-                    m_lastexguidesetting = Exguide_1s;
                 }
             } 
         }
@@ -688,10 +657,11 @@ void SerialPortImage::parseData(const QByteArray &rawData)
     m_pitch = pFrame->pitch_frame_angle * 0.002;
     emit imageFrameReceived(rawData);
 
-    //判断图像导引头是否被选中为外引导源，是的话更新数据。（3s跟踪模式）
-    if(exindex == 1)
+    //判断图像导引头是否被选中为外引导源，是的话更新数据（1s跟踪模式）
+    if(exindex == 0)
     {
-        m_kalman.FeedSeekerData(0,m_azimuth,m_pitch);
+        m_filterTime += 20;
+        m_abMgr.FeedData(m_filterTime, m_azimuth, m_pitch);
     }
 }
 

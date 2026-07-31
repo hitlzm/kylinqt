@@ -141,6 +141,30 @@ kylinqt_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt_autogen.dir\build.make CMakeFiles/kylinqt_autogen.dir/build
 .PHONY : kylinqt_autogen/fast
 
+kalman/AlphaBetaTracker.obj: kalman/AlphaBetaTracker.cpp.obj
+.PHONY : kalman/AlphaBetaTracker.obj
+
+# target to build an object file
+kalman/AlphaBetaTracker.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj
+.PHONY : kalman/AlphaBetaTracker.cpp.obj
+
+kalman/AlphaBetaTracker.i: kalman/AlphaBetaTracker.cpp.i
+.PHONY : kalman/AlphaBetaTracker.i
+
+# target to preprocess a source file
+kalman/AlphaBetaTracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.i
+.PHONY : kalman/AlphaBetaTracker.cpp.i
+
+kalman/AlphaBetaTracker.s: kalman/AlphaBetaTracker.cpp.s
+.PHONY : kalman/AlphaBetaTracker.s
+
+# target to generate assembly for a file
+kalman/AlphaBetaTracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.s
+.PHONY : kalman/AlphaBetaTracker.cpp.s
+
 kalman/seekKalman.obj: kalman/seekKalman.cpp.obj
 .PHONY : kalman/seekKalman.obj
 
@@ -463,6 +487,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... kylinqt_autogen
 	@echo ... kylinqt
+	@echo ... kalman/AlphaBetaTracker.obj
+	@echo ... kalman/AlphaBetaTracker.i
+	@echo ... kalman/AlphaBetaTracker.s
 	@echo ... kalman/seekKalman.obj
 	@echo ... kalman/seekKalman.i
 	@echo ... kalman/seekKalman.s

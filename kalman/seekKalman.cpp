@@ -177,15 +177,15 @@ void SeekerTrackManager::FeedSeekerData(double t, double az_meas, double el_meas
     el_filter.Update(el_meas);
 }
 
-AxisTrackPacket SeekerTrackManager::GenAxisPacket(bool is_az)
+sendExGuideData SeekerTrackManager::GenAxisPacket(bool is_az)
 {
-    AxisTrackPacket pkt;
-    pkt.time_start = sys_time;
+    sendExGuideData pkt;
+    pkt.time = sys_time;
     CSKalmanFilter& filt = is_az ? az_filter : el_filter;
     // 4个点：t0, t0+1, t0+2, t0+3
-    pkt.angle[0] = filt.Extrapolate(0.0);
-    pkt.angle[1] = filt.Extrapolate(1.0);
-    pkt.angle[2] = filt.Extrapolate(2.0);
-    pkt.angle[3] = filt.Extrapolate(3.0);
+    pkt.angle1 = filt.Extrapolate(0.0);
+    pkt.angle2 = filt.Extrapolate(1.0);
+    pkt.angle3 = filt.Extrapolate(2.0);
+    pkt.angle4 = filt.Extrapolate(3.0);
     return pkt;
 }

@@ -503,14 +503,14 @@ void SerialPortTurntableHex::sendTimeSetCmd(int seconds)
 
 // ════════════════════════ 时间同步 (对外接口) ════════════════════════
 
-void SerialPortTurntableHex::sendTimesync()
+void SerialPortTurntableHex::sendTimesync(int seconds)
 {
-    // 时间同步 = 时间设置, 使用时当前秒值
-    // 获取当前半天内的秒数 (0-14399, 即4小时)
-    QTime now = QTime::currentTime();
-    int seconds = now.hour() * 3600 + now.minute() * 60 + now.second();
-    // 限制在半天范围内
-    seconds = seconds % 14400;
+    // // 时间同步 = 时间设置, 使用时当前秒值
+    // // 获取当前半天内的秒数 (0-14399, 即4小时)
+    // QTime now = QTime::currentTime();
+    // int seconds = now.hour() * 3600 + now.minute() * 60 + now.second();
+    // // 限制在半天范围内
+    // seconds = seconds % 14400;
     sendTimeSetCmd(seconds);
 }
 
@@ -630,11 +630,10 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
 }
 
 
-void SerialPortTurntableHex::sendTrackMode_5ms(int time, int yawangle, int pitchangle)
+void SerialPortTurntableHex::sendTrackMode_5ms(int yawangle, int pitchangle)
 {
     // 5ms跟踪模式 (联合指令, 一帧包含三轴数据)
     TrackingSendCmd2Hex m_cmd;
-    m_cmd.trackTime = time;
     m_cmd.angle1 = m_current_inner_angle;                    // 内框保持
     m_cmd.angle2 = m_current_middle_angle + pitchangle;      // 中框 + 俯仰角
     m_cmd.angle3 = m_current_outter_angle + yawangle;        // 外框 + 方位角

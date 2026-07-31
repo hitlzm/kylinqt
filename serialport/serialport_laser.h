@@ -4,7 +4,7 @@
 #include "serialport.h"
 #include <QDateTime>
 #include "./circularbuffer.h"
-#include "Kalman/seekKalman.h"
+#include "Kalman/AlphaBetaTracker.h"
 
 struct laser_send_frame;
 struct laser_recv_frame;
@@ -286,7 +286,7 @@ signals:
     void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
     //两类导引头的实现相同
-    void reqTimesync();
+    void reqTimesync(int seconds = 0);
     void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
     void reqExsend_5ms(int time ,int angle1 ,int angle2 );
 
@@ -310,11 +310,18 @@ private:
     //激光导引头数据周期为10ms，3s接收300个数据，环形缓冲区大小设置为360
     CircularBuffer<laserExGuideData> m_circularbuf;
 
-    SeekerTrackManager m_kalman;
+    // Alpha-Beta 跟踪管理器：每10ms更新滤波，1s定时器外推预测角度
+    ABTrackManager m_abMgr{SeekerType::Laser};
+    qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每10ms+10
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;
-    int exindex = 0;
-    QTimer* m_exGuideTimer = nullptr;   // 外引导3s定时发送
+
+    int exindex = -1;               // 外引导模式标志
+    int exsrcindex = -1;            // 外引导源标志
+    int exguidesetting = -1;        // 跟踪模式时间间隔选择
+    int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
+    int m_sendCount_1s = 0;
+    QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
 };
 
 

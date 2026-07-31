@@ -4,7 +4,7 @@
 #include "serialport.h"
 #include "./circularbuffer.h"
 #include <QDateTime>
-#include "Kalman/seekKalman.h"
+#include "Kalman/AlphaBetaTracker.h"
 
 //默认视频拉流地址：rtsp://192.168.1.100:554/stream
 
@@ -509,9 +509,9 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void imageFrameReceived(const QByteArray &rawData);
-    void reqTimesync();
+    void reqTimesync(int seconds);
     void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
-    void reqExsend_5ms(int time ,int angle1 ,int angle2 );
+    void reqExsend_5ms(int angle1 ,int angle2 );
 
     void reqSendDeviationPixel(int num ,int x , int y);
 public slots:
@@ -546,8 +546,9 @@ private:
     static uint16_t crc16_table[256];
     //图像导引头每20ms接收一次数据，1s共50组数据，预留200个位置
     CircularBuffer<imageExGuideData> m_circularbuf;
-    //不再存储环形缓冲区，利用卡尔曼滤波器来估计目标位置,每三秒重新INIT一次，如果外引导源是图像导引头,利用前三秒数据给转台发送下一个三秒的跟踪角度
-    SeekerTrackManager m_kalman;
+    // Alpha-Beta 跟踪管理器：每20ms更新滤波，1s定时器外推预测角度
+    ABTrackManager m_abMgr{SeekerType::Image};
+    qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每20ms+20
 
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;    //存储图像导引头的方位角与俯仰角
@@ -556,7 +557,7 @@ private:
     int exsrcindex = -1;      //外引导源标志
     int exguidesetting = -1;  //跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  //记录上一次的时间间隔
-    int m_sendCount_5ms = 0;
+    // int m_sendCount_5ms = 0;
     int m_sendCount_1s = 0;
     QTime m_startTime = {};
     QDateTime m_dateTime = {};

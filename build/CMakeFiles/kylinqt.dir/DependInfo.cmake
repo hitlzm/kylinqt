@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "E:/QTproject/kylinqt/kalman/AlphaBetaTracker.cpp" "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj.d"
   "E:/QTproject/kylinqt/kalman/seekKalman.cpp" "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj.d"

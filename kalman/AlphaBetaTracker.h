@@ -218,4 +218,47 @@ private:
     double m_maxAngle;
 };
 
+#include "../serialport/serialport.h"  // sendExGuideData
+
+// Alpha-Beta 跟踪管理器：同时管理方位+俯仰双轴，生成1s下发数据包
+
+// 导引头类型（决定视场角限制范围）
+enum class SeekerType
+{
+    Laser,      // 激光导引头：方位 ±20°,  俯仰 ±20°
+    Image,      // 图像导引头：方位 ±18°,  俯仰 ±18°
+    CCD_Wide,   // CCD 广角模式：方位 ±27°,  俯仰 ±16°
+    CCD_Tele    // CCD 远焦模式：方位 ±1.33°, 俯仰 ±0.75°
+};
+
+class ABTrackManager
+{
+private:
+    AlphaBetaTracker az_tracker;  // 方位轴跟踪器
+    AlphaBetaTracker el_tracker;  // 俯仰轴跟踪器
+    qint64 sys_time;              // 系统全局时间戳 (ms)
+
+public:
+    explicit ABTrackManager(SeekerType type = SeekerType::Image);
+
+    // 初始化双轴初始角度和时间戳
+    void Init(double az0, double el0, qint64 timestampMs);
+
+    // 每次采样周期调用：接收实测角度并执行 Predict + Correct
+    void FeedData(qint64 t, double az_meas, double el_meas);
+
+    // 生成单轴1s跟踪数据包：4个预测角度，间隔0.25s；packetTime 直接写入 time
+    sendExGuideData GenAxisPacket(bool is_az, qint64 packetTime = 0);
+
+    // 参数访问（允许外部读写跟踪器参数）
+    AlphaBetaTracker& AzTracker() { return az_tracker; }
+    const AlphaBetaTracker& AzTracker() const { return az_tracker; }
+    AlphaBetaTracker& ElTracker() { return el_tracker; }
+    const AlphaBetaTracker& ElTracker() const { return el_tracker; }
+
+    // 直接读写 sys_time（用于每轮预测时重置数据包时间戳）
+    void SetSysTime(qint64 t) { sys_time = t; }
+    qint64 SysTime() const { return sys_time; }
+};
+
 #endif // ALPHABETATRACKER_H

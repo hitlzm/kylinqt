@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj"
+  "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj"
   "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"

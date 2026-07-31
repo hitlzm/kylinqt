@@ -12,6 +12,9 @@ brief:1.转台串口类负责实时接收转台状态反馈信息
 //发送信号为大端序（高位在低地址）
 #include "serialport.h"
 
+// 默认加速度，单位: 0.01°/s²（1000 = 10.00°/s²）
+#define TURNTABLE_DEFAULT_ACCELERATION  1000
+
 //转台信息反馈结构体
 typedef struct StatusFeedback {
     int m_time;

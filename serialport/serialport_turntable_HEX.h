@@ -104,7 +104,6 @@ typedef struct {
 
 // 跟踪模式2命令（应用层, 5ms周期 = 200Hz）
 typedef struct {
-    int     trackTime;      // 时间(仅用于记录, 协议不使用)
     float   angle1;         // 内框角度 (度)
     float   angle2;         // 中框角度 (度)
     float   angle3;         // 外框角度 (度)
@@ -328,10 +327,10 @@ public slots:
 
     // ── 外引导模式 ──
     void sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);
-    void sendTrackMode_5ms(int time, int yawangle, int pitchangle);
+    void sendTrackMode_5ms(int yawangle, int pitchangle);
 
     // ── 时间同步 ──
-    void sendTimesync();
+    void sendTimesync(int seconds);
 
     // ── 模式切换 ──
     void ProgramModeChanged(int mode);

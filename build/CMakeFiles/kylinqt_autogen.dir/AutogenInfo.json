@@ -117,6 +117,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/kalman/AlphaBetaTracker.h",
+			"MU",
+			"RHMJYO6DXZ/moc_AlphaBetaTracker.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/kalman/seekKalman.h",
 			"MU",
 			"RHMJYO6DXZ/moc_seekKalman.cpp",
@@ -253,6 +259,7 @@
 	"SETTINGS_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "E:/QTproject/kylinqt/kalman/AlphaBetaTracker.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/opencv/pixelkalmantracker.cpp", "MU", null ],
