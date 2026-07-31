@@ -36,7 +36,6 @@ Item{
             if (checked) {
                 root.myindex = 0
                 modeController.setCurrentMode(0)
-                modeController.modeChanged(0)
             }
         }
     }
@@ -51,7 +50,6 @@ Item{
             if (checked) {
                 root.myindex = 1
                 modeController.setCurrentMode(1)
-                modeController.modeChanged(1)
             }
         }
     }
@@ -66,7 +64,6 @@ Item{
             if (checked) {
                 root.myindex = 2
                 modeController.setCurrentMode(2)
-                modeController.modeChanged(2)
             }
         }
     }

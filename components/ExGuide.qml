@@ -48,6 +48,9 @@ Item {
             text: "激光导引头"
             font.pixelSize: 16
             ButtonGroup.group: guideSourceGroup
+            onCheckedChanged: {
+                if (checked) modeController.exguideSrcChanged(4)
+            }
         }
         CusRadioButton {
             id: guideImage
@@ -55,6 +58,9 @@ Item {
             text: "图像导引头"
             font.pixelSize: 16
             ButtonGroup.group: guideSourceGroup
+            onCheckedChanged: {
+                if (checked) modeController.exguideSrcChanged(3)
+            }
         }
         CusRadioButton {
             id: guideCCD
@@ -62,11 +68,52 @@ Item {
             text: "CCD相机"
             font.pixelSize: 16
             ButtonGroup.group: guideSourceGroup
+            onCheckedChanged: {
+                if (checked) modeController.exguideSrcChanged(5)
+            }
+        }
+    }
+
+    // 外引导跟踪周期
+    Row {
+        id: guidePeriodRow
+        anchors.top: guideSourceRow.bottom
+        anchors.topMargin: 4
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 12
+
+        Text {
+            text: "外引导跟踪周期:"
+            font.pixelSize: 17
+            font.bold: true
+            color: black
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        ButtonGroup { id: guidePeriodGroup }
+        CusRadioButton {
+            id: period250ms
+            width: 120
+            text: "1s"
+            font.pixelSize: 16
+            ButtonGroup.group: guidePeriodGroup
+            onCheckedChanged: {
+                if (checked) modeController.exguideSettingChanged(7)
+            }
+        }
+        CusRadioButton {
+            id: period5ms
+            width: 120
+            text: "5ms"
+            font.pixelSize: 16
+            ButtonGroup.group: guidePeriodGroup
+            onCheckedChanged: {
+                if (checked) modeController.exguideSettingChanged(6)
+            }
         }
     }
 
     Rectangle {
-        anchors.top: guideSourceRow.bottom
+        anchors.top: guidePeriodRow.bottom
         anchors.topMargin: 4
         anchors.left: parent.left
         anchors.right: parent.right

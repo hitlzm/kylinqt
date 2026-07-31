@@ -206,11 +206,20 @@ int main(int argc, char *argv[])
 
 
     //模式控制器的信号连接
+    // 模式控制器 → 各串口线程（运行模式 / 外引导源 / 跟踪周期 变更通知）
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, turntablePort, &SerialPortTurntableHex::ProgramModeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::modeChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
+
+    QObject::connect(&m_modeController, &ModeController::exguideSrcChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::exguideSrcChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::exguideSrcChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
+
+    QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
 
     //手柄信号连接
     QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntableHex::sendHandleMode, Qt::QueuedConnection);

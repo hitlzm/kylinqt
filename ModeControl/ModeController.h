@@ -31,7 +31,7 @@ public slots:
     void setCurrentMode(int mode) {
         if (m_currentMode != mode) {
             m_currentMode = mode;
-            emit currentModeChanged();
+            emit modeChanged(mode);
         }
     }
 
