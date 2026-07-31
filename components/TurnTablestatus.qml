@@ -7,7 +7,7 @@ import "./"
 Rectangle {
     id: root
     property int mywidth: 600
-    property int myheight: 450
+    property int myheight: 480
     width: mywidth
     height: myheight
     color: '#e9f0f9'
@@ -143,13 +143,14 @@ Rectangle {
         id: stack
         currentIndex: stacklayoutindex
         width: root.width - 20
-        height: 280
         anchors.top: serialctrlrow.bottom
         anchors.topMargin: 10
-        anchors.left:root.left
+        anchors.left: root.left
         anchors.leftMargin: 10
         anchors.right: root.right
-        anchors.rightMargin: 10 
+        anchors.rightMargin: 10
+        anchors.bottom: root.bottom
+        anchors.bottomMargin: 10
         Repeater {
             model: ["ExGuide.qml", "ProgramMode.qml", "Remotectlmode.qml"]
             Loader {

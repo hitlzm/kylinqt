@@ -78,8 +78,13 @@ TurnTablestatus {
     anchors.top: modeselect.bottom
     anchors.topMargin: 5
     anchors.left: dyt.right
-    anchors.leftMargin: 5   
+    anchors.leftMargin: 5
     anchors.right: myvideo.right
+    // 高度与左侧 ImageRecvArea 下边沿对齐
+    // myvideo(430) + margin(5) + modeselect(50) + margin(5) = 490
+    // 左侧内容下边沿 = bar.height + ImageSendArea(610) + ImageRecvArea(310) = bar.height + 920
+    // turntablestatus 高度 = bar.height + 920 - 490 = bar.height + 430
+    myheight: bar.height + 610 + 310 - 430 - 5 - 50 - 5 
     stacklayoutindex: modeselect.myindex
 }
 
