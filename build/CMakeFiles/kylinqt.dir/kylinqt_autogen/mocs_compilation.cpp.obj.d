@@ -277,13 +277,13 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_CCD.cpp \
  E:/QTproject/kylinqt/serialport/serialport_CCD.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_image.cpp \
- E:/QTproject/kylinqt/serialport/serialport_image.h \
- E:/QTproject/kylinqt/serialport/circularbuffer.h \
  E:/QTproject/kylinqt/Kalman/AlphaBetaTracker.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
  E:/QTproject/kylinqt/serialport/serialport.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_image.cpp \
+ E:/QTproject/kylinqt/serialport/serialport_image.h \
+ E:/QTproject/kylinqt/serialport/circularbuffer.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_laser.cpp \
  E:/QTproject/kylinqt/serialport/serialport_laser.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_turntable_HEX.cpp \

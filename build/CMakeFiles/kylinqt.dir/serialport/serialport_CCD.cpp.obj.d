@@ -234,6 +234,10 @@ CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:/QTproject/kylinqt/Kalman/AlphaBetaTracker.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
+ E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \

@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<programSend_frameHex>("programSend_frameHex");
     qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
     qRegisterMetaType<RMCData>("RMCData");
+    qRegisterMetaType<sendExGuideData>("sendExGuideData");
 
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);
@@ -49,8 +50,7 @@ int main(int argc, char *argv[])
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntableHex *turntablePort = new SerialPortTurntableHex;
     SerialPortBD *bdPort = new SerialPortBD;
-    //CCD串口对象留在主线程
-    SerialPortCCD *ccdPort = new SerialPortCCD(&app);
+    SerialPortCCD *ccdPort = new SerialPortCCD;       // 无父对象，将移到子线程
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
     imagePort->m_imageSendData = imageSendData;
     turntablePort->m_turntableDataHex = turntableData;
     turntablePort->m_turntableSendDataHex = turntableSendData;
+    ccdPort->m_ccdData = ccdData;
     //创建手柄对象
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
@@ -166,6 +167,25 @@ int main(int argc, char *argv[])
     QObject::connect(bdPort, &SerialPortBD::portsChanged, bdData, &BDData::setPortList, Qt::QueuedConnection);
     QObject::connect(bdPort, &SerialPortBD::bdFrameReceived, bdData, &BDData::updateFromFrame, Qt::QueuedConnection);
 
+    // ── CCD: 主线程 Data → 工作线程 Worker ──
+    QObject::connect(ccdData, &CCDData::requestOpenPort,  ccdPort, &SerialPortCCD::onOpenPort,  Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::requestClosePort, ccdPort, &SerialPortCCD::onClosePort, Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::requestScanPorts, ccdPort, &SerialPortCCD::onScanPorts, Qt::QueuedConnection);
+    // CCD 指令信号
+    QObject::connect(ccdData, &CCDData::req30XFocus,        ccdPort, &SerialPortCCD::send30XFocus,        Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::req1XFocus,         ccdPort, &SerialPortCCD::send1XFocus,         Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqdigZoomopen,     ccdPort, &SerialPortCCD::senddigZoomopen,     Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqdigZoomclose,    ccdPort, &SerialPortCCD::senddigZoomclose,    Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqBacklightopen,   ccdPort, &SerialPortCCD::sendBacklightopen,   Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqBacklightclose,  ccdPort, &SerialPortCCD::sendBacklightclose,  Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqResolutionchange, ccdPort, &SerialPortCCD::sendResolutionchange, Qt::QueuedConnection);
+
+    // ── CCD: 工作线程 Worker → 主线程 Data ──
+    QObject::connect(ccdPort, &SerialPortCCD::portOpened,   ccdData, &CCDData::setPortOpen, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::portClosed,   ccdData, [ccdData]{ ccdData->setPortOpen(false); }, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::portError,    ccdData, &CCDData::setError,    Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::portsChanged, ccdData, &CCDData::setPortList, Qt::QueuedConnection);
+
 
     //模式控制器的信号连接
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
@@ -190,6 +210,7 @@ int main(int argc, char *argv[])
     //为实现外引导模式进行的信号连接
     QObject::connect(imagePort, &SerialPortImage::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
@@ -198,22 +219,30 @@ int main(int argc, char *argv[])
     QObject::connect(laserPort, &SerialPortLaser::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
 
+    // 目标中心坐标：StreamProcessor → CCD 串口线程（待 StreamProcessor 实例化后启用）
+    // QObject::connect(streamProc, &StreamProcessor::targetCenterChanged,
+    //                  ccdPort,    &SerialPortCCD::recvTargetCenter,
+    //                  Qt::QueuedConnection);
+
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
     QThread *Imagethread = new QThread;
     QThread *Turntablethread = new QThread;
     QThread *Handlethread = new QThread;
     QThread *BDthread = new QThread;
+    QThread *CCDthread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
     bdPort->moveToThread(BDthread);
+    ccdPort->moveToThread(CCDthread);
     _myhandle->moveToThread(Handlethread);
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
     QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntableHex::dowork);
     QObject::connect(BDthread, &QThread::started, bdPort, &SerialPortBD::dowork);
+    QObject::connect(CCDthread, &QThread::started, ccdPort, &SerialPortCCD::dowork);
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
     QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
@@ -226,6 +255,8 @@ int main(int argc, char *argv[])
     QObject::connect(Handlethread,    &QThread::finished, Handlethread,     &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, bdPort,           &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, BDthread,         &QObject::deleteLater);
+    QObject::connect(CCDthread,      &QThread::finished, ccdPort,          &QObject::deleteLater);
+    QObject::connect(CCDthread,      &QThread::finished, CCDthread,        &QObject::deleteLater);
 
 
     Laserthread->start();
@@ -233,6 +264,7 @@ int main(int argc, char *argv[])
     Turntablethread->start();
     Handlethread->start();
     BDthread->start();
+    CCDthread->start();
     
     return app.exec();
 }
