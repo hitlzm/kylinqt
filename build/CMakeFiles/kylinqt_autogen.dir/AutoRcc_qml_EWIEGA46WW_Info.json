@@ -12,6 +12,7 @@
 		"E:/QTproject/kylinqt/main.qml",
 		"E:/QTproject/kylinqt/components/LaserArea.qml",
 		"E:/QTproject/kylinqt/components/ProgramMode.qml",
+		"E:/QTproject/kylinqt/components/TemplateBindingPopup.qml",
 		"E:/QTproject/kylinqt/components/LaserRecvArea.qml",
 		"E:/QTproject/kylinqt/components/MyComboBox.qml",
 		"E:/QTproject/kylinqt/components/Remotectlmode.qml",

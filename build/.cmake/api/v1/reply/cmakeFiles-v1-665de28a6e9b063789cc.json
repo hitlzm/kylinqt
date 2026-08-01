@@ -355,6 +355,14 @@
 		},
 		{
 			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake"
+		},
+		{
+			"isExternal" : true,
 			"path" : "E:/opencv-4.2.0/DNN/install/OpenCVConfig-version.cmake"
 		},
 		{

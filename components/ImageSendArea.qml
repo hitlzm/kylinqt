@@ -20,6 +20,12 @@ Rectangle {
         id: testmsg
     }
 
+    // 模板装订弹窗
+    TemplateBindingPopup {
+        id: templateBindingPopup
+        bindingData: templateBindingData
+    }
+
     // 下边沿
     Rectangle {
         width: parent.width
@@ -308,11 +314,16 @@ Rectangle {
                 id: connectButton
                 width: 80
                 height: 32
-                text: "连接"
+                text: templateBindingData.connected ? "断开" : "连接"
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
-                    // TODO: 连接远程主机 C++ 逻辑
-                    console.log("连接远程主机: " + remoteHostField.text + ":" + remotePortField.text)
+                    templateBindingData.host = remoteHostField.text
+                    templateBindingData.port = parseInt(remotePortField.text) || 0
+                    if (templateBindingData.connected) {
+                        templateBindingData.requestDisconnect()
+                    } else {
+                        templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+                    }
                 }
             }
         }
@@ -326,8 +337,12 @@ Rectangle {
                 text: "模板装订"
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
-                    // TODO: 模板装订 C++ 逻辑
-                    console.log("模板装订")
+                    // 同步远程主机地址和端口到模板装订数据
+                    templateBindingData.host = remoteHostField.text
+                    templateBindingData.port = parseInt(remotePortField.text) || 0
+                    // 如果已连接，尝试连接模板装订的网络
+                    templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+                    templateBindingPopup.visible = true
                 }
             }
         }

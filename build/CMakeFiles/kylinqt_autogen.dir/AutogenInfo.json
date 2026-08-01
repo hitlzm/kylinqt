@@ -89,6 +89,8 @@
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake",
 		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake",
+		"E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake",
 		"E:/opencv-4.2.0/DNN/install/OpenCVConfig-version.cmake",
 		"E:/opencv-4.2.0/DNN/install/OpenCVConfig.cmake",
 		"E:/opencv-4.2.0/DNN/install/x64/mingw/lib/OpenCVConfig.cmake",
@@ -120,6 +122,12 @@
 			"E:/QTproject/kylinqt/kalman/seekKalman.h",
 			"MU",
 			"RHMJYO6DXZ/moc_seekKalman.cpp",
+			null
+		],
+		[
+			"E:/QTproject/kylinqt/network/TemplateBindingClient.h",
+			"MU",
+			"5SSUPNRDSB/moc_TemplateBindingClient.cpp",
 			null
 		],
 		[
@@ -243,6 +251,7 @@
 	[
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/network/TemplateBindingClient.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_BD.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_CCD.cpp", "MU", null ],

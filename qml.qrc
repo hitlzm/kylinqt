@@ -20,5 +20,6 @@
         <file>components/Remotectlmode.qml</file>
         <file>components/MessagePopup.qml</file>
         <file>components/MsgPopup2.qml</file>
+        <file>components/TemplateBindingPopup.qml</file>
     </qresource>
 </RCC>

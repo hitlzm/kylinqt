@@ -1,11 +1,7 @@
-CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
- E:\QTproject\kylinqt\build\kylinqt_autogen\mocs_compilation.cpp \
- E:\QTproject\kylinqt\build\kylinqt_autogen\2GCJWZ5LBA/moc_ModeController.cpp \
- E:/QTproject/kylinqt/ModeControl/ModeController.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h \
+CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj: \
+ E:\QTproject\kylinqt\kalman\AlphaBetaTracker.cpp \
+ E:\QTproject\kylinqt\kalman\AlphaBetaTracker.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/type_traits \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
@@ -75,6 +71,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/uniform_int_dist.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/limits \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsysinfo.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qflags.h \
@@ -90,6 +87,11 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobalstatic.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnumeric.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h \
+ E:/QTproject/kylinqt/serialport/serialport.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qnamespace.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobjectdefs_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qchar.h \
@@ -220,142 +222,21 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_timeval.h \
  E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/pthread_time.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/parse_numbers.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/future \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/mutex \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_mutex.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/thread \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/memory \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/stl_raw_storage_iter.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ext/concurrence.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/unique_ptr.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_base.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/refwrap.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/shared_ptr_atomic.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward/auto_ptr.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/condition_variable \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/atomic_futex.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/std_function.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/functional \
- E:\QTproject\kylinqt\build\kylinqt_autogen\62PF24DQ2C/moc_myhandle.cpp \
- E:/QTproject/kylinqt/handle/myhandle.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmap.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtextstream.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qset.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\5SSUPNRDSB/moc_TemplateBindingClient.cpp \
- E:/QTproject/kylinqt/network/TemplateBindingClient.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/QTcpSocket \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtcpsocket.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtnetwork-config.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qabstractsocket.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QJsonObject \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonobject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonvalue.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QJsonArray \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonarray.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport.cpp \
- E:/QTproject/kylinqt/serialport/serialport.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiodevice.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_BD.cpp \
- E:/QTproject/kylinqt/serialport/serialport_BD.h \
- E:/QTproject/kylinqt/serialport/serialport.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_CCD.cpp \
- E:/QTproject/kylinqt/serialport/serialport_CCD.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_image.cpp \
- E:/QTproject/kylinqt/serialport/serialport_image.h \
- E:/QTproject/kylinqt/serialport/circularbuffer.h \
- E:/QTproject/kylinqt/kalman/seekKalman.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstringlist.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbasictimer.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtMath \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmath.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/cmath \
- E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h \
- E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/iostream \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_laser.cpp \
- E:/QTproject/kylinqt/serialport/serialport_laser.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_turntable.cpp \
- E:/QTproject/kylinqt/serialport/serialport_turntable.h \
- E:\QTproject\kylinqt\build\kylinqt_autogen\DPWVDNBJWW/moc_VlcVideoItem.cpp \
- E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickFramebufferObject \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickframebufferobject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqmlglobal.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qtqml-config.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtguiglobal.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqml.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlprivate.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlparserstatus.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlpropertyvaluesource.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmllist.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmetaobject.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlcomponent.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsvalue.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QList \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlist.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qwindowdefs_win.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmargins.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatastream.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qkeysequence.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreevent.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfile.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qfiledevice.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qvector2d.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtouchdevice.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcoreapplication.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qeventloop.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgb.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qrgba64.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qimage.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpaintdevice.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtransform.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qline.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpainterpath.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QMutex \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qmutex.h
+ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/math.h

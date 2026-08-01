@@ -7,6 +7,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/main.cpp.obj"
   "CMakeFiles/kylinqt.dir/main.cpp.obj.d"
+  "CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj"
+  "CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj"
   "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj.d"
   "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj"

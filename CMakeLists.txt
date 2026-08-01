@@ -38,7 +38,7 @@ set(VLC_INCLUDE_DIR "${VLC_ROOT}/sdk/include")
 set(VLC_LIBRARY_DIR "${VLC_ROOT}/sdk/lib")
 
 
-find_package(Qt5 COMPONENTS Core Quick Gui SerialPort  Gamepad REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Gui SerialPort Gamepad Network REQUIRED)
 find_package(OpenCV REQUIRED)
 
 if(NOT OPENCV_BIN_DIR)
@@ -71,6 +71,7 @@ else()
       ModeControl/ModeController.h
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
+      network/TemplateBindingClient.cpp
     #   opencv/cvconvert.h
       ${TaoQuickRes}
     )
@@ -91,7 +92,7 @@ target_compile_definitions(kylinqt
 
 target_link_libraries(kylinqt
   PRIVATE
-    Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad
+    Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad Qt5::Network
     libvlc libvlccore
     ${OpenCV_LIBS}
 )

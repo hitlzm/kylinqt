@@ -237,6 +237,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+network/TemplateBindingClient.obj: network/TemplateBindingClient.cpp.obj
+.PHONY : network/TemplateBindingClient.obj
+
+# target to build an object file
+network/TemplateBindingClient.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj
+.PHONY : network/TemplateBindingClient.cpp.obj
+
+network/TemplateBindingClient.i: network/TemplateBindingClient.cpp.i
+.PHONY : network/TemplateBindingClient.i
+
+# target to preprocess a source file
+network/TemplateBindingClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.i
+.PHONY : network/TemplateBindingClient.cpp.i
+
+network/TemplateBindingClient.s: network/TemplateBindingClient.cpp.s
+.PHONY : network/TemplateBindingClient.s
+
+# target to generate assembly for a file
+network/TemplateBindingClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.s
+.PHONY : network/TemplateBindingClient.cpp.s
+
 serialport/serialport.obj: serialport/serialport.cpp.obj
 .PHONY : serialport/serialport.obj
 
@@ -427,6 +451,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... network/TemplateBindingClient.obj
+	@echo ... network/TemplateBindingClient.i
+	@echo ... network/TemplateBindingClient.s
 	@echo ... serialport/serialport.obj
 	@echo ... serialport/serialport.i
 	@echo ... serialport/serialport.s
