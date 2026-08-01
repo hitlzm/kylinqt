@@ -351,6 +351,18 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
  E:\QTproject\kylinqt\ModeControl/ModeController.h \
+<<<<<<< HEAD
  E:\QTproject\kylinqt\log/LogManager.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QElapsedTimer \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qelapsedtimer.h
+=======
+ E:\QTproject\kylinqt\network/TemplateBindingClient.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/QTcpSocket \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtcpsocket.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qabstractsocket.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QJsonObject \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonobject.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonvalue.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QJsonArray \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonarray.h
+>>>>>>> newlayout2

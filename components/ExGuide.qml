@@ -72,7 +72,7 @@ Item {
             text: "外引导跟踪周期:"
             font.pixelSize: 17
             font.bold: true
-            color: black
+            color: "#000000"
             anchors.verticalCenter: parent.verticalCenter
         }
         ButtonGroup { id: guidePeriodGroup }

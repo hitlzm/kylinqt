@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import taoQuick 1.0
 import "./"
+
 Rectangle {
     id: root
     width: 1200
@@ -15,20 +16,27 @@ Rectangle {
     MessagePopup {
         id: pitchmsg
     }
-    MsgPopup2{
-        id:testmsg
+    MsgPopup2 {
+        id: testmsg
     }
-    //下边沿
+
+    // 模板装订弹窗
+    TemplateBindingPopup {
+        id: templateBindingPopup
+        bindingData: templateBindingData
+    }
+
+    // 下边沿
     Rectangle {
         width: parent.width
         height: 1
         color: "black"
-        anchors.bottom: parent.bottom   // 贴在主矩形下边沿
+        anchors.bottom: parent.bottom
     }
-    property var commandList: [
 
+    property var commandList: [
         "默认值",
-        //以下指令发送三拍，三拍后恢复默认值
+        // 以下指令发送三拍，三拍后恢复默认值
         "自检",
         "射检",
         "搜索",
@@ -40,7 +48,6 @@ Rectangle {
         "软件升级结束",
         "打开波门叠加",
         "关闭波门叠加"
-
     ]
 
     property int currentCmd: 0
@@ -53,31 +60,37 @@ Rectangle {
     // 接收回告描述缓存（无效值时保持上一次的描述）
     property string lastValidDesc1: "默认值"
     property string lastValidDesc2: "默认值"
-    Text {
-        id: titleText
-        text: "图像导引头\n控制与状态显示"
-        font.pixelSize: 24
-        font.bold: true
-        color: "#000000"
-        horizontalAlignment: Text.AlignHCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.top: parent.top
-        anchors.topMargin: 10
-    }
 
-    // 左侧命令区
+    // ═══════════════════════════════════════════════════════
+    // 原标题（已注释 — 布局重组后不再需要）
+    // ═══════════════════════════════════════════════════════
+    // Text {
+    //     id: titleText
+    //     text: "图像导引头\n控制与状态显示"
+    //     font.pixelSize: 24
+    //     font.bold: true
+    //     color: "#000000"
+    //     horizontalAlignment: Text.AlignHCenter
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 10
+    //     anchors.top: parent.top
+    //     anchors.topMargin: 10
+    // }
+
+    // ═══════════════════════════════════════════════════════
+    // 左侧 — 图像导引头控制字选择框（上移，原 titleText 已注释）
+    // ═══════════════════════════════════════════════════════
     Rectangle {
         id: commandArea
         width: 160
-        height: 450
+        height: 480
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
         anchors.leftMargin: 30
-        anchors.top: titleText.bottom
-        anchors.topMargin: 20
+        anchors.top: parent.top
+        anchors.topMargin: 40
 
         Column {
             spacing: 6
@@ -110,89 +123,53 @@ Rectangle {
                     }
 
                     onClicked: {
-                    root.currentCmd = index
-                    if(currentCmd===0)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x00
-                    } else if (currentCmd===1)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x01
-                    }
-                    else if (currentCmd===2)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x02
-                    }else if (currentCmd===3)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x03
-                    }else if (currentCmd===4)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x04
-                    }else if (currentCmd===5)
-                    {
-                           imageSendData.m_seekerCtrlWord=0x06
-                    }else if (currentCmd===6)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x55
-                    }else if (currentCmd===7)
-                    {
-                            imageSendData.m_seekerCtrlWord=0x40
-                    }else if (currentCmd===8)
-                    {
-                            imageSendData.m_seekerCtrlWord=0xA1
-                    }else if (currentCmd===9)
-                    {
-                            imageSendData.m_seekerCtrlWord=0xB1
-                    }else if (currentCmd===10)
-                    {
-                            imageSendData.m_seekerCtrlWord=0xED
-                    }
-                    else if (currentCmd===11)
-                    {
-                            imageSendData.m_seekerCtrlWord=0xEE
-                    }
-
+                        root.currentCmd = index
+                        if (currentCmd === 0) {
+                            imageSendData.m_seekerCtrlWord = 0x00
+                        } else if (currentCmd === 1) {
+                            imageSendData.m_seekerCtrlWord = 0x01
+                        } else if (currentCmd === 2) {
+                            imageSendData.m_seekerCtrlWord = 0x02
+                        } else if (currentCmd === 3) {
+                            imageSendData.m_seekerCtrlWord = 0x03
+                        } else if (currentCmd === 4) {
+                            imageSendData.m_seekerCtrlWord = 0x04
+                        } else if (currentCmd === 5) {
+                            imageSendData.m_seekerCtrlWord = 0x06
+                        } else if (currentCmd === 6) {
+                            imageSendData.m_seekerCtrlWord = 0x55
+                        } else if (currentCmd === 7) {
+                            imageSendData.m_seekerCtrlWord = 0x40
+                        } else if (currentCmd === 8) {
+                            imageSendData.m_seekerCtrlWord = 0xA1
+                        } else if (currentCmd === 9) {
+                            imageSendData.m_seekerCtrlWord = 0xB1
+                        } else if (currentCmd === 10) {
+                            imageSendData.m_seekerCtrlWord = 0xED
+                        } else if (currentCmd === 11) {
+                            imageSendData.m_seekerCtrlWord = 0xEE
+                        }
                     }
                 }
             }
         }
     }
 
-    // 串口选择 - 绑定到 C++ imageSerial 对象
-    CusComboBox {
-        id: serialComboBox
-        width: 120
-        height: 32
 
-        anchors.top: titleText.top
-        anchors.left: titleText.right
-        anchors.leftMargin: 30
-
-        model: imageData.availablePorts
-    }
-
-    // 波特率
-    CusComboBox {
-        id: baudComboBox
-        width: 120
-        height: 32
-
-        anchors.top: serialComboBox.top
-        anchors.left: serialComboBox.right
-        anchors.leftMargin: 30
-
-        model: ["460800"]
-    }
+    // ═══════════════════════════════════════════════════════
+    // Popups（保持为 root 直接子元素）
+    // ═══════════════════════════════════════════════════════
     CusPopup {
-            id: tip
-            backgroundWidth: 200
-            backgroundHeight: 80
-            barColor:"lightgray"
-            contentItem:Column {
+        id: tip
+        backgroundWidth: 200
+        backgroundHeight: 80
+        barColor: "lightgray"
+        contentItem: Column {
             spacing: 10
             Text { text: "串口已打开！" }
             CusButton_Blue { text: "确定"; onClicked: tip.hide() }
-            }
         }
+    }
     MessagePopup {
         id: msg
     }
@@ -200,112 +177,208 @@ Rectangle {
         id: tip1
         backgroundWidth: 200
         backgroundHeight: 80
-        barColor:"lightgray"
-        contentItem:Column {
-        spacing: 10
-        Text { text: "串口打开失败！" }
-        CusButton_Blue { text: "确定"; onClicked: tip1.hide() }
-        }
-    }
-    //扫描串口按钮
-    CusButton_Blue {
-        id: scanButton
-        width: 100
-        height: 32
-        text: "扫描串口"
-
-        anchors.top: serialComboBox.top
-        anchors.left: baudComboBox.right
-        anchors.leftMargin: 20
-
-        onClicked: {
-            imageData.requestScanPorts()
-        }
-    }
-    // 打开串口按钮
-    CusButton_Blue {
-        id: openButton
-        width: 100
-        height: 32
-        text: imageData.portOpen ? "关闭串口" : "打开串口"
-
-        anchors.top: serialComboBox.top
-        anchors.left: scanButton.right
-        anchors.leftMargin: 20
-        Timer {
-            id: delayTimer
-            interval: 1
-            onTriggered: {
-                // if (imageData.portOpen) tip.show()
-                if (imageData.portOpen) {
-                    // msg.message = "串口已打开！"; msg.open()
-                    testmsg.showToast("串口已打开")
-                    }
-                else { msg.message = "串口打开失败！"; msg.open() }
-            }
-        }
-        onClicked: {
-            if (imageData.portOpen) {
-                imageData.closePort()
-            } else {
-                imageData.openPort(serialComboBox.currentText,
-                                    parseInt(baudComboBox.currentText))
-                delayTimer.start()
-            }
+        barColor: "lightgray"
+        contentItem: Column {
+            spacing: 10
+            Text { text: "串口打开失败！" }
+            CusButton_Blue { text: "确定"; onClicked: tip1.hide() }
         }
     }
 
-    // 发送数据按钮
-    CusButton_Blue {
-        id: sendButton
-        width: 100
-        height: 32
-        text: "发送数据"
-        enabled: imageData.portOpen && pitchInputValid && yawInputValid
+    // ═══════════════════════════════════════════════════════
+    // 右侧第一行 — 串口操作
+    // ═══════════════════════════════════════════════════════
+    Row {
+        id: serialRow
+        spacing: 15
 
-        anchors.top: serialComboBox.top
-        anchors.left: openButton.right
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.left: commandArea.right
         anchors.leftMargin: 30
 
-        onClicked: {
-            imageSendData.buildFrame()     //构建帧成功后释放信号，由串口工作线程计算校验位并发送
-            console.log("图像导引头数据已发送")
+        // 串口选择
+        CusComboBox {
+            id: serialComboBox
+            width: 120
+            height: 32
+            model: imageData.availablePorts
         }
-    }
+        // 波特率
+        CusComboBox {
+            id: baudComboBox
+            width: 120
+            height: 32
+            model: ["460800"]
+        }
+        // 扫描串口按钮
+        CusButton_Blue {
+            id: scanButton
+            width: 100
+            height: 32
+            text: "扫描串口"
+            onClicked: {
+                imageData.requestScanPorts()
+            }
+        }
+        // 打开串口按钮
+        CusButton_Blue {
+            id: openButton
+            width: 100
+            height: 32
+            text: imageData.portOpen ? "关闭串口" : "打开串口"
 
-    CusButton_Blue {
-        id: photobutton
-        width: 100
-        height: 32
-        text: "拍摄参考图"
-        anchors.top: serialComboBox.top
-        anchors.left: sendButton.right
-        anchors.leftMargin: 20
-        onClicked: {
-                imageSendData.m_captureRefImgCmd=0xaa;
+            Timer {
+                id: delayTimer
+                interval: 1
+                onTriggered: {
+                    if (imageData.portOpen) {
+                        testmsg.showToast("串口已打开")
+                    } else {
+                        msg.message = "串口打开失败！"
+                        msg.open()
+                    }
+                }
+            }
+            onClicked: {
+                if (imageData.portOpen) {
+                    imageData.closePort()
+                } else {
+                    imageData.openPort(serialComboBox.currentText,
+                                        parseInt(baudComboBox.currentText))
+                    delayTimer.start()
+                }
+            }
+        }
+        // 发送数据按钮
+        CusButton_Blue {
+            id: sendButton
+            width: 100
+            height: 32
+            text: "发送数据"
+            enabled: imageData.portOpen && pitchInputValid && yawInputValid
+            onClicked: {
                 imageSendData.buildFrame()
+                console.log("图像导引头数据已发送")
+            }
+        }
+        // 拍摄参考图
+        CusButton_Blue {
+            id: photobutton
+            width: 100
+            height: 32
+            text: "拍摄参考图"
+            onClicked: {
+                imageSendData.m_captureRefImgCmd = 0xaa
+                imageSendData.buildFrame()
+            }
+        }
+        // 字符叠加开关
+        MySwitch {
+            id: mySwitch
+            width: 120
+            height: 32
+            title: "字符叠加"
         }
     }
 
-    MySwitch {
-        id: mySwitch
-        width: 120
-        height: 32
-        title: "字符叠加"
-        anchors.top: photobutton.top
-        anchors.left: photobutton.right
-        anchors.leftMargin: 20
+    // ═══════════════════════════════════════════════════════
+    // 右侧第二行 — 远程主机连接（新增）
+    // ═══════════════════════════════════════════════════════
+    Row {
+        id: remoteHostRow
+        spacing: 20
+        height: 50  // 显式高度 = 最高子项(remoteHostField.myheight)，保证子锚点 verticalCenter 可解析
+
+        anchors.top: serialRow.bottom
+        anchors.topMargin: 8
+        anchors.left: serialRow.left
+
+        MyTextField {
+            id: remoteHostField
+            mywidth: 160
+            myheight: 50
+            title: "远程主机地址"
+        }
+        MyTextField {
+            id: remotePortField
+            mywidth: 120
+            myheight: 50
+            title: "远程主机端口"
+        }
+        // 按钮使用 Item 包裹以垂直居中于较高的 MyTextField
+        Item {
+            width: 80
+            height: remoteHostField.myheight
+            CusButton_Blue {
+                id: connectButton
+                width: 80
+                height: 32
+                text: templateBindingData.connected ? "断开" : "连接"
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    templateBindingData.host = remoteHostField.text
+                    templateBindingData.port = parseInt(remotePortField.text) || 0
+                    if (templateBindingData.connected) {
+                        templateBindingData.requestDisconnect()
+                    } else {
+                        templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+                    }
+                }
+            }
+        }
+        Item {
+            width: 100
+            height: remoteHostField.myheight
+            CusButton_Blue {
+                id: templateBindButton
+                width: 100
+                height: 32
+                text: "模板装订"
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    // 同步远程主机地址和端口到模板装订数据
+                    templateBindingData.host = remoteHostField.text
+                    templateBindingData.port = parseInt(remotePortField.text) || 0
+                    // 如果已连接，尝试连接模板装订的网络
+                    templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+                    templateBindingPopup.visible = true
+                }
+            }
+        }
+        Item {
+            width:130
+            height: remoteHostField.myheight   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        }
+        Item {
+            width:130
+            height: remoteHostField.myheight 
+            anchors.verticalCenter: parent.verticalCenter  
+            Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        }
+        Item {
+            width:130
+            height: remoteHostField.myheight   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: indVideoOut; label: "视频输出";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        }
     }
 
-    // 框架角预装输入行
+    // ═══════════════════════════════════════════════════════
+    // 右侧第三行 — 框架角预装 + 下拉选择框第一行
+    // ═══════════════════════════════════════════════════════
     Row {
-        id: presetInputRow
-        spacing: 30
+        id: presetComboRow1
+        spacing: 15
+        height: 60  // 显式高度 = 最高子项(pitchPresetField.myheight)，保证子锚点 verticalCenter 可解析
 
-        anchors.top: serialComboBox.bottom
-        anchors.topMargin: 6
-        anchors.left: serialComboBox.left
+        anchors.top: remoteHostRow.bottom
+        anchors.topMargin: 8
+        anchors.left: serialRow.left
 
+        // ── 俯仰框架角预装 ──
         MyTextField {
             id: pitchPresetField
             mywidth: 120
@@ -313,24 +386,23 @@ Rectangle {
             title: "俯仰框架角预装"
             labeltext: "°"
 
-            // 实时校验：每次按键即刻更新发送按钮状态，超出范围即刻弹窗
             onTextChanged: {
                 var val = Number(text)
                 if (!isNaN(val) && (val > 18 || val < -18)) {
-                    if (root.pitchInputValid)  // 仅在由合法变非法时弹一次
+                    if (root.pitchInputValid)
                         testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
                     root.pitchInputValid = false
                 } else {
                     root.pitchInputValid = true
                 }
             }
-
             onEditingFinished: {
                 if (Number(text) >= -18 && Number(text) <= 18)
                     imageSendData.m_pitchGimbalPreset = Number(text)
             }
         }
 
+        // ── 偏航框架角预装 ──
         MyTextField {
             id: yawPresetField
             mywidth: 120
@@ -348,79 +420,68 @@ Rectangle {
                     root.yawInputValid = true
                 }
             }
-
             onEditingFinished: {
                 if (Number(text) >= -18 && Number(text) <= 18)
                     imageSendData.m_yawGimbalPreset = Number(text)
             }
         }
-    }
 
-    // ═══ 自检状态指示灯（输入框右侧）═══
-    // 数据来源：imageData.selfCheckFlag2~6，1=正常, 其他=故障
-    Row {
-        id: indicatorRow
-        spacing: 20
-
-        anchors.left: presetInputRow.right
-        anchors.leftMargin: 30
-        anchors.verticalCenter: presetInputRow.verticalCenter
-
-        Indicator { id: indIrVideo;   label: "红外视频接收"; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
-        Indicator { id: indTvVideo;   label: "电视视频接收"; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
-        Indicator { id: indVideoOut;  label: "视频输出";     normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
-        Indicator { id: indComm;      label: "通讯";         normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
-        Indicator { id: indServo;     label: "伺服自检";     normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
-    }
-
-    // 下拉选择框第一行
-    Row {
-        id: comboRow1
-        spacing: 50
-
-        anchors.top: presetInputRow.bottom
-        anchors.topMargin: 10
-        anchors.left: presetInputRow.left
-
+        // ── 光学参数装订控制字 ──
         MyComboBox {
             id: myCombox1
             mywidth: 180
             myheight: 55
             title: "光学参数装订控制字"
-            model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正","红外非均匀校正","模板擦除","积分时间设置"]
-            onCurrentIndexChanged:{
-
-                root.opticalParamCtrlCmd=mycurrentIndex
-
-                if(opticalParamCtrlCmd===0){
-                    imageSendData.m_opticalParamCtrl=0x00
-                }else if(opticalParamCtrlCmd===1){
-                    imageSendData.m_opticalParamCtrl=0xE1
-                }else if(opticalParamCtrlCmd===2){
-                    imageSendData.m_opticalParamCtrl=0xE2
-                }else if(opticalParamCtrlCmd===3){
-                    imageSendData.m_opticalParamCtrl=0xE3
-                }else if(opticalParamCtrlCmd===4){
-                    imageSendData.m_opticalParamCtrl=0xE4
-                }else if(opticalParamCtrlCmd===5){
-                    imageSendData.m_opticalParamCtrl=0xE5
-                }else if(opticalParamCtrlCmd===6){
-                    imageSendData.m_opticalParamCtrl=0xE6
+            model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正", "红外非均匀校正", "模板擦除", "积分时间设置"]
+            onCurrentIndexChanged: {
+                root.opticalParamCtrlCmd = mycurrentIndex
+                if (opticalParamCtrlCmd === 0) {
+                    imageSendData.m_opticalParamCtrl = 0x00
+                } else if (opticalParamCtrlCmd === 1) {
+                    imageSendData.m_opticalParamCtrl = 0xE1
+                } else if (opticalParamCtrlCmd === 2) {
+                    imageSendData.m_opticalParamCtrl = 0xE2
+                } else if (opticalParamCtrlCmd === 3) {
+                    imageSendData.m_opticalParamCtrl = 0xE3
+                } else if (opticalParamCtrlCmd === 4) {
+                    imageSendData.m_opticalParamCtrl = 0xE4
+                } else if (opticalParamCtrlCmd === 5) {
+                    imageSendData.m_opticalParamCtrl = 0xE5
+                } else if (opticalParamCtrlCmd === 6) {
+                    imageSendData.m_opticalParamCtrl = 0xE6
                 }
             }
         }
+
+        // ── 模板序号 ──
+        // MyComboBox {
+        //     id: myCombox2
+        //     mywidth: 90
+        //     myheight: 55
+        //     title: "模板序号"
+        //     model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+        //     onCurrentIndexChanged: {
+        //         if (mycurrentIndex !== -1) {
+        //             imageSendData.m_templateIndex = mycurrentIndex + 1
+        //         }
+        //     }
+        // }
+        
+        //改成了视频通道类型
         MyComboBox {
             id: myCombox2
-            mywidth: 90
+            mywidth: 120
             myheight: 55
-            title: "模板序号"
-            model: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+            title: "视频通道类型"
+            model: ["电视单模", "红外单模"]
             onCurrentIndexChanged: {
-               if (mycurrentIndex !== -1) {
-               imageSendData.m_templateIndex = mycurrentIndex + 1;
-             }
+                if (mycurrentIndex !== -1) {
+                    imageSendData.m_templateIndex = mycurrentIndex + 1
+                }
             }
         }
+
+        // ── 预装目标类型 ──
         MyComboBox {
             id: myCombox3
             mywidth: 140
@@ -428,180 +489,202 @@ Rectangle {
             title: "预装目标类型"
             model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
             onCurrentIndexChanged: {
-               if (mycurrentIndex === 0) {
-               imageSendData.m_targetBackgroundType1 = 0x00;
-             }else if(mycurrentIndex === 1){
-                imageSendData.m_targetBackgroundType1 = 0x01;
-             }else if(mycurrentIndex === 2){
-                imageSendData.m_targetBackgroundType1 = 0x02;
-             }else if(mycurrentIndex === 3){
-                imageSendData.m_targetBackgroundType1 = 0x04;
-             }else if(mycurrentIndex === 4){
-                imageSendData.m_targetBackgroundType1 = 0x07;
-             }
+                if (mycurrentIndex === 0) {
+                    imageSendData.m_targetBackgroundType1 = 0x00
+                } else if (mycurrentIndex === 1) {
+                    imageSendData.m_targetBackgroundType1 = 0x01
+                } else if (mycurrentIndex === 2) {
+                    imageSendData.m_targetBackgroundType1 = 0x02
+                } else if (mycurrentIndex === 3) {
+                    imageSendData.m_targetBackgroundType1 = 0x04
+                } else if (mycurrentIndex === 4) {
+                    imageSendData.m_targetBackgroundType1 = 0x07
+                }
             }
         }
-        MyComboBox {
-            id: myCombox4
-            mywidth: 100
-            myheight: 55
-            title: "背景类型"
-            model: ["平原","沙漠", "岛岸","山地","丛林","公路","城市","湖泊"]
-            onCurrentIndexChanged: {
-               if (mycurrentIndex === 0) {
-               imageSendData.m_targetBackgroundType4 = 0x00;
-             }else if(mycurrentIndex === 1){
-                imageSendData.m_targetBackgroundType4 = 0x01;
-             }else if(mycurrentIndex === 2){
-                imageSendData.m_targetBackgroundType4 = 0x02;
-             }else if(mycurrentIndex === 3){
-                imageSendData.m_targetBackgroundType4 = 0x03;
-             }else if(mycurrentIndex === 4){
-                imageSendData.m_targetBackgroundType4 = 0x04;
-             }else if(mycurrentIndex === 5){
-                imageSendData.m_targetBackgroundType4 = 0x05;
-             }else if(mycurrentIndex === 6){
-                imageSendData.m_targetBackgroundType4 = 0x06;
-             }else if(mycurrentIndex === 7){
-                imageSendData.m_targetBackgroundType4 = 0x07;
-             }
-            }
+        Item{
+            width:130
+            height: pitchPresetField.myheight   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: indComm;  label: "通讯";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
         }
+        
     }
 
-    // 下拉选择框第二行
+    // ═══════════════════════════════════════════════════════
+    // 右侧第四行 — 下拉选择框第二行
+    // ═══════════════════════════════════════════════════════
     Row {
         id: comboRow2
-        spacing: 50
+        spacing: 15
+        height: 55  // 显式高度 = 最高子项(myCombox4.myheight)，保证子锚点 verticalCenter 可解析
 
-        anchors.top: comboRow1.bottom
+        anchors.top: presetComboRow1.bottom
         anchors.topMargin: 10
-        anchors.left: comboRow1.left
+        anchors.left: presetComboRow1.left
 
+        // ── 背景类型 ──
+        MyComboBox {
+            id: myCombox4
+            mywidth: 120
+            myheight: 55
+            title: "背景类型"
+            model: ["平原", "沙漠", "岛岸", "山地", "丛林", "公路", "城市", "湖泊"]
+            onCurrentIndexChanged: {
+                if (mycurrentIndex === 0) {
+                    imageSendData.m_targetBackgroundType4 = 0x00
+                } else if (mycurrentIndex === 1) {
+                    imageSendData.m_targetBackgroundType4 = 0x01
+                } else if (mycurrentIndex === 2) {
+                    imageSendData.m_targetBackgroundType4 = 0x02
+                } else if (mycurrentIndex === 3) {
+                    imageSendData.m_targetBackgroundType4 = 0x03
+                } else if (mycurrentIndex === 4) {
+                    imageSendData.m_targetBackgroundType4 = 0x04
+                } else if (mycurrentIndex === 5) {
+                    imageSendData.m_targetBackgroundType4 = 0x05
+                } else if (mycurrentIndex === 6) {
+                    imageSendData.m_targetBackgroundType4 = 0x06
+                } else if (mycurrentIndex === 7) {
+                    imageSendData.m_targetBackgroundType4 = 0x07
+                }
+            }
+        }
+
+        // ── 目标灰度类型 ──
         MyComboBox {
             id: myCombox5
-            mywidth: 120
+            mywidth: 140
             myheight: 55
             title: "目标灰度类型"
             model: ["亮目标", "暗目标"]
             onCurrentIndexChanged: {
-               if (mycurrentIndex !== -1) {
-               imageSendData.m_targetBackgroundType2 = mycurrentIndex;
-               }
+                if (mycurrentIndex !== -1) {
+                    imageSendData.m_targetBackgroundType2 = mycurrentIndex
+                }
             }
         }
+
+        // ── 目标动静类型 ──
         MyComboBox {
             id: myCombox6
-            mywidth: 120
-            myheight: 55
-            title: "目标动静类型"
-            model: ["静目标","动目标" ]
-            onCurrentIndexChanged: {
-               if (mycurrentIndex !== -1) {
-               imageSendData.m_targetBackgroundType3 = mycurrentIndex;
-               }
-
-            }
-        }
-        MyComboBox {
-            id: myCombox7
             mywidth: 140
             myheight: 55
-            title: "修正指令状态"
-            model: ["非修正状态","修正状态" ]
-             onCurrentIndexChanged: {
-               if (mycurrentIndex !== -1) {
-               imageSendData.m_trackingCorrectionCmd = mycurrentIndex;
-               }
+            title: "目标动静类型"
+            model: ["静目标", "动目标"]
+            onCurrentIndexChanged: {
+                if (mycurrentIndex !== -1) {
+                    imageSendData.m_targetBackgroundType3 = mycurrentIndex
+                }
             }
         }
+
+        // ── 修正指令状态 ──
+        MyComboBox {
+            id: myCombox7
+            mywidth: 160
+            myheight: 55
+            title: "修正指令状态"
+            model: ["非修正状态", "修正状态"]
+            onCurrentIndexChanged: {
+                if (mycurrentIndex !== -1) {
+                    imageSendData.m_trackingCorrectionCmd = mycurrentIndex
+                }
+            }
+        }
+
+        // ── 波门大小 ──
         MyComboBox {
             id: myCombox8
             mywidth: 120
             myheight: 55
             title: "波门大小"
-            model: ["大","小" ]
+            model: ["大", "小"]
             onCurrentIndexChanged: {
-               if (mycurrentIndex === 0) {
-               imageSendData.m_gateSize = 0xaa;
-             }else if(mycurrentIndex === 1){
-                imageSendData.m_gateSize = 0x55;
-             }
-            }
-        }
-    }
-
-    // ═══ 帧信息（下拉框右侧）═══
-    Rectangle {
-        id: frameInfoBox
-        anchors.top: comboRow1.top
-        anchors.left: comboRow1.right
-        anchors.leftMargin: 20
-        width: 250
-        height: frameInfoTitle.height + frameInfoList.height + 20
-        color: "transparent"
-        border.color: "gray"
-        border.width: 2
-        radius: 6
-
-        // 标题
-        Label {
-            id: frameInfoTitle
-            text: "帧信息"
-            font.pixelSize: 18
-            font.bold: true
-            anchors.top: parent.top
-            anchors.topMargin: 6
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-        }
-
-        // 帧信息列表
-        CusListView {
-            id: frameInfoList
-            anchors.top: frameInfoTitle.bottom
-            anchors.topMargin: 4
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            height: 82
-            spacing: 4
-            model: 5
-
-            delegate: DataLabel {
-                fontSize: 18
-                labelWidth: 150
-                valueWidth: 60
-                label: {
-                    if (index === 0) return "B帧流水号:"
-                    if (index === 1) return "A帧流水号回告:"
-                    if (index === 2) return "测试"
-                    if (index === 3) return "测试"
-                    return "A帧有效标志:"
-                }
-                value: {
-                    if (index === 0) return imageData.bFrameSequence
-                    if (index === 1) return imageData.aFrameSequenceReply
-                    return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
-                }
-                valueColor: {
-                    if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
-                    return "#1a73e8"
+                if (mycurrentIndex === 0) {
+                    imageSendData.m_gateSize = 0xaa
+                } else if (mycurrentIndex === 1) {
+                    imageSendData.m_gateSize = 0x55
                 }
             }
         }
+        Item{
+            width:130
+            height: myCombox4.myheight   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: indServo; label: "伺服自检"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        }         
+        
     }
 
-    // ═══ 控制/状态信息 + 角度信息 + 跟踪信息（第一行）═══
+    // ═══════════════════════════════════════════════════════
+    // 状态显示第一行 — 帧信息 + 控制/状态信息 + 角度信息
+    // ═══════════════════════════════════════════════════════
     Row {
-        id: recvInfoRow
+        id: statusRow1
         spacing: 8
 
         anchors.top: comboRow2.bottom
-        anchors.topMargin: 22
-        anchors.left: commandArea.right
-        anchors.leftMargin: 97
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: (commandArea.x + commandArea.width + 30 + parent.width) / 2 - parent.width / 2
+
+        // ── 帧信息 ──
+        Rectangle {
+            id: frameInfoBox
+            width: 280
+            height: controlStatusBox.height
+            color: "transparent"
+            border.color: "gray"
+            border.width: 2
+            radius: 6
+
+            Label {
+                id: frameInfoTitle
+                text: "帧信息"
+                font.pixelSize: 18
+                font.bold: true
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+            }
+
+            CusListView {
+                id: frameInfoList
+                anchors.top: frameInfoTitle.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: parent.right
+                anchors.rightMargin: 8
+                height: controlStatusBox.height - frameInfoTitle.height - 24
+                spacing: 4
+                model: 5
+
+                delegate: DataLabel {
+                    fontSize: 18
+                    labelWidth: 150
+                    valueWidth: 60
+                    label: {
+                        if (index === 0) return "B帧流水号:"
+                        if (index === 1) return "A帧流水号回告:"
+                        if (index === 2) return "测试"
+                        if (index === 3) return "测试"
+                        return "A帧有效标志:"
+                    }
+                    value: {
+                        if (index === 0) return imageData.bFrameSequence
+                        if (index === 1) return imageData.aFrameSequenceReply
+                        return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                    }
+                    valueColor: {
+                        if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
+                        return "#1a73e8"
+                    }
+                }
+            }
+        }
 
         // ── 控制/状态信息 ──
         Rectangle {
@@ -655,113 +738,196 @@ Rectangle {
                     }
                     value: {
                         if (index === 0) {
-                            var v = imageData.seekerCtrlReply;
-                            var currentDesc = null;
-                            switch(v) {
-                                case 0x01: currentDesc = "自检通过"; break;
-                                case 0x02: currentDesc = "射检通过"; break;
-                                case 0x04: currentDesc = "搜索回告"; break;
-                                case 0x06: currentDesc = "发射指令回告"; break;
-                                case 0x41: currentDesc = "解锁回告"; break;
-                                case 0x42: currentDesc = "软件升级成功回告"; break;
-                                case 0x43: currentDesc = "软件升级失败回告"; break;
-                                case 0x44: currentDesc = "软件升级中"; break;
-                                case 0x55: currentDesc = "通讯检查通过"; break;
-                                case 0xE1: currentDesc = "自检中"; break;
-                                case 0xE2: currentDesc = "射检中"; break;
-                                case 0xF1: currentDesc = "自检不通过"; break;
-                                case 0xF2: currentDesc = "射检不通过"; break;
-                                case 0xF4: currentDesc = "通讯检查不通过"; break;
-                                default: break;
+                            var v = imageData.seekerCtrlReply
+                            var currentDesc = null
+                            switch (v) {
+                            case 0x01:
+                                currentDesc = "自检通过"
+                                break
+                            case 0x02:
+                                currentDesc = "射检通过"
+                                break
+                            case 0x04:
+                                currentDesc = "搜索回告"
+                                break
+                            case 0x06:
+                                currentDesc = "发射指令回告"
+                                break
+                            case 0x41:
+                                currentDesc = "解锁回告"
+                                break
+                            case 0x42:
+                                currentDesc = "软件升级成功回告"
+                                break
+                            case 0x43:
+                                currentDesc = "软件升级失败回告"
+                                break
+                            case 0x44:
+                                currentDesc = "软件升级中"
+                                break
+                            case 0x55:
+                                currentDesc = "通讯检查通过"
+                                break
+                            case 0xE1:
+                                currentDesc = "自检中"
+                                break
+                            case 0xE2:
+                                currentDesc = "射检中"
+                                break
+                            case 0xF1:
+                                currentDesc = "自检不通过"
+                                break
+                            case 0xF2:
+                                currentDesc = "射检不通过"
+                                break
+                            case 0xF4:
+                                currentDesc = "通讯检查不通过"
+                                break
+                            default:
+                                break
                             }
                             if (currentDesc !== null) {
-                                root.lastValidDesc1 = currentDesc;
+                                root.lastValidDesc1 = currentDesc
                             }
-                            return root.lastValidDesc1;
+                            return root.lastValidDesc1
                         }
                         if (index === 1) {
                             var v = imageData.opticalParamReply
-                            var currentDesc = null;
-                            switch(v) {
-                                case 0xE1: currentDesc = "非卫星图模板装订成功"; break
-                                case 0xE2: currentDesc = "卫星图模板装订成功"; break
-                                case 0xE3: currentDesc = "模板装订中"; break
-                                case 0xE4: currentDesc = "红外非均匀校正成功"; break
-                                case 0xE5: currentDesc = "模板正在擦除"; break
-                                case 0xE6: currentDesc = "模板擦除成功"; break
-                                case 0xE7: currentDesc = "非卫星图模板装订失败"; break
-                                case 0xE8: currentDesc = "卫星图模板装订失败"; break
-                                case 0xE9: currentDesc = "盲元校正成功"; break
-                                default: break
+                            var currentDesc = null
+                            switch (v) {
+                            case 0xE1:
+                                currentDesc = "非卫星图模板装订成功"
+                                break
+                            case 0xE2:
+                                currentDesc = "卫星图模板装订成功"
+                                break
+                            case 0xE3:
+                                currentDesc = "模板装订中"
+                                break
+                            case 0xE4:
+                                currentDesc = "红外非均匀校正成功"
+                                break
+                            case 0xE5:
+                                currentDesc = "模板正在擦除"
+                                break
+                            case 0xE6:
+                                currentDesc = "模板擦除成功"
+                                break
+                            case 0xE7:
+                                currentDesc = "非卫星图模板装订失败"
+                                break
+                            case 0xE8:
+                                currentDesc = "卫星图模板装订失败"
+                                break
+                            case 0xE9:
+                                currentDesc = "盲元校正成功"
+                                break
+                            default:
+                                break
                             }
                             if (currentDesc !== null) {
-                                root.lastValidDesc2 = currentDesc;
+                                root.lastValidDesc2 = currentDesc
                             }
-                            return root.lastValidDesc2;
+                            return root.lastValidDesc2
                         }
-                        if (index === 2) return imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel === 0x03 ? "电视" : "未知")
-                        if (index === 3) return "0x" + imageData.selfCheckFlag.toString(16).toUpperCase()
+                        if (index === 2)
+                            return imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel
+                                                                                    === 0x03 ? "电视" : "未知")
+                        if (index === 3)
+                            return "0x" + imageData.selfCheckFlag.toString(16).toUpperCase()
                         if (index === 4) {
-                            switch(imageData.m_targetBackgroundType1) {
-                                case 0x00: return "车辆"
-                                case 0x01: return "小型建筑物"
-                                case 0x02: return "坦克"
-                                case 0x04: return "舰船"
-                                case 0x07: return "靶标"
-                                default: return "未知"
+                            switch (imageData.m_targetBackgroundType1) {
+                            case 0x00:
+                                return "车辆"
+                            case 0x01:
+                                return "小型建筑物"
+                            case 0x02:
+                                return "坦克"
+                            case 0x04:
+                                return "舰船"
+                            case 0x07:
+                                return "靶标"
+                            default:
+                                return "未知"
                             }
                         }
                         if (index === 5) {
-                            switch(imageData.m_targetBackgroundType2) {
-                                case 0x00: return "亮目标"
-                                case 0x01: return "暗目标"
-                                default: return "未知"
+                            switch (imageData.m_targetBackgroundType2) {
+                            case 0x00:
+                                return "亮目标"
+                            case 0x01:
+                                return "暗目标"
+                            default:
+                                return "未知"
                             }
                         }
                         if (index === 6) {
-                            switch(imageData.m_targetBackgroundType3) {
-                                case 0x00: return "静目标"
-                                case 0x01: return "动目标"
-                                default: return "未知"
+                            switch (imageData.m_targetBackgroundType3) {
+                            case 0x00:
+                                return "静目标"
+                            case 0x01:
+                                return "动目标"
+                            default:
+                                return "未知"
                             }
                         }
                         if (index === 7) {
-                            switch(imageData.m_targetBackgroundType4) {
-                                case 0x00: return "平原"
-                                case 0x01: return "沙漠"
-                                case 0x02: return "岛岸"
-                                case 0x03: return "山地"
-                                case 0x04: return "丛林"
-                                case 0x05: return "公路"
-                                case 0x06: return "城市"
-                                case 0x07: return "湖泊"
-                                default: return "未知"
+                            switch (imageData.m_targetBackgroundType4) {
+                            case 0x00:
+                                return "平原"
+                            case 0x01:
+                                return "沙漠"
+                            case 0x02:
+                                return "岛岸"
+                            case 0x03:
+                                return "山地"
+                            case 0x04:
+                                return "丛林"
+                            case 0x05:
+                                return "公路"
+                            case 0x06:
+                                return "城市"
+                            case 0x07:
+                                return "湖泊"
+                            default:
+                                return "未知"
                             }
                         }
                         if (index === 8) {
-                            switch(imageData.opticalWorkState) {
-                                case 0x02: return "搜索状态"
-                                case 0x03: return "跟踪状态"
-                                case 0x04: return "框架角电锁零位状态"
-                                case 0x05: return "记忆状态"
-                                case 0x06: return "解锁状态"
-                                default: return "未知状态"
+                            switch (imageData.opticalWorkState) {
+                            case 0x02:
+                                return "搜索状态"
+                            case 0x03:
+                                return "跟踪状态"
+                            case 0x04:
+                                return "框架角电锁零位状态"
+                            case 0x05:
+                                return "记忆状态"
+                            case 0x06:
+                                return "解锁状态"
+                            default:
+                                return "未知状态"
                             }
                         }
-                        if (index === 9) return imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态"
+                        if (index === 9)
+                            return imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态"
                         return imageData.correctionCmdCount
                     }
                     valueColor: {
                         if (index === 0) {
                             var v = imageData.seekerCtrlReply
-                            if (v === 0x44 || v === 0xE1 || v === 0xE2) return "#e68a00"
-                            if (v >= 0xF0 || v === 0x43) return "#d93025"
+                            if (v === 0x44 || v === 0xE1 || v === 0xE2)
+                                return "#e68a00"
+                            if (v >= 0xF0 || v === 0x43)
+                                return "#d93025"
                             return "#1a73e8"
                         }
                         if (index === 1) {
                             var v = imageData.opticalParamReply
-                            if (v === 0xE3 || v === 0xE5) return "#e68a00"
-                            if (v === 0xE7 || v === 0xE8) return "#d93025"
+                            if (v === 0xE3 || v === 0xE5)
+                                return "#e68a00"
+                            if (v === 0xE7 || v === 0xE8)
+                                return "#d93025"
                             return "#1a73e8"
                         }
                         return "#1a73e8"
@@ -822,12 +988,25 @@ Rectangle {
                 }
             }
         }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // 状态显示第二行 — 跟踪信息 + 伺服/平台 + 角速度/陀螺 + 其他信息
+    // ═══════════════════════════════════════════════════════
+    Row {
+        id: statusRow2
+        spacing: 5
+
+        anchors.top: statusRow1.bottom
+        anchors.topMargin: 5
+        anchors.left: commandArea.right
+        anchors.leftMargin: 30
 
         // ── 跟踪信息 ──
         Rectangle {
             id: trackingInfoBox
             width: 240
-            height: controlStatusBox.height
+            height: gyroInfoBox.height
             color: "transparent"
             border.color: "gray"
             border.width: 2
@@ -868,51 +1047,56 @@ Rectangle {
                     }
                     property int currentState: imageData.trackingState
                     onCurrentStateChanged: {
-                        if (index !== 0) return
-                        if (currentState === 0x22) testmsg.showToast("目标已丢失")
-                        else if (currentState === 0x33) testmsg.showToast("已锁定目标")
+                        if (index !== 0)
+                            return
+                        if (currentState === 0x22)
+                            testmsg.showToast("目标已丢失")
+                        else if (currentState === 0x33)
+                            testmsg.showToast("已锁定目标")
                     }
                     value: {
                         if (index === 0) {
-                            switch(imageData.trackingState) {
-                                case 0x00: return "默认"
-                                case 0x11: return "搜索中"
-                                case 0x22: return "目标丢失"
-                                case 0x33: return "目标锁定"
-                                case 0x44: return "记忆状态"
-                                default: return "未知状态"
+                            switch (imageData.trackingState) {
+                            case 0x00:
+                                return "默认"
+                            case 0x11:
+                                return "搜索中"
+                            case 0x22:
+                                return "目标丢失"
+                            case 0x33:
+                                return "目标锁定"
+                            case 0x44:
+                                return "记忆状态"
+                            default:
+                                return "未知状态"
                             }
                         }
                         if (index === 1) {
-                            switch(imageData.trackerState) {
-                                case 0x00: return "空闲状态"
-                                case 0x01: return "跟踪状态"
-                                case 0x02: return "识别状态"
-                                case 0x03: return "匹配状态"
-                                default: return "未知状态"
+                            switch (imageData.trackerState) {
+                            case 0x00:
+                                return "空闲状态"
+                            case 0x01:
+                                return "跟踪状态"
+                            case 0x02:
+                                return "识别状态"
+                            case 0x03:
+                                return "匹配状态"
+                            default:
+                                return "未知状态"
                             }
                         }
-                        if (index === 2) return imageData.azimuthDeviationPixel
+                        if (index === 2)
+                            return imageData.azimuthDeviationPixel
                         return imageData.pitchDeviationPixel
                     }
                     valueColor: {
-                        if (index === 0) return imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
+                        if (index === 0)
+                            return imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
                         return "#1a73e8"
                     }
                 }
             }
         }
-    }
-
-    // ═══ 伺服/平台信息 + 角速度/陀螺信息 + 其他信息（第二行）═══
-    Row {
-        id: recvInfoRow2
-        spacing: 8
-
-        anchors.top: recvInfoRow.bottom
-        anchors.topMargin: 5
-        anchors.left: commandArea.right
-        anchors.leftMargin: 137
 
         // ── 伺服/平台信息 ──
         Rectangle {
@@ -1083,19 +1267,4 @@ Rectangle {
             }
         }
     }
-
-    // 连接到 imageSerial 信号
-    // Connections {
-    //     target: imageSerial
-    //     function onErrorOccurred(msg) {
-    //         console.log("Serial error:", msg)
-    //     }
-    //     function onConnected() {
-    //         console.log("Serial connected")
-    //     }
-    //     function onDisconnected() {
-    //         console.log("Serial disconnected")
-    //     }
-
-    // }
 }

@@ -35,7 +35,7 @@ set(MPV_INCLUDE_DIR "${MPV_ROOT}/include")
 set(MPV_LIBRARY_DIR "${MPV_ROOT}/lib")
 
 
-find_package(Qt5 COMPONENTS Core Quick Gui SerialPort  Gamepad REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick Gui SerialPort Gamepad Network REQUIRED)
 find_package(OpenCV REQUIRED)
 
 if(NOT OPENCV_BIN_DIR)
@@ -69,10 +69,7 @@ else()
       ModeControl/ModeController.h
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
-      kalman/AlphaBetaTracker.cpp
-      opencv/pixelkalmantracker.cpp
-      log/LogManager.cpp
-      log/LogManager.h
+      network/TemplateBindingClient.cpp
     #   opencv/cvconvert.h
       ${TaoQuickRes}
     )
@@ -91,8 +88,8 @@ target_compile_definitions(kylinqt
 
 target_link_libraries(kylinqt
   PRIVATE
-    Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad
-    mpv
+    Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad Qt5::Network
+    libvlc libvlccore
     ${OpenCV_LIBS}
 )
 

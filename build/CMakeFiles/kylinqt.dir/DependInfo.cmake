@@ -8,13 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "E:/QTproject/kylinqt/kalman/AlphaBetaTracker.cpp" "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj.d"
   "E:/QTproject/kylinqt/kalman/seekKalman.cpp" "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj.d"
-  "E:/QTproject/kylinqt/log/LogManager.cpp" "CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj.d"
   "E:/QTproject/kylinqt/main.cpp" "CMakeFiles/kylinqt.dir/main.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/main.cpp.obj.d"
-  "E:/QTproject/kylinqt/opencv/pixelkalmantracker.cpp" "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj.d"
+  "E:/QTproject/kylinqt/network/TemplateBindingClient.cpp" "CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport_BD.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport_CCD.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj.d"

@@ -559,6 +559,7 @@ Rectangle {
 
         Column {
             anchors.centerIn: parent
+            anchors.horizontalCenterOffset:30
             spacing: 8
 
             // 系统运行模式

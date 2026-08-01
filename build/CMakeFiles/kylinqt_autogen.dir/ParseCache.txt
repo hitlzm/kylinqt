@@ -3,6 +3,7 @@ E:/QTproject/kylinqt/ModeControl/ModeController.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/handle/myhandle.h
  mmc:Q_OBJECT
+<<<<<<< HEAD
 E:/QTproject/kylinqt/kalman/AlphaBetaTracker.h
 E:/QTproject/kylinqt/kalman/seekKalman.h
 E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.cpp
@@ -11,10 +12,24 @@ E:/QTproject/kylinqt/serialport/serialport_CCD.cpp
 E:/QTproject/kylinqt/serialport/circularbuffer.h
 E:/QTproject/kylinqt/serialport/serialport.h
  mmc:Q_OBJECT
+=======
+E:/QTproject/kylinqt/serialport/serialport_turntable.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/kalman/seekKalman.h
+E:/QTproject/kylinqt/serialport/serialport_image.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/network/TemplateBindingClient.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/serialport/circularbuffer.h
+E:/QTproject/kylinqt/serialport/serialport.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/serialport/serialport_CCD.cpp
+>>>>>>> newlayout2
 E:/QTproject/kylinqt/serialport/serialport_BD.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_CCD.h
  mmc:Q_OBJECT
+<<<<<<< HEAD
 E:/QTproject/kylinqt/serialport/serialport_image.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_laser.h
@@ -38,3 +53,18 @@ E:/QTproject/kylinqt/serialport/serialport_image.cpp
 E:/QTproject/kylinqt/serialport/serialport_laser.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp
 E:/QTproject/kylinqt/log/LogManager.cpp
+=======
+E:/QTproject/kylinqt/serialport/serialport_laser.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/kalman/seekKalman.cpp
+E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
+E:/QTproject/kylinqt/main.cpp
+E:/QTproject/kylinqt/serialport/serialport.cpp
+E:/QTproject/kylinqt/network/TemplateBindingClient.cpp
+E:/QTproject/kylinqt/serialport/serialport_image.cpp
+E:/QTproject/kylinqt/serialport/serialport_BD.cpp
+E:/QTproject/kylinqt/serialport/serialport_laser.cpp
+E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp
+>>>>>>> newlayout2

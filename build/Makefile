@@ -141,30 +141,6 @@ kylinqt_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt_autogen.dir\build.make CMakeFiles/kylinqt_autogen.dir/build
 .PHONY : kylinqt_autogen/fast
 
-kalman/AlphaBetaTracker.obj: kalman/AlphaBetaTracker.cpp.obj
-.PHONY : kalman/AlphaBetaTracker.obj
-
-# target to build an object file
-kalman/AlphaBetaTracker.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj
-.PHONY : kalman/AlphaBetaTracker.cpp.obj
-
-kalman/AlphaBetaTracker.i: kalman/AlphaBetaTracker.cpp.i
-.PHONY : kalman/AlphaBetaTracker.i
-
-# target to preprocess a source file
-kalman/AlphaBetaTracker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.i
-.PHONY : kalman/AlphaBetaTracker.cpp.i
-
-kalman/AlphaBetaTracker.s: kalman/AlphaBetaTracker.cpp.s
-.PHONY : kalman/AlphaBetaTracker.s
-
-# target to generate assembly for a file
-kalman/AlphaBetaTracker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.s
-.PHONY : kalman/AlphaBetaTracker.cpp.s
-
 kalman/seekKalman.obj: kalman/seekKalman.cpp.obj
 .PHONY : kalman/seekKalman.obj
 
@@ -237,30 +213,6 @@ kylinqt_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.s
 .PHONY : kylinqt_autogen/mocs_compilation.cpp.s
 
-log/LogManager.obj: log/LogManager.cpp.obj
-.PHONY : log/LogManager.obj
-
-# target to build an object file
-log/LogManager.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj
-.PHONY : log/LogManager.cpp.obj
-
-log/LogManager.i: log/LogManager.cpp.i
-.PHONY : log/LogManager.i
-
-# target to preprocess a source file
-log/LogManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/log/LogManager.cpp.i
-.PHONY : log/LogManager.cpp.i
-
-log/LogManager.s: log/LogManager.cpp.s
-.PHONY : log/LogManager.s
-
-# target to generate assembly for a file
-log/LogManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/log/LogManager.cpp.s
-.PHONY : log/LogManager.cpp.s
-
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
@@ -285,29 +237,29 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-opencv/pixelkalmantracker.obj: opencv/pixelkalmantracker.cpp.obj
-.PHONY : opencv/pixelkalmantracker.obj
+network/TemplateBindingClient.obj: network/TemplateBindingClient.cpp.obj
+.PHONY : network/TemplateBindingClient.obj
 
 # target to build an object file
-opencv/pixelkalmantracker.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj
-.PHONY : opencv/pixelkalmantracker.cpp.obj
+network/TemplateBindingClient.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj
+.PHONY : network/TemplateBindingClient.cpp.obj
 
-opencv/pixelkalmantracker.i: opencv/pixelkalmantracker.cpp.i
-.PHONY : opencv/pixelkalmantracker.i
+network/TemplateBindingClient.i: network/TemplateBindingClient.cpp.i
+.PHONY : network/TemplateBindingClient.i
 
 # target to preprocess a source file
-opencv/pixelkalmantracker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.i
-.PHONY : opencv/pixelkalmantracker.cpp.i
+network/TemplateBindingClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.i
+.PHONY : network/TemplateBindingClient.cpp.i
 
-opencv/pixelkalmantracker.s: opencv/pixelkalmantracker.cpp.s
-.PHONY : opencv/pixelkalmantracker.s
+network/TemplateBindingClient.s: network/TemplateBindingClient.cpp.s
+.PHONY : network/TemplateBindingClient.s
 
 # target to generate assembly for a file
-opencv/pixelkalmantracker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.s
-.PHONY : opencv/pixelkalmantracker.cpp.s
+network/TemplateBindingClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.s
+.PHONY : network/TemplateBindingClient.cpp.s
 
 serialport/serialport.obj: serialport/serialport.cpp.obj
 .PHONY : serialport/serialport.obj
@@ -511,9 +463,6 @@ help:
 	@echo ... rebuild_cache
 	@echo ... kylinqt_autogen
 	@echo ... kylinqt
-	@echo ... kalman/AlphaBetaTracker.obj
-	@echo ... kalman/AlphaBetaTracker.i
-	@echo ... kalman/AlphaBetaTracker.s
 	@echo ... kalman/seekKalman.obj
 	@echo ... kalman/seekKalman.i
 	@echo ... kalman/seekKalman.s
@@ -523,15 +472,12 @@ help:
 	@echo ... kylinqt_autogen/mocs_compilation.obj
 	@echo ... kylinqt_autogen/mocs_compilation.i
 	@echo ... kylinqt_autogen/mocs_compilation.s
-	@echo ... log/LogManager.obj
-	@echo ... log/LogManager.i
-	@echo ... log/LogManager.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
-	@echo ... opencv/pixelkalmantracker.obj
-	@echo ... opencv/pixelkalmantracker.i
-	@echo ... opencv/pixelkalmantracker.s
+	@echo ... network/TemplateBindingClient.obj
+	@echo ... network/TemplateBindingClient.i
+	@echo ... network/TemplateBindingClient.s
 	@echo ... serialport/serialport.obj
 	@echo ... serialport/serialport.i
 	@echo ... serialport/serialport.s

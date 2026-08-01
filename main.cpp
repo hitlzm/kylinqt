@@ -13,6 +13,7 @@
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
 #include "log/LogManager.h"
+#include "network/TemplateBindingClient.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -26,6 +27,9 @@ int main(int argc, char *argv[])
 {
     // ── DPI 缩放：Windows 依赖系统缩放比例，Linux 可通过环境变量 QT_SCALE_FACTOR 覆盖 ──
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setOrganizationName("KylinQt");
+    QCoreApplication::setOrganizationDomain("kylinqt.local");
+    QCoreApplication::setApplicationName("kylin-qt");
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     // Qt 5.14+ 提供更精确的高 DPI 处理策略
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
@@ -63,6 +67,8 @@ int main(int argc, char *argv[])
     TurntableSendDataHex *turntableSendData = new TurntableSendDataHex(&app);
     BDData *bdData = new BDData(&app);
     CCDData *ccdData = new CCDData(&app);
+    //创建模板装订数据对象（主线程，QML 直接访问）
+    TemplateBindingData *templateBindingData = new TemplateBindingData(&app);
 
     // 全局单例日志管理器
     LogManager *logManager = LogManager::instance();
@@ -74,6 +80,8 @@ int main(int argc, char *argv[])
     SerialPortTurntableHex *turntablePort = new SerialPortTurntableHex;
     SerialPortBD *bdPort = new SerialPortBD;
     SerialPortCCD *ccdPort = new SerialPortCCD;       // 无父对象，将移到子线程
+    // 网络传输 Worker（移到 NetworkThread）
+    TemplateBindingWorker *networkWorker = new TemplateBindingWorker(templateBindingData);
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
@@ -106,6 +114,7 @@ int main(int argc, char *argv[])
     // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
+    engine.rootContext()->setContextProperty("templateBindingData", templateBindingData);
     engine.rootContext()->setContextProperty("logManager", logManager);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
     qmlRegisterType<VlcFrameItem>("VlcVideo", 1, 0, "VlcFrame");
@@ -211,6 +220,12 @@ int main(int argc, char *argv[])
     QObject::connect(ccdPort, &SerialPortCCD::portsChanged, ccdData, &CCDData::setPortList, Qt::QueuedConnection);
 
 
+    // ── TemplateBinding: 主线程 Data → 网络线程 Worker ──
+    QObject::connect(templateBindingData, &TemplateBindingData::requestConnect,    networkWorker, &TemplateBindingWorker::onConnect,    Qt::QueuedConnection);
+    QObject::connect(templateBindingData, &TemplateBindingData::requestDisconnect, networkWorker, &TemplateBindingWorker::onDisconnect, Qt::QueuedConnection);
+    QObject::connect(templateBindingData, &TemplateBindingData::requestSendImages, networkWorker, &TemplateBindingWorker::onSendImages,  Qt::QueuedConnection);
+    QObject::connect(templateBindingData, &TemplateBindingData::requestSendTxt,    networkWorker, &TemplateBindingWorker::onSendTxt,     Qt::QueuedConnection);
+
     //模式控制器的信号连接
     // 模式控制器 → 各串口线程（运行模式 / 外引导源 / 跟踪周期 变更通知）
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
@@ -264,12 +279,14 @@ int main(int argc, char *argv[])
     QThread *Handlethread = new QThread;
     QThread *BDthread = new QThread;
     QThread *CCDthread = new QThread;
+    QThread *NetworkThread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
     bdPort->moveToThread(BDthread);
     ccdPort->moveToThread(CCDthread);
     _myhandle->moveToThread(Handlethread);
+    networkWorker->moveToThread(NetworkThread);
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
@@ -290,6 +307,8 @@ int main(int argc, char *argv[])
     QObject::connect(BDthread,       &QThread::finished, BDthread,         &QObject::deleteLater);
     QObject::connect(CCDthread,      &QThread::finished, ccdPort,          &QObject::deleteLater);
     QObject::connect(CCDthread,      &QThread::finished, CCDthread,        &QObject::deleteLater);
+    QObject::connect(NetworkThread,  &QThread::finished, networkWorker,    &QObject::deleteLater);
+    QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);
 
 
     Laserthread->start();
@@ -298,6 +317,7 @@ int main(int argc, char *argv[])
     Handlethread->start();
     BDthread->start();
     CCDthread->start();
+    NetworkThread->start();
     
     return app.exec();
 }
