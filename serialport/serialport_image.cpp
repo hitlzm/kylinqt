@@ -1,6 +1,7 @@
 #include "serialport_image.h"
 #include <QDebug>
 #include <QString>
+#include "../log/LogManager.h"
 #include <QThread>
 #include <QTimer>
 // ─────────────────────────────────────────────
@@ -581,6 +582,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                         sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s +1);  // 俯仰轴
                         // 发送预测角度给转台
                         reqExsend_1s(az_pkt, el_pkt);
+                        LogManager::instance()->logImageTracking(az_pkt.angle1, el_pkt.angle1);
                         if(++m_sendCount_1s >= Maxsendcount) {  // 1小时重同步
                             m_sendCount_1s = 0;
                         }
@@ -592,7 +594,8 @@ void SerialPortImage::ExmodeChanged(int mode)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 5ms模式只发送方位角与俯仰角即可
-                        reqExsend_5ms(m_azimuth,m_pitch);    
+                        reqExsend_5ms(m_azimuth,m_pitch);
+                        LogManager::instance()->logImageTracking(m_azimuth, m_pitch);    
                     });
                     m_exGuideTimer->start(5); // 每5ms触发一次
                     m_lastexguidesetting = Exguide_5ms;

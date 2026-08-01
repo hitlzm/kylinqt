@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "E:/QTproject/kylinqt/kalman/seekKalman.cpp" "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj.d"
   "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj.d"
+  "E:/QTproject/kylinqt/log/LogManager.cpp" "CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj.d"
   "E:/QTproject/kylinqt/main.cpp" "CMakeFiles/kylinqt.dir/main.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/main.cpp.obj.d"
   "E:/QTproject/kylinqt/opencv/pixelkalmantracker.cpp" "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj.d"
   "E:/QTproject/kylinqt/serialport/serialport.cpp" "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj" "gcc" "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj.d"

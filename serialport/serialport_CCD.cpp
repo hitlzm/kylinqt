@@ -1,6 +1,7 @@
 #include "serialport_CCD.h"
 #include <QDebug>
 #include <QTimeZone>
+#include "../log/LogManager.h"
 // ─────────────────────────────────────────────
 // 外引导模式常量
 // ─────────────────────────────────────────────
@@ -166,6 +167,8 @@ void SerialPortCCD::ExmodeChanged(int mode)
                         sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s);  // 俯仰轴
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
+                        // 记录追踪日志
+                        LogManager::instance()->logCCDTracking(az_pkt.angle1, el_pkt.angle1);
                         if(++m_sendCount_1s >= Maxsendcount) {  // 10分钟重同步
                             m_sendCount_1s = 0;
                         }
@@ -178,6 +181,7 @@ void SerialPortCCD::ExmodeChanged(int mode)
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 5ms模式直接发送当前计算角度
                         emit reqExsend_5ms(m_azimuth, m_pitch);
+                        LogManager::instance()->logCCDTracking(m_azimuth, m_pitch);
                     });
                     m_exGuideTimer->start(15); // 每5ms触发一次 ，考虑到数据更新没那么快，切换为15ms模式
                     m_lastexguidesetting = Exguide_5ms;

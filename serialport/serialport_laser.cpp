@@ -1,6 +1,7 @@
 #include "serialport_laser.h"
 #include <QDebug>
 #include <QString>
+#include "../log/LogManager.h"
 #include <QTimer>
 // ─────────────────────────────────────────────
 // 外引导模式常量
@@ -487,6 +488,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                         sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s);  // 俯仰轴
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
+                        LogManager::instance()->logLaserTracking(az_pkt.angle1, el_pkt.angle1);
                         if(++m_sendCount_1s >= Maxsendcount) {  // 10分钟重同步
                             m_sendCount_1s = 0;
                         }
@@ -499,6 +501,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 5ms模式直接发送角度数据
                         emit reqExsend_5ms(m_azimuth, m_pitch);
+                        LogManager::instance()->logLaserTracking(m_azimuth, m_pitch);
                     });
                     m_exGuideTimer->start(5); // 每5ms触发一次
                     m_lastexguidesetting = Exguide_5ms;

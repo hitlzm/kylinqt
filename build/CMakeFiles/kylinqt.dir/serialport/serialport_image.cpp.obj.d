@@ -259,6 +259,9 @@ CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
+ E:/QTproject/kylinqt/log/LogManager.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QElapsedTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qelapsedtimer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h \
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/future \

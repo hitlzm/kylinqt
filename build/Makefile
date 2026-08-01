@@ -237,6 +237,30 @@ kylinqt_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.s
 .PHONY : kylinqt_autogen/mocs_compilation.cpp.s
 
+log/LogManager.obj: log/LogManager.cpp.obj
+.PHONY : log/LogManager.obj
+
+# target to build an object file
+log/LogManager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj
+.PHONY : log/LogManager.cpp.obj
+
+log/LogManager.i: log/LogManager.cpp.i
+.PHONY : log/LogManager.i
+
+# target to preprocess a source file
+log/LogManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/log/LogManager.cpp.i
+.PHONY : log/LogManager.cpp.i
+
+log/LogManager.s: log/LogManager.cpp.s
+.PHONY : log/LogManager.s
+
+# target to generate assembly for a file
+log/LogManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/log/LogManager.cpp.s
+.PHONY : log/LogManager.cpp.s
+
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
@@ -499,6 +523,9 @@ help:
 	@echo ... kylinqt_autogen/mocs_compilation.obj
 	@echo ... kylinqt_autogen/mocs_compilation.i
 	@echo ... kylinqt_autogen/mocs_compilation.s
+	@echo ... log/LogManager.obj
+	@echo ... log/LogManager.i
+	@echo ... log/LogManager.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

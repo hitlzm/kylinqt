@@ -11,6 +11,7 @@
 #include "vlcvideo/VlcFrameItem.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
+#include "log/LogManager.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -44,6 +45,10 @@ int main(int argc, char *argv[])
     TurntableSendDataHex *turntableSendData = new TurntableSendDataHex(&app);
     BDData *bdData = new BDData(&app);
     CCDData *ccdData = new CCDData(&app);
+
+    // 全局单例日志管理器
+    LogManager *logManager = LogManager::instance();
+    logManager->setParent(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
@@ -83,6 +88,7 @@ int main(int argc, char *argv[])
     // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
+    engine.rootContext()->setContextProperty("logManager", logManager);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
     qmlRegisterType<VlcFrameItem>("VlcVideo", 1, 0, "VlcFrame");
 
