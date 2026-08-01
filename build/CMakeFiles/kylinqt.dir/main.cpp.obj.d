@@ -350,4 +350,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:\QTproject\kylinqt\handle/myhandle.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDebug \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdebug.h \
- E:\QTproject\kylinqt\ModeControl/ModeController.h
+ E:\QTproject\kylinqt\ModeControl/ModeController.h \
+ E:\QTproject\kylinqt\log/LogManager.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QElapsedTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qelapsedtimer.h

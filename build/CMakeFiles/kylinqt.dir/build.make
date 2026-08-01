@@ -294,11 +294,26 @@ CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.s"
 	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\QTproject\kylinqt\opencv\pixelkalmantracker.cpp -o CMakeFiles\kylinqt.dir\opencv\pixelkalmantracker.cpp.s
 
+CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
+CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
+CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj: E:/QTproject/kylinqt/log/LogManager.cpp
+CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj: CMakeFiles/kylinqt.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj"
+	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj -MF CMakeFiles\kylinqt.dir\log\LogManager.cpp.obj.d -o CMakeFiles\kylinqt.dir\log\LogManager.cpp.obj -c E:\QTproject\kylinqt\log\LogManager.cpp
+
+CMakeFiles/kylinqt.dir/log/LogManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/kylinqt.dir/log/LogManager.cpp.i"
+	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\QTproject\kylinqt\log\LogManager.cpp > CMakeFiles\kylinqt.dir\log\LogManager.cpp.i
+
+CMakeFiles/kylinqt.dir/log/LogManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/kylinqt.dir/log/LogManager.cpp.s"
+	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\QTproject\kylinqt\log\LogManager.cpp -o CMakeFiles\kylinqt.dir\log\LogManager.cpp.s
+
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/kylinqt.dir/flags.make
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/kylinqt.dir/includes_CXX.rsp
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: CMakeFiles/kylinqt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 	E:\QT5.12.8\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj -MF CMakeFiles\kylinqt.dir\kylinqt_autogen\EWIEGA46WW\qrc_qml.cpp.obj.d -o CMakeFiles\kylinqt.dir\kylinqt_autogen\EWIEGA46WW\qrc_qml.cpp.obj -c E:\QTproject\kylinqt\build\kylinqt_autogen\EWIEGA46WW\qrc_qml.cpp
 
 CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.i: cmake_force
@@ -324,6 +339,7 @@ kylinqt_OBJECTS = \
 "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj" \
 "CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj" \
 "CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj" \
+"CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj" \
 "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 
 # External object files for target kylinqt
@@ -342,6 +358,7 @@ kylinqt.exe: CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/kalman/AlphaBetaTracker.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/opencv/pixelkalmantracker.cpp.obj
+kylinqt.exe: CMakeFiles/kylinqt.dir/log/LogManager.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/build.make
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a
@@ -398,7 +415,7 @@ kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_core420.dll.a
 kylinqt.exe: CMakeFiles/kylinqt.dir/linkLibs.rsp
 kylinqt.exe: CMakeFiles/kylinqt.dir/objects1.rsp
 kylinqt.exe: CMakeFiles/kylinqt.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable kylinqt.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable kylinqt.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\kylinqt.dir\link.txt --verbose=$(VERBOSE)
 	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_core420.dll E:/QTproject/kylinqt/build
 	F:\VScode\cmake-4.1.0-rc2-windows-x86_64\cmake-4.1.0-rc2-windows-x86_64\bin\cmake.exe -E copy_if_different E:/opencv-4.2.0/DNN/install/x64/mingw/bin/libopencv_imgproc420.dll E:/QTproject/kylinqt/build

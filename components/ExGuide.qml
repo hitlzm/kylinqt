@@ -7,23 +7,9 @@ Item {
     id: root
     anchors.fill: parent
 
-    // 供外部调用的日志接口：ExGuide.addLog("消息内容")
-    function addLog(msg) {
-        var now = new Date()
-        var ts = now.toLocaleTimeString(Qt.locale(), "hh:mm:ss")
-        logModel.append({ text: "[" + ts + "] " + msg })
-        // 超过 200 条时移除最老的
-        if (logModel.count > 200) {
-            logModel.remove(0, logModel.count - 200)
-        }
-        // 自动滚到底部
-        logList.positionViewAtEnd()
-    }
-
-    // 清空日志
-    function clearLog() {
-        logModel.clear()
-    }
+    // 日志条目由 C++ LogManager 单例提供，格式已包含时间戳和来源标签
+    // 可通过 logManager.addLog("来源", "消息") 从任意 QML 或 C++ 添加日志
+    // 可通过 logManager.clearLog() 清空日志
 
     // 外引导源选择
     Row {
@@ -140,10 +126,10 @@ Item {
             clip: true
             spacing: 1
 
-            model: ListModel { id: logModel }
+            model: logManager.logEntries
 
             delegate: Text {
-                text: model.text
+                text: modelData
                 font.pixelSize: 12; font.family: "Consolas"
                 color: '#1e0101'
                 width: logList.width
@@ -158,6 +144,14 @@ Item {
                     color: "#555555"; radius: 3
                 }
             }
+        }
+    }
+
+    // 新日志到达时自动滚到底部
+    Connections {
+        target: logManager
+        onLogEntriesChanged: {
+            logList.positionViewAtEnd()  //新日志到达时自动滚到底部
         }
     }
 }

@@ -258,4 +258,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimeZone \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimezone.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
+ E:/QTproject/kylinqt/log/LogManager.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QElapsedTimer \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qelapsedtimer.h

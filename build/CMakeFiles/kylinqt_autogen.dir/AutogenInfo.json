@@ -202,6 +202,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/log/LogManager.h",
+			"MU",
+			"3DINGQWIAT/moc_LogManager.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/opencv/pixelkalmantracker.h",
 			"MU",
 			"IBQRWEGK53/moc_pixelkalmantracker.cpp",
@@ -334,6 +340,7 @@
 	[
 		[ "E:/QTproject/kylinqt/kalman/AlphaBetaTracker.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/log/LogManager.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/opencv/pixelkalmantracker.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],

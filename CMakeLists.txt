@@ -71,6 +71,8 @@ else()
       kalman/seekKalman.cpp
       kalman/AlphaBetaTracker.cpp
       opencv/pixelkalmantracker.cpp
+      log/LogManager.cpp
+      log/LogManager.h
     #   opencv/cvconvert.h
       ${TaoQuickRes}
     )
