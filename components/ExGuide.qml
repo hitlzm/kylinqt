@@ -60,7 +60,7 @@ Item {
     Connections {
         target: logManager
         onLogEntriesChanged: {
-            logList.positionViewAtEnd()
+            logList.positionViewAtEnd()  //新日志到达时自动滚到底部
         }
     }
 }
