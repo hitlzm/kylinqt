@@ -10,8 +10,8 @@ import taoQuick 1.0
 Window {
     id: popup
 
-    width: 1020
-    height: 800
+    width: 1140
+    height: 840
     visible: false
     flags: Qt.Window | Qt.WindowStaysOnTopHint
     modality: Qt.NonModal
@@ -28,6 +28,12 @@ Window {
 
     // 本地模式状态（驱动 UI 界面切换）
     property bool isSat: bindingData ? bindingData.isSatellite : false
+
+    // 是否已点击过图片（控制红框显示）
+    property bool hasClicked: false
+    // 确认后的目标像素尺寸（红框实际使用的尺寸）
+    property int confirmedPixelsX: 160
+    property int confirmedPixelsY: 160
 
     // 图片选择对话框
     FileDialog {
@@ -124,7 +130,7 @@ Window {
 
             // ── 左侧：图片预览 ──
             Item {
-                Layout.preferredWidth: 380
+                Layout.preferredWidth: 500
                 Layout.fillHeight: true
 
                 ColumnLayout {
@@ -156,11 +162,17 @@ Window {
                                 }
                             visible: source != ""
 
-                            // 图片加载完成 → 自动填入分辨率
+                            // 图片加载完成 → 自动填入分辨率，重置默认目标尺寸
                             onStatusChanged: {
                                 if (status === Image.Ready && bindingData) {
                                     bindingData.imageWidth  = sourceSize.width
                                     bindingData.imageHeight = sourceSize.height
+                                    // 切换到新图片时默认 160×160
+                                    bindingData.targetPixelsX = 160
+                                    bindingData.targetPixelsY = 160
+                                    popup.confirmedPixelsX = 160
+                                    popup.confirmedPixelsY = 160
+                                    popup.hasClicked = false
                                 }
                             }
                         }
@@ -173,23 +185,27 @@ Window {
 
                             onClicked: {
                                 if (!bindingData || imagePreview.sourceSize.width <= 0) return
+                                var margin = 4  // 与 imagePreview 的 anchors.margins 保持一致
                                 var scaleW = imagePreview.paintedWidth  / imagePreview.sourceSize.width
                                 var scaleH = imagePreview.paintedHeight / imagePreview.sourceSize.height
+                                // offset 是 Image 内部 letterbox/pillarbox 的偏移
                                 var offsetX = (imagePreview.width  - imagePreview.paintedWidth)  / 2
                                 var offsetY = (imagePreview.height - imagePreview.paintedHeight) / 2
-                                var imgX = Math.round((mouse.x - offsetX) / scaleW)
-                                var imgY = Math.round((mouse.y - offsetY) / scaleH)
-                                bindingData.targetPosX = Math.max(0, Math.min(imgX, imagePreview.sourceSize.width  - 1))
-                                bindingData.targetPosY = Math.max(0, Math.min(imgY, imagePreview.sourceSize.height - 1))
-                                // 默认目标宽高 160 像素
-                                bindingData.targetPixelsX = 160
-                                bindingData.targetPixelsY = 160
+                                // mouse.x/y 相对于父 Rectangle，需要减去 margin 才对齐 Image 坐标
+                                var imgX = Math.round((mouse.x - margin - offsetX) / scaleW)
+                                var imgY = Math.round((mouse.y - margin - offsetY) / scaleH)
+                                // 使用已确认的目标尺寸进行边界裁剪
+                                var halfW = Math.floor(popup.confirmedPixelsX / 2)
+                                var halfH = Math.floor(popup.confirmedPixelsY / 2)
+                                bindingData.targetPosX = Math.max(halfW, Math.min(imgX, imagePreview.sourceSize.width  - 1 - halfW))
+                                bindingData.targetPosY = Math.max(halfH, Math.min(imgY, imagePreview.sourceSize.height - 1 - halfH))
+                                popup.hasClicked = true
                             }
                         }
 
-                        // 标框（红色方框，尺寸 = targetPixelsX × targetPixelsY）
+                        // 标框（红色方框，使用确认后的像素尺寸，首次点击后才显示）
                         Rectangle {
-                            visible: bindingData && bindingData.targetPosX >= 0
+                            visible: bindingData && popup.hasClicked
                             color: "transparent"
                             border.color: "#ff0000"
                             border.width: 2
@@ -198,27 +214,30 @@ Window {
                                 if (!bindingData || imagePreview.sourceSize.width <= 0) return 0
                                 var s = Math.min(imagePreview.paintedWidth  / imagePreview.sourceSize.width,
                                                  imagePreview.paintedHeight / imagePreview.sourceSize.height)
-                                return bindingData.targetPixelsX * s
+                                return popup.confirmedPixelsX * s
                             }
                             height: {
                                 if (!bindingData || imagePreview.sourceSize.width <= 0) return 0
                                 var s = Math.min(imagePreview.paintedWidth  / imagePreview.sourceSize.width,
                                                  imagePreview.paintedHeight / imagePreview.sourceSize.height)
-                                return bindingData.targetPixelsY * s
+                                return popup.confirmedPixelsY * s
                             }
                             x: {
                                 if (!bindingData || imagePreview.sourceSize.width <= 0) return 0
+                                var margin = 4
                                 var s = Math.min(imagePreview.paintedWidth  / imagePreview.sourceSize.width,
                                                  imagePreview.paintedHeight / imagePreview.sourceSize.height)
-                                var offX = (imagePreview.width - imagePreview.sourceSize.width * s) / 2
-                                return offX + (bindingData.targetPosX - bindingData.targetPixelsX / 2) * s
+                                // Image 内部的 letterbox 偏移 + Image 相对于父 Rectangle 的 margin
+                                var offX = margin + (imagePreview.width - imagePreview.sourceSize.width * s) / 2
+                                return offX + (bindingData.targetPosX - popup.confirmedPixelsX / 2) * s
                             }
                             y: {
                                 if (!bindingData || imagePreview.sourceSize.width <= 0) return 0
+                                var margin = 4
                                 var s = Math.min(imagePreview.paintedWidth  / imagePreview.sourceSize.width,
                                                  imagePreview.paintedHeight / imagePreview.sourceSize.height)
-                                var offY = (imagePreview.height - imagePreview.sourceSize.height * s) / 2
-                                return offY + (bindingData.targetPosY - bindingData.targetPixelsY / 2) * s
+                                var offY = margin + (imagePreview.height - imagePreview.sourceSize.height * s) / 2
+                                return offY + (bindingData.targetPosY - popup.confirmedPixelsY / 2) * s
                             }
 
                             // 中心十字线
@@ -326,7 +345,7 @@ Window {
                         ButtonGroup { id: imageTypeGroup }
 
                         Row {
-                            spacing: 25
+                            spacing: 30
                             CusRadioButton {
                                 id: satelliteRadio
                                 text: "卫星图"
@@ -376,7 +395,7 @@ Window {
 
                         Row {
                             visible: isSat
-                            spacing: 10
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "比例尺"
@@ -389,7 +408,7 @@ Window {
                         }
                         Row {
                             visible: isSat
-                            spacing: 25
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "图像宽度"
@@ -408,7 +427,7 @@ Window {
                         }
                         Row {
                             visible: isSat
-                            spacing: 25
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "目标横坐标"
@@ -427,7 +446,8 @@ Window {
                         }
                         Row {
                             visible: isSat
-                            spacing: 25
+                            spacing: 30
+                            height: 55
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "目标横像素数"
@@ -442,7 +462,18 @@ Window {
                                 text: bindingData ? bindingData.targetPixelsY.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.targetPixelsY = parseInt(text) || 0 }
                             }
-                            Item { width: 180; height: 55 }
+                            CusButton_Blue {
+                                text: "确认修改"
+                                width: 80
+                                height: 32
+                                anchors.verticalCenter: parent.verticalCenter
+                                onClicked: {
+                                    if (bindingData) {
+                                        popup.confirmedPixelsX = bindingData.targetPixelsX
+                                        popup.confirmedPixelsY = bindingData.targetPixelsY
+                                    }
+                                }
+                            }
                         }
 
                         // ════════════════════════════════════════
@@ -462,7 +493,7 @@ Window {
 
                         Row {
                             visible: !isSat
-                            spacing: 10
+                            spacing: 30
                             MyComboBox {
                                 mywidth: 155; myheight: 55
                                 title: "模板图模式"
@@ -475,7 +506,7 @@ Window {
                         }
                         Row {
                             visible: !isSat
-                            spacing: 25
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "拍摄距离"
@@ -500,7 +531,7 @@ Window {
                         }
                         Row {
                             visible: !isSat
-                            spacing: 25
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "相机焦距"
@@ -519,7 +550,7 @@ Window {
                         }
                         Row {
                             visible: !isSat
-                            spacing: 25
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "图像宽度"
@@ -538,7 +569,7 @@ Window {
                         }
                         Row {
                             visible: !isSat
-                            spacing: 25
+                            spacing: 30
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "目标横坐标"
@@ -557,7 +588,8 @@ Window {
                         }
                         Row {
                             visible: !isSat
-                            spacing: 25
+                            spacing: 30
+                            height: 55
                             MyTextField {
                                 mywidth: 155; myheight: 55
                                 title: "目标横像素数"
@@ -572,7 +604,18 @@ Window {
                                 text: bindingData ? bindingData.targetPixelsY.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.targetPixelsY = parseInt(text) || 0 }
                             }
-                            Item { width: 180; height: 55 }
+                            CusButton_Blue {
+                                text: "确认修改"
+                                width: 80
+                                height: 32
+                                anchors.verticalCenter: parent.verticalCenter
+                                onClicked: {
+                                    if (bindingData) {
+                                        popup.confirmedPixelsX = bindingData.targetPixelsX
+                                        popup.confirmedPixelsY = bindingData.targetPixelsY
+                                    }
+                                }
+                            }
                         }
                     }
                 }

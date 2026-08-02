@@ -10,12 +10,6 @@ Rectangle {
     height: 610
     color: '#e9f0f9'
 
-    MessagePopup {
-        id: azimuthmsg
-    }
-    MessagePopup {
-        id: pitchmsg
-    }
     MsgPopup2 {
         id: testmsg
     }
@@ -173,6 +167,9 @@ Rectangle {
     MessagePopup {
         id: msg
     }
+    MessagePopup {
+        id: netmsg
+    }
     CusPopup {
         id: tip1
         backgroundWidth: 200
@@ -194,10 +191,17 @@ Rectangle {
 
         anchors.top: parent.top
         anchors.topMargin: 10
-        anchors.left: commandArea.right
-        anchors.leftMargin: 30
+        anchors.left: commandArea.right 
+        anchors.leftMargin: -35
 
         // 串口选择
+        Text {
+            text: "串口号："
+            font.pixelSize: 18
+            font.bold: true
+            color: "#000000"
+            anchors.verticalCenter: serialComboBox.verticalCenter
+        }
         CusComboBox {
             id: serialComboBox
             width: 120
@@ -205,6 +209,13 @@ Rectangle {
             model: imageData.availablePorts
         }
         // 波特率
+        Text {
+            text: "波特率："
+            font.pixelSize: 18
+            font.bold: true
+            color: "#000000"
+            anchors.verticalCenter: baudComboBox.verticalCenter
+        }
         CusComboBox {
             id: baudComboBox
             width: 120
@@ -233,7 +244,8 @@ Rectangle {
                 interval: 1
                 onTriggered: {
                     if (imageData.portOpen) {
-                        testmsg.showToast("串口已打开")
+                        msg.message = "串口已打开！"
+                        msg.open()
                     } else {
                         msg.message = "串口打开失败！"
                         msg.open()
@@ -292,7 +304,7 @@ Rectangle {
 
         anchors.top: serialRow.bottom
         anchors.topMargin: 8
-        anchors.left: serialRow.left
+        x: serialRow.x + serialComboBox.x
 
         MyTextField {
             id: remoteHostField
@@ -316,6 +328,21 @@ Rectangle {
                 height: 32
                 text: templateBindingData.connected ? "断开" : "连接"
                 anchors.verticalCenter: parent.verticalCenter
+
+                Timer {
+                    id: connectTimer
+                    interval: 1000
+                    onTriggered: {
+                        if (templateBindingData.connected) {
+                            netmsg.message = "网络已连接！"
+                            netmsg.open()
+                        } else {
+                            netmsg.message = "网络连接失败！"
+                            netmsg.open()
+                        }
+                    }
+                }
+
                 onClicked: {
                     templateBindingData.host = remoteHostField.text
                     templateBindingData.port = parseInt(remotePortField.text) || 0
@@ -323,6 +350,7 @@ Rectangle {
                         templateBindingData.requestDisconnect()
                     } else {
                         templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+                        connectTimer.start()
                     }
                 }
             }
@@ -376,7 +404,7 @@ Rectangle {
 
         anchors.top: remoteHostRow.bottom
         anchors.topMargin: 8
-        anchors.left: serialRow.left
+        x: serialRow.x + serialComboBox.x
 
         // ── 俯仰框架角预装 ──
         MyTextField {
@@ -521,7 +549,7 @@ Rectangle {
 
         anchors.top: presetComboRow1.bottom
         anchors.topMargin: 10
-        anchors.left: presetComboRow1.left
+        x: serialRow.x + serialComboBox.x
 
         // ── 背景类型 ──
         MyComboBox {
@@ -625,7 +653,7 @@ Rectangle {
         spacing: 8
 
         anchors.top: comboRow2.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: (commandArea.x + commandArea.width + 30 + parent.width) / 2 - parent.width / 2
 

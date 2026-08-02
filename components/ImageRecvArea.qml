@@ -14,8 +14,12 @@ Rectangle {
     MsgPopup2 { id: middlemsg }
     MsgPopup2 { id: outmsg }
 
+    // 串口打开/关闭提示弹窗（需确认按钮）
+    MessagePopup { id: bdmsg }
+    MessagePopup { id: ccdmsg }
+
     // ═══════════════════════════════════════════════════════════════
-    // 第一行左侧：串口与北斗信息显示框（水平布局：蓝色方框 + 北斗数据）
+    // 第一行左侧：串口与北斗信息显示框
     // ═══════════════════════════════════════════════════════════════
     GroupBox {
         id: serialBDBox
@@ -44,124 +48,117 @@ Rectangle {
             radius: 8
         }
 
-        // 蓝色边框 - 串口选择区域（左侧）
-        Rectangle {
-            id: serialRect
-            anchors.left: parent.left
-            anchors.leftMargin: 3
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            width: 360
-            height: 78
-            color: "#e8f0fe"
-            border.color: "#1a73e8"
-            border.width: 2
-            radius: 4
+        Column {
+            anchors.fill: parent
+            anchors.margins: 12
+            spacing: 12
 
-            Column {
-                anchors.centerIn: parent
-                spacing: 4
-
-                // 第一行：串口号 + 波特率
-                Row {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 8
-                    Text {
-                        text: "串口号:"
-                        font.pixelSize: 15
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    CusComboBox {
-                        id: portComboBox
-                        width: 110
-                        height: 28
-                        model: imageData.availablePorts
-                        font.pixelSize: 14
-                    }
-                    Text {
-                        text: "波特率:"
-                        font.pixelSize: 15
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                    CusComboBox {
-                        id: baudComboBox
-                        width: 110
-                        height: 28
-                        model: ["9600"]
-                        font.pixelSize: 14
+            // 第一行：串口号 + 波特率 + 扫描串口 + 打开串口
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 6
+                Text {
+                    text: "串口号:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusComboBox {
+                    id: portComboBox
+                    width: 95
+                    height: 28
+                    model: imageData.availablePorts
+                    font.pixelSize: 14
+                }
+                Text {
+                    text: "波特率:"
+                    font.pixelSize: 15
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusComboBox {
+                    id: baudComboBox
+                    width: 95
+                    height: 28
+                    model: ["9600"]
+                    font.pixelSize: 14
+                }
+                CusButton_Blue {
+                    id: scanButton
+                    text: "扫描串口"
+                    font.pixelSize: 15
+                    width: 85
+                    height: 28
+                    onClicked: {
+                        imageData.scanPorts()
                     }
                 }
+                CusButton_Blue {
+                    id: openButton
+                    text: bdData.portOpen ? "关闭串口" : "打开串口"
+                    font.pixelSize: 15
+                    width: 85
+                    height: 28
 
-                // 第二行：扫描串口 + 打开串口按钮
-                Row {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 15
-                    CusButton_Blue {
-                        id: scanButton
-                        text: "扫描串口"
-                        font.pixelSize: 15
-                        width: 110
-                        height: 28
-                        onClicked: {
-                            imageData.scanPorts()
-                        }
-                    }
-                    CusButton_Blue {
-                        id: openButton
-                        text: bdData.portOpen ? "关闭串口" : "打开串口"
-                        font.pixelSize: 15
-                        width: 110
-                        height: 28
-                        onClicked: {
+                    Timer {
+                        id: bdDelayTimer
+                        interval: 1
+                        onTriggered: {
                             if (bdData.portOpen) {
-                                bdData.closePort()
+                                bdmsg.message = "北斗串口已打开！"
+                                bdmsg.open()
                             } else {
-                                bdData.openPort(portComboBox.currentText,
-                                                parseInt(baudComboBox.currentText))
+                                bdmsg.message = "北斗串口打开失败！"
+                                bdmsg.open()
                             }
                         }
                     }
-                }
-            }
-        }
 
-        // 北斗数据区域（放在蓝色方框右侧）
-        Column {
-            id: beidouColumn
-            anchors.left: serialRect.right
-            anchors.leftMargin: 20
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.verticalCenter: serialRect.verticalCenter
-            spacing: 4
+                    onClicked: {
+                        if (bdData.portOpen) {
+                            bdData.closePort()
+                        } else {
+                            bdData.openPort(portComboBox.currentText,
+                                            parseInt(baudComboBox.currentText))
+                            bdDelayTimer.start()
+                        }
+                    }
+                }
+            }
 
-            DataLabel {
-                fontSize: 16; labelWidth: 52; valueWidth: 140; labelBold: true
-                label: "北斗时间:"
-                value: {
-                    if (!bdData.m_isPosValid) return "--"
-                    var dt = bdData.m_bjDateTime
-                    return dt ? Qt.formatDateTime(dt, "yyyy-MM-dd hh:mm:ss") : "--"
+            // 第二行：北斗时间 + 经度 + 纬度
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: 15
+                spacing: 8
+                DataLabel {
+                    fontSize: 16; labelWidth: 50; valueWidth: 140; labelBold: true
+                    label: "北斗时间:"
+                    value: {
+                        if (!bdData.m_isPosValid) return "--"
+                        var dt = bdData.m_bjDateTime
+                        return dt ? Qt.formatDateTime(dt, "yyyy-MM-dd hh:mm:ss") : "--"
+                    }
                 }
-            }
-            DataLabel {
-                fontSize: 16; labelWidth: 52; valueWidth: 140; labelBold: true
-                label: "经度:"
-                value: {
-                    if (!bdData.m_isPosValid) return "--"
-                    var lon = bdData.m_longitude.toFixed(6)
-                    var dir = bdData.m_iseast ? "E" : "W"
-                    return lon + "° " + dir
+                DataLabel {
+                    fontSize: 16; labelWidth: 36; valueWidth: 100; labelBold: true
+                    label: "经度:"
+                    value: {
+                        if (!bdData.m_isPosValid) return "--"
+                        var lon = bdData.m_longitude.toFixed(6)
+                        var dir = bdData.m_iseast ? "E" : "W"
+                        return lon + "° " + dir
+                    }
                 }
-            }
-            DataLabel {
-                fontSize: 16; labelWidth: 52; valueWidth: 140; labelBold: true
-                label: "纬度:"
-                value: {
-                    if (!bdData.m_isPosValid) return "--"
-                    var lat = bdData.m_latitude.toFixed(6)
-                    var dir = bdData.m_isnorth ? "N" : "S"
-                    return lat + "° " + dir
+                DataLabel {
+                    fontSize: 16; labelWidth: 36; valueWidth: 100; labelBold: true
+                    label: "纬度:"
+                    value: {
+                        if (!bdData.m_isPosValid) return "--"
+                        var lat = bdData.m_latitude.toFixed(6)
+                        var dir = bdData.m_isnorth ? "N" : "S"
+                        return lat + "° " + dir
+                    }
                 }
             }
         }
@@ -248,12 +245,28 @@ Rectangle {
                     font.pixelSize: 15
                     width: 100
                     height: 28
+
+                    Timer {
+                        id: ccdDelayTimer
+                        interval: 1
+                        onTriggered: {
+                            if (ccdData.portOpen) {
+                                ccdmsg.message = "CCD串口已打开！"
+                                ccdmsg.open()
+                            } else {
+                                ccdmsg.message = "CCD串口打开失败！"
+                                ccdmsg.open()
+                            }
+                        }
+                    }
+
                     onClicked: {
                         if (ccdData.portOpen) {
                             ccdData.closePort()
                         } else {
                             ccdData.openPort(ccdPortComboBox.currentText,
                                              parseInt(ccdBaudComboBox.currentText))
+                            ccdDelayTimer.start()
                         }
                     }
                 }
