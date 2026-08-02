@@ -194,10 +194,17 @@ Rectangle {
 
         anchors.top: parent.top
         anchors.topMargin: 10
-        anchors.left: commandArea.right
-        anchors.leftMargin: 30
+        anchors.left: commandArea.right 
+        anchors.leftMargin: -35
 
         // 串口选择
+        Text {
+            text: "串口号："
+            font.pixelSize: 18
+            font.bold: true
+            color: "#000000"
+            anchors.verticalCenter: serialComboBox.verticalCenter
+        }
         CusComboBox {
             id: serialComboBox
             width: 120
@@ -205,6 +212,13 @@ Rectangle {
             model: imageData.availablePorts
         }
         // 波特率
+        Text {
+            text: "波特率："
+            font.pixelSize: 18
+            font.bold: true
+            color: "#000000"
+            anchors.verticalCenter: baudComboBox.verticalCenter
+        }
         CusComboBox {
             id: baudComboBox
             width: 120
@@ -292,7 +306,7 @@ Rectangle {
 
         anchors.top: serialRow.bottom
         anchors.topMargin: 8
-        anchors.left: serialRow.left
+        x: serialRow.x + serialComboBox.x
 
         MyTextField {
             id: remoteHostField
@@ -376,7 +390,7 @@ Rectangle {
 
         anchors.top: remoteHostRow.bottom
         anchors.topMargin: 8
-        anchors.left: serialRow.left
+        x: serialRow.x + serialComboBox.x
 
         // ── 俯仰框架角预装 ──
         MyTextField {
@@ -521,7 +535,7 @@ Rectangle {
 
         anchors.top: presetComboRow1.bottom
         anchors.topMargin: 10
-        anchors.left: presetComboRow1.left
+        x: serialRow.x + serialComboBox.x
 
         // ── 背景类型 ──
         MyComboBox {
@@ -625,7 +639,7 @@ Rectangle {
         spacing: 8
 
         anchors.top: comboRow2.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: (commandArea.x + commandArea.width + 30 + parent.width) / 2 - parent.width / 2
 

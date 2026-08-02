@@ -48,31 +48,18 @@ Rectangle {
 
     property int currentCmd: 0
 
-    Text {
-        id: titleText
-        text: "激光导引头\n控制与状态显示"
-        font.pixelSize: 24
-        font.bold: true
-        color: "#000000"
-        horizontalAlignment: Text.AlignHCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.top: parent.top
-        anchors.topMargin: 10
-    }
-
     // 左侧命令区
     Rectangle {
         id: commandArea
-        width: 140
+        width: 160
         height: 400
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
         anchors.leftMargin: 50
-        anchors.top: titleText.bottom
-        anchors.topMargin: 20
+        anchors.top: parent.top
+        anchors.topMargin: 80
 
         Column {
             spacing: 6
@@ -183,28 +170,48 @@ Rectangle {
 
    //上部控制区，串口选择，波特率，按钮等
    // 串口选择 - 绑定到 C++ laserSerial 对象
+    Text {
+        id: serialLabel
+        text: "串口号："
+        font.pixelSize: 18
+        font.bold: true
+        color: "#000000"
+        anchors.verticalCenter: serialComboBox.verticalCenter
+        anchors.right: serialComboBox.left
+        anchors.rightMargin: 6
+    }
     CusComboBox {
         id: serialComboBox
         width: 220
         height: 42
 
-        anchors.top: titleText.top
-        // anchors.topMargin: 10
-        anchors.left: titleText.right
-        anchors.leftMargin: 30
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.left: commandArea.right
+        anchors.leftMargin: -30
 
         model: laserData.availablePorts
     }
 
     // 波特率
+    Text {
+        id: baudLabel
+        text: "波特率："
+        font.pixelSize: 18
+        font.bold: true
+        color: "#000000"
+        anchors.verticalCenter: baudComboBox.verticalCenter
+        anchors.left: serialComboBox.right
+        anchors.leftMargin: 6
+    }
     CusComboBox {
         id: baudComboBox
         width: 220
         height: 42
 
         anchors.top: serialComboBox.top
-        anchors.left: serialComboBox.right
-        anchors.leftMargin: 30
+        anchors.left: baudLabel.right
+        anchors.leftMargin: 10
 
         model: ["115200"]
     }
@@ -288,15 +295,18 @@ Rectangle {
         }
     }
 
+    
     // 左侧输入框
     Column {
         id: firstColumn
         spacing: 5
 
         anchors.top: serialComboBox.bottom
-        anchors.topMargin: 10
-        anchors.left:commandArea.right
-        anchors.leftMargin: 120
+        anchors.topMargin: 30
+        // anchors.left:commandArea.right
+        // anchors.leftMargin: 120
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: -120
         property var disabledIndices: []
         Repeater {
             model: [
@@ -342,7 +352,7 @@ Rectangle {
         spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 30
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: firstColumn.right
         anchors.leftMargin: 30
@@ -401,7 +411,7 @@ Rectangle {
         spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 30
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: secondColumn.right
         anchors.leftMargin: 30
@@ -460,7 +470,7 @@ Rectangle {
         spacing: 5
 
         anchors.top: sendButton.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 30
         // anchors.horizontalCenter: sendButton.horizontalCenter
         anchors.left: thirdColumn.right
         anchors.leftMargin: 30
@@ -513,11 +523,12 @@ Rectangle {
             }
         }
     }
+
     LaserRecvArea{
         myheight:320
         mywidth:800
         anchors.top: firstColumn.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: 30
         anchors.left: commandArea.right
         anchors.leftMargin: 100
         groupHeight1:150
