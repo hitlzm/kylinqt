@@ -4,7 +4,7 @@
 #include "serialport.h"
 #include <QDateTime>
 #include "./circularbuffer.h"
-#include "Kalman/AlphaBetaTracker.h"
+#include "kalman/AlphaBetaTracker.h"
 
 struct laser_send_frame;
 struct laser_recv_frame;

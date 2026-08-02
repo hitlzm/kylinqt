@@ -4,7 +4,7 @@
 #include "serialport.h"
 #include "./circularbuffer.h"
 #include <QDateTime>
-#include "Kalman/AlphaBetaTracker.h"
+#include "kalman/AlphaBetaTracker.h"
 
 //默认视频拉流地址：rtsp://192.168.1.100:554/stream
 

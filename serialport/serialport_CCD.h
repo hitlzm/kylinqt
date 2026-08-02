@@ -2,7 +2,7 @@
 #define SERIALPORT_CCD_H
 
 #include "serialport.h"
-#include "Kalman/AlphaBetaTracker.h"
+#include "kalman/AlphaBetaTracker.h"
 #include <QDateTime>
 #include <QTimer>
 

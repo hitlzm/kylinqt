@@ -8,6 +8,9 @@ Item{
     id:root
     anchors.fill: parent
 
+    // 限位提示弹窗（需确认按钮）
+    MessagePopup { id: limitmsg }
+
 property var controlNames: [
     "三轴控制",
     "内框控制",
@@ -98,23 +101,59 @@ ColumnLayout{
                 onEditingFinished: {
                     var mynumber = extractNumbers(text);
                     if (index === 0) {                            // 三轴控制
-                        turntableSendData.inner_startangle = mynumber[0] || 0;
+                        var innerVal  = mynumber[0]
+                        var middleVal = mynumber[1]
+                        var outerVal  = mynumber[2]
 
-                        turntableSendData.middle_startangle = mynumber[1] || 0;
+                        // 收集所有超限的轴
+                        var errors = []
+                        if (innerVal !== undefined && text.trim() !== "" && (isNaN(innerVal) || innerVal < -200 || innerVal > 200))
+                            errors.push("内框(滚转): -200°~200°")
+                        if (middleVal !== undefined && text.trim() !== "" && (isNaN(middleVal) || middleVal < -10 || middleVal > 70))
+                            errors.push("中框(俯仰): -10°~70°")
+                        if (outerVal !== undefined && text.trim() !== "" && (isNaN(outerVal) || outerVal < -100 || outerVal > 100))
+                            errors.push("外框(方位): -100°~100°")
 
-                        turntableSendData.outter_startangle = mynumber[2] || 0;
+                        if (errors.length > 0) {
+                            limitmsg.message = "输入超出范围！请按以下范围重新输入：\n" + errors.join("\n")
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+
+                        turntableSendData.inner_startangle = innerVal || 0;
+                        turntableSendData.middle_startangle = middleVal || 0;
+                        turntableSendData.outter_startangle = outerVal || 0;
                         turntableSendData.index = 0;
-                        
-                    } else if (index === 1) {
-                        turntableSendData.inner_startangle = Number(text)
-                        // turntableSendData.index = 1;
-                    } else if (index === 2) {
-                        turntableSendData.middle_startangle = Number(text)
-                        // turntableSendData.index = 2;
-                    } else if (index === 3) {
-                        turntableSendData.outter_startangle = Number(text)
-                        // turntableSendData.index = 3;
-                    } 
+
+                    } else if (index === 1) {                     // 内框控制（滚转）
+                        var val = Number(text)
+                        if (text.trim() !== "" && (isNaN(val) || val < -200 || val > 200)) {
+                            limitmsg.message = "内框(滚转)角度输入范围为-200°~200°，请重新输入"
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+                        turntableSendData.inner_startangle = val
+                    } else if (index === 2) {                     // 中框控制（俯仰）
+                        var val = Number(text)
+                        if (text.trim() !== "" && (isNaN(val) || val < -10 || val > 70)) {
+                            limitmsg.message = "中框(俯仰)角度输入范围为-10°~70°，请重新输入"
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+                        turntableSendData.middle_startangle = val
+                    } else if (index === 3) {                     // 外框控制（方位）
+                        var val = Number(text)
+                        if (text.trim() !== "" && (isNaN(val) || val < -100 || val > 100)) {
+                            limitmsg.message = "外框(方位)角度输入范围为-100°~100°，请重新输入"
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+                        turntableSendData.outter_startangle = val
+                    }
                 }
             }
             CusTextField{
@@ -129,20 +168,58 @@ ColumnLayout{
                 onEditingFinished: {
                     var mynumber = extractNumbers(text);
                     if (index === 0) {                            // 三轴控制
+                        var innerVal  = mynumber[0]
+                        var middleVal = mynumber[1]
+                        var outerVal  = mynumber[2]
 
-                        turntableSendData.inner_endangle = mynumber[0] || 0;
-                        
-                        turntableSendData.middle_endangle = mynumber[1] || 0;
-                        
-                        turntableSendData.outter_endangle = mynumber[2] || 0;
+                        // 收集所有超限的轴
+                        var errors = []
+                        if (innerVal !== undefined && text.trim() !== "" && (isNaN(innerVal) || innerVal < -200 || innerVal > 200))
+                            errors.push("内框(滚转): -200°~200°")
+                        if (middleVal !== undefined && text.trim() !== "" && (isNaN(middleVal) || middleVal < -10 || middleVal > 70))
+                            errors.push("中框(俯仰): -10°~70°")
+                        if (outerVal !== undefined && text.trim() !== "" && (isNaN(outerVal) || outerVal < -100 || outerVal > 100))
+                            errors.push("外框(方位): -100°~100°")
 
-                    } else if (index === 1) {
-                        turntableSendData.inner_endangle = Number(text)
-                    } else if (index === 2) {
-                        turntableSendData.middle_endangle = Number(text)
-                    }else if (index === 3) {
-                        turntableSendData.outter_endangle = Number(text)
-                    }  
+                        if (errors.length > 0) {
+                            limitmsg.message = "输入超出范围！请按以下范围重新输入：\n" + errors.join("\n")
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+
+                        turntableSendData.inner_endangle = innerVal || 0;
+                        turntableSendData.middle_endangle = middleVal || 0;
+                        turntableSendData.outter_endangle = outerVal || 0;
+
+                    } else if (index === 1) {                     // 内框控制（滚转）
+                        var val = Number(text)
+                        if (text.trim() !== "" && (isNaN(val) || val < -200 || val > 200)) {
+                            limitmsg.message = "内框(滚转)角度输入范围为-200°~200°，请重新输入"
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+                        turntableSendData.inner_endangle = val
+                    } else if (index === 2) {                     // 中框控制（俯仰）
+                        var val = Number(text)
+                        if (text.trim() !== "" && (isNaN(val) || val < -10 || val > 70)) {
+                            limitmsg.message = "中框(俯仰)角度输入范围为-10°~70°，请重新输入"
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+                        turntableSendData.middle_endangle = val
+                    } else if (index === 3) {                     // 外框控制（方位）
+                        var val = Number(text)
+                        if (text.trim() !== "" && (isNaN(val) || val < -100 || val > 100)) {
+                            limitmsg.message = "外框(方位)角度输入范围为-100°~100°，请重新输入"
+                            limitmsg.open()
+                            text = ""
+                            return
+                        }
+                        turntableSendData.outter_endangle = val
+                    }
                 }
             }
             CusTextField{
