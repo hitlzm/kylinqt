@@ -14,6 +14,10 @@ Rectangle {
     MsgPopup2 { id: middlemsg }
     MsgPopup2 { id: outmsg }
 
+    // 串口打开/关闭提示弹窗（需确认按钮）
+    MessagePopup { id: bdmsg }
+    MessagePopup { id: ccdmsg }
+
     // ═══════════════════════════════════════════════════════════════
     // 第一行左侧：串口与北斗信息显示框
     // ═══════════════════════════════════════════════════════════════
@@ -95,12 +99,28 @@ Rectangle {
                     font.pixelSize: 15
                     width: 85
                     height: 28
+
+                    Timer {
+                        id: bdDelayTimer
+                        interval: 1
+                        onTriggered: {
+                            if (bdData.portOpen) {
+                                bdmsg.message = "北斗串口已打开！"
+                                bdmsg.open()
+                            } else {
+                                bdmsg.message = "北斗串口打开失败！"
+                                bdmsg.open()
+                            }
+                        }
+                    }
+
                     onClicked: {
                         if (bdData.portOpen) {
                             bdData.closePort()
                         } else {
                             bdData.openPort(portComboBox.currentText,
                                             parseInt(baudComboBox.currentText))
+                            bdDelayTimer.start()
                         }
                     }
                 }
@@ -225,12 +245,28 @@ Rectangle {
                     font.pixelSize: 15
                     width: 100
                     height: 28
+
+                    Timer {
+                        id: ccdDelayTimer
+                        interval: 1
+                        onTriggered: {
+                            if (ccdData.portOpen) {
+                                ccdmsg.message = "CCD串口已打开！"
+                                ccdmsg.open()
+                            } else {
+                                ccdmsg.message = "CCD串口打开失败！"
+                                ccdmsg.open()
+                            }
+                        }
+                    }
+
                     onClicked: {
                         if (ccdData.portOpen) {
                             ccdData.closePort()
                         } else {
                             ccdData.openPort(ccdPortComboBox.currentText,
                                              parseInt(ccdBaudComboBox.currentText))
+                            ccdDelayTimer.start()
                         }
                     }
                 }

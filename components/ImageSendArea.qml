@@ -10,12 +10,6 @@ Rectangle {
     height: 610
     color: '#e9f0f9'
 
-    MessagePopup {
-        id: azimuthmsg
-    }
-    MessagePopup {
-        id: pitchmsg
-    }
     MsgPopup2 {
         id: testmsg
     }
@@ -173,6 +167,9 @@ Rectangle {
     MessagePopup {
         id: msg
     }
+    MessagePopup {
+        id: netmsg
+    }
     CusPopup {
         id: tip1
         backgroundWidth: 200
@@ -247,7 +244,8 @@ Rectangle {
                 interval: 1
                 onTriggered: {
                     if (imageData.portOpen) {
-                        testmsg.showToast("串口已打开")
+                        msg.message = "串口已打开！"
+                        msg.open()
                     } else {
                         msg.message = "串口打开失败！"
                         msg.open()
@@ -330,6 +328,21 @@ Rectangle {
                 height: 32
                 text: templateBindingData.connected ? "断开" : "连接"
                 anchors.verticalCenter: parent.verticalCenter
+
+                Timer {
+                    id: connectTimer
+                    interval: 1000
+                    onTriggered: {
+                        if (templateBindingData.connected) {
+                            netmsg.message = "网络已连接！"
+                            netmsg.open()
+                        } else {
+                            netmsg.message = "网络连接失败！"
+                            netmsg.open()
+                        }
+                    }
+                }
+
                 onClicked: {
                     templateBindingData.host = remoteHostField.text
                     templateBindingData.port = parseInt(remotePortField.text) || 0
@@ -337,6 +350,7 @@ Rectangle {
                         templateBindingData.requestDisconnect()
                     } else {
                         templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+                        connectTimer.start()
                     }
                 }
             }
