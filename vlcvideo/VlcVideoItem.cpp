@@ -836,6 +836,32 @@ void VlcVideoItem::onRenderContextReady()
     setupPlayer();
 }
 
+// 从 mpv video-params 节点中解析出视频固有显示尺寸（dw/dh）
+static void parseVideoParamsNode(mpv_node *node, int *dw, int *dh)
+{
+    if (!node) return;
+
+    if (node->format == MPV_FORMAT_NODE_MAP) {
+        mpv_node_list *list = node->u.list;
+        for (int i = 0; list && i < list->num; ++i) {
+            const char *key = list->keys ? list->keys[i] : nullptr;
+            if (!key || list->values[i].format != MPV_FORMAT_INT64) continue;
+            if      (strcmp(key, "dw") == 0) *dw = static_cast<int>(list->values[i].u.int64);
+            else if (strcmp(key, "dh") == 0) *dh = static_cast<int>(list->values[i].u.int64);
+        }
+    } else if (node->format == MPV_FORMAT_NODE_ARRAY) {
+        // 旧版 mpv：视频参数以 [key, value, key, value, ...] 数组形式返回
+        mpv_node_list *list = node->u.list;
+        for (int i = 0; list && i + 1 < list->num; i += 2) {
+            mpv_node &k = list->values[i];
+            mpv_node &v = list->values[i + 1];
+            if (k.format != MPV_FORMAT_STRING || !k.u.string || v.format != MPV_FORMAT_INT64) continue;
+            if      (strcmp(k.u.string, "dw") == 0) *dw = static_cast<int>(v.u.int64);
+            else if (strcmp(k.u.string, "dh") == 0) *dh = static_cast<int>(v.u.int64);
+        }
+    }
+}
+
 void VlcVideoItem::processMpvEvents()
 {
     if (!m_mpv) return;
@@ -905,6 +931,14 @@ void VlcVideoItem::processMpvEvents()
                 if (prop->format == MPV_FORMAT_FLAG)
                     m_seekable = !!(*static_cast<int *>(prop->data));
                 emit seekableChanged();
+            } else if (strcmp(prop->name, "video-params") == 0) {
+                // 记录视频固有显示尺寸，供 requestPixelAt 剔除黑边、判定点击是否落在视频画面内
+                if (prop->format == MPV_FORMAT_NODE) {
+                    int dw = m_videoDw, dh = m_videoDh;
+                    parseVideoParamsNode(static_cast<mpv_node *>(prop->data), &dw, &dh);
+                    m_videoDw = dw;
+                    m_videoDh = dh;
+                }
             }
             break;
         }
@@ -927,7 +961,8 @@ void VlcVideoItem::processMpvEvents()
 void VlcVideoItem::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        qDebug() << "[MpvVideo] mousePressEvent at" << event->pos();
+        // 坐标映射与“是否落在视频画面内”的判定都在 requestPixelAt 中完成；
+        // 点击在视频画面之外（黑边）时静默忽略，不输出、不发送偏差像素。
         requestPixelAt(event->pos().x(), event->pos().y());
         event->accept();
         return;
@@ -968,26 +1003,57 @@ void VlcVideoItem::requestPixelAt(int x, int y)
         return;
     }
 
-    const qreal scale = qMin(itemW / videoW, itemH / videoH);
-    const qreal displayW = videoW * scale;
-    const qreal displayH = videoH * scale;
-    const qreal offsetX = (itemW - displayW) / 2.0;
-    const qreal offsetY = (itemH - displayH) / 2.0;
+    // 整个 item 显示的就是整帧内容（帧含 mpv 渲染时的黑边），
+    // 所以点击坐标 → 帧坐标是均匀缩放映射
+    const qreal frameX = x / itemW * videoW;
+    const qreal frameY = y / itemH * videoH;
 
-    if (x < offsetX || x > offsetX + displayW ||
-        y < offsetY || y > offsetY + displayH) {
-        qDebug() << "[MpvVideo] click outside video area:" << x << y;
-        emit errorReadingPixel(QStringLiteral("点击位置在视频画面之外"));
+    // 若已知视频固有显示尺寸，剔除帧内黑边（letterbox）并把坐标映射回视频原生坐标系
+    if (m_videoDw > 0 && m_videoDh > 0) {
+        const qreal aspect = qreal(m_videoDw) / m_videoDh;
+        const qreal frameAspect = videoW / videoH;
+        qreal vw, vh, ox, oy;
+        if (aspect > frameAspect) {
+            // 视频比帧更宽 → 上下留黑边
+            vw = videoW;
+            vh = videoW / aspect;
+            ox = 0.0;
+            oy = (videoH - vh) / 2.0;
+        } else {
+            // 视频比帧更窄 → 左右留黑边
+            vh = videoH;
+            vw = videoH * aspect;
+            ox = (videoW - vw) / 2.0;
+            oy = 0.0;
+        }
+
+        if (frameX < ox || frameX > ox + vw ||
+            frameY < oy || frameY > oy + vh) {
+            // 点击位置在视频画面之外（黑边），静默忽略
+            return;
+        }
+
+        // 黑边内的坐标 → 视频原生坐标系（如 1280×720），供导引头使用
+        const int nativeX = qBound(0, qRound((frameX - ox) / vw * m_videoDw), m_videoDw - 1);
+        const int nativeY = qBound(0, qRound((frameY - oy) / vh * m_videoDh), m_videoDh - 1);
+
+        // 颜色从当前显示的帧上读取；帧缓冲为 bottom-up（首行=画面底部），纵向需翻转
+        const int memX = qBound(0, qRound(frameX), frame.width() - 1);
+        const int memY = qBound(0, frame.height() - 1 - qRound(frameY), frame.height() - 1);
+        QColor color = frame.pixelColor(memX, memY);
+        qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → video("
+                 << nativeX << "," << nativeY << ") =" << color;
+        emit reqDeviationToImg(nativeX, nativeY);
         return;
     }
 
-    int frameX = qRound((x - offsetX) / displayW * videoW);
-    int frameY = qRound((y - offsetY) / displayH * videoH);
-    frameX = qBound(0, frameX, frame.width() - 1);
-    frameY = qBound(0, frameY, frame.height() - 1);
+    // 视频尺寸未知（video-params 尚未到达）时退回帧坐标
+    int frameXpx = qBound(0, qRound(frameX), frame.width() - 1);
+    int frameYpx = qBound(0, qRound(frameY), frame.height() - 1);
 
-    QColor color = frame.pixelColor(frameX, frameY);
+    // 帧缓冲为 bottom-up，纵向翻转后再读像素颜色
+    QColor color = frame.pixelColor(frameXpx, frame.height() - 1 - frameYpx);
     qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → frame("
-             << frameX << "," << frameY << ") =" << color;
-    emit pixelRead(x, y);
+             << frameXpx << "," << frameYpx << ") =" << color;
+    emit reqDeviationToImg(frameXpx, frameYpx);
 }

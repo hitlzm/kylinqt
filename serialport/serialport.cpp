@@ -40,7 +40,8 @@ void SerialPort::dowork()
 
     // QSerialPort 在工作线程中创建，避免主线程创建后被 moveToThread 迁移
     m_serialPort = new QSerialPort(this);
-    timer = new PreciseTimer(this);
+    timer = new QTimer(this);
+    timer->setTimerType(Qt::PreciseTimer);
     connect(m_serialPort, &QSerialPort::readyRead,
             this, &SerialPort::handleReadyRead);
     connect(m_serialPort, &QSerialPort::errorOccurred,

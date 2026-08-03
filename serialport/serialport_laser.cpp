@@ -301,13 +301,13 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
     //断开上一次的连接
-    disconnect(timer, &PreciseTimer::timeout, this, nullptr);
+    disconnect(timer, &QTimer::timeout, this, nullptr);
 
     int sendCount = 0;
     static quint8 datacount=0;
     timer->setInterval(10); // 10ms
     // 连接定时器的超时信号
-    connect(timer, &PreciseTimer::timeout, this, [=]() mutable {
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 发送数据
         SerialPort::send(data);
         
@@ -510,7 +510,9 @@ void SerialPortLaser::ExmodeChanged(int mode)
         }
         else
         {
-            m_exGuideTimer->stop(); //切换到其他外引导源时，暂停激光导引头外引导定时器，停止继续发送
+            if (m_exGuideTimer) {
+                m_exGuideTimer->stop(); //切换到其他外引导源时，暂停激光导引头外引导定时器，停止继续发送
+            }
         }
     }
     else

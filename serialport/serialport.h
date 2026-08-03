@@ -6,7 +6,7 @@
 #include <QSerialPortInfo>
 #include <QByteArray>
 #include <QStringList>
-#include "precisetimer.h"
+#include <QTimer>
 
 class SerialPort : public QObject
 {
@@ -41,7 +41,7 @@ protected:
 
     QSerialPort *m_serialPort;
     QStringList m_availablePorts;
-    PreciseTimer *timer;        //用于两类导引头发送指令时，多次发送时间间隔的计时
+    QTimer *timer;              //用于两类导引头发送指令时，多次发送时间间隔的计时
 
 signals:
     // void dataReceived(const QByteArray &parsedData);

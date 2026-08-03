@@ -494,7 +494,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     // 先断开旧连接，避免重复绑定导致 lambda 被多次触发
     disconnect(timer, &QTimer::timeout, this, nullptr);
     // 连接定时器的超时信号
-    connect(timer, &PreciseTimer::timeout, this, [=]() mutable {
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 发送数据
         qint64 count=SerialPort::send(data);
         //增加帧流水号改变,如果发送字节数没问题
@@ -604,7 +604,9 @@ void SerialPortImage::ExmodeChanged(int mode)
         }
         else
         {
-            m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+            if (m_exGuideTimer) {
+                m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+            }
         }
     }
     else

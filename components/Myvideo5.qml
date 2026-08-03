@@ -163,10 +163,6 @@ Rectangle {
         function onEnded() { console.log("VlcVideo: 播放结束"); stopOverlay.visible = true }
         function onError(msg) { console.log("VlcVideo error:", msg) }
         function onStopped() { console.log("VlcVideo: 已停止"); stopOverlay.visible = true }
-        // function onPixelRead(frameX, frameY) {
-        //     pixelInfo.text = "帧坐标: (" + frameX + ", " + frameY + ")"
-        //     console.log("帧坐标:", pixelInfo.text)
-        // }
         function onReqDeviationToImg(x, y) {
             console.log("偏差像素请求: (" + x + ", " + y + ")")
             imageSendData.relayDeviationPixel(x, y)

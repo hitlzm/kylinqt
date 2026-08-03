@@ -223,6 +223,7 @@ void CCDData::setError(const QString &msg) { if (m_errorString != msg) { m_error
 void CCDData::setFocusMode(int mode) {
     if (m_focusMode != mode) {
         m_focusMode = mode;
+        emit focusModeChanged();
         if (mode == 0) emit req30XFocus();
         else emit req1XFocus();
     }
@@ -231,6 +232,7 @@ void CCDData::setFocusMode(int mode) {
 void CCDData::setBacklight(bool on) {
     if (m_backlightOn != on) {
         m_backlightOn = on;
+        emit backlightOnChanged();
         if (on) emit reqBacklightopen();
         else emit reqBacklightclose();
     }
@@ -240,6 +242,7 @@ void CCDData::setResolution(int index) {
     if (index < 0 || index > 3) return;
     if (m_resolutionIndex != index) {
         m_resolutionIndex = index;
+        emit resolutionIndexChanged();
         emit reqResolutionchange(index);
     }
 }

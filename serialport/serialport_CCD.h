@@ -53,6 +53,11 @@ signals:
     void availablePortsChanged();
     void errorStringChanged();
 
+    // CCD 控制状态变化信号
+    void focusModeChanged();
+    void backlightOnChanged();
+    void resolutionIndexChanged();
+
     // ── 请求信号（→ 排队到工作线程）──
     void requestOpenPort(const QString &portName, int baudRate);
     void requestClosePort();

@@ -49,7 +49,7 @@ public:
     Q_INVOKABLE void stop();
 
     // ── 像素读取接口 ──────────────────────────────────────
-    /// QML 调用，传入控件坐标，映射为视频帧坐标并发射 pixelRead 信号
+    /// QML 调用，传入控件坐标，映射为视频帧坐标并发射 reqDeviationToImg 信号
     Q_INVOKABLE void requestPixelAt(int x, int y);
 
 protected:
@@ -86,7 +86,8 @@ signals:
     void error(const QString &errorMsg);
 
     // ── 像素读取结果信号 ──────────────────────────────────
-    void pixelRead(int frameX, int frameY);
+    /// 点击到视频画面内时发出，携带帧坐标，请求图像导引头发送偏差像素
+    void reqDeviationToImg(int frameX, int frameY);
     void errorReadingPixel(QString message);
 
 private slots:
@@ -128,6 +129,11 @@ private:
     unsigned m_width = 0;
     unsigned m_height = 0;
     volatile bool m_frameUpdated = false;
+
+    // 视频固有显示尺寸（mpv video-params 的 dw/dh）。
+    // 用于判断点击是否落在帧内真实视频画面上（剔除 mpv 渲染时留下的黑边）。
+    int m_videoDw = 0;
+    int m_videoDh = 0;
 
     // StreamProcessor 处理后回传的帧
     QImage m_processedFrame;

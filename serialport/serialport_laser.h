@@ -3,6 +3,7 @@
 
 #include "serialport.h"
 #include <QDateTime>
+#include <QTimer>
 #include "./circularbuffer.h"
 #include "kalman/AlphaBetaTracker.h"
 
