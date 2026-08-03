@@ -1,4 +1,6 @@
 #include <QGuiApplication>
+#include <QApplication>
+#include <QQuickStyle>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QThread>
@@ -35,7 +37,13 @@ int main(int argc, char *argv[])
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
         Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
-    QGuiApplication app(argc, argv);
+    // QGuiApplication app(argc, argv);
+    
+    QApplication app(argc, argv);
+
+    // 固定 QQC2 样式为 Basic，避免在 Linux/麒麟上因 QApplication 自动切到 Fusion
+    // 导致 TabBar 黑白选中效果丢失、整体长度缩小（Windows 下默认即 Basic）
+    QQuickStyle::setStyle("Basic");
 
     // ── 跨平台默认字体：Linux 上不存在微软雅黑，设置可用回退字体 ──
     QFont defaultFont = app.font();

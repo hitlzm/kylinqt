@@ -8,7 +8,7 @@ import "./"
 
 Rectangle {
     id: root
-    width: 700; height: 430
+    width: 700; height: 450
     color: "#e9f0f9"
 
     property bool _connected: false
@@ -20,6 +20,8 @@ Rectangle {
         anchors.left: parent.left;  anchors.leftMargin: 12
         anchors.right: parent.right; anchors.rightMargin: 12
         anchors.top: parent.top;     anchors.topMargin: 10
+        // 固定高度：避免麒麟下 22px 标题行高变大，把下方控件挤出 430 底边
+        height: 26
         spacing: 12
 
         Text { text: "导引头视频"; font.pixelSize: 22; font.bold: true; color: "#000000"; Layout.alignment: Qt.AlignVCenter }
@@ -78,19 +80,21 @@ Rectangle {
         id: controlRow
         anchors.left: parent.left;   anchors.leftMargin: 12
         anchors.right: parent.right; anchors.rightMargin: 12
-        anchors.top: videoBorder.bottom; anchors.topMargin: 10
+        anchors.top: videoBorder.bottom; anchors.topMargin: 8
+        // 固定行高：行内按钮不再随麒麟字体行高变化
+        height: 36
         spacing: 12
 
         CusButton_Blue {
             text: videoPlayer.playing ? "暂停" : "播放"
-            Layout.fillWidth: true; height: 40
+            Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
                 if (!_connected) connectToUrl(urlInput.text.trim())
                 if (videoPlayer.playing) videoPlayer.pause()
                 else { videoPlayer.play(); stopOverlay.visible = false }
             }
         }
-        CusButton_Blue { text: "停止"; Layout.fillWidth: true; height: 40
+        CusButton_Blue { text: "停止"; Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
                 videoPlayer.stop()
                 stopOverlay.visible = true
@@ -108,11 +112,13 @@ Rectangle {
         id: urlRow
         anchors.left: parent.left;   anchors.leftMargin: 12
         anchors.right: parent.right; anchors.rightMargin: 12
-        anchors.top: controlRow.bottom; anchors.topMargin: 10
+        anchors.top: controlRow.bottom; anchors.topMargin: 8
+        // 固定行高：输入框和连接按钮不再随麒麟字体行高变化，杜绝溢出父边界
+        height: 32
         spacing: 10
         Text { text: "RTSP:"; font.pixelSize: 16; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
-        CusTextField { id: urlInput; Layout.fillWidth: true; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
-        CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; height: 36; onClicked: connectToUrl(urlInput.text.trim()) }
+        CusTextField { id: urlInput; Layout.fillWidth: true; Layout.preferredHeight: 26; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
+        CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; Layout.preferredHeight: 32; onClicked: connectToUrl(urlInput.text.trim()) }
     }
 
     function connectToUrl(newUrl) { if (newUrl === "") return; videoPlayer.stop(); videoPlayer.source = newUrl; _connected = true }

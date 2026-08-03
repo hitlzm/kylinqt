@@ -328,9 +328,9 @@ kylinqt.exe: CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj
 kylinqt.exe: CMakeFiles/kylinqt.dir/build.make
-kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5SerialPortd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Gamepadd.a
+kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5QuickControls2d.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_gapi420.dll.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_stitching420.dll.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_aruco420.dll.a
@@ -356,9 +356,11 @@ kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_tracking420.dll
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_videostab420.dll.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_xobjdetect420.dll.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_xphoto420.dll.a
+kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Quickd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Qmld.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Networkd.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_highgui420.dll.a
+kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Widgetsd.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Guid.a
 kylinqt.exe: E:/QT5.12.8/5.12.8/mingw73_64/lib/libQt5Cored.a
 kylinqt.exe: E:/opencv-4.2.0/DNN/install/x64/mingw/lib/libopencv_datasets420.dll.a

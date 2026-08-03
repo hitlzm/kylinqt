@@ -1,36 +1,57 @@
 [
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\kylinqt_autogen\\mocs_compilation.cpp.obj -c E:\\QTproject\\kylinqt\\build\\kylinqt_autogen\\mocs_compilation.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\kylinqt_autogen\\mocs_compilation.cpp.obj -c E:\\QTproject\\kylinqt\\build\\kylinqt_autogen\\mocs_compilation.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/build/kylinqt_autogen/mocs_compilation.cpp",
   "output": "CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\main.cpp.obj -c E:\\QTproject\\kylinqt\\main.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\main.cpp.obj -c E:\\QTproject\\kylinqt\\main.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/main.cpp",
   "output": "CMakeFiles/kylinqt.dir/main.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/serialport/serialport.cpp",
   "output": "CMakeFiles/kylinqt.dir/serialport/serialport.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_image.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_image.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_image.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_image.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/serialport/serialport_image.cpp",
   "output": "CMakeFiles/kylinqt.dir/serialport/serialport_image.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_laser.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_laser.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_laser.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_laser.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/serialport/serialport_laser.cpp",
   "output": "CMakeFiles/kylinqt.dir/serialport/serialport_laser.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_turntable_HEX.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_turntable_HEX.cpp",
   "file": "E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.cpp",
   "output": "CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj"
@@ -38,23 +59,41 @@
 {
   "directory": "E:/QTproject/kylinqt/build",
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_BD.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_BD.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_turntable.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_turntable.cpp",
+  "file": "E:/QTproject/kylinqt/serialport/serialport_turntable.cpp",
+  "output": "CMakeFiles/kylinqt.dir/serialport/serialport_turntable.cpp.obj"
+},
+{
+  "directory": "E:/QTproject/kylinqt/build",
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_BD.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_BD.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/serialport/serialport_BD.cpp",
   "output": "CMakeFiles/kylinqt.dir/serialport/serialport_BD.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_CCD.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_CCD.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\serialport\\serialport_CCD.cpp.obj -c E:\\QTproject\\kylinqt\\serialport\\serialport_CCD.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/serialport/serialport_CCD.cpp",
   "output": "CMakeFiles/kylinqt.dir/serialport/serialport_CCD.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\vlcvideo\\VlcVideoItem.cpp.obj -c E:\\QTproject\\kylinqt\\vlcvideo\\VlcVideoItem.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\vlcvideo\\VlcVideoItem.cpp.obj -c E:\\QTproject\\kylinqt\\vlcvideo\\VlcVideoItem.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp",
   "output": "CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\vlcvideo\\VlcFrameItem.cpp.obj -c E:\\QTproject\\kylinqt\\vlcvideo\\VlcFrameItem.cpp",
   "file": "E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp",
   "output": "CMakeFiles/kylinqt.dir/vlcvideo/VlcFrameItem.cpp.obj"
@@ -62,18 +101,29 @@
 {
   "directory": "E:/QTproject/kylinqt/build",
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\kalman\\seekKalman.cpp.obj -c E:\\QTproject\\kylinqt\\kalman\\seekKalman.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\kalman\\seekKalman.cpp.obj -c E:\\QTproject\\kylinqt\\kalman\\seekKalman.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/kalman/seekKalman.cpp",
   "output": "CMakeFiles/kylinqt.dir/kalman/seekKalman.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\network\\TemplateBindingClient.cpp.obj -c E:\\QTproject\\kylinqt\\network\\TemplateBindingClient.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\network\\TemplateBindingClient.cpp.obj -c E:\\QTproject\\kylinqt\\network\\TemplateBindingClient.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/network/TemplateBindingClient.cpp",
   "output": "CMakeFiles/kylinqt.dir/network/TemplateBindingClient.cpp.obj"
 },
 {
   "directory": "E:/QTproject/kylinqt/build",
+<<<<<<< HEAD
   "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++14 -o CMakeFiles\\kylinqt.dir\\kylinqt_autogen\\EWIEGA46WW\\qrc_qml.cpp.obj -c E:\\QTproject\\kylinqt\\build\\kylinqt_autogen\\EWIEGA46WW\\qrc_qml.cpp",
+=======
+  "command": "E:\\QT5.12.8\\Tools\\mingw730_64\\bin\\g++.exe -DQT_CORE_LIB -DQT_GAMEPAD_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_QML_DEBUG -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_SERIALPORT_LIB -DQT_WIDGETS_LIB -DTaoQuickImportPath=\\\"file:///E:/QTproject/kylinqt/\\\" @CMakeFiles/kylinqt.dir/includes_CXX.rsp -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -g -std=gnu++11 -o CMakeFiles\\kylinqt.dir\\kylinqt_autogen\\EWIEGA46WW\\qrc_qml.cpp.obj -c E:\\QTproject\\kylinqt\\build\\kylinqt_autogen\\EWIEGA46WW\\qrc_qml.cpp",
+>>>>>>> newlayout2
   "file": "E:/QTproject/kylinqt/build/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp",
   "output": "CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj"
 }

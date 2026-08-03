@@ -236,10 +236,19 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qshareddata.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsize.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/QApplication \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qapplication.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgetsglobal.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgets-config.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcursor.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/QQuickStyle \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qquickstyle.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qtquickcontrols2global.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/QQmlApplicationEngine \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlapplicationengine.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlengine.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qjsengine.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
