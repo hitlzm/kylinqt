@@ -455,10 +455,15 @@ void SerialPortLaser::ExmodeChanged(int mode)
         exguidesetting = mode; //外引导发送时间间隔选择  索引为6，7
 
     if (exindex == ExguideMode) //判断是否为外引导模式
-    {
+    {   
         // 激光导引头被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcLaser)
         {
+            // 判断激光导引头串口是否开启，未开启时触发弹窗提示
+            if (!isOpen()) {
+                emit exguideSerialNotOpen("激光导引头串口未打开");
+            }
+
             // 只有时间间隔设置改变时才重新绑定
             if(m_lastexguidesetting != exguidesetting)
             {

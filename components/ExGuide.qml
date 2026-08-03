@@ -99,6 +99,7 @@ Item {
     }
 
     Rectangle {
+        id: logArea
         anchors.top: guidePeriodRow.bottom
         anchors.topMargin: 4
         anchors.left: parent.left
@@ -130,9 +131,10 @@ Item {
 
             delegate: Text {
                 text: modelData
-                font.pixelSize: 12; font.family: "Consolas"
+                font.pixelSize: 16; font.family: "Consolas"
                 color: '#1e0101'
                 width: logList.width
+                horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.Wrap
             }
 

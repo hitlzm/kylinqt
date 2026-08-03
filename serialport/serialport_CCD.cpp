@@ -131,6 +131,11 @@ void SerialPortCCD::ExmodeChanged(int mode)
         // CCD相机被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcCCD)
         {
+            // 判断CCD相机串口是否开启，未开启时触发弹窗提示
+            if (!isOpen()) {
+                emit exguideSerialNotOpen("CCD串口未打开");
+            }
+
             // 只有时间间隔设置改变时才重新绑定
             if(m_lastexguidesetting != exguidesetting)
             {

@@ -131,6 +131,9 @@ signals:
     void availablePortsChanged();
     void errorStringChanged();
 
+    // ── 弹窗请求信号（工作线程 → QML 弹窗提示）──
+    void popupMessage(const QString &msg);
+
     // ── 请求信号（→ 排队到工作线程）──
     void requestOpenPort(const QString &portName, int baudRate);
     void requestClosePort();
@@ -283,6 +286,8 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void laserFrameReceived(const laser_recv_frame &frame);
+    // 外引导源串口未打开时，通知 QML 弹窗提示
+    void exguideSerialNotOpen(const QString &msg);
 
     // void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
@@ -322,7 +327,7 @@ private:
     int exguidesetting = -1;        // 跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
     int m_sendCount_1s = 0;
-    
+
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
 };
 

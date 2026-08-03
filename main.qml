@@ -88,4 +88,22 @@ TurnTablestatus {
     stacklayoutindex: modeselect.myindex
 }
 
+// 外引导源串口未打开时，弹窗提示
+MessagePopup {
+    id: serialWarnMsg
+}
+
+Connections {
+    target: laserData
+    function onPopupMessage(msg) { serialWarnMsg.message = msg; serialWarnMsg.open() }
+}
+Connections {
+    target: imageData
+    function onPopupMessage(msg) { serialWarnMsg.message = msg; serialWarnMsg.open() }
+}
+Connections {
+    target: ccdData
+    function onPopupMessage(msg) { serialWarnMsg.message = msg; serialWarnMsg.open() }
+}
+
 }

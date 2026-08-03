@@ -53,6 +53,9 @@ signals:
     void availablePortsChanged();
     void errorStringChanged();
 
+    // ── 弹窗请求信号（工作线程 → QML 弹窗提示）──
+    void popupMessage(const QString &msg);
+
     // CCD 控制状态变化信号
     void focusModeChanged();
     void backlightOnChanged();
@@ -112,6 +115,8 @@ signals:
     void portClosed();
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
+    // 外引导源串口未打开时，通知 QML 弹窗提示
+    void exguideSerialNotOpen(const QString &msg);
 
     // 外引导模式请求信号（连接转台串口线程）
     void reqTimesync(int seconds = 0);

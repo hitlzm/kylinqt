@@ -330,6 +330,11 @@ Window {
                     boundsBehavior: Flickable.StopAtBounds
                     interactive: columnContent.height > height
 
+                    // 内容超出时显示滚动条
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AsNeeded
+                    }
+
                     Column {
                         id: columnContent
                         width: parent.width
@@ -397,27 +402,27 @@ Window {
                             visible: isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "比例尺"
                                 labeltext: "米/像素"
                                 text: bindingData ? bindingData.scale.toFixed(4) : ""
                                 onEditingFinished: { if (bindingData) bindingData.scale = parseFloat(text) || 0 }
                             }
-                            Item { width: 180; height: 55 }
-                            Item { width: 180; height: 55 }
+                            Item { width: 180; height: 60 }
+                            Item { width: 180; height: 60 }
                         }
                         Row {
                             visible: isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "图像宽度"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.imageWidth.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.imageWidth = parseInt(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "图像高度"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.imageHeight.toString() : ""
@@ -429,14 +434,14 @@ Window {
                             visible: isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标横坐标"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPosX.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.targetPosX = parseInt(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标纵坐标"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPosY.toString() : ""
@@ -447,16 +452,16 @@ Window {
                         Row {
                             visible: isSat
                             spacing: 30
-                            height: 55
+                            height: 60
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标横像素数"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPixelsX.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.targetPixelsX = parseInt(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标纵像素数"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPixelsY.toString() : ""
@@ -508,21 +513,21 @@ Window {
                             visible: !isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "拍摄距离"
                                 labeltext: "米"
                                 text: bindingData ? bindingData.distance.toFixed(2) : ""
                                 onEditingFinished: { if (bindingData) bindingData.distance = parseFloat(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "拍摄方位角"
                                 labeltext: "°"
                                 text: bindingData ? bindingData.azimuth.toFixed(2) : ""
                                 onEditingFinished: { if (bindingData) bindingData.azimuth = parseFloat(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "拍摄俯仰角"
                                 labeltext: "°"
                                 text: bindingData ? bindingData.pitchAngle.toFixed(2) : ""
@@ -533,14 +538,14 @@ Window {
                             visible: !isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "相机焦距"
                                 labeltext: "mm"
                                 text: bindingData ? bindingData.focalLength.toFixed(2) : ""
                                 onEditingFinished: { if (bindingData) bindingData.focalLength = parseFloat(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "像元尺寸"
                                 labeltext: "μm"
                                 text: bindingData ? bindingData.pixelSize.toFixed(2) : ""
@@ -552,14 +557,14 @@ Window {
                             visible: !isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "图像宽度"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.imageWidth.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.imageWidth = parseInt(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "图像高度"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.imageHeight.toString() : ""
@@ -571,14 +576,14 @@ Window {
                             visible: !isSat
                             spacing: 30
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标横坐标"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPosX.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.targetPosX = parseInt(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标纵坐标"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPosY.toString() : ""
@@ -589,16 +594,16 @@ Window {
                         Row {
                             visible: !isSat
                             spacing: 30
-                            height: 55
+                            height: 60
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标横像素数"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPixelsX.toString() : ""
                                 onEditingFinished: { if (bindingData) bindingData.targetPixelsX = parseInt(text) || 0 }
                             }
                             MyTextField {
-                                mywidth: 155; myheight: 55
+                                mywidth: 155; myheight: 60
                                 title: "目标纵像素数"
                                 labeltext: "像素"
                                 text: bindingData ? bindingData.targetPixelsY.toString() : ""

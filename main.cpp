@@ -250,6 +250,11 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
 
+    // 外引导源串口未打开时，弹窗提示（工作线程 → 主线程 Data → QML 弹窗）
+    QObject::connect(laserPort, &SerialPortLaser::exguideSerialNotOpen, laserData, &LaserData::popupMessage, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::exguideSerialNotOpen, imageData, &ImageData::popupMessage, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::exguideSerialNotOpen, ccdData, &CCDData::popupMessage, Qt::QueuedConnection);
+
     //手柄信号连接
     QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntableHex::sendHandleMode, Qt::QueuedConnection);
 

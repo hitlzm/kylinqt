@@ -48,6 +48,7 @@ Rectangle {
 
                 // ── 状态信息 ──
                 GroupBox {
+                    topPadding: 20
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
@@ -118,6 +119,7 @@ Rectangle {
 
                 // ── 角度信息 ──
                 GroupBox {
+                    topPadding: 20
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
@@ -152,6 +154,7 @@ Rectangle {
 
                 // ── 角速度信息 ──
                 GroupBox {
+                    topPadding: 20
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
@@ -190,6 +193,7 @@ Rectangle {
 
                 // ── 象限能量 ──
                 GroupBox {
+                    topPadding: 20
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
@@ -223,6 +227,7 @@ Rectangle {
 
                 // ── 其他信息 ──
                 GroupBox {
+                    topPadding: 20
                     background: Rectangle {
                         color: "transparent"
                         border.color: "gray"
