@@ -363,6 +363,39 @@
 		},
 		{
 			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Widgets/Qt5Widgets_QWindowsVistaStylePlugin.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5QuickControls2/Qt5QuickControls2ConfigVersion.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5QuickControls2/Qt5QuickControls2Config.cmake"
+		},
+		{
+			"isExternal" : true,
 			"path" : "E:/opencv-4.2.0/DNN/install/OpenCVConfig-version.cmake"
 		},
 		{

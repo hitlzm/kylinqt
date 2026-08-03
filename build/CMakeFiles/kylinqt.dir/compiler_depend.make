@@ -587,6 +587,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcursor.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h \
@@ -636,11 +637,18 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/QQuickStyle \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qquickstyle.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qtquickcontrols2global.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/QApplication \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qapplication.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgets-config.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgetsglobal.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/limits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/syslimits.h \
   E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm \
@@ -3531,11 +3539,11 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stat64.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/corecrt_startup.h:
 
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/ktmtypes.h:
+
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/crtdefs.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/avx512erintrin.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/ktmtypes.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qtgui-config.h:
 
@@ -3735,6 +3743,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qglobal.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qhash.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/QQuickStyle:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qiterator.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonarray.h:
@@ -3753,9 +3763,9 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlocale.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/_mingw_stdarg.h:
 
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/libloaderapi.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qlogging.h:
 
 kylinqt_autogen/YN6D6BICVT/moc_serialport_CCD.cpp:
 
@@ -3784,6 +3794,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpair.h:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qpoint.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qprocessordetection.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qquickstyle.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qrect.h:
 
@@ -4035,6 +4047,8 @@ E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/numer
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/ratio:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/QApplication:
+
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/thread:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/stdarg.h:
@@ -4091,6 +4105,12 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QGuiApplication:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qmatrix4x4.h:
 
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/mmintrin.h:
+
+E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/imm.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcursor.h:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/QQmlApplicationEngine:
@@ -4111,9 +4131,19 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/poppack.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlengine.h:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qtquickcontrols2global.h:
+
 E:/QTproject/kylinqt/network/TemplateBindingClient.cpp:
 
 E:/QTproject/kylinqt/serialport/serialport_image.cpp:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qapplication.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgets-config.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgetsglobal.h:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QOpenGLFunctions:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDataStream:
 
@@ -4142,14 +4172,6 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QRectF:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qt_windows.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QMatrix4x4:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QOpenGLFunctions:
-
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/mmintrin.h:
-
-E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/imm.h:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcursor.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qopenglext.h:
 

@@ -300,7 +300,7 @@ Rectangle {
     Row {
         id: remoteHostRow
         spacing: 20
-        height: 50  // 显式高度 = 最高子项(remoteHostField.myheight)，保证子锚点 verticalCenter 可解析
+        height: 60  // 显式高度 = 最高子项(remoteHostField.myheight)，保证子锚点 verticalCenter 可解析
 
         anchors.top: serialRow.bottom
         anchors.topMargin: 8
@@ -309,13 +309,13 @@ Rectangle {
         MyTextField {
             id: remoteHostField
             mywidth: 160
-            myheight: 50
+            myheight: 60
             title: "远程主机地址"
         }
         MyTextField {
             id: remotePortField
             mywidth: 120
-            myheight: 50
+            myheight: 60
             title: "远程主机端口"
         }
         // 按钮使用 Item 包裹以垂直居中于较高的 MyTextField
@@ -328,6 +328,7 @@ Rectangle {
                 height: 32
                 text: templateBindingData.connected ? "断开" : "连接"
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 5
 
                 Timer {
                     id: connectTimer
@@ -364,6 +365,7 @@ Rectangle {
                 height: 32
                 text: "模板装订"
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 5
                 onClicked: {
                     // 同步远程主机地址和端口到模板装订数据
                     templateBindingData.host = remoteHostField.text
@@ -378,18 +380,21 @@ Rectangle {
             width:130
             height: remoteHostField.myheight   
             anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 3
             Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
         }
         Item {
             width:130
             height: remoteHostField.myheight 
-            anchors.verticalCenter: parent.verticalCenter  
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 3
             Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
         }
         Item {
             width:130
             height: remoteHostField.myheight   
             anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 3
             Indicator { id: indVideoOut; label: "视频输出";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
         }
     }
@@ -672,6 +677,9 @@ Rectangle {
                 text: "帧信息"
                 font.pixelSize: 18
                 font.bold: true
+                // 固定标题高度，避免字体行高差异（Win 雅黑 vs 麒麟 Noto）影响列表高度计算
+                height: font.pixelSize + 8
+                verticalAlignment: Text.AlignVCenter
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -729,6 +737,9 @@ Rectangle {
                 text: "控制/状态信息"
                 font.pixelSize: 18
                 font.bold: true
+                // 固定标题高度，避免字体行高差异（Win 雅黑 vs 麒麟 Noto）影响盒子高度计算
+                height: font.pixelSize + 8
+                verticalAlignment: Text.AlignVCenter
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left
@@ -993,7 +1004,7 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 90
+                height: 120
                 spacing: 4
                 model: 4
 
@@ -1059,7 +1070,7 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 90
+                height: 100
                 spacing: 4
                 model: 4
 
@@ -1155,7 +1166,7 @@ Rectangle {
                 anchors.leftMargin: 8
                 anchors.right: parent.right
                 anchors.rightMargin: 8
-                height: 78
+                height: 90
                 spacing: 4
                 model: 3
 
@@ -1192,6 +1203,9 @@ Rectangle {
                 text: "角速度/陀螺信息"
                 font.pixelSize: 18
                 font.bold: true
+                // 固定标题高度，避免字体行高差异（Win 雅黑 vs 麒麟 Noto）影响盒子高度计算
+                height: font.pixelSize + 8
+                verticalAlignment: Text.AlignVCenter
                 anchors.top: parent.top
                 anchors.topMargin: 6
                 anchors.left: parent.left

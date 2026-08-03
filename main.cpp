@@ -1,4 +1,6 @@
 #include <QGuiApplication>
+#include <QApplication>
+#include <QQuickStyle>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QThread>
@@ -26,7 +28,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("KylinQt");
     QCoreApplication::setOrganizationDomain("kylinqt.local");
     QCoreApplication::setApplicationName("kylin-qt");
-    QGuiApplication app(argc, argv);
+    // QGuiApplication app(argc, argv);
+    
+    QApplication app(argc, argv);
+
+    // 固定 QQC2 样式为 Basic，避免在 Linux/麒麟上因 QApplication 自动切到 Fusion
+    // 导致 TabBar 黑白选中效果丢失、整体长度缩小（Windows 下默认即 Basic）
+    QQuickStyle::setStyle("Basic");
 
     // 注册自定义结构体到 Qt 元对象系统（QueuedConnection 跨线程传递必需）
     qRegisterMetaType<laser_send_frame>("laser_send_frame");

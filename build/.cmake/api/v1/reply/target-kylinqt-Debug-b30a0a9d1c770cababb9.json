@@ -159,11 +159,19 @@
 				},
 				{
 					"backtrace" : 3,
+					"define" : "QT_QUICKCONTROLS2_LIB"
+				},
+				{
+					"backtrace" : 3,
 					"define" : "QT_QUICK_LIB"
 				},
 				{
 					"backtrace" : 3,
 					"define" : "QT_SERIALPORT_LIB"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "QT_WIDGETS_LIB"
 				},
 				{
 					"backtrace" : 13,
@@ -240,6 +248,16 @@
 					"backtrace" : 3,
 					"isSystem" : true,
 					"path" : "E:/QT5.12.8/5.12.8/mingw73_64/include/QtGamepad"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2"
 				}
 			],
 			"language" : "CXX",
@@ -296,17 +314,17 @@
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Quickd.a",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
 				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5SerialPortd.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 3,
 				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Gamepadd.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5QuickControls2d.a",
 				"role" : "libraries"
 			},
 			{
@@ -445,6 +463,11 @@
 				"role" : "libraries"
 			},
 			{
+				"backtrace" : 3,
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Quickd.a",
+				"role" : "libraries"
+			},
+			{
 				"backtrace" : 9,
 				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Qmld.a",
 				"role" : "libraries"
@@ -457,6 +480,11 @@
 			{
 				"backtrace" : 3,
 				"fragment" : "E:\\opencv-4.2.0\\DNN\\install\\x64\\mingw\\lib\\libopencv_highgui420.dll.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "E:\\QT5.12.8\\5.12.8\\mingw73_64\\lib\\libQt5Widgetsd.a",
 				"role" : "libraries"
 			},
 			{

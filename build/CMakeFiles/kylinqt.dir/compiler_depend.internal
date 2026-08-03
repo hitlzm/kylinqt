@@ -591,6 +591,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/QImage
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qaccessible.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcolor.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qcursor.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qevent.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qfont.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qguiapplication.h
@@ -640,11 +641,18 @@ CMakeFiles/kylinqt.dir/main.cpp.obj
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquick-config.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qtquickglobal.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/QQuickStyle
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qquickstyle.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuickControls2/qtquickcontrols2global.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPort
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialport.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/QApplication
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qapplication.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgets-config.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtWidgets/qtwidgetsglobal.h
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/limits.h
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/syslimits.h
  E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/algorithm

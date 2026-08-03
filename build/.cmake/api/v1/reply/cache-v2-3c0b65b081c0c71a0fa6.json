@@ -1382,6 +1382,18 @@
 			"value" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Qml"
 		},
 		{
+			"name" : "Qt5QuickControls2_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Qt5QuickControls2."
+				}
+			],
+			"type" : "PATH",
+			"value" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5QuickControls2"
+		},
+		{
 			"name" : "Qt5Quick_DIR",
 			"properties" : 
 			[
@@ -1404,6 +1416,18 @@
 			],
 			"type" : "PATH",
 			"value" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5SerialPort"
+		},
+		{
+			"name" : "Qt5Widgets_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Qt5Widgets."
+				}
+			],
+			"type" : "PATH",
+			"value" : "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5Widgets"
 		},
 		{
 			"name" : "Qt5_DIR",

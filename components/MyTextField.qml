@@ -29,6 +29,10 @@ Item {
         anchors.top: parent.top
         font.pixelSize: 14
         font.bold: true
+        // 固定标题高度：避免因系统字体行高不同（Win 雅黑 vs 麒麟 Noto/文泉驿）
+        // 导致下方输入框高度 = myheight - titleText.height - spacing 被压缩
+        height: 20
+        verticalAlignment: Text.AlignVCenter
         color: root.enabled ? "#333333" : "#BBBBBB"
         }
    RowLayout {

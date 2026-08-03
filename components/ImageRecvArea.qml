@@ -6,7 +6,7 @@ import "./"
 Rectangle {
     id: root
     width: 1200
-    height: 310
+    height: 330
     color: '#e9f0f9'
 
     // 报警弹窗（内框/中框/外框）

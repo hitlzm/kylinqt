@@ -129,6 +129,7 @@
 #define __INT_FAST16_TYPE__ short int
 #define _fastcall __attribute__((__fastcall__))
 #define __LDBL_HAS_DENORM__ 1
+#define QT_WIDGETS_LIB 1
 #define __cplusplus 201103L
 #define __cpp_ref_qualifiers 200710
 #define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
@@ -274,6 +275,7 @@
 #define __UINT16_TYPE__ short unsigned int
 #define __WCHAR_TYPE__ short unsigned int
 #define __SIZEOF_FLOAT__ 4
+#define QT_QUICKCONTROLS2_LIB 1
 #define __pic__ 1
 #define __UINTPTR_MAX__ 0xffffffffffffffffULL
 #define __INT_FAST64_WIDTH__ 64
