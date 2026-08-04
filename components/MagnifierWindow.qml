@@ -7,9 +7,15 @@ Window {
     width: Screen.width * 0.65
     height: Screen.height * 0.65
     title: "视频放大镜"
-    flags: Qt.Window | Qt.FramelessWindowHint
+    // 与 TemplateBindingPopup 保持一致，保证放大镜窗口独立于主窗口：
+    //   - WindowStaysOnTopHint：始终置顶，不随主窗口最小化而隐藏
+    //   - Qt.NonModal：非模态，可与主界面同时操作
+    //   - visible:false：创建时不立即显示，由 Myvideo5.toggleMagnifier() 的
+    //     show() 显式显示，避免在 createObject 阶段被自动挂到主窗口成为子窗口
+    flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+    modality: Qt.NonModal
     color: "#000000"
-    visible: true
+    visible: false
 
     property var frameSource: null
 

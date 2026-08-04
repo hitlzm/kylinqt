@@ -509,7 +509,7 @@ Rectangle {
             model: ["电视单模", "红外单模"]
             onCurrentIndexChanged: {
                 if (mycurrentIndex !== -1) {
-                    imageSendData.m_templateIndex = mycurrentIndex + 1
+                    imageSendData.m_templateIndex = mycurrentIndex //电视单模 0x00 , 红外单模 0x01
                 }
             }
         }

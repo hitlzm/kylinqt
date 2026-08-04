@@ -160,7 +160,6 @@ private:
     // 外引导模式时可根据CCD视场角得到转台的方位角与俯仰角应转动的角度，广角模式下为55.27，32.26 远焦模式下为2.66，1.51
     int m_centerX = -1;
     int m_centerY = -1;
-    float m_
 
     // ── 像素坐标卡尔曼跟踪器 ──
     PixelKalmanTracker m_tracker;

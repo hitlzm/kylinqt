@@ -237,6 +237,18 @@ bool OnnxYoloDetector::loadModel(const std::string &onnxPath) {
             }
         }
 
+        // 校验输出通道与 setNumClasses 的一致性（YOLOv3-tiny: 通道 = 3*(5+类别数)）
+        for (const auto &shape : m_impl->outputShapes) {
+            if (shape.size() >= 2 && shape[1] > 0) {
+                const int impliedK = static_cast<int>(shape[1]) / 3 - 5;
+                if (impliedK > 0 && impliedK != m_numClasses) {
+                    qWarning() << "[OnnxYolo] Model output channels imply"
+                               << impliedK << "classes, but setNumClasses ="
+                               << m_numClasses << "; detect() will use model value";
+                }
+            }
+        }
+
         m_loaded = true;
         qDebug() << "[OnnxYolo] Model loaded successfully:" << QString::fromStdString(onnxPath);
         return true;
@@ -497,7 +509,19 @@ bool OnnxYoloDetector::detect(const cv::Mat &frame, std::vector<OnnxDetection> &
         // ══ 步骤① 预处理（LetterBox + NCHW blob）══
         float letterBoxScale;
         int letterBoxPadX, letterBoxPadY;
-        cv::Mat blob = preprocessFrame(frame, m_inputWidth, m_inputHeight,
+        // 输入尺寸以模型实际 shape 为准（loadModel 时解析，动态维度回退到 setInputSize）
+        std::vector<int64_t> inputShape = m_impl->inputShape;
+        if (inputShape.size() != 4) {
+            inputShape = {1, 3, m_inputHeight, m_inputWidth};
+        }
+        if (inputShape[0] <= 0) inputShape[0] = 1;
+        if (inputShape[1] <= 0) inputShape[1] = 3;
+        if (inputShape[2] <= 0) inputShape[2] = m_inputHeight;
+        if (inputShape[3] <= 0) inputShape[3] = m_inputWidth;
+        const int inputW = static_cast<int>(inputShape[3]);
+        const int inputH = static_cast<int>(inputShape[2]);
+
+        cv::Mat blob = preprocessFrame(frame, inputW, inputH,
                                         letterBoxScale, letterBoxPadX, letterBoxPadY);
         // 保存 LetterBox 参数，供后处理坐标还原使用
         m_letterBoxScale = letterBoxScale;
@@ -508,10 +532,8 @@ bool OnnxYoloDetector::detect(const cv::Mat &frame, std::vector<OnnxDetection> &
         Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(
             OrtArenaAllocator, OrtMemTypeDefault);
 
-        std::vector<int64_t> inputShape = {
-            1, 3, m_inputHeight, m_inputWidth
-        };
-        size_t inputElementCount = 1 * 3 * m_inputHeight * m_inputWidth;
+        size_t inputElementCount = static_cast<size_t>(
+            inputShape[0] * inputShape[1] * inputShape[2] * inputShape[3]);
 
         Ort::Value inputTensor = Ort::Value::CreateTensor<float>(
             memoryInfo,
@@ -552,7 +574,6 @@ bool OnnxYoloDetector::detect(const cv::Mat &frame, std::vector<OnnxDetection> &
         }
 
         // ══ 步骤⑤ 后处理 ══
-        const int K = m_numClasses;
         const int frameW = frame.cols;
         const int frameH = frame.rows;
 
@@ -565,11 +586,30 @@ bool OnnxYoloDetector::detect(const cv::Mat &frame, std::vector<OnnxDetection> &
             if (s >= outputGH.size() || s >= outputGW.size())
                 break;
 
+            // 类别数 K 从该输出张量的通道数推导：channels = 3 * (5 + K)，
+            // 避免模型类别数与 setNumClasses 不一致时越界读取
+            int K = m_numClasses;
+            if (s < outputTensors.size()) {
+                auto shapeInfo = outputTensors[s].GetTensorTypeAndShapeInfo();
+                auto shape = shapeInfo.GetShape();
+                if (shape.size() >= 2 && shape[1] > 0) {
+                    const int impliedK = static_cast<int>(shape[1]) / 3 - 5;
+                    if (impliedK > 0) {
+                        K = impliedK;
+                        if (K != m_numClasses) {
+                            qWarning() << "[OnnxYolo] Output" << s
+                                       << "channels imply" << K << "classes (setNumClasses ="
+                                       << m_numClasses << "), using model value";
+                        }
+                    }
+                }
+            }
+
             decodeYoloScale(
                 outputData[s],
                 K,
                 outputGH[s], outputGW[s],
-                m_inputWidth, m_inputHeight,
+                inputW, inputH,
                 frameW, frameH,
                 kStrides[s],
                 kAnchors[s],

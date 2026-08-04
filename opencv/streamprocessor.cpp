@@ -213,9 +213,12 @@ void StreamProcessor::start() {
 }
 
 void StreamProcessor::stop() {
-    m_running = false;
+    if (!m_running.exchange(false))
+        return;
     if (m_timer)
         m_timer->stop();
+    // 由 stop() 统一发出 finished，避免与 processFrame 尾部重复触发
+    emit finished();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -229,7 +232,6 @@ void StreamProcessor::processFrame() {
     
     if (!m_running) {
         qDebug() << "[StreamProcessor] Stopped";
-        emit finished();
         return;
     }
 
@@ -250,6 +252,9 @@ void StreamProcessor::processFrame() {
                             CV_8UC4, const_cast<uchar*>(rawFrame.bits()),
                             static_cast<size_t>(rawFrame.bytesPerLine()));
             cv::cvtColor(rgbaMat, frame, cv::COLOR_RGBA2BGR);
+            // glReadPixels 读出的帧是 bottom-up（首行=画面底部），而 OpenCV 按 top-down 解释，
+            // 这里垂直翻转成正常画面坐标，保证检测框/目标中心与真实画面一致
+            cv::flip(frame, frame, 0);
             // frame 是独立的 BGR cv::Mat，rawFrame 可在此后释放
         }
     }
@@ -322,6 +327,9 @@ void StreamProcessor::processFrame() {
     }
 
     // ── ⑥ cv::Mat → QImage 转换 ──
+    // 检测在 top-down 坐标系中进行，回传前再翻转回 bottom-up，
+    // 与 VlcVideoItem 渲染器的纹理映射（首行=画面底部）保持一致
+    cv::flip(frame, frame, 0);
     QImage img = cvMatToQImage(frame);
 
     // ── ⑦ 回传 VlcVideoItem 显示 + 对外广播 ──
@@ -332,14 +340,17 @@ void StreamProcessor::processFrame() {
         emit frameReady(img);
     }
 
-    if (!detections.empty()) {
-        emit detectionsReady(detections);
-    }
+    // 无论是否有检测结果都广播，便于外部区分“无目标”和“无新帧”
+    emit detectionsReady(detections);
 
     // ── ⑧ 帧率控制：按实际耗时动态调节 ──
     //  耗时 < 目标间隔 → 等剩余时间，精准控帧
     //  耗时 ≥ 目标间隔 → 立即下一帧，不积压
     
+    // stop() 可能在处理过程中被调用，退出前不再重启定时器
+    if (!m_running)
+        return;
+
     int elapsed  = static_cast<int>(frameTimer.elapsed());
     int remaining = targetInterval - elapsed;
 

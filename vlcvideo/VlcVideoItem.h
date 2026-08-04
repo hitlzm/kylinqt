@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QMutex>
 #include <QColor>
+#include <QSize>
 
 struct mpv_handle;
 struct mpv_render_context;
@@ -69,6 +70,10 @@ public:
 
     qreal frameWidth() const { return m_width; }
     qreal frameHeight() const { return m_height; }
+
+    /// 视频固有显示尺寸（mpv video-params 的 dw/dh）。
+    /// 供放大镜等"一帧多显"场景裁剪 mpv 离屏渲染时在帧内留下的黑边。
+    QSize videoNativeSize() const { return QSize(m_videoDw, m_videoDh); }
 
     // ---- QQuickFramebufferObject 接口 ----
     Renderer *createRenderer() const override;

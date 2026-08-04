@@ -637,7 +637,9 @@ QImage VlcVideoItem::grabFrame() const
     QMutexLocker lock(&m_frameMutex);
     if (m_readyIdx < 0 || m_frameBuf[m_readyIdx].isNull())
         return QImage();
-    return m_frameBuf[m_readyIdx];
+    // 渲染线程会在原缓冲上原位覆写（glReadPixels 直接写 buf.bits()），
+    // 必须深拷贝，否则调用方持有的 QImage 会在下一帧渲染时被改写，产生撕裂帧
+    return m_frameBuf[m_readyIdx].copy();
 }
 
 void VlcVideoItem::submitProcessedFrame(const QImage &frame)
@@ -983,7 +985,8 @@ void VlcVideoItem::requestPixelAt(int x, int y)
         if (m_hasProcessedFrame && !m_processedFrame.isNull()) {
             frame = m_processedFrame;
         } else if (m_readyIdx >= 0 && !m_frameBuf[m_readyIdx].isNull()) {
-            frame = m_frameBuf[m_readyIdx];
+            // 与 grabFrame 同理：渲染线程会原位覆写缓冲，取深拷贝避免读到时被改写
+            frame = m_frameBuf[m_readyIdx].copy();
         }
     }
 

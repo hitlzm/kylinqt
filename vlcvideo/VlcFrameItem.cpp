@@ -60,18 +60,35 @@ public:
         int fullW = refFrame.width();
         int fullH = refFrame.height();
 
-        // ── 计算 zoom 区域的纹理坐标（归一化） ──
+        // ── 先裁剪掉帧内 mpv 留下的黑边，得到真实视频内容区域 ──
+        // 离屏 FBO 的宽高比 = 主播放器控件的宽高比，视频内容在其中保持宽高比居中
+        // （可能上下或左右留黑边）。放大镜若直接整帧贴图，这些黑边会被一并放大，
+        // 出现四边黑框。这里用视频固有显示尺寸（dw/dh）反推出内容在帧中的位置。
+        double ox = 0.0, oy = 0.0, cw = fullW, ch = fullH;
+        {
+            const QSize native = src->videoNativeSize();
+            if (native.width() > 0 && native.height() > 0) {
+                const double scale = qMin(double(fullW) / native.width(),
+                                          double(fullH) / native.height());
+                cw = native.width() * scale;
+                ch = native.height() * scale;
+                ox = (fullW - cw) / 2.0;
+                oy = (fullH - ch) / 2.0;
+            }
+        }
+
+        // ── 计算 zoom 区域（基于内容区域，单位为完整帧像素） ──
         qreal zf = m_item->zoomFactor();
-        qreal zx = 0.0, zy = 0.0, zw = fullW, zh = fullH;
+        double zx = ox, zy = oy, zw = cw, zh = ch;
         if (zf > 1.0) {
             qreal cx = m_item->centerX();
             qreal cy = m_item->centerY();
-            if (cx < 0) cx = fullW / 2.0;
-            if (cy < 0) cy = fullH / 2.0;
-            zw = fullW / zf;
-            zh = fullH / zf;
-            zx = qBound(0.0, cx - zw / 2.0, double(fullW) - zw);
-            zy = qBound(0.0, cy - zh / 2.0, double(fullH) - zh);
+            if (cx < 0) cx = ox + cw / 2.0;
+            if (cy < 0) cy = oy + ch / 2.0;
+            zw = cw / zf;
+            zh = ch / zf;
+            zx = qBound(ox, cx - zw / 2.0, ox + cw - zw);
+            zy = qBound(oy, cy - zh / 2.0, oy + ch - zh);
         }
 
         // 纹理坐标变化时重建 quad

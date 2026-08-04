@@ -5,6 +5,9 @@
 #include <QQmlContext>
 #include <QThread>
 #include <QFont>
+#include <QDir>
+#include <QFileInfo>
+#include <QStringList>
 #include "serialport/serialport_laser.h"
 #include "serialport/serialport_image.h"
 #include "serialport/serialport_turntable_HEX.h"
@@ -12,6 +15,7 @@
 #include "serialport/serialport_CCD.h"
 #include "vlcvideo/VlcVideoItem.h"
 #include "vlcvideo/VlcFrameItem.h"
+#include "opencv/streamprocessor.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
 #include "log/LogManager.h"
@@ -136,6 +140,79 @@ int main(int argc, char *argv[])
         }
     }, Qt::DirectConnection);
     engine.load(url);
+
+    // ── 视频流目标检测：VlcVideoItem → StreamProcessor（工作线程）→ 回传显示 / CCD 目标中心 ──
+    StreamProcessor *streamProc = new StreamProcessor;   // 无父对象，随后移入视频处理线程
+    QThread *streamThread = new QThread;
+
+    // 从 QML 场景中找到视频播放器（当前界面中唯一的 VlcVideo 实例）
+    if (QObject *rootObj = engine.rootObjects().value(0)) {
+        if (VlcVideoItem *vlcItem = rootObj->findChild<VlcVideoItem*>()) {
+            streamProc->setVideoSource(vlcItem);
+        } else {
+            qWarning() << "[main] VlcVideoItem not found; StreamProcessor will run without video source";
+        }
+    } else {
+        qWarning() << "[main] QML root object missing; StreamProcessor will run without video source";
+    }
+
+    // 加载 YOLO 模型：优先可执行文件目录下的 models/，其次可执行文件目录、工作目录
+    const QString appDir = QCoreApplication::applicationDirPath();
+    QStringList modelCandidates;
+    modelCandidates << appDir + "/models/best.onnx"
+                    << appDir + "/best.onnx"
+                    << QDir::current().filePath("models/best.onnx")
+                    << QDir::current().filePath("best.onnx")
+                    << QStringLiteral("E:/QTproject/yolov3model2/best.onnx")
+                    << QStringLiteral("E:/QTproject/ONNXRUNTIME2/model/best.onnx");
+    QString modelPath;
+    for (const QString &candidate : modelCandidates) {
+        if (QFileInfo::exists(candidate)) {
+            modelPath = candidate;
+            break;
+        }
+    }
+    // 推理参数与参考工程一致（best.onnx 为单类 armored_vehicle 模型）
+    streamProc->setConfThreshold(0.4f);
+    streamProc->setNmsThreshold(0.5f);
+    streamProc->setInputSize(416, 416);
+    streamProc->setTargetFps(30);
+    if (!modelPath.isEmpty()) {
+        QString namesPath;
+        QStringList namesCandidates;
+        namesCandidates << QFileInfo(modelPath).dir().filePath("test.names")
+                        << QFileInfo(modelPath).dir().filePath("best.names")
+                        << appDir + "/test.names"
+                        << QStringLiteral("E:/QTproject/yolov4model/test.names");
+        for (const QString &candidate : namesCandidates) {
+            if (QFileInfo::exists(candidate)) {
+                namesPath = candidate;
+                break;
+            }
+        }
+        if (!streamProc->loadYoloModel(modelPath, namesPath)) {
+            qWarning() << "[main] YOLO 模型加载失败:" << modelPath;
+        }
+    } else {
+        qWarning() << "[main] 未找到 YOLO 模型文件（已禁用检测，仅透传视频帧）:"
+                   << modelCandidates.join(" / ");
+    }
+
+    // 目标中心坐标 → CCD 串口线程；识别/加载错误输出到日志
+    QObject::connect(streamProc, &StreamProcessor::targetCenterChanged,
+                     ccdPort,    &SerialPortCCD::recvTargetCenter,
+                     Qt::QueuedConnection);
+    QObject::connect(streamProc, &StreamProcessor::errorOccurred, [](const QString &msg) {
+        qWarning() << "[StreamProcessor]" << msg;
+    });
+
+    // 线程启动 → 开始处理；finished → 退出线程并回收
+    QObject::connect(streamThread, &QThread::started, streamProc, &StreamProcessor::start);
+    QObject::connect(streamProc, &StreamProcessor::finished, streamThread, &QThread::quit);
+    QObject::connect(streamThread, &QThread::finished, streamProc, &QObject::deleteLater);
+    QObject::connect(streamThread, &QThread::finished, streamThread, &QObject::deleteLater);
+    streamProc->moveToThread(streamThread);
+    streamThread->start();
 
     // ═══ 2) 连线：Data（主线程）↔ Worker（工作线程），全部 QueuedConnection ═══
 
@@ -279,11 +356,6 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
-
-    // 目标中心坐标：StreamProcessor → CCD 串口线程（待 StreamProcessor 实例化后启用）
-    // QObject::connect(streamProc, &StreamProcessor::targetCenterChanged,
-    //                  ccdPort,    &SerialPortCCD::recvTargetCenter,
-    //                  Qt::QueuedConnection);
 
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;
