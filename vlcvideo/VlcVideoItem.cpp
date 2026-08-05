@@ -55,7 +55,8 @@ public:
     ~VlcVideoRenderer() override
     {
         if (!m_glInitialized) return;
-        if (m_texture)        { glDeleteTextures(1, &m_texture); m_item->m_displayTexId = 0; }
+        m_item->m_displayTexId = 0;   // 可能指向 m_texture 或 m_offscreenTex，统一复位
+        if (m_texture)        glDeleteTextures(1, &m_texture);
         if (m_vbo)            glDeleteBuffers(1, &m_vbo);
         if (m_program)        glDeleteProgram(m_program);
         if (m_offscreenTex)   glDeleteTextures(1, &m_offscreenTex);
@@ -114,6 +115,13 @@ public:
             }
         }
 
+        // 导引头模式（无 CPU 回读）：用离屏 FBO 尺寸兜底，保证 quad 有合法尺寸
+        if (!m_item->m_cpuConsumerActive.load()) {
+            QSize off(int(m_item->m_width), int(m_item->m_height));
+            if (!off.isEmpty() && off != m_videoSize)
+                m_videoSize = off;
+        }
+
         // 窗口尺寸变化 → 重新计算 quad 顶点
         QSize curItemSize(int(m_item->width()), int(m_item->height()));
         if (m_itemSize != curItemSize || m_videoSize != m_lastQuadVideoSize) {
@@ -137,14 +145,23 @@ public:
         //              << "texture:" << m_texture
         //              << "vertices:" << m_vertices.size();
 
-        // ── 2. 上载纹理并绘制（与原来完全一致）─────
-        if (m_textureDirty && !m_frameCopy.isNull())
-            uploadTexture();
+        // ── 2. 选择显示源纹理并绘制 ──
+        //    有 CPU 消费者（CCD）：上载 raw/processed 帧到 m_texture 显示
+        //    无 CPU 消费者（导引头）：直接采样离屏 FBO 纹理，纯 GPU、零回读
+        GLuint srcTex = 0;
+        if (m_item->m_cpuConsumerActive.load()) {
+            if (m_textureDirty && !m_frameCopy.isNull())
+                uploadTexture();
+            srcTex = m_texture;
+        } else {
+            srcTex = m_offscreenTex;
+        }
+        m_item->m_displayTexId = srcTex;   // 放大镜绑定跟随
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        if (m_texture && !m_vertices.isEmpty()) {
+        if (srcTex && !m_vertices.isEmpty()) {
             glUseProgram(m_program);
 
             glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -152,7 +169,7 @@ public:
                          m_vertices.constData(), GL_DYNAMIC_DRAW);
 
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, m_texture);
+            glBindTexture(GL_TEXTURE_2D, srcTex);
             glUniform1i(glGetUniformLocation(m_program, "uTexture"), 0);
 
             GLint posLoc = glGetAttribLocation(m_program, "aPosition");
@@ -275,19 +292,26 @@ private:
 
         {
             QMutexLocker lock(&m_item->m_frameMutex);
-            QImage &buf = m_item->m_frameBuf[m_item->m_writeIdx];
-            if (buf.width() != w || buf.height() != h || buf.isNull())
-                buf = QImage(w, h, QImage::Format_RGBA8888);
 
-            glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buf.bits());
-
+            // 帧尺寸总是更新（requestPixelAt / 放大镜依赖，即使不回读）
             bool sizeChanged = (m_item->m_width != w || m_item->m_height != h);
             m_item->m_width  = w;
             m_item->m_height = h;
             if (sizeChanged) emit m_item->frameSizeChanged();
-            m_item->m_readyIdx = m_item->m_writeIdx;
-            m_item->m_writeIdx = 1 - m_item->m_writeIdx;
-            m_item->m_frameUpdated = true;
+
+            // 有 CPU 消费者（如 CCD 检测）时才读回像素；
+            // 导引头纯显示模式跳过 glReadPixels，显示直接采样离屏纹理
+            if (m_item->m_cpuConsumerActive.load()) {
+                QImage &buf = m_item->m_frameBuf[m_item->m_writeIdx];
+                if (buf.width() != w || buf.height() != h || buf.isNull())
+                    buf = QImage(w, h, QImage::Format_RGBA8888);
+
+                glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, buf.bits());
+
+                m_item->m_readyIdx = m_item->m_writeIdx;
+                m_item->m_writeIdx = 1 - m_item->m_writeIdx;
+                m_item->m_frameUpdated = true;
+            }
         }
 
         // ── 恢复 Qt FBO + viewport（关键！否则后续绘制错位） ──
@@ -627,6 +651,17 @@ qint64 VlcVideoItem::length() const
 }
 
 bool VlcVideoItem::isSeekable() const { return m_seekable; }
+
+// ===== CPU 帧消费开关 =====
+void VlcVideoItem::setCpuFrameConsumer(bool on)
+{
+    if (m_cpuConsumerActive.load() != on) {
+        m_cpuConsumerActive.store(on);
+        emit cpuFrameConsumerChanged();
+        // 强制触发重绘，让渲染线程尽快按新模式走
+        update();
+    }
+}
 
 // ══════════════════════════════════════════════════════════════════
 // StreamProcessor 接口
@@ -974,35 +1009,26 @@ void VlcVideoItem::mousePressEvent(QMouseEvent *event)
 }
 
 // ══════════════════════════════════════════════════════════════════
-// 像素读取 — 从 CPU 帧缓冲同步读取（做 Letterbox 坐标映射）
+// 像素读取 — 纯几何映射（做 Letterbox 坐标映射），不依赖 CPU 帧缓冲
 // ══════════════════════════════════════════════════════════════════
 
 void VlcVideoItem::requestPixelAt(int x, int y)
 {
-    QImage frame;
-    {
-        QMutexLocker lock(&m_frameMutex);
-        if (m_hasProcessedFrame && !m_processedFrame.isNull()) {
-            frame = m_processedFrame;
-        } else if (m_readyIdx >= 0 && !m_frameBuf[m_readyIdx].isNull()) {
-            // 与 grabFrame 同理：渲染线程会原位覆写缓冲，取深拷贝避免读到时被改写
-            frame = m_frameBuf[m_readyIdx].copy();
-        }
-    }
-
-    if (frame.isNull()) {
-        qDebug() << "[MpvVideo] requestPixelAt: no frame available";
-        emit errorReadingPixel(QStringLiteral("无可用视频帧"));
-        return;
-    }
-
+    // 纯几何映射：不再依赖 CPU 像素（点击发的是坐标，颜色此前仅作 debug）。
+    // 帧尺寸 = 离屏 FBO 尺寸（m_width/m_height，渲染线程始终更新），
+    // 视频固有尺寸 dw/dh 来自 video-params。导引头/CCD 模式统一走这里。
     const qreal itemW = static_cast<qreal>(width());
     const qreal itemH = static_cast<qreal>(height());
-    const qreal videoW = static_cast<qreal>(frame.width());
-    const qreal videoH = static_cast<qreal>(frame.height());
+    const qreal videoW = static_cast<qreal>(m_width);
+    const qreal videoH = static_cast<qreal>(m_height);
 
-    if (itemW <= 0.0 || itemH <= 0.0 || videoW <= 0.0 || videoH <= 0.0) {
+    if (itemW <= 0.0 || itemH <= 0.0) {
         emit errorReadingPixel(QStringLiteral("尺寸无效"));
+        return;
+    }
+    if (videoW <= 0.0 || videoH <= 0.0) {
+        qDebug() << "[MpvVideo] requestPixelAt: no frame available";
+        emit errorReadingPixel(QStringLiteral("无可用视频帧"));
         return;
     }
 
@@ -1040,23 +1066,16 @@ void VlcVideoItem::requestPixelAt(int x, int y)
         const int nativeX = qBound(0, qRound((frameX - ox) / vw * m_videoDw), m_videoDw - 1);
         const int nativeY = qBound(0, qRound((frameY - oy) / vh * m_videoDh), m_videoDh - 1);
 
-        // 颜色从当前显示的帧上读取；帧缓冲为 bottom-up（首行=画面底部），纵向需翻转
-        const int memX = qBound(0, qRound(frameX), frame.width() - 1);
-        const int memY = qBound(0, frame.height() - 1 - qRound(frameY), frame.height() - 1);
-        QColor color = frame.pixelColor(memX, memY);
         qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → video("
-                 << nativeX << "," << nativeY << ") =" << color;
+                 << nativeX << "," << nativeY << ")";
         emit reqDeviationToImg(nativeX, nativeY);
         return;
     }
 
     // 视频尺寸未知（video-params 尚未到达）时退回帧坐标
-    int frameXpx = qBound(0, qRound(frameX), frame.width() - 1);
-    int frameYpx = qBound(0, qRound(frameY), frame.height() - 1);
-
-    // 帧缓冲为 bottom-up，纵向翻转后再读像素颜色
-    QColor color = frame.pixelColor(frameXpx, frame.height() - 1 - frameYpx);
+    const int frameXpx = qBound(0, qRound(frameX), int(videoW) - 1);
+    const int frameYpx = qBound(0, qRound(frameY), int(videoH) - 1);
     qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → frame("
-             << frameXpx << "," << frameYpx << ") =" << color;
+             << frameXpx << "," << frameYpx << ")";
     emit reqDeviationToImg(frameXpx, frameYpx);
 }

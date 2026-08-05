@@ -14,6 +14,16 @@ Rectangle {
     property bool _connected: false
     property var magnifierWindow: null
 
+    // ── CPU 帧消费开关（导引头/CCD 模式切换处翻转）──
+    // 导引头模式（视频直接显示）→ false：渲染线程跳过 glReadPixels，显示/放大镜纯 GPU、零回读
+    // CCD 模式（需 YOLO 检测）  → true ：保留 CPU 回读供 StreamProcessor 取帧
+    // 默认 true = 保持现有行为；在接入/切换视频源时按模式置位即可
+    property bool cpuFrameConsumer: true
+    onCpuFrameConsumerChanged: videoPlayer.setCpuFrameConsumer(cpuFrameConsumer)
+
+    // 视频源选择互斥组（标题栏 radio）
+    ButtonGroup { id: videoSourceGroup }
+
     // ========== 顶部标题栏 ==========
     RowLayout {
         id: titleBar
@@ -24,7 +34,29 @@ Rectangle {
         height: 26
         spacing: 12
 
-        Text { text: "导引头视频"; font.pixelSize: 22; font.bold: true; color: "#000000"; Layout.alignment: Qt.AlignVCenter }
+        Text { text: "视频显示区"; font.pixelSize: 22; font.bold: true; color: "#000000"; Layout.alignment: Qt.AlignVCenter }
+
+        // ── 视频源选择：导引头（纯显示，跳过CPU回读）/ CCD（保留回读供检测）──
+        Text { text: "视频源:"; font.pixelSize: 14; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
+        RadioButton {
+            id: sourceGuide
+            text: "导引头"
+            font.pixelSize: 13
+            padding: 0
+            ButtonGroup.group: videoSourceGroup
+            Layout.alignment: Qt.AlignVCenter
+            onCheckedChanged: if (checked) selectSource(false)
+        }
+        RadioButton {
+            id: sourceCCD
+            text: "CCD"
+            font.pixelSize: 13
+            padding: 0
+            ButtonGroup.group: videoSourceGroup
+            Layout.alignment: Qt.AlignVCenter
+            onCheckedChanged: if (checked) selectSource(true)
+        }
+
         Item { Layout.fillWidth: true }
 
         Row {
@@ -122,6 +154,18 @@ Rectangle {
     }
 
     function connectToUrl(newUrl) { if (newUrl === "") return; videoPlayer.stop(); videoPlayer.source = newUrl; _connected = true }
+
+    // 视频源选择：CCD → 保留 CPU 回读供 YOLO 检测；导引头 → 跳过回读纯 GPU 显示
+    function selectSource(isCCD) {
+        cpuFrameConsumer = isCCD
+        // 选中导引头时默认填入导引头 RTSP 流地址
+        if (!isCCD && urlInput) urlInput.text = "rtsp://192.168.1.100:554/stream"
+    }
+
+    // 初始默认导引头模式：关闭 CPU 回读 + 填入默认 RTSP（此时子对象均已创建）
+    Component.onCompleted: {
+        sourceGuide.checked = true
+    }
 
     function toggleMagnifier() {
         if (magnifierWindow) {

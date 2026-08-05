@@ -1,0 +1,27 @@
+opencv/onnxyolodetector.cpp
+      opencv/streamprocessor.cpp
+      opencv/pixelkalmantracker.cpp
+      opencv/cvconvert.h
+
+/usr/bin/ld: CMakeFiles/kylinqt.dir/opencv/onnxyolodetector.cpp.o: in function `_GLOBAL__sub_I_onnxyolodetector.cpp':
+/opt/onnxruntime/include/onnxruntime_cxx_api.h:115: undefined reference to `OrtGetApiBase'
+collect2: error: ld returned 1 exit status
+make[2]: *** [CMakeFiles/kylinqt.dir/build.make:406：kylinqt] 错误 1
+make[1]: *** [CMakeFiles/Makefile2:84：CMakeFiles/kylinqt.dir/all] 错误 2
+make: *** [Makefile:136：all] 错误 2
+
+# 1. 看 CMake 到底解析到哪个库（空值 = 没找到）
+grep ONNXRUNTIME_LIBRARY CMakeCache.txt
+
+# 2. 看实际链接命令里有没有 onnxruntime（重点看 -l 参数）
+cmake --build . --verbose 2>&1 | grep -E "onnx|kylinqt$"
+
+# 3. 确认库文件真的存在且导出该符号
+ls -l /opt/onnxruntime/lib/
+nm -D /opt/onnxruntime/lib/libonnxruntime.so | grep OrtGetApiBase   # 动态库
+# 或
+nm /opt/onnxruntime/lib/libonnxruntime.a | grep OrtGetApiBase       # 静态库
+
+# 4. 确认库架构和工具链一致
+file /opt/onnxruntime/lib/libonnxruntime.so
+

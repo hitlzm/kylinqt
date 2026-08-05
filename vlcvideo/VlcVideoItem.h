@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QColor>
 #include <QSize>
+#include <atomic>
 
 struct mpv_handle;
 struct mpv_render_context;
@@ -23,6 +24,7 @@ class VlcVideoItem : public QQuickFramebufferObject
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal frameWidth READ frameWidth NOTIFY frameSizeChanged)
     Q_PROPERTY(qreal frameHeight READ frameHeight NOTIFY frameSizeChanged)
+    Q_PROPERTY(bool cpuFrameConsumer READ cpuFrameConsumer WRITE setCpuFrameConsumer NOTIFY cpuFrameConsumerChanged)
 
 public:
     explicit VlcVideoItem(QQuickItem *parent = nullptr);
@@ -71,6 +73,13 @@ public:
     qreal frameWidth() const { return m_width; }
     qreal frameHeight() const { return m_height; }
 
+    // ── CPU 帧消费开关 ────────────────────────────────────
+    /// 是否有 CPU 侧消费者（如 StreamProcessor 检测）需要读回像素。
+    /// false（导引头纯显示）时渲染线程跳过 glReadPixels，
+    /// 显示/放大镜直接绑离屏 FBO 纹理，点击走纯几何映射。
+    bool cpuFrameConsumer() const { return m_cpuConsumerActive.load(); }
+    Q_INVOKABLE void setCpuFrameConsumer(bool on);
+
     /// 视频固有显示尺寸（mpv video-params 的 dw/dh）。
     /// 供放大镜等"一帧多显"场景裁剪 mpv 离屏渲染时在帧内留下的黑边。
     QSize videoNativeSize() const { return QSize(m_videoDw, m_videoDh); }
@@ -86,6 +95,7 @@ signals:
     void lengthChanged();
     void seekableChanged();
     void frameSizeChanged();
+    void cpuFrameConsumerChanged();
     void stopped();
     void ended();
     void error(const QString &errorMsg);
@@ -145,6 +155,9 @@ private:
     bool   m_hasProcessedFrame = false;
 
     unsigned int m_displayTexId = 0;
+
+    // 是否有 CPU 侧消费者需要读回像素（渲染线程读 / GUI 线程写，须 atomic）
+    std::atomic<bool> m_cpuConsumerActive{true};
 
     bool m_playing = false;
     bool m_playClicked = false;

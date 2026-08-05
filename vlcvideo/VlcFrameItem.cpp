@@ -54,11 +54,11 @@ public:
 
         m_sharedTexId = static_cast<GLuint>(texId);
 
-        // 源帧尺寸（从 VlcVideoItem 的离屏 FBO）
-        QImage refFrame = src->grabFrame();
-        if (refFrame.isNull()) return;
-        int fullW = refFrame.width();
-        int fullH = refFrame.height();
+        // 源帧尺寸：改用 VlcVideoItem 的属性（离屏 FBO 尺寸），
+        // 不再依赖 grabFrame()——导引头模式关闭 CPU 回读后 grabFrame 返回空
+        int fullW = qRound(src->frameWidth());
+        int fullH = qRound(src->frameHeight());
+        if (fullW <= 0 || fullH <= 0) return;
 
         // ── 先裁剪掉帧内 mpv 留下的黑边，得到真实视频内容区域 ──
         // 离屏 FBO 的宽高比 = 主播放器控件的宽高比，视频内容在其中保持宽高比居中
