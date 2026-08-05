@@ -244,7 +244,7 @@ private:
         QMetaObject::invokeMethod(m_item, "onRenderContextReady", Qt::QueuedConnection);
     }
 
-    // ---- 让 mpv 渲染到 1.5x 离屏 FBO，然后读回高清 CPU 帧缓冲 ----
+    // ---- 让 mpv 渲染到离屏 FBO（优先视频原生分辨率），然后读回 CPU 帧缓冲 ----
     void renderMpvFrame()
     {
         if (!m_item->m_mpvCtx)
@@ -254,16 +254,31 @@ private:
         if (!(flags & MPV_RENDER_UPDATE_FRAME))
             return;
 
-        // 1.5 倍分辨率离屏渲染：
-        //   mpv → 离屏FBO (1008×444) → glReadPixels → QImage (高清)
-        //   主画面 quad 缩小显示，放大镜 grabFrame() 拿到更高清帧
-        int w = qMax(16, int(m_item->width()))  * 3 / 2;
-        int h = qMax(16, int(m_item->height())) * 3 / 2;
+        // 离屏渲染目标尺寸：优先取视频原生分辨率（video-params 的 dw/dh）。
+        //   这样读回的帧就是原始画面，不带 mpv 按控件比例渲染留下的黑边，
+        //   且分辨率不随控件大小变化；上限 1920×1080，小于上限的源按原尺寸。
+        //   视频参数尚未解析到时，退回“控件尺寸 × 1.5”作为过渡。
+        constexpr int kMaxFboWidth  = 1920;
+        constexpr int kMaxFboHeight = 1080;
+        int w, h;
+        const int videoW = m_item->m_videoDw;
+        const int videoH = m_item->m_videoDh;
+        if (videoW > 0 && videoH > 0) {
+            const float capScale = qMin(1.0f,
+                                        qMin(static_cast<float>(kMaxFboWidth) / videoW,
+                                             static_cast<float>(kMaxFboHeight) / videoH));
+            w = qMax(16, static_cast<int>(videoW * capScale + 0.5f));
+            h = qMax(16, static_cast<int>(videoH * capScale + 0.5f));
+        } else {
+            w = qMax(16, int(m_item->width()))  * 3 / 2;
+            h = qMax(16, int(m_item->height())) * 3 / 2;
+        }
 
         if (w != m_mpvFboWidth || h != m_mpvFboHeight) {
             m_mpvFboWidth = w;
             m_mpvFboHeight = h;
             rebuildOffscreenFbo();
+            qDebug() << "[MpvVideo] offscreen FBO resized to:" << w << "x" << h;
         }
         if (!m_offscreenFbo) return;
 
@@ -973,8 +988,12 @@ void VlcVideoItem::processMpvEvents()
                 if (prop->format == MPV_FORMAT_NODE) {
                     int dw = m_videoDw, dh = m_videoDh;
                     parseVideoParamsNode(static_cast<mpv_node *>(prop->data), &dw, &dh);
-                    m_videoDw = dw;
-                    m_videoDh = dh;
+                    if (dw != m_videoDw || dh != m_videoDh) {
+                        m_videoDw = dw;
+                        m_videoDh = dh;
+                        qDebug() << "[MpvVideo] video-params (native size):"
+                                 << m_videoDw << "x" << m_videoDh;
+                    }
                 }
             }
             break;
@@ -1032,49 +1051,24 @@ void VlcVideoItem::requestPixelAt(int x, int y)
         return;
     }
 
-    // 整个 item 显示的就是整帧内容（帧含 mpv 渲染时的黑边），
-    // 所以点击坐标 → 帧坐标是均匀缩放映射
-    const qreal frameX = x / itemW * videoW;
-    const qreal frameY = y / itemH * videoH;
+    // 显示时帧在控件内是“等比缩放 + 居中”（由渲染器 quad 决定），
+    // 黑边只出现在控件内视频内容区之外。先算内容区在控件坐标中的位置，
+    // 点击落在内容区之外（黑边）时静默忽略，不发偏差像素。
+    const qreal scale = qMin(itemW / videoW, itemH / videoH);
+    const qreal displayW = videoW * scale;
+    const qreal displayH = videoH * scale;
+    const qreal ox = (itemW - displayW) / 2.0;
+    const qreal oy = (itemH - displayH) / 2.0;
 
-    // 若已知视频固有显示尺寸，剔除帧内黑边（letterbox）并把坐标映射回视频原生坐标系
-    if (m_videoDw > 0 && m_videoDh > 0) {
-        const qreal aspect = qreal(m_videoDw) / m_videoDh;
-        const qreal frameAspect = videoW / videoH;
-        qreal vw, vh, ox, oy;
-        if (aspect > frameAspect) {
-            // 视频比帧更宽 → 上下留黑边
-            vw = videoW;
-            vh = videoW / aspect;
-            ox = 0.0;
-            oy = (videoH - vh) / 2.0;
-        } else {
-            // 视频比帧更窄 → 左右留黑边
-            vh = videoH;
-            vw = videoH * aspect;
-            ox = (videoW - vw) / 2.0;
-            oy = 0.0;
-        }
-
-        if (frameX < ox || frameX > ox + vw ||
-            frameY < oy || frameY > oy + vh) {
-            // 点击位置在视频画面之外（黑边），静默忽略
-            return;
-        }
-
-        // 黑边内的坐标 → 视频原生坐标系（如 1280×720），供导引头使用
-        const int nativeX = qBound(0, qRound((frameX - ox) / vw * m_videoDw), m_videoDw - 1);
-        const int nativeY = qBound(0, qRound((frameY - oy) / vh * m_videoDh), m_videoDh - 1);
-
-        qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → video("
-                 << nativeX << "," << nativeY << ")";
-        emit reqDeviationToImg(nativeX, nativeY);
+    if (x < ox || x > ox + displayW || y < oy || y > oy + displayH) {
+        qDebug() << "[MpvVideo] click outside video area, ignored: ("
+                 << x << "," << y << ")";
         return;
     }
 
-    // 视频尺寸未知（video-params 尚未到达）时退回帧坐标
-    const int frameXpx = qBound(0, qRound(frameX), int(videoW) - 1);
-    const int frameYpx = qBound(0, qRound(frameY), int(videoH) - 1);
+    // 内容区内的点击 → 帧坐标（帧 = 视频原生画面，坐标即视频原生坐标）
+    const int frameXpx = qBound(0, qRound((x - ox) / displayW * videoW), int(videoW) - 1);
+    const int frameYpx = qBound(0, qRound((y - oy) / displayH * videoH), int(videoH) - 1);
     qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → frame("
              << frameXpx << "," << frameYpx << ")";
     emit reqDeviationToImg(frameXpx, frameYpx);

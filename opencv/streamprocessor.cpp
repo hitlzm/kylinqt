@@ -96,7 +96,7 @@ bool StreamProcessor::loadYoloModel(const QString &onnxPath,
         }
     }
 
-    qDebug() << "[StreamProcessor] YOLOv3-tiny ONNX model ready,"
+    qDebug() << "[StreamProcessor] YOLO ONNX model ready,"
              << "classes:" << m_detector.classCount()
              << "input:" << 416 << "x" << 416;
     return true;

@@ -37,7 +37,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <atomic>
-#include "onnxyolodetector.h"
+#include "onnxyolov5detector.h"
 #include "pixelkalmantracker.h"
 
 class VlcVideoItem;  // 前向声明
@@ -136,7 +136,7 @@ private:
     void drawDetections(cv::Mat &frame,
                         const std::vector<OnnxDetection> &detections);
 
-    OnnxYoloDetector m_detector;
+    OnnxYoloV5Detector m_detector;
     VlcVideoItem *m_videoSource = nullptr;   // 外部 VlcVideoItem（拉流+显示）
 
     QTimer *m_timer = nullptr;

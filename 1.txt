@@ -25,3 +25,406 @@ nm /opt/onnxruntime/lib/libonnxruntime.a | grep OrtGetApiBase       # 静态库
 # 4. 确认库架构和工具链一致
 file /opt/onnxruntime/lib/libonnxruntime.so
 
+QML debugging is enabled. Only use this in a safe environment.
+QFont::setPixelSize: Pixel size <= 0 (-1)
+[MpvVideo] componentComplete, size: -4 x 296
+qrc:/main.qml:30: ReferenceError: cusConfig is not defined
+qrc:/main.qml:35: ReferenceError: cusConfig is not defined
+[main] 未找到 YOLO 模型文件（已禁用检测，仅透传视频帧）: "/home/ipc/final/kylinqt41/build/models/best.onnx / /home/ipc/final/kylinqt41/build/best.onnx / /home/ipc/final/kylinqt41/build/models/best.onnx / /home/ipc/final/kylinqt41/build/best.onnx / E:/QTproject/yolov3model2/best.onnx / E:/QTproject/ONNXRUNTIME2/model/best.onnx"
+[StreamProcessor] Started, thread: QThread(0x163a9440)
+
+
+ipc@ipc-pc:~/ONNXRUNTIME2/opencvtest/build$ gdb ./opencvtest
+GNU gdb (Kylin 9.2-0kylin1~20.04.2build1) 9.2
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "aarch64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./opencvtest...
+(gdb) run
+Starting program: /home/ipc/ONNXRUNTIME2/opencvtest/build/opencvtest 
+/home/ipc/ONNXRUNTIME2/opencvtest/build/opencvtest: /usr/lib/aarch64-linux-gnu/pvr/libOpenCL.so.1: no version information available (required by /lib/aarch64-linux-gnu/libavutil.so.56)
+/home/ipc/ONNXRUNTIME2/opencvtest/build/opencvtest: /usr/lib/aarch64-linux-gnu/pvr/libOpenCL.so.1: no version information available (required by /lib/aarch64-linux-gnu/libavutil.so.56)
+/home/ipc/ONNXRUNTIME2/opencvtest/build/opencvtest: /usr/lib/aarch64-linux-gnu/pvr/libOpenCL.so.1: no version information available (required by /lib/aarch64-linux-gnu/libavfilter.so.7)
+/home/ipc/ONNXRUNTIME2/opencvtest/build/opencvtest: /usr/lib/aarch64-linux-gnu/pvr/libOpenCL.so.1: no version information available (required by /lib/aarch64-linux-gnu/libavfilter.so.7)
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/aarch64-linux-gnu/libthread_db.so.1".
+QML debugging is enabled. Only use this in a safe environment.
+[main] Step 1: Starting...
+[New Thread 0x7fe1619a00 (LWP 123777)]
+[New Thread 0x7fdb7fea00 (LWP 123778)]
+[New Thread 0x7fdaffda00 (LWP 123779)]
+[New Thread 0x7fda7c1a00 (LWP 123780)]
+[New Thread 0x7fd9fc0a00 (LWP 123781)]
+[Detaching after vfork from child process 123782]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[New Thread 0x7fd971ba00 (LWP 123785)]
+[New Thread 0x7fd8f1aa00 (LWP 123786)]
+[New Thread 0x7fc3ffda00 (LWP 123787)]
+[New Thread 0x7fc37fca00 (LWP 123788)]
+[StreamProcessor] mpv initialized (hwdec=no, vo=libmpv)
+[New Thread 0x7fc2aada00 (LWP 123807)]
+[StreamProcessor] OpenGL offscreen context created
+[StreamProcessor] FBO created: 1280 x 720
+
+Thread 1 "opencvtest" received signal SIGILL, Illegal instruction.
+0x0000007ff7a8ca60 in ?? () from /usr/lib/aarch64-linux-gnu/libmpv.so.1
+(gdb) bt full
+#0  0x0000007ff7a8ca60 in  () at /usr/lib/aarch64-linux-gnu/libmpv.so.1
+#1  0x0000000000de6c80 in  ()
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 123723] will be killed.
+
+Quit anyway? (y or n) n
+Not confirmed.
+(gdb) run
+The program being debugged has been started already.
+Start it from the beginning? (y or n) 
+Please answer y or n.
+The program being debugged has been started already.
+Start it from the beginning? (y or n) n
+Program not restarted.
+(gdb) continue
+Continuing.
+Unable to fetch general registers.: 没有那个进程.
+Unable to fetch general registers.: 没有那个进程.
+(gdb) [Thread 0x7fc2aada00 (LWP 123807) exited]
+[Thread 0x7fc37fca00 (LWP 123788) exited]
+[Thread 0x7fc3ffda00 (LWP 123787) exited]
+[Thread 0x7fd8f1aa00 (LWP 123786) exited]
+[Thread 0x7fd971ba00 (LWP 123785) exited]
+[Thread 0x7fd9fc0a00 (LWP 123781) exited]
+[Thread 0x7fda7c1a00 (LWP 123780) exited]
+[Thread 0x7fdaffda00 (LWP 123779) exited]
+[Thread 0x7fdb7fea00 (LWP 123778) exited]
+[Thread 0x7fe1619a00 (LWP 123777) exited]
+
+Program terminated with signal SIGILL, Illegal instruction.
+The program no longer exists.
+
+
+QML debugging is enabled. Only use this in a safe environment.
+QFont::setPixelSize: Pixel size <= 0 (-1)
+[MpvVideo] componentComplete, size: -4 x 296
+qrc:/main.qml:30: ReferenceError: cusConfig is not defined
+qrc:/main.qml:35: ReferenceError: cusConfig is not defined
+[main] 未找到 YOLO 模型文件（已禁用检测，仅透传视频帧）: "/home/ipc/final/kylinqt41/build/models/best.onnx / /home/ipc/final/kylinqt41/build/best.onnx / /home/ipc/final/kylinqt41/build/models/best.onnx / /home/ipc/final/kylinqt41/build/best.onnx / E:/QTproject/yolov3model2/best.onnx / E:/QTproject/ONNXRUNTIME2/model/best.onnx"
+[StreamProcessor] Started, thread: QThread(0x399f50d0)
+[MpvVideo] createRenderer() called
+[MpvVideo] Vendor  : Phytium Information Technologies
+[MpvVideo] Renderer: PhytiumVR A-Series AXT-16-512
+[MpvVideo] Version : 3.0 build 1.16@6099580
+
+http://ftp.deb-multimedia.org/pool/main/v/vlc-dmo/libvlc-dev_3.0.23-dmo6_arm64.deb
+http://ftp.deb-multimedia.org/pool/main/v/vlc-dmo/libvlc5_3.0.23-dmo6_arm64.deb
+
+/home/ipc/ONNXRUNTIME2/opencvtest/ONNXRUNTIME/streamprocessor.cpp: In lambda function:
+/home/ipc/ONNXRUNTIME2/opencvtest/ONNXRUNTIME/streamprocessor.cpp:260:80: error: cannot call member function ‘void (* QOpenGLContext::getProcAddress(const char*) const)()’ without object
+  260 |             return reinterpret_cast<void *>(QOpenGLContext::getProcAddress(name));
+      |                                                                                ^
+make[2]: *** [CMakeFiles/opencvtest.dir/build.make:209：CMakeFiles/opencvtest.dir/ONNXRUNTIME/streamprocessor.cpp.o] 错误 1
+make[1]: *** [CMakeFiles/Makefile2:84：CMakeFiles/opencvtest.dir/all] 错误 2
+make: *** [Makefile:91：all] 错误 2
+
+/home/ipc/ONNXRUNTIME2/opencvtest/ONNXRUNTIME/streamprocessor.cpp: In member function ‘bool StreamProcessor::openVideo(const QString&)’:
+/home/ipc/ONNXRUNTIME2/opencvtest/ONNXRUNTIME/streamprocessor.cpp:265:5: error: cannot convert ‘StreamProcessor::openVideo(const QString&)::<lambda(void*, const char*)>’ to ‘void* (*)(void*, const char*)’ in initialization
+  265 |     };
+      |     ^
+make[2]: *** [CMakeFiles/opencvtest.dir/build.make:209：CMakeFiles/opencvtest.dir/ONNXRUNTIME/streamprocessor.cpp.o] 错误 1
+make[1]: *** [CMakeFiles/Makefile2:84：CMakeFiles/opencvtest.dir/all] 错误 2
+make: *** [Makefile:91：all] 错误 2
+
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90501]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90504]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90507]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90510]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90513]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90516]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90519]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90522]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90525]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90528]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90531]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90534]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90537]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90540]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90543]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90546]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90549]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90552]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90555]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90558]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90561]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90564]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90567]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90570]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90573]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90576]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90579]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90582]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90585]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90588]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90591]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90594]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90597]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90600]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90603]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90606]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90609]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90612]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90615]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90618]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90621]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90624]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90627]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90630]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90633]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90636]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90639]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90642]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90645]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90648]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90651]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90654]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[Detaching after vfork from child process 90657]
+/sys/firmware/dmi/tables/smbios_entry_point: Permission denied
+[New Thread 0x7f85ff9a00 (LWP 90660)]
+[New Thread 0x7f857f8a00 (LWP 90661)]
+[New Thread 0x7f947f9a00 (LWP 90662)]
+[New Thread 0x7f84bf6a00 (LWP 90663)]
+[New Thread 0x7f84ff7a00 (LWP 90664)]
+[New Thread 0x7f847f5a00 (LWP 90665)]
+[New Thread 0x7f63ffca00 (LWP 90666)]
+[New Thread 0x7f63bfba00 (LWP 90667)]
+[New Thread 0x7f637faa00 (LWP 90668)]
+continue
+q
+[Thread 0x7f95ffca00 (LWP 90077) exited]
+[Thread 0x7f94ffaa00 (LWP 90079) exited]
+[Thread 0x7f957fba00 (LWP 90078) exited]
+[Thread 0x7f9cdf9a00 (LWP 90076) exited]
+[Thread 0x7f9d5faa00 (LWP 90075) exited]
+[Thread 0x7f87ffda00 (LWP 90080) exited]
+[Thread 0x7f877fca00 (LWP 90081) exited]
+[Thread 0x7f86ffba00 (LWP 90082) exited]
+[Thread 0x7f867faa00 (LWP 90083) exited]
+[Thread 0x7facff7a00 (LWP 88565) exited]
+[Thread 0x7fe1619a00 (LWP 88316) exited]
+QFileSystemWatcher::removePaths: list is empty
+QFileSystemWatcher::removePaths: list is empty
+[Thread 0x7fd9fc0a00 (LWP 88338) exited]
+[Thread 0x7fad7f8a00 (LWP 88385) exited]
+[Thread 0x7faeffba00 (LWP 88369) exited]
+[Thread 0x7fafffda00 (LWP 88367) exited]
+[Thread 0x7fc2ffba00 (LWP 88346) exited]
+[Thread 0x7fc37fca00 (LWP 88345) exited]
+[Thread 0x7fda7c1a00 (LWP 88337) exited]
+[Thread 0x7fdaffda00 (LWP 88336) exited]
+[Thread 0x7fdb7fea00 (LWP 88335) exited]
+[Thread 0x7f9ddfba00 (LWP 88686) exited]
+[Thread 0x7f847f5a00 (LWP 90665) exited]
+[Thread 0x7f63bfba00 (LWP 90667) exited]
+[Thread 0x7f637faa00 (LWP 90668) exited]
+[Thread 0x7f84ff7a00 (LWP 90664) exited]
+[Thread 0x7f84bf6a00 (LWP 90663) exited]
+[Thread 0x7f947f9a00 (LWP 90662) exited]
+[Thread 0x7f857f8a00 (LWP 90661) exited]
+[Thread 0x7f85ff9a00 (LWP 90660) exited]
+[Thread 0x7fadff9a00 (LWP 88383) exited]
+[Thread 0x7fae7faa00 (LWP 88382) exited]
+[Thread 0x7faf7fca00 (LWP 88368) exited]
+[Thread 0x7fc22aca00 (LWP 88365) exited]
+[Thread 0x7fc3ffda00 (LWP 88344) exited]
+[Thread 0x7fd8f1aa00 (LWP 88343) exited]
+[Thread 0x7fd971ba00 (LWP 88339) exited]
+[Thread 0x7fe22b5040 (LWP 88262) exited]
+--Type <RET> for more, q to quit, c to continue without paging--continue
+[Inferior 1 (process 88262) exited normally]
+
+[mpv file] stream level seek from 504775 to 1324525
+[mpv file] stream level seek from 1455597 to 377759
+[mpv file] stream level seek from 508831 to 1329321
+[mpv file] stream level seek from 1460393 to 378482
+[mpv file] stream level seek from 509554 to 1358999
+[mpv file] stream level seek from 1490071 to 378858
+[mpv file] stream level seek from 509930 to 1362403
+[mpv file] stream level seek from 1493475 to 418174
+[mpv file] stream level seek from 549246 to 1366505
+[mpv file] stream level seek from 1497577 to 422014
+[mpv file] stream level seek from 553086 to 1370013
+[mpv file] stream level seek from 1501085 to 425758
+[mpv file] stream level seek from 556830 to 1414659
+[mpv file] stream level seek from 1545731 to 426518
+[mpv file] stream level seek from 557590 to 1419341
+[mpv file] stream level seek from 1550413 to 426875
+[mpv file] stream level seek from 557947 to 1425120
+[mpv file] stream level seek from 1556192 to 427608
+[mpv file] stream level seek from 558680 to 1430568
+[mpv file] stream level seek from 1561640 to 428353
+[mpv file] stream level seek from 559425 to 1471573
+[mpv file] stream level seek from 1602645 to 429090
+[mpv file] stream level seek from 560162 to 1475135
+[mpv file] stream level seek from 1606207 to 429499
+[mpv file] stream level seek from 560571 to 1479998
+[mpv vo/libmpv] mpv_render_context_render() not being called or stuck.
+[mpv file] stream level seek from 1611070 to 430226
+[mpv file] stream level seek from 561298 to 1485978
+[mpv file] stream level seek from 1617050 to 430985
+[mpv file] stream level seek from 562057 to 1517480
+[mpv file] stream level seek from 1648552 to 435222
+[mpv file] stream level seek from 566294 to 1520731
+[mpv file] stream level seek from 1651803 to 435902
+[mpv file] stream level seek from 566974 to 1525298
+[mpv file] stream level seek from 1656370 to 436237
+[mpv file] stream level seek from 567309 to 1528839
+[mpv file] stream level seek from 1659911 to 436937
+[mpv file] stream level seek from 568009 to 1570886
+[mpv file] stream level seek from 1701958 to 437656
+[mpv file] stream level seek from 568728 to 1576763
+[mpv file] stream level seek from 1707835 to 475733
+[mpv file] stream level seek from 606805 to 1583360
+[mpv file] stream level seek from 1714432 to 476475
+[mpv file] stream level seek from 607547 to 1589621
+[mpv file] stream level seek from 1667298 to 476849
+[mpv file] stream level seek from 607921 to 1667298
+[mpv file] stream level seek from 1798370 to 480435
+[mpv file] stream level seek from 611507 to 1671030
+[mpv file] stream level seek from 1802102 to 481215
+[mpv file] stream level seek from 612287 to 1673867
+[mpv file] stream level seek from 1804939 to 485264
+[mpv file] stream level seek from 616336 to 1676008
+[mpv file] stream level seek from 1807080 to 486022
+[mpv file] stream level seek from 617094 to 1691189
+[mpv file] stream level seek from 1822261 to 486540
+[mpv file] stream level seek from 617612 to 1692693
+[mpv file] stream level seek from 1823765 to 490298
+[mpv file] stream level seek from 621370 to 1694261
+[mpv vo/libmpv] mpv_render_context_render() not being called or stuck.
+[mpv file] stream level seek from 1825333 to 490992
+[mpv file] stream level seek from 622064 to 1695603
+[mpv file] stream level seek from 1826675 to 538926
+[mpv file] stream level seek from 669998 to 1719352
+[mpv file] stream level seek from 1850424 to 542675
+[mpv file] stream level seek from 673747 to 1721323
+[mpv file] stream level seek from 1852395 to 542995
+[mpv file] stream level seek from 674067 to 1723136
+[mpv file] stream level seek from 1854208 to 543682
+[mpv file] stream level seek from 674754 to 1724862
+[mpv file] stream level seek from 1855934 to 544402
+[mpv file] stream level seek from 675474 to 1753631
+[mpv file] stream level seek from 1884703 to 548150
+[mpv file] stream level seek from 679222 to 1755453
+[mpv file] stream level seek from 1886525 to 548866
+[mpv file] stream level seek from 679938 to 1757491
+[mpv file] stream level seek from 1888563 to 552335
+[mpv file] stream level seek from 683407 to 1759369
+[mpv vo/libmpv] mpv_render_context_render() not being called or stuck.
+[mpv file] stream level seek from 1890441 to 553041
+[mpv file] stream level seek from 684113 to 1796852
+[mpv file] stream level seek from 1927924 to 553756
+[mpv file] stream level seek from 684828 to 1798466
+[mpv file] stream level seek from 1929538 to 554483
+[mpv file] stream level seek from 685555 to 1799878
+[mpv file] stream level seek from 1930950 to 555206
+[mpv file] stream level seek from 686278 to 1800925
+[mpv file] stream level seek from 1931997 to 555573
+[mpv file] stream level seek from 686645 to 1827307
+[mpv file] stream level seek from 1958379 to 588346
+[mpv file] stream level seek from 719418 to 1829447
+[mpv file] stream level seek from 1960519 to 591307
+[mpv file] stream level seek from 722379 to 1831724
+[mpv vo/libmpv] mpv_render_context_render() not being called or stuck.
+[mpv file] stream level seek from 1962796 to 592106
+[mpv file] stream level seek from 723178 to 1833753
+[mpv file] stream level seek from 1964825 to 592570
+[mpv file] stream level seek from 723642 to 1861257
+[mpv file] stream level seek from 1992329 to 596252
+[mpv file] stream level seek from 727324 to 1862851
+[mpv file] stream level seek from 1993923 to 596940
+[mpv file] stream level seek from 728012 to 1864902
+[mpv file] stream level seek from 1995974 to 600705
+[mpv file] stream level seek from 731777 to 1866674
+[mpv file] stream level seek from 1997746 to 601425
+[mpv file] stream level seek from 732497 to 1913486
+
+OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+[OnnxYolo] Output 0 channels imply 840 classes (setNumClasses = 80 ), using model value
+
+
+
+

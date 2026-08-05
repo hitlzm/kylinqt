@@ -102,6 +102,7 @@ else()
       vlcvideo/VlcVideoItem.cpp
       vlcvideo/VlcFrameItem.cpp
       opencv/onnxyolodetector.cpp
+      opencv/onnxyolov5detector.cpp
       opencv/streamprocessor.cpp
       opencv/pixelkalmantracker.cpp
       opencv/cvconvert.h

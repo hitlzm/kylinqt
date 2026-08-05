@@ -383,7 +383,19 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
         // ══ 步骤① 预处理 LetterBox + NCHW ══
         float letterBoxScale;
         int letterBoxPadX, letterBoxPadY;
-        cv::Mat blob = preprocessV5(frame, m_inputWidth, m_inputHeight,
+        // 输入尺寸以模型实际 shape 为准（loadModel 时解析，动态维度回退到 setInputSize）
+        std::vector<int64_t> inputShape = m_impl->inputShape;
+        if (inputShape.size() != 4) {
+            inputShape = {1, 3, m_inputHeight, m_inputWidth};
+        }
+        if (inputShape[0] <= 0) inputShape[0] = 1;
+        if (inputShape[1] <= 0) inputShape[1] = 3;
+        if (inputShape[2] <= 0) inputShape[2] = m_inputHeight;
+        if (inputShape[3] <= 0) inputShape[3] = m_inputWidth;
+        const int inputW = static_cast<int>(inputShape[3]);
+        const int inputH = static_cast<int>(inputShape[2]);
+
+        cv::Mat blob = preprocessV5(frame, inputW, inputH,
                                      letterBoxScale, letterBoxPadX, letterBoxPadY);
         m_letterBoxScale = letterBoxScale;
         m_letterBoxPadX  = letterBoxPadX;
@@ -393,10 +405,8 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
         Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(
             OrtArenaAllocator, OrtMemTypeDefault);
 
-        std::vector<int64_t> inputShape = {
-            1, 3, m_inputHeight, m_inputWidth
-        };
-        size_t inputElementCount = 1 * 3 * m_inputHeight * m_inputWidth;
+        size_t inputElementCount = static_cast<size_t>(
+            inputShape[0] * inputShape[1] * inputShape[2] * inputShape[3]);
 
         Ort::Value inputTensor = Ort::Value::CreateTensor<float>(
             memoryInfo,
@@ -462,7 +472,7 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
             outputData,
             numDetections,
             K,
-            m_inputWidth, m_inputHeight,
+            inputW, inputH,
             frame.cols, frame.rows,
             m_confThreshold,
             m_nmsThreshold,
