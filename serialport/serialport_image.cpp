@@ -531,7 +531,39 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     // 启动定时器（立即触发第一次发送，若想先等20ms再发，可改为 timer->start(20) 但默认立即触发）
     timer->start();
 }
-void SerialPortImage::onReadyRead() { SerialPort::onReadyRead(); }
+void SerialPortImage::onReadyRead()
+{
+    // 仿照 laser 串口的处理：串口驱动一次 readyRead 到达的数据不一定是一整帧，
+    // 先存入接收缓冲，找到帧头 0x77 0xAB 后再按固定帧长切出完整一帧交给 parseData
+    m_rxBuffer.append(m_serialPort->readAll());
+
+    const int frameLen = static_cast<int>(sizeof(image_recv_frame));
+
+    while (m_rxBuffer.size() >= 2) {
+        // 1. 逐字节查找帧头：找到 0x77 后判断下一个是否为 0xAB
+        int headIdx = -1;
+        for (int i = 0; i <= m_rxBuffer.size() - 2; ++i) {
+            if (static_cast<quint8>(m_rxBuffer[i])     == 0x77
+                    && static_cast<quint8>(m_rxBuffer[i + 1]) == 0xAB) {
+                headIdx = i;
+                break;
+            }
+        }
+        if (headIdx < 0) {
+            // 没找到完整帧头，保留最后1字节（可能是下一帧帧头的第一个字节）
+            if (m_rxBuffer.size() > 1)
+                m_rxBuffer = m_rxBuffer.right(1);
+            break;
+        }
+        if (headIdx > 0)
+            m_rxBuffer.remove(0, headIdx);
+        if (m_rxBuffer.size() < frameLen)
+            break;
+        QByteArray frame = m_rxBuffer.left(frameLen);
+        m_rxBuffer.remove(0, frameLen);
+        parseData(frame);
+    }
+}
 
 
 void SerialPortImage::ExmodeChanged(int mode)

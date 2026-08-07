@@ -323,6 +323,8 @@ private:
     int m_sendCount_1s = 0;
     
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
+
+    QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，按帧头+固定帧长切帧
 };
 
 

@@ -9,7 +9,20 @@ SerialPortBD::SerialPortBD(QObject *parent)
     
 }
 
-void SerialPortBD::onReadyRead() { SerialPort::onReadyRead(); }
+void SerialPortBD::onReadyRead()
+{
+    // 串口每次 readyRead 到达的数据不一定是一条完整的 NMEA 语句，
+    // 需要累积到 '\n' 再切出完整语句解析，否则一条语句会被拆成多次解析
+    m_rxBuffer.append(m_serialPort->readAll());
+
+    int idx;
+    while ((idx = m_rxBuffer.indexOf('\n')) != -1) {
+        QByteArray line = m_rxBuffer.left(idx).trimmed();   // 去掉行尾 \r\n
+        m_rxBuffer.remove(0, idx + 1);
+        if (line.startsWith('$'))
+            parseData(line);
+    }
+}
 
 //数据格式：$BDRMC,123400.000,A,4002.217821,N,11618.105743,E,0.026,181.631,180411,,,A*2C
 void SerialPortBD::parseData(const QByteArray &rawData)
@@ -18,9 +31,10 @@ void SerialPortBD::parseData(const QByteArray &rawData)
     QString sentence = QString::fromLatin1(rawData.trimmed()); // 去除换行符
     //输出数据结构体
     RMCData outData;
-    // 2. 基础校验：必须以 '$' 开头且包含 "RMC"
-    if (!sentence.startsWith('$') || !sentence.contains("BDRMC")) {
-        qWarning() << "Invalid RMC sentence prefix";
+    // 2. 基础校验：必须以 '$' 开头，且是北斗 RMC 语句
+    //    设备实际发送 $GBRMC（NMEA 4.0+ 北斗前缀），老设备是 $BDRMC，两种都要接收
+    if (!(sentence.startsWith("$GBRMC") || sentence.startsWith("$BDRMC"))) {
+        qWarning() << "Invalid RMC sentence prefix: " << sentence;
         return;
     }
     // 3. 提取校验和（如果有）并验证，校验和为16进制，转换为ASCII码后占两个字节
@@ -97,7 +111,10 @@ void SerialPortBD::parseData(const QByteArray &rawData)
     }
     
     //把UTC时间转化为北京时间
-    QDateTime beijingTime = QDateTime(utcDate, utcTime, Qt::UTC).toTimeZone(QTimeZone("Asia/Beijing"));
+    // 北京时间 = UTC + 8，固定偏移、无夏令时，直接使用固定偏移时区，
+    // 避免 Qt 5.12 Windows 时区后端对空转换表调用 last() 触发断言崩溃（QTBUG-96152）
+    QDateTime beijingTime = QDateTime(utcDate, utcTime, Qt::UTC)
+                                .toTimeZone(QTimeZone(8 * 3600));
 
     // 8. 转换经纬度
     double latitude = nmeaToDecimal(latStr, latDir);
@@ -181,30 +198,43 @@ QString BDData::mode() const
 
 void BDData ::updateFromFrame(const RMCData &frame)
 {
-    //先判断定位是否有效
+    //先同步定位有效标识（QML 用它作为显示门槛，否则 m_isPosValid 永远是 false）
+    if (m_isPosValid != frame.isValid)
+    {
+        m_isPosValid = frame.isValid;
+        emit isPosValidChanged();
+    }
+
+    //先赋值，值变化才发信号（原代码只发信号不赋值，导致 QML 读到的永远是旧值）
+    m_BJDateTime = frame.BJDateTime;
+    emit bjDateTimeChanged();
+
     if(frame.isValid)
     {
-        m_BJDateTime = frame.BJDateTime;
-        emit bjDateTimeChanged();
         if(m_latitude != frame.latitude)
         {
+            m_latitude = frame.latitude;
             emit latitudeChanged();
         }
         if(m_longitude != frame.longitude)
         {
+            m_longitude = frame.longitude;
             emit longitudeChanged();
         }
         //用于判断北纬还是南纬
         if(m_isnorth != frame.isnorth)
         {
+            m_isnorth = frame.isnorth;
             emit isnorthChanged();
         }
         if(m_iseast != frame.iseast)
         {
+            m_iseast = frame.iseast;
             emit iseastChanged();
         }
         if(m_mode != frame.mode)
         {
+            m_mode = frame.mode;
             emit modeChanged();
         }
     }
