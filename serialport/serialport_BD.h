@@ -133,6 +133,7 @@ protected:
     void onReadyRead() override;
 private:
     double nmeaToDecimal(const QString& coord, const QString& dir);  //将 NMEA 纬度/经度（ddmm.mmmmm）转换为十进制度数
+    QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一条 NMEA 语句的一部分，攒到 '\n' 再解析
 };
 
 
