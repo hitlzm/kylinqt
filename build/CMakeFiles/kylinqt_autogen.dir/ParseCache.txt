@@ -10,10 +10,10 @@ E:/QTproject/kylinqt/serialport/serialport_image.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/network/TemplateBindingClient.h
  mmc:Q_OBJECT
-E:/QTproject/kylinqt/serialport/serialport_CCD.cpp
-E:/QTproject/kylinqt/serialport/circularbuffer.h
 E:/QTproject/kylinqt/serialport/serialport.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/serialport/serialport_CCD.cpp
+E:/QTproject/kylinqt/serialport/circularbuffer.h
 E:/QTproject/kylinqt/serialport/serialport_BD.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_CCD.h

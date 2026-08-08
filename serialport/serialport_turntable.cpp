@@ -437,7 +437,7 @@ void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float
             }
         }else if(buttonL2!=0){
             PositionModeCmd1 cmd;
-            cmd.axis = 3; // 外框框
+            cmd.axis = 3; // 外框
             cmd.acceleration = 1000; // 示例加速度
             //判断步进还是步减，每次变动角度为3度
             if(buttonA)
