@@ -23,7 +23,7 @@ Rectangle {
     // ═══════════════════════════════════════════════════════════════
     GroupBox {
         id: serialBDBox
-        width: 550
+        width: 650
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top
@@ -65,10 +65,11 @@ Rectangle {
                 }
                 CusComboBox {
                     id: portComboBox
-                    width: 95
+                    width: 130
                     height: 28
                     model: imageData.availablePorts
                     font.pixelSize: 14
+                    popupMinWidth: 200
                 }
                 Text {
                     text: "波特率:"
@@ -78,10 +79,11 @@ Rectangle {
                 }
                 CusComboBox {
                     id: baudComboBox
-                    width: 95
+                    width: 110
                     height: 28
                     model: ["9600"]
                     font.pixelSize: 14
+                    popupMinWidth: 200
                 }
                 CusButton_Blue {
                     id: scanButton
@@ -129,10 +131,9 @@ Rectangle {
             // 第二行：北斗时间 + 经度 + 纬度
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 15
-                spacing: 8
+                spacing: 5
                 DataLabel {
-                    fontSize: 16; labelWidth: 50; valueWidth: 140; labelBold: true
+                    fontSize: 16; labelWidth: 80; valueWidth: 174; labelBold: true
                     label: "北斗时间:"
                     value: {
                         if (!bdData.m_isPosValid) return "--"
@@ -141,23 +142,23 @@ Rectangle {
                     }
                 }
                 DataLabel {
-                    fontSize: 16; labelWidth: 36; valueWidth: 100; labelBold: true
+                    fontSize: 16; labelWidth: 46; valueWidth: 118; labelBold: true
                     label: "经度:"
                     value: {
                         if (!bdData.m_isPosValid) return "--"
                         var lon = bdData.m_longitude.toFixed(6)
                         var dir = bdData.m_iseast ? "E" : "W"
-                        return lon + "° " + dir
+                        return lon + "°" + dir
                     }
                 }
                 DataLabel {
-                    fontSize: 16; labelWidth: 36; valueWidth: 100; labelBold: true
+                    fontSize: 16; labelWidth: 46; valueWidth: 112; labelBold: true
                     label: "纬度:"
                     value: {
                         if (!bdData.m_isPosValid) return "--"
                         var lat = bdData.m_latitude.toFixed(6)
                         var dir = bdData.m_isnorth ? "N" : "S"
-                        return lat + "° " + dir
+                        return lat + "°" + dir
                     }
                 }
             }
@@ -203,7 +204,7 @@ Rectangle {
             // 第一行：串口号 + 波特率 + 扫描串口 + 打开串口
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
+                spacing: 3
                 Text {
                     text: "串口号:"
                     font.pixelSize: 15
@@ -212,10 +213,11 @@ Rectangle {
                 }
                 CusComboBox {
                     id: ccdPortComboBox
-                    width: 110
+                    width: 98
                     height: 28
                     model: ccdData.availablePorts
                     font.pixelSize: 14
+                    popupMinWidth: 200
                 }
                 Text {
                     text: "波特率:"
@@ -225,16 +227,17 @@ Rectangle {
                 }
                 CusComboBox {
                     id: ccdBaudComboBox
-                    width: 110
+                    width: 90
                     height: 28
                     model: ["115200"]
                     font.pixelSize: 14
                     currentIndex: 0
+                    popupMinWidth: 200
                 }
                 CusButton_Blue {
                     text: "扫描串口"
                     font.pixelSize: 15
-                    width: 100
+                    width: 77
                     height: 28
                     onClicked: {
                         ccdData.scanPorts()
@@ -243,7 +246,7 @@ Rectangle {
                 CusButton_Blue {
                     text: ccdData.portOpen ? "关闭串口" : "打开串口"
                     font.pixelSize: 15
-                    width: 100
+                    width: 77
                     height: 28
 
                     Timer {
@@ -275,7 +278,7 @@ Rectangle {
             // 第二行：焦距 + 背光补偿 + 分辨率
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 12
+                spacing: 4
                 Text {
                     text: "焦距:"
                     font.pixelSize: 15
@@ -285,7 +288,7 @@ Rectangle {
                 ButtonGroup { id: focusGroup }
                 CusRadioButton {
                     id: focal30X
-                    width: 75
+                    width: 65
                     text: "30X"
                     font.pixelSize: 14
                     ButtonGroup.group: focusGroup
@@ -296,7 +299,7 @@ Rectangle {
                 }
                 CusRadioButton {
                     id: focal1X
-                    width: 75
+                    width: 65
                     text: "1X"
                     font.pixelSize: 14
                     ButtonGroup.group: focusGroup
@@ -327,10 +330,11 @@ Rectangle {
                 }
                 CusComboBox {
                     id: resolutionComboBox
-                    width: 110
+                    width: 95
                     height: 28
                     model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
                     font.pixelSize: 14
+                    popupMinWidth: 130
                     currentIndex: ccdData.resolutionIndex
                     onCurrentIndexChanged: {
                         ccdData.setResolution(currentIndex)

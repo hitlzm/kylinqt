@@ -12,6 +12,9 @@ ComboBox {
     currentIndex: 0
     readonly property string imgUrlNormal: CusConfig.imagePathPrefix + "ComboBox_Down.png"
 
+    // 下拉弹层最小宽度：0 表示与控件同宽；设置后弹层（及选项）至少这么宽，
+    // 避免控件本身较窄时下拉后看不到完整选项内容
+    property int popupMinWidth: 0
     property real defaultHeight: CusConfig.fixedHeight * 6
     displayText: qsTr(currentText) + CusConfig.transString
     background: Rectangle {
@@ -78,8 +81,8 @@ ComboBox {
     }
 
     popup: Popup {
-        y: cusComboBox.height 
-        width: cusComboBox.width
+        y: cusComboBox.height
+        width: Math.max(cusComboBox.width, cusComboBox.popupMinWidth)
         implicitHeight: Math.min(contentItem.implicitHeight, defaultHeight)
         height: visible ? implicitHeight : 0
 
@@ -107,7 +110,7 @@ ComboBox {
     }
     property int hoveredIndex: -1
     delegate: ItemDelegate {
-        width: cusComboBox.width
+        width: Math.max(cusComboBox.width, cusComboBox.popupMinWidth)
         height: cusComboBox.height
         contentItem: CusLabel {
             leftPadding: cusComboBox.leftPadding
@@ -122,7 +125,7 @@ ComboBox {
         }
         highlighted: cusComboBox.hoveredIndex === index
         background: Item {
-            width: cusComboBox.width
+            width: Math.max(cusComboBox.width, cusComboBox.popupMinWidth)
             height: cusComboBox.height
             Rectangle {
                 anchors {
