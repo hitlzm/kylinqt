@@ -635,8 +635,10 @@ void SerialPortImage::ExmodeChanged(int mode)
             } 
         }
         else
-        {
-            m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+        {   
+            if (m_exGuideTimer) {
+                m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+            }
         }
     }
     else

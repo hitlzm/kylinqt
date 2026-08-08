@@ -326,7 +326,7 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
         checksum2 ^= checkdata2[i];
         }
         data[16] = checksum2;
-        // 发送5次后停止并销毁定时器
+        // 发送10次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();
             // timer->deleteLater();
@@ -541,8 +541,10 @@ void SerialPortLaser::ExmodeChanged(int mode)
             }
         }
         else
-        {
+        {   
+            if (m_exGuideTimer) {
             m_exGuideTimer->stop(); //切换到其他外引导源时，暂停激光导引头外引导定时器，停止继续发送
+            }
         }
     }
     else
