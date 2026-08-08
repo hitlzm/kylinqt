@@ -185,7 +185,41 @@ void SerialPortTurntableHex::buildAndSend(uint8_t axis_cmd, const uint8_t params
 }
 
 
-// ════════════════════════ 数据解析（HEX二进制格式, 29字节接收帧）═══════════════════════════
+// ════════════════════════ 数据接收与解析（HEX二进制格式, 29字节接收帧）═══════════════════════════
+
+void SerialPortTurntableHex::onReadyRead()
+{
+    // 仿照 image/laser 串口的处理：串口驱动一次 readyRead 到达的数据不一定是一整帧，
+    // 先存入接收缓冲，找到帧头 0x55 0xAA 后再按固定帧长(29字节)切出完整一帧交给 parseData
+    m_rxBuffer.append(m_serialPort->readAll());
+
+    const int frameLen = 29;
+
+    while (m_rxBuffer.size() >= 2) {
+        // 1. 逐字节查找帧头：找到 0x55 后判断下一个是否为 0xAA
+        int headIdx = -1;
+        for (int i = 0; i <= m_rxBuffer.size() - 2; ++i) {
+            if (static_cast<quint8>(m_rxBuffer[i])     == 0x55
+                    && static_cast<quint8>(m_rxBuffer[i + 1]) == 0xAA) {
+                headIdx = i;
+                break;
+            }
+        }
+        if (headIdx < 0) {
+            // 没找到完整帧头，保留最后1字节（可能是下一帧帧头的第一个字节）
+            if (m_rxBuffer.size() > 1)
+                m_rxBuffer = m_rxBuffer.right(1);
+            break;
+        }
+        if (headIdx > 0)
+            m_rxBuffer.remove(0, headIdx);
+        if (m_rxBuffer.size() < frameLen)
+            break;
+        QByteArray frame = m_rxBuffer.left(frameLen);
+        m_rxBuffer.remove(0, frameLen);
+        parseData(frame);
+    }
+}
 
 void SerialPortTurntableHex::parseData(const QByteArray &rawData)
 {

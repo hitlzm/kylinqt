@@ -338,11 +338,43 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
  }
 
 void SerialPortLaser::onReadyRead() {
-    // 但这里 parseData 在工作线程执行，updateFromFrame 也在主线程执行。
-    // LaserData 成员变量被工作线程写 + 主线程读，对 int/float 安全可接受。）
-    SerialPort::onReadyRead();
-    // QByteArray rawData = m_serialPort->readAll();
-    // parseData(rawData);
+    // 仿照 BD 串口的处理：串口驱动一次 readyRead 到达的数据不一定是一整帧，
+    // 先存入接收缓冲，找到帧头 0x55 0xAA 0xDC 后再按固定帧长切出完整一帧交给 parseData
+    m_rxBuffer.append(m_serialPort->readAll());
+
+    const int frameLen = static_cast<int>(sizeof(laser_recv_frame));
+
+    while (m_rxBuffer.size() >= 3) {
+        // 1. 逐字节查找帧头：找到 0x55 后判断下一个是否为 0xAA、下下个是否为 0xDC
+        int headIdx = -1;
+        for (int i = 0; i <= m_rxBuffer.size() - 3; ++i) {
+            if (static_cast<quint8>(m_rxBuffer[i])     == 0x55
+                    && static_cast<quint8>(m_rxBuffer[i + 1]) == 0xAA
+                    && static_cast<quint8>(m_rxBuffer[i + 2]) == 0xDC) {
+                headIdx = i;
+                break;
+            }
+        }
+        if (headIdx < 0) {
+            // 缓冲内没有完整帧头：只保留末尾2字节，
+            // 防止帧头被拆成两段到达（如先到 0x55 0xAA，下一批才到 0xDC）
+            if (m_rxBuffer.size() > 2)
+                m_rxBuffer = m_rxBuffer.right(2);
+            break;
+        }
+        // 2. 丢弃帧头前的噪声字节
+        if (headIdx > 0)
+            m_rxBuffer.remove(0, headIdx);
+
+        // 3. 数据还不够一帧，等下一批数据
+        if (m_rxBuffer.size() < frameLen)
+            break;
+
+        // 4. 帧头无误，从帧头开始读取固定字节数的一整帧送入解析
+        QByteArray frame = m_rxBuffer.left(frameLen);
+        m_rxBuffer.remove(0, frameLen);
+        parseData(frame);
+    }
 }
 
 LaserData* SerialPortLaser::laserData() const

@@ -572,6 +572,7 @@ private:
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器 ，和串口发送定时器不同
     int Cbh_tv; //电视帧编号
     int Infrared_num; //红外帧编号
+    QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，攒到完整帧头+固定帧长再切出交给 parseData
 };
 
 
