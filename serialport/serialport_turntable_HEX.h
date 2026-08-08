@@ -354,6 +354,8 @@ public slots:
 protected:
     void parseData(const QByteArray &rawData) override;
 
+    void onReadyRead() override; //把数据存入缓冲区，再分包并解析数据帧
+
     // ── HEX二进制发送函数 ──
     void sendEnableCmd(int axis, bool enable);          // 使能/释放电机
     void sendStopCmd(int axis);                         // 停车
@@ -389,6 +391,8 @@ private:
     float m_current_inner_angle;
     float m_current_middle_angle;
     float m_current_outter_angle;
+
+    QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，按帧头+固定帧长切帧
 };
 
 #endif // SERIALPORT_TURNTABLE_HEX_H
