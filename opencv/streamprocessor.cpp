@@ -34,7 +34,7 @@
 
 #include "streamprocessor.h"
 #include "cvconvert.h"
-#include "VlcVideoItem.h"
+#include "vlcvideo/VlcVideoItem.h"
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QThread>

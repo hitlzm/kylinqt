@@ -940,6 +940,8 @@ void VlcVideoItem::processMpvEvents()
 
         case MPV_EVENT_FILE_LOADED:
             qDebug() << "[MpvVideo] file loaded";
+            // 通知 QML：流已加载/连接成功，只有此时才应显示“已就绪”
+            emit fileLoaded();
             // 重定向/新文件加载后，kickstart 渲染管线
             update();
             break;

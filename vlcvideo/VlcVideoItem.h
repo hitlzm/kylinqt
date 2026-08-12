@@ -99,6 +99,8 @@ signals:
     void stopped();
     void ended();
     void error(const QString &errorMsg);
+    /// 媒体流/文件加载成功（mpv MPV_EVENT_FILE_LOADED）
+    void fileLoaded();
 
     // ── 像素读取结果信号 ──────────────────────────────────
     /// 点击到视频画面内时发出，携带帧坐标，请求图像导引头发送偏差像素

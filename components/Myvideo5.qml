@@ -12,6 +12,10 @@ Rectangle {
     color: "#e9f0f9"
 
     property bool _connected: false
+    property bool _stopped: false
+    property bool _retrying: false
+    property int _retryCount: 0
+    property int _maxRetries: 2
     property var magnifierWindow: null
 
     // ── CPU 帧消费开关（导引头/CCD 模式切换处翻转）──
@@ -62,9 +66,9 @@ Rectangle {
         Row {
             spacing: 6; Layout.alignment: Qt.AlignVCenter
             Rectangle { width: 12; height: 12; radius: 6; anchors.verticalCenter: parent.verticalCenter
-                color: videoPlayer.playing ? "#4CAF50" : (_connected ? "#FF9800" : "#F44336") }
+                color: _stopped ? "#9E9E9E" : (videoPlayer.playing ? "#4CAF50" : (_connected ? "#FF9800" : "#F44336")) }
             Text { anchors.verticalCenter: parent.verticalCenter; font.pixelSize: 16; color: "#333333"
-                text: videoPlayer.playing ? "播放中" : (_connected ? "已就绪" : "未连接") }
+                text: _stopped ? "已停止" : (videoPlayer.playing ? "播放中" : (_connected ? "已就绪" : "未连接")) }
         }
     }
 
@@ -95,6 +99,20 @@ Rectangle {
         z: 1
     }
 
+    // 连接失败后自动重连：等待 3 秒重新加载并播放；次数耗尽后由 connFailMsg 弹窗提示
+    Timer {
+        id: retryTimer
+        interval: 3000
+        repeat: false
+        onTriggered: {
+            _retrying = false
+            connectToUrl(urlInput.text.trim(), true)
+            videoPlayer.play()
+        }
+    }
+
+    MessagePopup { id: connFailMsg }
+
     // // 像素信息显示（悬浮于视频右下角）
     // Text {
     //     id: pixelInfo
@@ -121,14 +139,22 @@ Rectangle {
             text: videoPlayer.playing ? "暂停" : "播放"
             Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
-                if (!_connected) connectToUrl(urlInput.text.trim())
+                if (!_connected) {
+                    _retryCount = 0
+                    connectToUrl(urlInput.text.trim())
+                }
+                _stopped = false
                 if (videoPlayer.playing) videoPlayer.pause()
                 else { videoPlayer.play(); stopOverlay.visible = false }
             }
         }
         CusButton_Blue { text: "停止"; Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
+                retryTimer.stop()
+                _retrying = false
+                _retryCount = 0
                 videoPlayer.stop()
+                _stopped = true
                 stopOverlay.visible = true
             } }
         CusButton_Blue { text: root.magnifierWindow ? "关闭新窗口" : "🔍 放大"; Layout.fillWidth: true; height: 40
@@ -153,7 +179,21 @@ Rectangle {
         CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; Layout.preferredHeight: 32; onClicked: connectToUrl(urlInput.text.trim()) }
     }
 
-    function connectToUrl(newUrl) { if (newUrl === "") return; videoPlayer.stop(); videoPlayer.source = newUrl; _connected = true }
+    // 连接：只有 mpv 真正加载成功（onFileLoaded）后才置 _connected = true；
+    // 失败时保持“未连接”，由 onError 触发自动重连。
+    function connectToUrl(newUrl, isRetry) {
+        if (newUrl === "") return
+        retryTimer.stop()
+        _retrying = false
+        if (!isRetry) _retryCount = 0
+        _connected = false
+        _stopped = false
+        videoPlayer.stop()
+        // 先清空再赋值：重连相同 URL 时也能强制重新加载
+        videoPlayer.source = ""
+        videoPlayer.source = newUrl
+        stopOverlay.visible = false
+    }
 
     // 视频源选择：CCD → 保留 CPU 回读供 YOLO 检测；导引头 → 跳过回读纯 GPU 显示
     function selectSource(isCCD) {
@@ -211,8 +251,32 @@ Rectangle {
 
     Connections { target: videoPlayer
         function onPlayingChanged() { console.log("VlcVideo playing:", videoPlayer.playing) }
+        function onFileLoaded() {
+            console.log("VlcVideo: 流已加载，连接成功")
+            _connected = true
+            _stopped = false
+            _retrying = false
+            _retryCount = 0
+            retryTimer.stop()
+            stopOverlay.visible = false
+        }
         function onEnded() { console.log("VlcVideo: 播放结束"); stopOverlay.visible = true }
-        function onError(msg) { console.log("VlcVideo error:", msg) }
+        function onError(msg) {
+            console.log("VlcVideo error:", msg)
+            if (_stopped) return          // 用户已主动停止，不再自动重连
+            _connected = false
+            _stopped = false
+            stopOverlay.visible = false
+            if (_retrying) return         // 重连进行中，忽略重复错误
+            if (_retryCount < _maxRetries) {
+                _retryCount++
+                _retrying = true
+                retryTimer.start()
+            } else {
+                connFailMsg.message = "视频流连接失败，请检查视频源地址或网络后重试"
+                connFailMsg.open()
+            }
+        }
         function onStopped() { console.log("VlcVideo: 已停止"); stopOverlay.visible = true }
         function onReqDeviationToImg(x, y) {
             console.log("偏差像素请求: (" + x + ", " + y + ")")
