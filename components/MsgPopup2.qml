@@ -14,7 +14,7 @@ Popup {
 
     // 对外属性
     property alias message: messageLabel.text
-    property int autoCloseDelay: 500
+    property int autoCloseDelay: 1000
     property int margin: 12
     property int minPopupWidth: 180
     property int maxPopupWidth: 600

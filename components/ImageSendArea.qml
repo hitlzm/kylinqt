@@ -381,21 +381,21 @@ Rectangle {
             height: remoteHostField.myheight   
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
-            Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+            Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
         Item {
             width:130
             height: remoteHostField.myheight 
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
-            Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+            Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
         Item {
             width:130
             height: remoteHostField.myheight   
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
-            Indicator { id: indVideoOut; label: "视频输出";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+            Indicator { id: indVideoOut; label: "视频输出";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
     }
 
@@ -423,7 +423,7 @@ Rectangle {
                 var val = Number(text)
                 if (!isNaN(val) && (val > 18 || val < -18)) {
                     if (root.pitchInputValid)
-                        testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
+                        testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入", 1500)
                     root.pitchInputValid = false
                 } else {
                     root.pitchInputValid = true
@@ -447,7 +447,7 @@ Rectangle {
                 var val = Number(text)
                 if (!isNaN(val) && (val > 18 || val < -18)) {
                     if (root.yawInputValid)
-                        testmsg.showToast("偏航角输入范围为-18°~ 18°,请重新输入")
+                        testmsg.showToast("偏航角输入范围为-18°~ 18°,请重新输入", 1500)
                     root.yawInputValid = false
                 } else {
                     root.yawInputValid = true
@@ -539,7 +539,7 @@ Rectangle {
             width:130
             height: pitchPresetField.myheight   
             anchors.verticalCenter: parent.verticalCenter
-            Indicator { id: indComm;  label: "通讯";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+            Indicator { id: indComm;  label: "通讯";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
         
     }
@@ -645,7 +645,7 @@ Rectangle {
             width:130
             height: myCombox4.myheight   
             anchors.verticalCenter: parent.verticalCenter
-            Indicator { id: indServo; label: "伺服自检"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+            Indicator { id: indServo; label: "伺服自检"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }         
         
     }
@@ -696,7 +696,7 @@ Rectangle {
                 anchors.rightMargin: 8
                 height: controlStatusBox.height - frameInfoTitle.height - 24
                 spacing: 4
-                model: 5
+                model: 3
 
                 delegate: DataLabel {
                     fontSize: 18
@@ -705,8 +705,6 @@ Rectangle {
                     label: {
                         if (index === 0) return "B帧流水号:"
                         if (index === 1) return "A帧流水号回告:"
-                        if (index === 2) return "测试"
-                        if (index === 3) return "测试"
                         return "A帧有效标志:"
                     }
                     value: {
@@ -1089,9 +1087,9 @@ Rectangle {
                         if (index !== 0)
                             return
                         if (currentState === 0x22)
-                            testmsg.showToast("目标已丢失")
+                            testmsg.showToast("目标已丢失", 1500)
                         else if (currentState === 0x33)
-                            testmsg.showToast("已锁定目标")
+                            testmsg.showToast("已锁定目标", 1500)
                     }
                     value: {
                         if (index === 0) {

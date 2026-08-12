@@ -672,6 +672,13 @@ void VlcVideoItem::setCpuFrameConsumer(bool on)
 {
     if (m_cpuConsumerActive.load() != on) {
         m_cpuConsumerActive.store(on);
+        if (!on) {
+            // Guide-head mode: drop the stale CPU frame so StreamProcessor
+            // cannot keep consuming the previous CCD frame.
+            QMutexLocker lock(&m_frameMutex);
+            m_readyIdx = -1;
+            m_frameUpdated = false;
+        }
         emit cpuFrameConsumerChanged();
         // 强制触发重绘，让渲染线程尽快按新模式走
         update();
@@ -829,7 +836,7 @@ void VlcVideoItem::doSetupPlayer()
     // 先设为暂停状态，等用户点击 play() 再取消暂停
     int paused = 1;
     mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
-
+    mpv_set_property_string(m_mpv, "rtsp-transport", "tcp");
     // 观察属性变化以获取播放状态
     mpv_observe_property(m_mpv, 0, "pause",          MPV_FORMAT_FLAG);
     mpv_observe_property(m_mpv, 0, "duration",       MPV_FORMAT_DOUBLE);

@@ -692,11 +692,11 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             cmd.axis = 1;
             cmd.acceleration = defaultAccel;
             if (buttonA && Acount >= 1) {
-                cmd.velocity = MAX_SPEED_HEX / 2.0f;
+                cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle + 3.0f;
                 sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
-                cmd.velocity = -MAX_SPEED_HEX / 2.0f;
+                cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle - 3.0f;
                 sendPositionCmd(cmd);
             }
@@ -706,11 +706,11 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             cmd.axis = 3;
             cmd.acceleration = defaultAccel;
             if (buttonA && Acount >= 1) {
-                cmd.velocity = MAX_SPEED_HEX / 2.0f;
+                cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle + 3.0f;
                 sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
-                cmd.velocity = -MAX_SPEED_HEX / 2.0f;
+                cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle - 3.0f;
                 sendPositionCmd(cmd);
             }
@@ -720,11 +720,11 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             cmd.axis = 2;
             cmd.acceleration = defaultAccel;
             if (buttonA && Acount >= 1) {
-                cmd.velocity = MAX_SPEED_HEX / 2.0f;
+                cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle + 3.0f;
                 sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
-                cmd.velocity = -MAX_SPEED_HEX / 2.0f;
+                cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle - 3.0f;
                 sendPositionCmd(cmd);
             }

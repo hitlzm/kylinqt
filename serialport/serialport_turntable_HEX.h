@@ -257,10 +257,6 @@ public slots:
     void recvoutter_angle(float angle) { m_current_outter_angle = angle; }
 
 signals:
-    void requestOpenTurntable();
-    void requestCloseTurntable();
-    void requestResetTurntable();
-    void requestZeroTurntable();
     void requestSendProgramMode(programSend_frameHex frame);
     void runtimeChanged();
     void inner_startangleChanged();

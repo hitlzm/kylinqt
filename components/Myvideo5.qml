@@ -158,8 +158,9 @@ Rectangle {
     // 视频源选择：CCD → 保留 CPU 回读供 YOLO 检测；导引头 → 跳过回读纯 GPU 显示
     function selectSource(isCCD) {
         cpuFrameConsumer = isCCD
-        // 选中导引头时默认填入导引头 RTSP 流地址
-        if (!isCCD && urlInput) urlInput.text = "rtsp://192.168.1.100:554/stream"
+        // 选中导引头时默认填入导引头 RTSP 流地址   ,  测试时先使用ts流（udp://@226.0.0.80:8001），后期可换成RTSP
+        // if (!isCCD && urlInput) urlInput.text = "rtsp://192.168.1.100:554/stream"
+        if (!isCCD && urlInput) urlInput.text = "udp://@226.0.0.80:8001"
     }
 
     // 初始默认导引头模式：关闭 CPU 回读 + 填入默认 RTSP（此时子对象均已创建）

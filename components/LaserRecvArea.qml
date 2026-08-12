@@ -16,13 +16,27 @@ Rectangle {
     MsgPopup2 {
         id: faultmsg
     }
+    MsgPopup2 {
+        id: detectorMsg
+    }
 
     // 捕捉故障信息变化，出现故障时弹窗
     property int faultStatus: laserData.faultInfo1
     onFaultStatusChanged: {
         if (faultStatus === 0x02) {
-            faultmsg.showToast("激光导引头故障")
+            faultmsg.showToast("激光导引头故障", 1500)
         }
+    }
+
+    // 探测器状态（第三部分 bits1~0）非正常时弹窗：1=丢光 2=不同步 3=能量饱和
+    property int detectorState: (laserData.detectorStatus & 0x03)
+    onDetectorStateChanged: {
+        if (detectorState === 0) return
+        var txt = ""
+        if (detectorState === 1) txt = "探测器丢光"
+        else if (detectorState === 2) txt = "探测器不同步"
+        else if (detectorState === 3) txt = "探测器能量饱和"
+        detectorMsg.showToast(txt, 1500)
     }
    
 
@@ -57,7 +71,8 @@ Rectangle {
                     }
                     title: "状态信息"
                     font.pixelSize: 18
-                    Layout.fillWidth: true
+                    Layout.fillWidth: false
+                    Layout.preferredWidth: 370
                     Layout.preferredHeight: groupHeight1
                     label: Label {
                         text: parent.title
@@ -66,16 +81,32 @@ Rectangle {
                         topPadding: 6
                     }
 
-                    Row {
-                        spacing: 30
-                        anchors.centerIn: parent
+                    CusListView {
+                        anchors.top: parent.top
+                        anchors.topMargin: 32
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 8
+                        spacing: 4
+                        model: 6
 
-                        Column {
-                            spacing: 6
-
-                            DataLabel {
-                                label: "DYT状态:"
-                                value: {
+                        delegate: DataLabel {
+                            fontSize: 18
+                            labelWidth: 135
+                            valueWidth: 170
+                            label: {
+                                if (index === 0) return "DYT状态:"
+                                if (index === 1) return "激光周期:"
+                                if (index === 2) return "自检信息:"
+                                if (index === 3) return "探测器状态:"
+                                if (index === 4) return "故障信息:"
+                                return "故障码:"
+                            }
+                            value: {
+                                if (index === 0) {
                                     switch(laserData.dytStatus) {
                                         case 0x00: return "待机"
                                         case 0x01: return "自检中"
@@ -91,27 +122,52 @@ Rectangle {
                                         default: return "未知(0x" + laserData.dytStatus.toString(16) + ")"
                                     }
                                 }
-                            }
-                            DataLabel { label: "探测器状态:"; value: "0x" + laserData.detectorStatus.toString(16).toUpperCase() }
-                            DataLabel {
-                                label: "故障信息:"
-                                value: switch(laserData.faultInfo1) {
+                                // bits4：激光周期设定标志
+                                if (index === 1)
+                                    return (laserData.detectorStatus & 0x10) ? "已设定" : "未设定"
+                                // bits3~2：自检信息
+                                if (index === 2) {
+                                    switch((laserData.detectorStatus & 0x0C) >> 2) {
+                                        case 0x00: return "NA"
+                                        case 0x01: return "自检中"
+                                        case 0x02: return "自检正常"
+                                        case 0x03: return "自检故障"
+                                        default: return "NA"
+                                    }
+                                }
+                                // bits1~0：探测器状态
+                                if (index === 3) {
+                                    switch(laserData.detectorStatus & 0x03) {
+                                        case 0x00: return "正常"
+                                        case 0x01: return "丢光"
+                                        case 0x02: return "不同步"
+                                        case 0x03: return "能量饱和"
+                                        default: return "未知"
+                                    }
+                                }
+                                if (index === 4) {
+                                    switch(laserData.faultInfo1) {
                                         case 0x00: return "NA"
                                         case 0x01: return "无故障"
                                         case 0x02: return "有故障"
                                         default: return "NA"
                                     }
-                                valueColor: laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
+                                }
+                                switch(laserData.faultInfo1) {
+                                    case 0x00: return "NA"
+                                    case 0x01: return "NA"
+                                    case 0x02: return "0x" + laserData.faultInfo2.toString(16).toUpperCase()
+                                    default: return "NA"
+                                }
                             }
-                             DataLabel {
-                                label: "故障码:"
-                                value: switch(laserData.faultInfo1) {
-                                        case 0x00: return "NA"
-                                        case 0x01: return "NA"
-                                        case 0x02: return "0x" + laserData.faultInfo2.toString(16).toUpperCase()
-                                        default: return "NA"
-                                    }
-                                valueColor:"#d93025"
+                            valueColor: {
+                                // 探测器状态非正常（丢光/不同步/能量饱和）红色
+                                if (index === 3) return (laserData.detectorStatus & 0x03) !== 0 ? "#d93025" : "#1a73e8"
+                                // 自检故障红色
+                                if (index === 2) return (laserData.detectorStatus & 0x0C) === 0x0C ? "#d93025" : "#1a73e8"
+                                if (index === 4) return laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
+                                if (index === 5) return "#d93025"
+                                return "#1a73e8"
                             }
                         }
                     }
@@ -128,6 +184,8 @@ Rectangle {
                     }
                     title: "角度信息"
                     font.pixelSize: 18
+                    Layout.preferredWidth: 240
+                    Layout.minimumWidth: 240
                     Layout.fillWidth: true
                     Layout.preferredHeight: groupHeight1
                     label: Label {
@@ -163,6 +221,8 @@ Rectangle {
                     }
                     title: "角速度信息"
                     font.pixelSize: 18
+                    Layout.preferredWidth: 240
+                    Layout.minimumWidth: 240
                     Layout.fillWidth: true
                     Layout.preferredHeight: groupHeight1
                     label: Label {

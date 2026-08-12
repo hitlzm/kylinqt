@@ -9,6 +9,42 @@
 #include <QImage>
 #include <QBuffer>
 
+namespace {
+
+// JSON 字符串转义（与 QJsonDocument 输出一致）
+QByteArray jsonEscape(const QString &s)
+{
+    QByteArray out;
+    out += '"';
+    for (const QChar ch : s) {
+        const ushort u = ch.unicode();
+        switch (u) {
+        case '"':  out += "\\\""; break;
+        case '\\': out += "\\\\"; break;
+        case '\b': out += "\\b";  break;
+        case '\f': out += "\\f";  break;
+        case '\n': out += "\\n";  break;
+        case '\r': out += "\\r";  break;
+        case '\t': out += "\\t";  break;
+        default:
+            if (u < 0x20)
+                out += QString("\\u%1").arg(u, 4, 16, QChar('0')).toUtf8();
+            else
+                out += QString(ch).toUtf8();
+        }
+    }
+    out += '"';
+    return out;
+}
+
+// 双精度数值序列化（与 Qt5 QJsonDocument 一致：'g' 格式、15 位有效数字）
+QByteArray jsonNumber(double v)
+{
+    return QString::number(v, 'g', 15).toUtf8();
+}
+
+} // namespace
+
 // ═══════════════════════════════════════════════════════
 // TemplateBindingData 实现
 // ═══════════════════════════════════════════════════════
@@ -318,9 +354,7 @@ void TemplateBindingData::prevImage()
 
 void TemplateBindingData::generateTxt()
 {
-    QJsonObject root = generateTxtJson();
-    QJsonDocument doc(root);
-    QByteArray txtData = doc.toJson(QJsonDocument::Indented);
+    QByteArray txtData = generateTxtData();
 
     QString fileName = QString("template%1.txt")
         .arg(m_imageEntries.size() > 0 ? m_imageEntries[0].templateId : 0, 3, 10, QChar('0'));
@@ -342,45 +376,54 @@ void TemplateBindingData::generateTxt()
     emit txtGeneratedChanged();
 }
 
-QJsonObject TemplateBindingData::generateTxtJson() const
+QByteArray TemplateBindingData::generateTxtData() const
 {
-    QJsonObject root;
-    root["templateType"] = "templateBinding";
-    root["imageCount"] = m_imageEntries.size();
+    QByteArray out;
+    out += "{\n";
+    out += "    \"templateType\": \"templateBinding\",\n";
+    out += "    \"imageCount\": " + QByteArray::number(m_imageEntries.size()) + ",\n";
+    out += "    \"images\": [\n";
 
-    QJsonArray imagesArray;
-    for (const auto &entry : m_imageEntries) {
-        QJsonObject imgObj;
-        imgObj["filePath"] = QFileInfo(entry.filePath).fileName();
-        imgObj["isSatellite"] = entry.isSatellite;
-        imgObj["templateId"] = entry.templateId;
-        imgObj["imageId"] = entry.imageId;
+    for (int i = 0; i < m_imageEntries.size(); ++i) {
+        const ImageEntry &entry = m_imageEntries.at(i);
+        out += "        {\n";
 
-        // 通用参数
-        imgObj["imageWidth"]    = entry.imageWidth;
-        imgObj["imageHeight"]   = entry.imageHeight;
-        imgObj["targetPosX"]    = entry.targetPosX;
-        imgObj["targetPosY"]    = entry.targetPosY;
-        imgObj["targetPixelsX"] = entry.targetPixelsX;
-        imgObj["targetPixelsY"] = entry.targetPixelsY;
+        // 公共字段：文件名 → 是否卫星图 → 模板ID（即装订界面的图片序号）
+        out += "            \"filePath\": " + jsonEscape(QFileInfo(entry.filePath).fileName()) + ",\n";
+        out += "            \"isSatellite\": " + QByteArray(entry.isSatellite ? "true" : "false") + ",\n";
+        out += "            \"templateId\": " + QByteArray::number(entry.templateId) + ",\n";
 
         if (entry.isSatellite) {
-            // 卫星图参数 (4项)
-            imgObj["scale"] = entry.scale;
+            // 卫星图：比例尺放在图像宽高之前
+            out += "            \"scale\": " + jsonNumber(entry.scale) + ",\n";
         } else {
-            // 非卫星图参数 (9项)
-            imgObj["templateMode"] = entry.templateMode;
-            imgObj["distance"]     = entry.distance;
-            imgObj["azimuth"]      = entry.azimuth;
-            imgObj["pitchAngle"]   = entry.pitchAngle;
-            imgObj["focalLength"]  = entry.focalLength;
-            imgObj["pixelSize"]    = entry.pixelSize;
+            // 非卫星图：模板图模式 → 距离 → 方位角 → 俯仰角 → 焦距 → 像元尺寸
+            out += "            \"templateMode\": " + QByteArray::number(entry.templateMode) + ",\n";
+            out += "            \"distance\": "     + jsonNumber(entry.distance) + ",\n";
+            out += "            \"azimuth\": "      + jsonNumber(entry.azimuth) + ",\n";
+            out += "            \"pitchAngle\": "   + jsonNumber(entry.pitchAngle) + ",\n";
+            out += "            \"focalLength\": "  + jsonNumber(entry.focalLength) + ",\n";
+            out += "            \"pixelSize\": "    + jsonNumber(entry.pixelSize) + ",\n";
         }
-        imagesArray.append(imgObj);
-    }
-    root["images"] = imagesArray;
 
-    return root;
+        // 图像分辨率 → 目标位置 → 目标像素数
+        out += "            \"imageWidth\": "    + QByteArray::number(entry.imageWidth) + ",\n";
+        out += "            \"imageHeight\": "   + QByteArray::number(entry.imageHeight) + ",\n";
+        out += "            \"targetPosX\": "    + QByteArray::number(entry.targetPosX) + ",\n";
+        out += "            \"targetPosY\": "    + QByteArray::number(entry.targetPosY) + ",\n";
+        out += "            \"targetPixelsX\": " + QByteArray::number(entry.targetPixelsX) + ",\n";
+        out += "            \"targetPixelsY\": " + QByteArray::number(entry.targetPixelsY) + "\n";
+
+        out += "        }";
+        if (i < m_imageEntries.size() - 1)
+            out += ",\n";
+        else
+            out += "\n";
+    }
+
+    out += "    ]\n";
+    out += "}\n";
+    return out;
 }
 
 // ── Slots ──
@@ -415,15 +458,27 @@ void TemplateBindingData::setStatusMessage(const QString &msg)
     if (m_statusMessage != msg) { m_statusMessage = msg; emit statusMessageChanged(); }
 }
 
+void TemplateBindingData::provideTxtSnapshot()
+{
+    // Runs on the GUI thread via QueuedConnection, so generateTxtData()
+    // never iterates m_imageEntries concurrently with GUI-thread mutations.
+    emit txtSnapshotReady(generateTxtData());
+}
+
+void TemplateBindingData::provideImageSnapshot()
+{
+    // 主线程提供当前图片快照（完整路径 + 模板ID），网络线程据此发送图片报文
+    emit imageSnapshotReady(currentImagePath(), templateId());
+}
+
 
 // ═══════════════════════════════════════════════════════
 // TemplateBindingWorker 实现
 // ═══════════════════════════════════════════════════════
 
-TemplateBindingWorker::TemplateBindingWorker(TemplateBindingData *data, QObject *parent)
+TemplateBindingWorker::TemplateBindingWorker(QObject *parent)
     : QObject(parent)
     , m_socket(new QTcpSocket(this))
-    , m_data(data)
     , m_currentSendIndex(0)
     , m_totalBytesSent(0)
     , m_totalBytesToSend(0)
@@ -447,7 +502,7 @@ void TemplateBindingWorker::onConnect(const QString &host, int port)
     if (m_socket->state() == QAbstractSocket::ConnectedState)
         m_socket->disconnectFromHost();
 
-    m_data->setStatusMessage("正在连接 " + host + ":" + QString::number(port) + "...");
+    emit statusMessageChanged("正在连接 " + host + ":" + QString::number(port) + "...");
     m_socket->connectToHost(host, static_cast<quint16>(port));
 }
 
@@ -459,21 +514,21 @@ void TemplateBindingWorker::onDisconnect()
 
 void TemplateBindingWorker::onSocketConnected()
 {
-    m_data->setConnected(true);
-    m_data->setStatusMessage("已连接到远程主机");
+    emit connectedStatusChanged(true);
+    emit statusMessageChanged("已连接到远程主机");
 }
 
 void TemplateBindingWorker::onSocketDisconnected()
 {
-    m_data->setConnected(false);
-    m_data->setStatusMessage("已断开连接");
+    emit connectedStatusChanged(false);
+    emit statusMessageChanged("已断开连接");
 }
 
 void TemplateBindingWorker::onSocketError(QAbstractSocket::SocketError error)
 {
     Q_UNUSED(error)
-    m_data->setConnected(false);
-    m_data->setStatusMessage("连接错误: " + m_socket->errorString());
+    emit connectedStatusChanged(false);
+    emit statusMessageChanged("连接错误: " + m_socket->errorString());
 }
 
 // ── 发送图片 ──
@@ -483,25 +538,41 @@ void TemplateBindingWorker::onSendImages()
     m_currentSendIndex = 0;
     m_totalBytesSent = 0;
     m_totalBytesToSend = 0;
-    m_data->setImageSent(false);
-    m_data->setSendProgress(0.0);
+    emit imageSentStatusChanged(false);
+    emit sendProgressChanged(0.0);
 
     if (m_socket->state() != QAbstractSocket::ConnectedState) {
-        m_data->setStatusMessage("未连接到远程主机，无法发送图片");
+        emit statusMessageChanged("未连接到远程主机，无法发送图片");
         return;
     }
 
-    sendNextImage();
+    // 请求主线程提供当前图片快照，再真正发送图片报文
+    emit requestImageSnapshot();
 }
 
-void TemplateBindingWorker::sendNextImage()
+void TemplateBindingWorker::onImageSnapshotReady(const QString &filePath, int templateId)
 {
-    m_data->setStatusMessage("图片发送功能已就绪");
-    m_data->setImageSent(true);
-    m_data->setSendProgress(1.0);
+    if (m_socket->state() != QAbstractSocket::ConnectedState)
+        return;
+
+    QByteArray packet = buildImagePacket(filePath, templateId);
+    if (packet.isEmpty()) {
+        emit statusMessageChanged("图片加载失败，无法发送: " + filePath);
+        return;
+    }
+
+    qint64 written = m_socket->write(packet);
+    if (written > 0) {
+        m_socket->flush();
+        emit imageSentStatusChanged(true);
+        emit sendProgressChanged(1.0);
+        emit statusMessageChanged("图片发送成功");
+    } else {
+        emit statusMessageChanged("图片发送失败: " + m_socket->errorString());
+    }
 }
 
-QByteArray TemplateBindingWorker::buildImagePacket(const QString &filePath, const ImageEntry &entry)
+QByteArray TemplateBindingWorker::buildImagePacket(const QString &filePath, int templateId)
 {
     QByteArray packet;
 
@@ -515,32 +586,10 @@ QByteArray TemplateBindingWorker::buildImagePacket(const QString &filePath, cons
     buffer.open(QIODevice::WriteOnly);
     image.save(&buffer, "BMP");
 
-    QJsonObject meta = m_data->generateTxtJson();
-    // 用单个图片条目覆盖 images 数组
-    QJsonObject singleImg;
-    singleImg["filePath"]      = QFileInfo(filePath).fileName();
-    singleImg["isSatellite"]   = entry.isSatellite;
-    singleImg["templateId"]    = entry.templateId;
-    singleImg["imageId"]       = entry.imageId;
-    singleImg["imageWidth"]    = entry.imageWidth;
-    singleImg["imageHeight"]   = entry.imageHeight;
-    singleImg["targetPosX"]    = entry.targetPosX;
-    singleImg["targetPosY"]    = entry.targetPosY;
-    singleImg["targetPixelsX"] = entry.targetPixelsX;
-    singleImg["targetPixelsY"] = entry.targetPixelsY;
-    if (entry.isSatellite) {
-        singleImg["scale"] = entry.scale;
-    } else {
-        singleImg["templateMode"] = entry.templateMode;
-        singleImg["distance"]     = entry.distance;
-        singleImg["azimuth"]      = entry.azimuth;
-        singleImg["pitchAngle"]   = entry.pitchAngle;
-        singleImg["focalLength"]  = entry.focalLength;
-        singleImg["pixelSize"]    = entry.pixelSize;
-    }
-    meta["images"] = QJsonArray{ singleImg };
-    meta["type"] = "image";
-    meta["fileSize"] = imageData.size();
+    // meta JSON 只包含文件名与模板ID
+    QJsonObject meta;
+    meta["filePath"]   = QFileInfo(filePath).fileName();
+    meta["templateId"] = templateId;
 
     QByteArray metaJson = QJsonDocument(meta).toJson(QJsonDocument::Compact);
 
@@ -560,21 +609,34 @@ QByteArray TemplateBindingWorker::buildImagePacket(const QString &filePath, cons
 
 void TemplateBindingWorker::onSendTxt(const QByteArray &txtData)
 {
-    m_data->setTxtSent(false);
-    m_data->setStatusMessage("正在发送 TXT 文件...");
+    emit txtSentStatusChanged(false);
+    emit statusMessageChanged("正在发送 TXT 文件...");
 
     if (m_socket->state() != QAbstractSocket::ConnectedState) {
-        m_data->setStatusMessage("未连接到远程主机，无法发送 TXT");
+        emit statusMessageChanged("未连接到远程主机，无法发送 TXT");
         return;
     }
 
-    QByteArray data = txtData;
-    if (data.isEmpty()) {
-        QJsonObject json = m_data->generateTxtJson();
-        QJsonDocument doc(json);
-        data = doc.toJson(QJsonDocument::Indented);
+    if (txtData.isEmpty()) {
+        // TXT JSON must be generated on the GUI thread; request a snapshot
+        // instead of generating it from the network thread.
+        emit requestTxtSnapshot();
+        return;
     }
 
+    sendTxtPacket(txtData);
+}
+
+void TemplateBindingWorker::onTxtSnapshotReady(const QByteArray &data)
+{
+    if (m_socket->state() != QAbstractSocket::ConnectedState)
+        return;
+
+    sendTxtPacket(data);
+}
+
+void TemplateBindingWorker::sendTxtPacket(const QByteArray &data)
+{
     QByteArray packet;
     QDataStream stream(&packet, QIODevice::WriteOnly);
     stream.setByteOrder(QDataStream::BigEndian);
@@ -586,9 +648,9 @@ void TemplateBindingWorker::onSendTxt(const QByteArray &txtData)
     qint64 written = m_socket->write(packet);
     if (written > 0) {
         m_socket->flush();
-        m_data->setTxtSent(true);
-        m_data->setStatusMessage("TXT 文件发送成功");
+        emit txtSentStatusChanged(true);
+        emit statusMessageChanged("TXT 文件发送成功");
     } else {
-        m_data->setStatusMessage("TXT 文件发送失败: " + m_socket->errorString());
+        emit statusMessageChanged("TXT 文件发送失败: " + m_socket->errorString());
     }
 }

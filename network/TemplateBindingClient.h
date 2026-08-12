@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QByteArray>
 #include <QStringList>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -167,7 +168,8 @@ public:
 
     // 获取当前图片条目（供 Worker 使用）
     const ImageEntry* currentEntry() const;
-    QJsonObject generateTxtJson() const;
+    // 按固定字段顺序生成 TXT（JSON）文本
+    QByteArray generateTxtData() const;
 
 signals:
     void hostChanged();
@@ -212,6 +214,9 @@ signals:
     void requestSendImages();
     void requestSendTxt(const QByteArray &txtData);
 
+    void txtSnapshotReady(const QByteArray &data);
+    void imageSnapshotReady(const QString &filePath, int templateId);
+
 public slots:
     void setConnected(bool conn);
     void setTxtGenerated(bool gen);
@@ -219,6 +224,8 @@ public slots:
     void setImageSent(bool sent);
     void setTxtSent(bool sent);
     void setStatusMessage(const QString &msg);
+    void provideTxtSnapshot();
+    void provideImageSnapshot();
 
 private:
     QString m_host;
@@ -244,7 +251,7 @@ class TemplateBindingWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit TemplateBindingWorker(TemplateBindingData *data, QObject *parent = nullptr);
+    explicit TemplateBindingWorker(QObject *parent = nullptr);
     ~TemplateBindingWorker() override;
 
 public slots:
@@ -257,13 +264,23 @@ private slots:
     void onSocketConnected();
     void onSocketDisconnected();
     void onSocketError(QAbstractSocket::SocketError error);
+    void onTxtSnapshotReady(const QByteArray &data);
+    void onImageSnapshotReady(const QString &filePath, int templateId);
+
+signals:
+    void connectedStatusChanged(bool connected);
+    void statusMessageChanged(const QString &msg);
+    void sendProgressChanged(double progress);
+    void imageSentStatusChanged(bool sent);
+    void txtSentStatusChanged(bool sent);
+    void requestTxtSnapshot();
+    void requestImageSnapshot();
 
 private:
-    void sendNextImage();
-    QByteArray buildImagePacket(const QString &filePath, const ImageEntry &entry);
+    void sendTxtPacket(const QByteArray &data);
+    QByteArray buildImagePacket(const QString &filePath, int templateId);
 
     QTcpSocket *m_socket;
-    TemplateBindingData *m_data;
     int m_currentSendIndex;
     qint64 m_totalBytesSent;
     qint64 m_totalBytesToSend;

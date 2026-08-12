@@ -326,7 +326,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.azimuthAngleValid)
-                                toastmsg.showToast("方位角输入范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("方位角输入范围为-20°~ 20°,请重新输入", 1500)
                             root.azimuthAngleValid = false
                         } else {
                             root.azimuthAngleValid = true
@@ -376,7 +376,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.elevationAngleValid)
-                                toastmsg.showToast("俯仰角输入范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("俯仰角输入范围为-20°~ 20°,请重新输入", 1500)
                             root.elevationAngleValid = false
                         } else {
                             root.elevationAngleValid = true
@@ -385,7 +385,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.searchCenterAzimuthValid)
-                                toastmsg.showToast("搜索中心方位角输入范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("搜索中心方位角输入范围为-20°~ 20°,请重新输入", 1500)
                             root.searchCenterAzimuthValid = false
                         } else {
                             root.searchCenterAzimuthValid = true
@@ -435,7 +435,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.searchCenterElevationValid)
-                                toastmsg.showToast("搜索中心俯仰角输入范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("搜索中心俯仰角输入范围为-20°~ 20°,请重新输入", 1500)
                             root.searchCenterElevationValid = false
                         } else {
                             root.searchCenterElevationValid = true
@@ -444,7 +444,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.azimuthSearchRangeValid)
-                                toastmsg.showToast("方位搜索范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("方位搜索范围为-20°~ 20°,请重新输入", 1500)
                             root.azimuthSearchRangeValid = false
                         } else {
                             root.azimuthSearchRangeValid = true
@@ -494,7 +494,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.elevationSearchRangeValid)
-                                toastmsg.showToast("俯仰搜索范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("俯仰搜索范围为-20°~ 20°,请重新输入", 1500)
                             root.elevationSearchRangeValid = false
                         } else {
                             root.elevationSearchRangeValid = true
@@ -503,7 +503,7 @@ Rectangle {
                         var val = Number(text)
                         if (!isNaN(val) && (val > 20 || val < -20)) {
                             if (root.searchRadiusValid)
-                                toastmsg.showToast("搜索半径范围为-20°~ 20°,请重新输入")
+                                toastmsg.showToast("搜索半径范围为-20°~ 20°,请重新输入", 1500)
                             root.searchRadiusValid = false
                         } else {
                             root.searchRadiusValid = true
@@ -526,7 +526,7 @@ Rectangle {
 
     LaserRecvArea{
         myheight:320
-        mywidth:800
+        mywidth:880
         anchors.top: firstColumn.bottom
         anchors.topMargin: 30
         anchors.left: commandArea.right

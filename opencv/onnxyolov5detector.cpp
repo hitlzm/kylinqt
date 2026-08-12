@@ -101,6 +101,7 @@ void OnnxYoloV5Detector::setNumClasses(int n) {
 bool OnnxYoloV5Detector::loadModel(const std::string &onnxPath) {
     m_impl->release();
     m_loaded = false;
+    m_lastAutoDetectedClasses = -1;
 
     try {
         m_impl->env = std::make_unique<Ort::Env>(
@@ -454,8 +455,9 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
                           : actualNumClasses;
 
         // 如果模型输出的类别数跟预期不一致，更新内部值
-        if (K != m_numClasses) {
+        if (K != m_lastAutoDetectedClasses) {
             qDebug() << "[OnnxYoloV5] Auto-detected" << K << "classes (from output shape)";
+            m_lastAutoDetectedClasses = K;
         }
 
         if (numDetections <= 0 || K <= 0) {

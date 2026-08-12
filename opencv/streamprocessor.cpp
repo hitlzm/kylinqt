@@ -237,6 +237,12 @@ void StreamProcessor::processFrame() {
 
     // 固定目标帧间隔（ms）
     const int targetInterval = std::max(5, 1000 / m_targetFps);
+    // Guide-head mode (CPU readback disabled): pause detection entirely,
+    // otherwise stale CCD frames left in the buffer keep feeding YOLO.
+    if (m_videoSource && !m_videoSource->cpuFrameConsumer()) {
+        m_timer->start(targetInterval);
+        return;
+    }
     // ── 帧率控制起点：记录本次处理开始时间 ──
     QElapsedTimer frameTimer;
     frameTimer.start();

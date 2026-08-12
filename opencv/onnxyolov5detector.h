@@ -75,6 +75,9 @@ private:
     int   m_numClasses    = 80;
     int   m_numThreads    = 4;
     bool  m_loaded        = false;
+    // Last class count inferred from the output shape (avoids spamming the
+    // "Auto-detected" hint on every frame).
+    int   m_lastAutoDetectedClasses = -1;
 
     // LetterBox 预处理参数（detect 时计算，供后处理坐标还原用）
     float m_letterBoxScale = 1.0f;

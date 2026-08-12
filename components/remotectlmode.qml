@@ -135,19 +135,19 @@ ColumnLayout {
         DataLabel {
             id: x
             label: "内框速度输出:"
-            value: (myGamepad.axisLeftY * 100).toFixed(0) + " %"
+            value: (myGamepad.axisRightX * 100).toFixed(0) + " %"
             fontSize: 20
         }
         DataLabel {
             id: y
             label: "中框速度输出:"
-            value: (myGamepad.axisLeftX * 100).toFixed(0) + " %"
+            value: (myGamepad.axisLeftY * 100).toFixed(0) + " %"
             fontSize: 20
         }
         DataLabel {
             id: z
             label: "外框速度输出:"
-            value: (myGamepad.axisRightX * 100).toFixed(0) + " %"
+            value: (myGamepad.axisLeftX * 100).toFixed(0) + " %"
             fontSize: 20
         }
     }

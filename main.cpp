@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     SerialPortBD *bdPort = new SerialPortBD;
     SerialPortCCD *ccdPort = new SerialPortCCD;       // 无父对象，将移到子线程
     // 网络传输 Worker（移到 NetworkThread）
-    TemplateBindingWorker *networkWorker = new TemplateBindingWorker(templateBindingData);
+    TemplateBindingWorker *networkWorker = new TemplateBindingWorker;
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
@@ -311,6 +311,31 @@ int main(int argc, char *argv[])
     QObject::connect(templateBindingData, &TemplateBindingData::requestSendImages, networkWorker, &TemplateBindingWorker::onSendImages,  Qt::QueuedConnection);
     QObject::connect(templateBindingData, &TemplateBindingData::requestSendTxt,    networkWorker, &TemplateBindingWorker::onSendTxt,     Qt::QueuedConnection);
 
+    // Network worker -> GUI-thread data object: all status updates are queued,
+    // so the worker never calls TemplateBindingData methods from its own thread.
+    QObject::connect(networkWorker, &TemplateBindingWorker::connectedStatusChanged,
+                     templateBindingData, &TemplateBindingData::setConnected, Qt::QueuedConnection);
+    QObject::connect(networkWorker, &TemplateBindingWorker::statusMessageChanged,
+                     templateBindingData, &TemplateBindingData::setStatusMessage, Qt::QueuedConnection);
+    QObject::connect(networkWorker, &TemplateBindingWorker::sendProgressChanged,
+                     templateBindingData, &TemplateBindingData::setSendProgress, Qt::QueuedConnection);
+    QObject::connect(networkWorker, &TemplateBindingWorker::imageSentStatusChanged,
+                     templateBindingData, &TemplateBindingData::setImageSent, Qt::QueuedConnection);
+    QObject::connect(networkWorker, &TemplateBindingWorker::txtSentStatusChanged,
+                     templateBindingData, &TemplateBindingData::setTxtSent, Qt::QueuedConnection);
+
+    // TXT JSON snapshot handshake: worker requests -> GUI thread builds JSON -> replies
+    QObject::connect(networkWorker, &TemplateBindingWorker::requestTxtSnapshot,
+                     templateBindingData, &TemplateBindingData::provideTxtSnapshot, Qt::QueuedConnection);
+    QObject::connect(templateBindingData, &TemplateBindingData::txtSnapshotReady,
+                     networkWorker, &TemplateBindingWorker::onTxtSnapshotReady, Qt::QueuedConnection);
+
+    // 图片快照握手：worker 请求 -> 主线程提供当前图片 -> 发送图片报文
+    QObject::connect(networkWorker, &TemplateBindingWorker::requestImageSnapshot,
+                     templateBindingData, &TemplateBindingData::provideImageSnapshot, Qt::QueuedConnection);
+    QObject::connect(templateBindingData, &TemplateBindingData::imageSnapshotReady,
+                     networkWorker, &TemplateBindingWorker::onImageSnapshotReady, Qt::QueuedConnection);
+
     //模式控制器的信号连接
     // 模式控制器 → 各串口线程（运行模式 / 外引导源 / 跟踪周期 变更通知）
     QObject::connect(&m_modeController, &ModeController::modeChanged, _myhandle, &Myhandle::modechanged, Qt::QueuedConnection);
@@ -404,5 +429,49 @@ int main(int argc, char *argv[])
     CCDthread->start();
     NetworkThread->start();
     
-    return app.exec();
+    const int ret = app.exec();
+
+    // ------------------------------------------------------------------
+    // Graceful shutdown: stop every worker thread BEFORE the QApplication,
+    // QML engine and data objects are destroyed. Otherwise worker threads
+    // keep running and touch already-freed objects (LogManager, Data, QML
+    // items), which is a common source of crashes when closing the app.
+    // ------------------------------------------------------------------
+
+    // 1) Video processing thread: ask StreamProcessor to stop inside its own
+    //    thread (BlockingQueuedConnection), then quit and wait.
+    if (streamThread->isRunning()) {
+        QMetaObject::invokeMethod(streamProc, "stop", Qt::BlockingQueuedConnection);
+        streamThread->quit();
+        streamThread->wait();
+    }
+
+    // 2) Serial / handle / network worker threads.
+    auto stopWorkerThread = [](QThread *thread) {
+        if (thread && thread->isRunning()) {
+            thread->quit();
+            thread->wait();
+        }
+    };
+    stopWorkerThread(Laserthread);
+    stopWorkerThread(Imagethread);
+    stopWorkerThread(Turntablethread);
+    stopWorkerThread(Handlethread);
+    stopWorkerThread(BDthread);
+    stopWorkerThread(CCDthread);
+    stopWorkerThread(NetworkThread);
+
+    // 3) The thread objects were allocated without a parent; collect them now.
+    //    Any pending deleteLater events are dropped when the receiver is
+    //    destroyed, so this does not double-delete.
+    delete streamThread;
+    delete Laserthread;
+    delete Imagethread;
+    delete Turntablethread;
+    delete Handlethread;
+    delete BDthread;
+    delete CCDthread;
+    delete NetworkThread;
+
+    return ret;
 }
