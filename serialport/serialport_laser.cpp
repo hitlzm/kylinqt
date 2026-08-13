@@ -422,10 +422,10 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         frame.reserved1[0] = (static_cast<quint8>(static_cast<unsigned char>(rawData[27])));
         frame.reserved1[1] = (static_cast<quint8>(static_cast<unsigned char>(rawData[26])));
         frame.gain_status = static_cast<qint8>(rawData[28]);
-        frame.quadrant1_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[29]))) ;
-        frame.quadrant2_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[30]))) ;
-        frame.quadrant3_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[31]))) ;
-        frame.quadrant4_energy = (static_cast<qint16>(static_cast<unsigned char>(rawData[32]))) ;
+        frame.quadrant1_energy = static_cast<quint8>(rawData[29]);
+        frame.quadrant2_energy = static_cast<quint8>(rawData[30]);
+        frame.quadrant3_energy = static_cast<quint8>(rawData[31]);
+        frame.quadrant4_energy = static_cast<quint8>(rawData[32]);
         frame.software_version1 = (static_cast<qint16>(static_cast<unsigned char>(rawData[33])) << 8) | static_cast<unsigned char>(rawData[34]);
         frame.software_version2 = (static_cast<qint16>(static_cast<unsigned char>(rawData[35])) << 8) | static_cast<unsigned char>(rawData[36]);
         frame.XOR_result = static_cast<quint8>(rawData[37]);

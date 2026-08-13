@@ -393,17 +393,17 @@ typedef struct laser_recv_frame{
     // 字节24: 增益状态 (0xB0~0xB4: 5级起控状态)
     quint8 gain_status;
 
-    // 字节25: 第一象限能量强度 (UINT8, 1bit=0.01, 范围-1750~1750)
-    qint8 quadrant1_energy;     // 注意：文档写UINT8但取值范围有负数，实际应为有符号
+    // 字节25: 第一象限能量强度 (UINT8, 1bit=0.01)
+    quint8 quadrant1_energy;
 
     // 字节26: 第二象限能量强度
-    qint8 quadrant2_energy;
+    quint8 quadrant2_energy;
 
     // 字节27: 第三象限能量强度
-    qint8 quadrant3_energy;
+    quint8 quadrant3_energy;
 
     // 字节28: 第四象限能量强度
-    qint8 quadrant4_energy;
+    quint8 quadrant4_energy;
 
     // 字节29-30: 软件1版本号 (处理板, UINT16, 1bit=0.01, 例0x00C9=2.01)
     quint16 software_version1;

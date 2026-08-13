@@ -281,7 +281,7 @@ Rectangle {
             height: 32
             text: "拍摄参考图"
             onClicked: {
-                imageSendData.m_captureRefImgCmd = 0xaa
+                imageSendData.m_captureRefImgCmd = 0xaa //发三拍后恢复默认值
                 imageSendData.buildFrame()
             }
         }
