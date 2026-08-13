@@ -13,9 +13,10 @@ Rectangle {
 
     property bool _connected: false
     property bool _stopped: false
+    property bool _isPlaying: false
     property bool _retrying: false
     property int _retryCount: 0
-    property int _maxRetries: 2
+    property int _maxRetries: 1
     property var magnifierWindow: null
 
     // ── CPU 帧消费开关（导引头/CCD 模式切换处翻转）──
@@ -66,9 +67,9 @@ Rectangle {
         Row {
             spacing: 6; Layout.alignment: Qt.AlignVCenter
             Rectangle { width: 12; height: 12; radius: 6; anchors.verticalCenter: parent.verticalCenter
-                color: _stopped ? "#9E9E9E" : (videoPlayer.playing ? "#4CAF50" : (_connected ? "#FF9800" : "#F44336")) }
+                color: _stopped ? "#9E9E9E" : (_connected ? (_isPlaying ? "#4CAF50" : "#FF9800") : "#F44336") }
             Text { anchors.verticalCenter: parent.verticalCenter; font.pixelSize: 16; color: "#333333"
-                text: _stopped ? "已停止" : (videoPlayer.playing ? "播放中" : (_connected ? "已就绪" : "未连接")) }
+                text: _stopped ? "已停止" : (_connected ? (_isPlaying ? "播放中" : "已就绪") : "未连接") }
         }
     }
 
@@ -99,16 +100,30 @@ Rectangle {
         z: 1
     }
 
-    // 连接失败后自动重连：等待 3 秒重新加载并播放；次数耗尽后由 connFailMsg 弹窗提示
+    // 连接失败后自动重连：等待 2 秒重新加载并播放；次数耗尽后由 connFailMsg 弹窗提示
     Timer {
         id: retryTimer
-        interval: 3000
+        interval: 2000
         repeat: false
         onTriggered: {
             _retrying = false
+            if (urlInput.text.trim() === "") {
+                _isPlaying = false
+                return
+            }
             connectToUrl(urlInput.text.trim(), true)
+            _isPlaying = true
+            connWatchdog.start()
             videoPlayer.play()
         }
+    }
+
+    // 连接看门狗：点击播放后若长时间收不到视频帧，判定连接失败并走重连/弹窗流程
+    Timer {
+        id: connWatchdog
+        interval: 2000
+        repeat: false
+        onTriggered: handleConnectionFailure("连接视频源超时，未收到视频数据，请检查视频源或网络后重试")
     }
 
     MessagePopup { id: connFailMsg }
@@ -136,25 +151,39 @@ Rectangle {
         spacing: 12
 
         CusButton_Blue {
-            text: videoPlayer.playing ? "暂停" : "播放"
+            text: _isPlaying ? "暂停" : "播放"
             Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
-                if (!_connected) {
-                    _retryCount = 0
-                    connectToUrl(urlInput.text.trim())
+                if (_isPlaying) {
+                    connWatchdog.stop()
+                    videoPlayer.pause()
+                    _isPlaying = false
+                } else {
+                    if (!_connected) {
+                        _retryCount = 0
+                        if (urlInput.text.trim() === "") {
+                            _isPlaying = false
+                            return
+                        }
+                        connectToUrl(urlInput.text.trim())
+                    }
+                    _stopped = false
+                    videoPlayer.play()
+                    _isPlaying = true
+                    connWatchdog.start()
+                    stopOverlay.visible = false
                 }
-                _stopped = false
-                if (videoPlayer.playing) videoPlayer.pause()
-                else { videoPlayer.play(); stopOverlay.visible = false }
             }
         }
         CusButton_Blue { text: "停止"; Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
                 retryTimer.stop()
+                connWatchdog.stop()
                 _retrying = false
                 _retryCount = 0
                 videoPlayer.stop()
                 _stopped = true
+                _isPlaying = false
                 stopOverlay.visible = true
             } }
         CusButton_Blue { text: root.magnifierWindow ? "关闭新窗口" : "🔍 放大"; Layout.fillWidth: true; height: 40
@@ -175,24 +204,44 @@ Rectangle {
         height: 32
         spacing: 10
         Text { text: "RTSP:"; font.pixelSize: 16; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
-        CusTextField { id: urlInput; Layout.fillWidth: true; Layout.preferredHeight: 26; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
+        CusTextField { id: urlInput; Layout.fillWidth: true; Layout.preferredHeight: 35; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
         CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; Layout.preferredHeight: 32; onClicked: connectToUrl(urlInput.text.trim()) }
     }
 
-    // 连接：只有 mpv 真正加载成功（onFileLoaded）后才置 _connected = true；
-    // 失败时保持“未连接”，由 onError 触发自动重连。
+    // 连接：只有真正收到视频帧（onFrameSizeChanged）后才置 _connected = true；
+    // 失败时保持“未连接”，由 onError / 连接看门狗触发自动重连。
     function connectToUrl(newUrl, isRetry) {
         if (newUrl === "") return
         retryTimer.stop()
+        connWatchdog.stop()
         _retrying = false
         if (!isRetry) _retryCount = 0
         _connected = false
         _stopped = false
+        _isPlaying = false
         videoPlayer.stop()
-        // 先清空再赋值：重连相同 URL 时也能强制重新加载
-        videoPlayer.source = ""
+        // 相同 URL 重连时先清空，确保强制重新加载
+        if (videoPlayer.source === newUrl) videoPlayer.source = ""
         videoPlayer.source = newUrl
         stopOverlay.visible = false
+    }
+
+    // 连接失败统一处理：置未连接 → 自动重连（最多 _maxRetries 次）→ 弹窗提示
+    function handleConnectionFailure(msg) {
+        _connected = false
+        _stopped = false
+        _isPlaying = false
+        stopOverlay.visible = false
+        connWatchdog.stop()
+        if (_retrying) return
+        if (_retryCount < _maxRetries) {
+            _retryCount++
+            _retrying = true
+            retryTimer.start()
+        } else {
+            connFailMsg.message = msg
+            connFailMsg.open()
+        }
     }
 
     // 视频源选择：CCD → 保留 CPU 回读供 YOLO 检测；导引头 → 跳过回读纯 GPU 显示
@@ -249,41 +298,50 @@ Rectangle {
         }
     }
 
-    Connections { target: videoPlayer
-        function onPlayingChanged() { console.log("VlcVideo playing:", videoPlayer.playing) }
-        function onFileLoaded() {
-            console.log("VlcVideo: 流已加载，连接成功")
-            _connected = true
-            _stopped = false
-            _retrying = false
-            _retryCount = 0
-            retryTimer.stop()
-            stopOverlay.visible = false
+    Connections {
+        target: videoPlayer
+        // 注意：Qt 5.12 不支持 Connections 里的 function onXxx() 写法，
+        // 必须使用 onXxx: 属性语法，否则信号处理器不会触发。
+        onPlayingChanged: {
+            // 注意：playing 只是 pause 标志，不代表流已连通（UDP 打开协议就会上报 true），
+            // 不能用它判定连接成功；连接成功只看 onFrameSizeChanged（收到真实视频帧）
+            console.log("VlcVideo playing:", videoPlayer.playing)
         }
-        function onEnded() { console.log("VlcVideo: 播放结束"); stopOverlay.visible = true }
-        function onError(msg) {
-            console.log("VlcVideo error:", msg)
-            if (_stopped) return          // 用户已主动停止，不再自动重连
-            _connected = false
-            _stopped = false
-            stopOverlay.visible = false
-            if (_retrying) return         // 重连进行中，忽略重复错误
-            if (_retryCount < _maxRetries) {
-                _retryCount++
-                _retrying = true
-                retryTimer.start()
-            } else {
-                connFailMsg.message = "视频流连接失败，请检查视频源地址或网络后重试"
-                connFailMsg.open()
+        onFrameSizeChanged: {
+            // 收到真实视频帧才算连接成功（UDP/RTSP 打开协议不等于有数据）
+            if (videoPlayer.frameWidth > 0 && videoPlayer.frameHeight > 0) {
+                console.log("VlcVideo: 收到视频帧，连接成功")
+                _connected = true
+                _stopped = false
+                _retrying = false
+                _retryCount = 0
+                retryTimer.stop()
+                connWatchdog.stop()
+                stopOverlay.visible = false
             }
         }
-        function onStopped() { console.log("VlcVideo: 已停止"); stopOverlay.visible = true }
-        function onReqDeviationToImg(x, y) {
-            console.log("偏差像素请求: (" + x + ", " + y + ")")
-            imageSendData.relayDeviationPixel(x, y)
+        onEnded: {
+            console.log("VlcVideo: 播放结束")
+            _isPlaying = false
+            connWatchdog.stop()
+            stopOverlay.visible = true
         }
-        function onErrorReadingPixel(msg) {
-            console.warn("读取像素失败:", msg)
+        onError: {
+            console.log("VlcVideo error:", errorMsg)
+            if (_stopped) return          // 用户已主动停止，不再自动重连
+            handleConnectionFailure("视频流连接失败，请检查视频源地址或网络后重试")
+        }
+        onStopped: {
+            console.log("VlcVideo: 已停止")
+            _isPlaying = false
+            stopOverlay.visible = true
+        }
+        onReqDeviationToImg: {
+            console.log("偏差像素请求: (" + frameX + ", " + frameY + ")")
+            imageSendData.relayDeviationPixel(frameX, frameY)
+        }
+        onErrorReadingPixel: {
+            console.warn("读取像素失败:", message)
         }
     }
 }

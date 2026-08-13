@@ -876,6 +876,10 @@ void VlcVideoItem::releasePlayer()
         m_frameUpdated = false;
         m_hasProcessedFrame = false;
         m_processedFrame = QImage();
+        // 帧尺寸清零：下一次收到真实视频帧时必定触发 frameSizeChanged，
+        // 供 QML 以“收到视频帧”作为连接成功的判定依据
+        m_width = 0;
+        m_height = 0;
     }
 }
 

@@ -4,7 +4,10 @@ import "./components"
 import taoQuick 1.0
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
-Window {
+
+// 使用 ApplicationWindow（Window 的子类）：它会自动创建 QQC2 的 Overlay，
+// 使 parent: Overlay.overlay 的弹窗（MessagePopup / MsgPopup2）能正常显示。
+ApplicationWindow {
     id: root
     visible: true
     width: Screen.width
