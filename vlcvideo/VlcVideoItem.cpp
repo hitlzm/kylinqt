@@ -866,6 +866,11 @@ void VlcVideoItem::releasePlayer()
     m_setupInProgress = false;
     m_needClearDisplay = true;   // 通知渲染器清空上一视频流的残留帧
 
+    // 复位视频参数与“连接成功”标志：每次重新加载都重新判定
+    m_videoDw = 0;
+    m_videoDh = 0;
+    m_videoReady = false;
+
     // 清空帧缓冲
     {
         QMutexLocker lock(&m_frameMutex);
@@ -1007,6 +1012,12 @@ void VlcVideoItem::processMpvEvents()
                         qDebug() << "[MpvVideo] video-params (native size):"
                                  << m_videoDw << "x" << m_videoDh;
                     }
+                }
+                // 解析到真实视频参数即代表流中确实有视频数据，判定连接成功
+                // （UDP/RTSP 仅打开协议、无数据时不会触发）
+                if (m_videoDw > 0 && m_videoDh > 0 && !m_videoReady) {
+                    m_videoReady = true;
+                    emit videoReady();
                 }
             }
             break;

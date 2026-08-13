@@ -100,7 +100,7 @@ Rectangle {
         z: 1
     }
 
-    // 连接失败后自动重连：等待 2 秒重新加载并播放；次数耗尽后由 connFailMsg 弹窗提示
+    // 连接失败后自动重连：等待 2 秒重新加载（不自动播放）；仍失败由 connFailMsg 弹窗提示
     Timer {
         id: retryTimer
         interval: 2000
@@ -111,22 +111,13 @@ Rectangle {
                 _isPlaying = false
                 return
             }
+            // 重连只建立连接，不自动播放（由用户点击播放按钮）
             connectToUrl(urlInput.text.trim(), true)
-            _isPlaying = true
-            connWatchdog.start()
-            videoPlayer.play()
         }
     }
 
-    // 连接看门狗：点击播放后若长时间收不到视频帧，判定连接失败并走重连/弹窗流程
-    Timer {
-        id: connWatchdog
-        interval: 2000
-        repeat: false
-        onTriggered: handleConnectionFailure("连接视频源超时，未收到视频数据，请检查视频源或网络后重试")
-    }
-
     MessagePopup { id: connFailMsg }
+    MessagePopup { id: connectFirstMsg }
 
     // // 像素信息显示（悬浮于视频右下角）
     // Text {
@@ -151,37 +142,31 @@ Rectangle {
         spacing: 12
 
         CusButton_Blue {
-            text: _isPlaying ? "暂停" : "播放"
+            text: "播放"
             Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
-                if (_isPlaying) {
-                    connWatchdog.stop()
-                    videoPlayer.pause()
+                // 只保留播放功能（不提供暂停）；视频源未就绪时提示先连接
+                if (!_connected) {
+                    connectFirstMsg.message = "请先连接视频源"
+                    connectFirstMsg.open()
                     _isPlaying = false
-                } else {
-                    if (!_connected) {
-                        _retryCount = 0
-                        if (urlInput.text.trim() === "") {
-                            _isPlaying = false
-                            return
-                        }
-                        connectToUrl(urlInput.text.trim())
-                    }
-                    _stopped = false
-                    videoPlayer.play()
-                    _isPlaying = true
-                    connWatchdog.start()
-                    stopOverlay.visible = false
+                    return
                 }
+                _stopped = false
+                videoPlayer.play()
+                _isPlaying = true
+                stopOverlay.visible = false
             }
         }
         CusButton_Blue { text: "停止"; Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
+                // 停止 = 断开当前视频源：停止播放并清空源，再次播放需重新连接
                 retryTimer.stop()
-                connWatchdog.stop()
                 _retrying = false
                 _retryCount = 0
                 videoPlayer.stop()
+                videoPlayer.source = ""
+                _connected = false
                 _stopped = true
                 _isPlaying = false
                 stopOverlay.visible = true
@@ -208,12 +193,11 @@ Rectangle {
         CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; Layout.preferredHeight: 32; onClicked: connectToUrl(urlInput.text.trim()) }
     }
 
-    // 连接：只有真正收到视频帧（onFrameSizeChanged）后才置 _connected = true；
-    // 失败时保持“未连接”，由 onError / 连接看门狗触发自动重连。
+    // 连接：只有 mpv 解析到真实视频流（onVideoReady）后才置 _connected = true；
+    // 失败时保持“未连接”，由 onError 失败信号触发自动重连。
     function connectToUrl(newUrl, isRetry) {
         if (newUrl === "") return
         retryTimer.stop()
-        connWatchdog.stop()
         _retrying = false
         if (!isRetry) _retryCount = 0
         _connected = false
@@ -226,13 +210,13 @@ Rectangle {
         stopOverlay.visible = false
     }
 
-    // 连接失败统一处理：置未连接 → 自动重连（最多 _maxRetries 次）→ 弹窗提示
+    // 连接失败统一处理（由连接返回的失败信号触发）：
+    // 置未连接 → 2 秒后自动重连（最多 _maxRetries 次）→ 仍失败则弹窗提示
     function handleConnectionFailure(msg) {
         _connected = false
         _stopped = false
         _isPlaying = false
         stopOverlay.visible = false
-        connWatchdog.stop()
         if (_retrying) return
         if (_retryCount < _maxRetries) {
             _retryCount++
@@ -304,26 +288,23 @@ Rectangle {
         // 必须使用 onXxx: 属性语法，否则信号处理器不会触发。
         onPlayingChanged: {
             // 注意：playing 只是 pause 标志，不代表流已连通（UDP 打开协议就会上报 true），
-            // 不能用它判定连接成功；连接成功只看 onFrameSizeChanged（收到真实视频帧）
+            // 不能用它判定连接成功；连接成功只看 onVideoReady（mpv 解析到真实视频参数）
             console.log("VlcVideo playing:", videoPlayer.playing)
         }
-        onFrameSizeChanged: {
-            // 收到真实视频帧才算连接成功（UDP/RTSP 打开协议不等于有数据）
-            if (videoPlayer.frameWidth > 0 && videoPlayer.frameHeight > 0) {
-                console.log("VlcVideo: 收到视频帧，连接成功")
-                _connected = true
-                _stopped = false
-                _retrying = false
-                _retryCount = 0
-                retryTimer.stop()
-                connWatchdog.stop()
-                stopOverlay.visible = false
-            }
+        onVideoReady: {
+            // mpv 解析到真实视频参数（video-params）才算连接成功；
+            // 仅打开 UDP/RTSP 协议、没有视频数据时不会触发
+            console.log("VlcVideo: 检测到真实视频流，连接成功")
+            _connected = true
+            _stopped = false
+            _retrying = false
+            _retryCount = 0
+            retryTimer.stop()
+            stopOverlay.visible = false
         }
         onEnded: {
             console.log("VlcVideo: 播放结束")
             _isPlaying = false
-            connWatchdog.stop()
             stopOverlay.visible = true
         }
         onError: {

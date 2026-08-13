@@ -101,6 +101,8 @@ signals:
     void error(const QString &errorMsg);
     /// 媒体流/文件加载成功（mpv MPV_EVENT_FILE_LOADED）
     void fileLoaded();
+    /// mpv 解析到真实视频参数（video-params）时发出，表示连接成功
+    void videoReady();
 
     // ── 像素读取结果信号 ──────────────────────────────────
     /// 点击到视频画面内时发出，携带帧坐标，请求图像导引头发送偏差像素
@@ -151,6 +153,7 @@ private:
     // 用于判断点击是否落在帧内真实视频画面上（剔除 mpv 渲染时留下的黑边）。
     int m_videoDw = 0;
     int m_videoDh = 0;
+    bool m_videoReady = false;   // 本次连接是否已判定成功（每次 releasePlayer 复位）
 
     // StreamProcessor 处理后回传的帧
     QImage m_processedFrame;
