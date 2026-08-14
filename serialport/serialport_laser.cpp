@@ -290,14 +290,7 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[11])) << 8) | static_cast<unsigned char>(mydata[10]);
     frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[13])) << 8) | static_cast<unsigned char>(mydata[12]);
     frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[15])) << 8) | static_cast<unsigned char>(mydata[14]);
-    const uint8_t* checkdata = reinterpret_cast<const uint8_t*>(&frame);
-    uint8_t checksum = 0;
-    //去掉开头的三个字节与结尾的一个校验位字节
-    for (size_t i = 3; i < sizeof(frame) - 1; ++i) {
-        checksum ^= checkdata[i];
-    }
-    frame.XOR_result = checksum;
-    
+    //校验位在定时器每拍发送前统一计算，这里无需预计算
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
     //断开上一次的连接
@@ -308,25 +301,29 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
     timer->setInterval(10); // 10ms
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
-        // 发送数据
-        SerialPort::send(data);
-        
-        sendCount++;
-        //统计并更改发送次数,重新进行校验位计算
-        datacount++;
-        if(datacount >= 3){
-            datacount=0;
-        }
-        data[3]= 0x11 | (datacount << 6);
+        // 帧计数器：先写当前值（从 0 开始），发送成功后再递增
+        data[3] = 0x11 | (datacount << 6);
 
-        const char * checkdata2= data.data();
+        // 计算异或校验位并更新，不计入帧头与校验位
+        const char * checkdata2 = data.data();
         uint8_t checksum2 = 0;
-        //计算异或校验位并更新,不计入帧头与校验位
         for (size_t i = 3; i < data.size() - 1; ++i) {
-        checksum2 ^= checkdata2[i];
+            checksum2 ^= checkdata2[i];
         }
         data[16] = checksum2;
-        // 发送5次后停止并销毁定时器
+
+        // 发送数据
+        qint64 count = SerialPort::send(data);
+        // 发送成功才递增帧计数器（失败则下帧重发同一计数）
+        if (count >= data.size()) {
+            datacount++;
+            if(datacount >= 3){
+                datacount = 0;
+            }
+        }
+        sendCount++;
+
+        // 发送10次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();
             // timer->deleteLater();

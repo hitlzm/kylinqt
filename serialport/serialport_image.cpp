@@ -480,11 +480,8 @@ void SerialPortImage::onOpenPort(const QString &name, int baud) {
 void SerialPortImage::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortImage::onSendData(image_send_frame frame) { 
-    //每发送十帧中的第一帧的校验位计算
-    uint16_t crc = SerialPortImage::crc16_ccitt_fast(
-        reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
-    frame.crc16 = crc;
-    auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));  
+    //校验位在定时器每拍发送前统一计算，这里无需预计算
+    auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
     //引入定时器，每20ms发送一次
     int sendCount = 0;
@@ -495,18 +492,10 @@ void SerialPortImage::onSendData(image_send_frame frame) {
     disconnect(timer, &QTimer::timeout, this, nullptr);
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
-        // 发送数据
-        qint64 count=SerialPort::send(data);
-        //增加帧流水号改变,如果发送字节数没问题
-        if(count >= 224){
-        //计算流水号      
-            num += 1;
-        //  将结果拆分回两个字节
-            data[3] = static_cast<char>(num & 0xFF);        // 低字节
-            data[4] = static_cast<char>((num >> 8) & 0xFF); // 高字节
-        }
-        sendCount++;
-        
+        // 流水号：先写当前值（从 0 开始），发送成功后再递增
+        data[3] = static_cast<char>(num & 0xFF);        // 低字节
+        data[4] = static_cast<char>((num >> 8) & 0xFF); // 高字节
+
         //发一拍处理
         if(sendCount >= 1){
             data[46]=0x00; //跟踪修正指令
@@ -518,9 +507,18 @@ void SerialPortImage::onSendData(image_send_frame frame) {
             data[61]=0x00;   //拍摄参考图
         }
         //更新数据后重新计算并填入校验位
-        crc= crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));
+        uint16_t crc = crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));
         data[222] = static_cast<char>(crc & 0xFF);        // 低字节
         data[223] = static_cast<char>((crc >> 8) & 0xFF); // 高字节
+
+        // 发送数据
+        qint64 count=SerialPort::send(data);
+        //发送成功才递增流水号（失败则下帧重发同一流水号）
+        if(count >= 224){
+            num += 1;
+        }
+        sendCount++;
+
         // 发送10次后停止并销毁定时器
         if (sendCount >= 10) {
             timer->stop();
