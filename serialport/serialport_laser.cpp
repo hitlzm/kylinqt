@@ -546,14 +546,16 @@ void SerialPortLaser::ExmodeChanged(int mode)
             }
         }
         else
-        {
+        {   
             if (m_exGuideTimer) {
                 m_exGuideTimer->stop(); //切换到其他外引导源时，暂停激光导引头外引导定时器，停止继续发送
             }
         }
     }
     else
-    {
+    {   
+        exsrcindex = -1; //非外引导模式下，外引导源索引置0
+        exguidesetting = -1; //非外引导模式下，外引导发送时间间隔索引置0
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }

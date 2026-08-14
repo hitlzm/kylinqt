@@ -480,7 +480,7 @@ void SerialPortImage::onOpenPort(const QString &name, int baud) {
 void SerialPortImage::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortImage::onSendData(image_send_frame frame) { 
-
+    //每发送十帧中的第一帧的校验位计算
     uint16_t crc = SerialPortImage::crc16_ccitt_fast(
         reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
     frame.crc16 = crc;
@@ -648,6 +648,8 @@ void SerialPortImage::ExmodeChanged(int mode)
     }
     else
     {
+        exsrcindex = -1; //非外引导模式下，外引导源索引置0
+        exguidesetting = -1; //非外引导模式下，外引导发送时间间隔索引置0
         // 非外引导模式：停止定时器
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();

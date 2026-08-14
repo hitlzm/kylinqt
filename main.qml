@@ -98,15 +98,15 @@ MessagePopup {
 
 Connections {
     target: laserData
-    function onPopupMessage(msg) { serialWarnMsg.message = msg; serialWarnMsg.open() }
+    onPopupMessage: { serialWarnMsg.message = msg; serialWarnMsg.open() }
 }
 Connections {
     target: imageData
-    function onPopupMessage(msg) { serialWarnMsg.message = msg; serialWarnMsg.open() }
+    onPopupMessage: { serialWarnMsg.message = msg; serialWarnMsg.open() }
 }
 Connections {
     target: ccdData
-    function onPopupMessage(msg) { serialWarnMsg.message = msg; serialWarnMsg.open() }
+    onPopupMessage: { serialWarnMsg.message = msg; serialWarnMsg.open() }
 }
 
 }

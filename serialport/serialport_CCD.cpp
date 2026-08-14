@@ -194,7 +194,9 @@ void SerialPortCCD::ExmodeChanged(int mode)
         }
     }
     else
-    {
+    {   
+        exsrcindex = -1; //非外引导模式下，外引导源索引置0
+        exguidesetting = -1; //非外引导模式下，外引导发送时间间隔索引置0
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }
