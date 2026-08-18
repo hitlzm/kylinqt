@@ -511,6 +511,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         data[222] = static_cast<char>(crc & 0xFF);        // 低字节
         data[223] = static_cast<char>((crc >> 8) & 0xFF); // 高字节
 
+        qDebug() << "SerialPortImage::onSendData:" << data.toHex();
         // 发送数据
         qint64 count=SerialPort::send(data);
         //发送成功才递增流水号（失败则下帧重发同一流水号）

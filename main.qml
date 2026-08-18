@@ -13,7 +13,9 @@ ApplicationWindow {
     width: Screen.width
     height: Screen.height
     title: qsTr("kylin-qt")
+    //flags: Qt.Window | Qt.FramelessWindowHint   // 加入这句指令可以去掉系统标题栏
 
+    //自制标题栏
 
     Item {
     id:dyt
@@ -30,12 +32,12 @@ ApplicationWindow {
 
             TabButton {
                 text: qsTr("图像导引头")
-                font.pixelSize: cusConfig.fontPixel + 6
+                font.pixelSize: CusConfig.fontPixel + 6
             }
 
             TabButton {
                 text: qsTr("激光导引头")
-                font.pixelSize: cusConfig.fontPixel + 6
+                font.pixelSize: CusConfig.fontPixel + 6
             }
         }
         // ===== 页面区域 =====
