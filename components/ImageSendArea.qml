@@ -421,16 +421,16 @@ Rectangle {
 
             onTextChanged: {
                 var val = Number(text)
-                if (!isNaN(val) && (val > 18 || val < -18)) {
+                if (!isNaN(val) && (val > 10 || val < -40)) {
                     if (root.pitchInputValid)
-                        testmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入", 1500)
+                        testmsg.showToast("俯仰角输入范围为-40°~ 10°,请重新输入", 1500)
                     root.pitchInputValid = false
                 } else {
                     root.pitchInputValid = true
                 }
             }
             onEditingFinished: {
-                if (Number(text) >= -18 && Number(text) <= 18)
+                if (Number(text) >= -40 && Number(text) <= 10)
                     imageSendData.m_pitchGimbalPreset = Number(text)
             }
         }
@@ -445,16 +445,16 @@ Rectangle {
 
             onTextChanged: {
                 var val = Number(text)
-                if (!isNaN(val) && (val > 18 || val < -18)) {
+                if (!isNaN(val) && (val > 30 || val < -30)) {
                     if (root.yawInputValid)
-                        testmsg.showToast("偏航角输入范围为-18°~ 18°,请重新输入", 1500)
+                        testmsg.showToast("偏航角输入范围为-30°~ 30°,请重新输入", 1500)
                     root.yawInputValid = false
                 } else {
                     root.yawInputValid = true
                 }
             }
             onEditingFinished: {
-                if (Number(text) >= -18 && Number(text) <= 18)
+                if (Number(text) >= -30 && Number(text) <= 30)
                     imageSendData.m_yawGimbalPreset = Number(text)
             }
         }
@@ -868,8 +868,8 @@ Rectangle {
                             return root.lastValidDesc2
                         }
                         if (index === 2)
-                            return imageData.currentWorkChannel === 0x02 ? "红外" : (imageData.currentWorkChannel
-                                                                                    === 0x03 ? "电视" : "未知")
+                            return imageData.currentWorkChannel === 0x01 ? "红外" : (imageData.currentWorkChannel
+                                                                                    === 0x00 ? "电视" : "未知")
                         if (index === 3)
                             return "0x" + imageData.selfCheckFlag.toString(16).toUpperCase()
                         if (index === 4) {
@@ -1287,7 +1287,7 @@ Rectangle {
                         if (index === 0) return "红外帧编号:"
                         if (index === 1) return "红外帧频:"
                         if (index === 2) return "电视帧频:"
-                        if (index === 3) return "Cbh_tv4405:"
+                        if (index === 3) return "电视帧编号:"
                         if (index === 4) return "波门尺寸:"
                         if (index === 5) return "软件版本1:"
                         if (index === 6) return "软件版本2:"
