@@ -100,7 +100,7 @@ Rectangle {
         z: 1
     }
 
-    // 连接失败后自动重连：等待 2 秒重新加载（不自动播放）；仍失败由 connFailMsg 弹窗提示
+    // 连接失败后自动重连：等待 2 秒重新加载；仍失败由 connFailMsg 弹窗提示
     Timer {
         id: retryTimer
         interval: 2000
@@ -111,7 +111,7 @@ Rectangle {
                 _isPlaying = false
                 return
             }
-            // 重连只建立连接，不自动播放（由用户点击播放按钮）
+            // 重连只建立连接，连接成功后自动播放
             connectToUrl(urlInput.text.trim(), true)
         }
     }
@@ -141,23 +141,23 @@ Rectangle {
         height: 36
         spacing: 12
 
-        CusButton_Blue {
-            text: "播放"
-            Layout.fillWidth: true; Layout.preferredHeight: 32
-            onClicked: {
-                // 只保留播放功能（不提供暂停）；视频源未就绪时提示先连接
-                if (!_connected) {
-                    connectFirstMsg.message = "请先连接视频源"
-                    connectFirstMsg.open()
-                    _isPlaying = false
-                    return
-                }
-                _stopped = false
-                videoPlayer.play()
-                _isPlaying = true
-                stopOverlay.visible = false
-            }
-        }
+        // CusButton_Blue {
+        //     text: "播放"
+        //     Layout.fillWidth: true; Layout.preferredHeight: 32
+        //     onClicked: {
+        //         // 只保留播放功能（不提供暂停）；视频源未就绪时提示先连接
+        //         if (!_connected) {
+        //             connectFirstMsg.message = "请先连接视频源"
+        //             connectFirstMsg.open()
+        //             _isPlaying = false
+        //             return
+        //         }
+        //         _stopped = false
+        //         videoPlayer.play()
+        //         _isPlaying = true
+        //         stopOverlay.visible = false
+        //     }
+        // }
         CusButton_Blue { text: "停止"; Layout.fillWidth: true; Layout.preferredHeight: 32
             onClicked: {
                 // 停止 = 断开当前视频源：停止播放并清空源，再次播放需重新连接
@@ -173,10 +173,10 @@ Rectangle {
             } }
         CusButton_Blue { text: root.magnifierWindow ? "关闭新窗口" : "🔍 放大"; Layout.fillWidth: true; height: 40
             onClicked: toggleMagnifier() }
-        Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
-        CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 200
-            value: videoPlayer.volume; onMoved: videoPlayer.setVolume(value) }
-        CusLabel { text: Math.round(videoPlayer.volume ) + "%"; font.pixelSize: 14; Layout.preferredWidth: 45; horizontalAlignment: Text.AlignHCenter }
+        // Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
+        // CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 100
+        //     value: videoPlayer.volume; onMoved: videoPlayer.setVolume(value) }
+        // CusLabel { text: Math.round(videoPlayer.volume ) + "%"; font.pixelSize: 14; Layout.preferredWidth: 45; horizontalAlignment: Text.AlignHCenter }
     }
 
     // ========== URL 输入区 ==========
@@ -188,7 +188,7 @@ Rectangle {
         // 固定行高：输入框和连接按钮不再随麒麟字体行高变化，杜绝溢出父边界
         height: 32
         spacing: 10
-        Text { text: "RTSP:"; font.pixelSize: 16; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
+        Text { text: "视频流:"; font.pixelSize: 16; color: "#333333"; Layout.alignment: Qt.AlignVCenter }
         CusTextField { id: urlInput; Layout.fillWidth: true; Layout.preferredHeight: 35; font.pixelSize: 14; onAccepted: connectToUrl(text.trim()) }
         CusButton_Blue { text: "连接"; Layout.preferredWidth: 70; Layout.preferredHeight: 32; onClicked: connectToUrl(urlInput.text.trim()) }
     }
@@ -300,6 +300,9 @@ Rectangle {
             _retrying = false
             _retryCount = 0
             retryTimer.stop()
+            // 连接成功立即播放
+            videoPlayer.play()
+            _isPlaying = true
             stopOverlay.visible = false
         }
         onEnded: {

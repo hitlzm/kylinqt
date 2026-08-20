@@ -350,7 +350,7 @@ void ImageSendData::buildFrame()
     frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
     frame.reserved2 = 0;
     frame.gate_size = static_cast<quint8>(m_gateSize);
-    frame.osd_switch = static_cast<quint8>(m_osdSwitch);
+    // frame.osd_switch = static_cast<quint8>(m_osdSwitch);
     frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
     memset(frame.reserved3, 0, sizeof(frame.reserved3));
     frame.target_altitude = static_cast<qint16>(m_targetAltitude);
@@ -421,7 +421,7 @@ void ImageSendData::buildDeviation(int num ,int x ,int y)
     frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
     frame.reserved2 = 0;
     frame.gate_size = static_cast<quint8>(m_gateSize);
-    frame.osd_switch = static_cast<quint8>(m_osdSwitch);
+    // frame.osd_switch = static_cast<quint8>(m_osdSwitch);
     frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
     memset(frame.reserved3, 0, sizeof(frame.reserved3));
     frame.target_altitude = static_cast<qint16>(m_targetAltitude);
@@ -504,7 +504,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         if(sendCount >= 3){
             data[5]=0x00;    //导引头控制字
             data[6]=0x00;    //光学参数装订控制字
-            data[61]=0x00;   //拍摄参考图
+            data[60]=0x00;   //拍摄参考图
         }
         //更新数据后重新计算并填入校验位
         uint16_t crc = crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));

@@ -330,7 +330,7 @@ class ImageSendData : public QObject
     Q_PROPERTY(float m_searchPitchRate MEMBER m_searchPitchRate NOTIFY searchPitchRateChanged)
     Q_PROPERTY(float m_searchYawRate MEMBER m_searchYawRate NOTIFY searchYawRateChanged)
     Q_PROPERTY(int m_gateSize MEMBER m_gateSize NOTIFY gateSizeChanged)
-    Q_PROPERTY(int m_osdSwitch MEMBER m_osdSwitch NOTIFY osdSwitchChanged)
+    // Q_PROPERTY(int m_osdSwitch MEMBER m_osdSwitch NOTIFY osdSwitchChanged)
     Q_PROPERTY(int m_captureRefImgCmd MEMBER m_captureRefImgCmd NOTIFY captureRefImgCmdChanged)
     Q_PROPERTY(int m_targetAltitude MEMBER m_targetAltitude NOTIFY targetAltitudeChanged)
     Q_PROPERTY(float m_aircraftPitch MEMBER m_aircraftPitch NOTIFY aircraftPitchChanged)
@@ -393,7 +393,7 @@ signals:
     void searchPitchRateChanged();
     void searchYawRateChanged();
     void gateSizeChanged();
-    void osdSwitchChanged();
+    // void osdSwitchChanged();
     void captureRefImgCmdChanged();
     void targetAltitudeChanged();
     void aircraftPitchChanged();
@@ -470,7 +470,7 @@ private:
     float m_searchPitchRate = 0;
     float m_searchYawRate = 0;
     int m_gateSize = 0;
-    int m_osdSwitch = 0;    //字符叠加指令消失，后面的61-152字节为预留区
+    // int m_osdSwitch = 0;    //字符叠加指令消失，后面的61-152字节为预留区
     int m_captureRefImgCmd = 0;
     int m_targetAltitude = 0;
     float m_aircraftPitch = 0;
@@ -840,13 +840,13 @@ struct image_send_frame {
     quint8 gate_size;
 
     // 字节60: 字符叠加 (0xAA=开, 0x55=关)
-    quint8 osd_switch;
+    //quint8 osd_switch;
 
-    // 字节61: 拍摄参考图指令 (0xAA=拍摄, 发三拍后恢复默认)
+    // 字节60: 拍摄参考图指令 (0xAA=拍摄, 发三拍后恢复默认)
     quint8 capture_ref_img_cmd;
 
-    // 字节62-152: 预留91字节
-    quint8 reserved3[91];       // 62~152 inclusive count = 152-62+1=91
+    // 字节61-152: 预留92字节
+    quint8 reserved3[92];       // 62~152 inclusive count = 152-62+1=91
 
     // 字节153-154: 目标海拔高度 (单位: m, 精度1)
     qint16 target_altitude;

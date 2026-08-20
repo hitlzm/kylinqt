@@ -17,7 +17,7 @@ Rectangle {
     // 模板装订弹窗
     TemplateBindingPopup {
         id: templateBindingPopup
-        bindingData: templateBindingData
+        bindingData: templateBindingData    
     }
 
     // 下边沿
@@ -271,6 +271,7 @@ Rectangle {
             enabled: imageData.portOpen && pitchInputValid && yawInputValid
             onClicked: {
                 imageSendData.buildFrame()
+                //imageSendData.m_seekerCtrlWord = 0x00  
                 console.log("图像导引头数据已发送")
             }
         }
@@ -281,17 +282,19 @@ Rectangle {
             height: 32
             text: "拍摄参考图"
             onClicked: {
-                imageSendData.m_captureRefImgCmd = 0xaa //发三拍后恢复默认值
+                imageSendData.m_captureRefImgCmd = 0xaa //拍摄参考图指令，发三拍后恢复默认值
                 imageSendData.buildFrame()
+                console.log("图像导引头数据已发送")
+                imageSendData.m_captureRefImgCmd = 0x00 //发三拍后恢复默认值
             }
         }
-        // 字符叠加开关
-        MySwitch {
-            id: mySwitch
-            width: 120
-            height: 32
-            title: "字符叠加"
-        }
+        // // 字符叠加开关
+        // MySwitch {
+        //     id: mySwitch
+        //     width: 120
+        //     height: 32
+        //     title: "字符叠加"
+        // }
     }
 
     // ═══════════════════════════════════════════════════════
@@ -306,93 +309,232 @@ Rectangle {
         anchors.topMargin: 8
         x: serialRow.x + serialComboBox.x
 
-        MyTextField {
-            id: remoteHostField
-            mywidth: 160
-            myheight: 60
-            title: "远程主机地址"
-        }
-        MyTextField {
-            id: remotePortField
-            mywidth: 120
-            myheight: 60
-            title: "远程主机端口"
-        }
-        // 按钮使用 Item 包裹以垂直居中于较高的 MyTextField
-        Item {
-            width: 80
-            height: remoteHostField.myheight
-            CusButton_Blue {
-                id: connectButton
-                width: 80
-                height: 32
-                text: templateBindingData.connected ? "断开" : "连接"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 5
+        // MyTextField {
+        //     id: remoteHostField
+        //     mywidth: 160
+        //     myheight: 60
+        //     title: "远程主机地址"
+        // }
+        // MyTextField {
+        //     id: remotePortField
+        //     mywidth: 120
+        //     myheight: 60
+        //     title: "远程主机端口"
+        // }
+        // // 按钮使用 Item 包裹以垂直居中于较高的 MyTextField
+        // Item {
+        //     width: 80
+        //     height: remoteHostField.myheight
+        //     CusButton_Blue {
+        //         id: connectButton
+        //         width: 80
+        //         height: 32
+        //         text: templateBindingData.connected ? "断开" : "连接"
+        //         anchors.verticalCenter: parent.verticalCenter
+        //         anchors.verticalCenterOffset: 5
 
-                Timer {
-                    id: connectTimer
-                    interval: 1000
-                    onTriggered: {
-                        if (templateBindingData.connected) {
-                            netmsg.message = "网络已连接！"
-                            netmsg.open()
-                        } else {
-                            netmsg.message = "网络连接失败！"
-                            netmsg.open()
-                        }
-                    }
+        //         Timer {
+        //             id: connectTimer
+        //             interval: 1000
+        //             onTriggered: {
+        //                 if (templateBindingData.connected) {
+        //                     netmsg.message = "网络已连接！"
+        //                     netmsg.open()
+        //                 } else {
+        //                     netmsg.message = "网络连接失败！"
+        //                     netmsg.open()
+        //                 }
+        //             }
+        //         }
+
+        //         onClicked: {
+        //             templateBindingData.host = remoteHostField.text
+        //             templateBindingData.port = parseInt(remotePortField.text) || 0
+        //             if (templateBindingData.connected) {
+        //                 templateBindingData.requestDisconnect()
+        //             } else {
+        //                 templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+        //                 connectTimer.start()
+        //             }
+        //         }
+        //     }
+        // }
+        // Item {
+        //     width: 100
+        //     height: remoteHostField.myheight
+        //     CusButton_Blue {
+        //         id: templateBindButton
+        //         width: 100
+        //         height: 32
+        //         text: "模板装订"
+        //         anchors.verticalCenter: parent.verticalCenter
+        //         anchors.verticalCenterOffset: 5
+        //         onClicked: {
+        //             // 同步远程主机地址和端口到模板装订数据
+        //             templateBindingData.host = remoteHostField.text
+        //             templateBindingData.port = parseInt(remotePortField.text) || 0
+        //             // 如果已连接，尝试连接模板装订的网络
+        //             templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
+        //             templateBindingPopup.visible = true
+        //         }
+        //     }
+        // }
+        
+        // TODO：把模板装订换成控制导引头内部调节机构运动
+
+        // ═══════════════════════════════════════════════════════
+        // 数值调节 — CusSpinBox + 上下左右箭头按钮（新增）
+        // ═══════════════════════════════════════════════════════
+        CusSpinBox {
+            id: adjustSpinBox
+            width: 120
+            height: 32
+            from: 1
+            to: 10
+            stepSize: 1.5
+            value: 1
+            anchors.verticalCenter: parent.verticalCenter
+            onValueChanged: {
+                // TODO: 把调节值 value 下发到实际控制对象（如 imageSendData 对应成员）
+                console.log("调节值 = " + value)
+            }
+        }
+
+        // ── 上箭头 ──
+        CusButton_White {
+            id: btnUp
+            width: 40
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            contentItem: Image {
+                source: "qrc:/components/arrowUp.jpg"
+                width: 28
+                height: 28
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                opacity: parent.pressed ? 0.7 : 1.0
+            }
+            // 长按期间持续发送
+            Timer {
+                id: upRepeatTimer
+                interval: 250
+                repeat: true
+                running: btnUp.pressed
+                onTriggered: {
+                    // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
+                    imageSendData.m_searchPitchRate = adjustSpinBox.value
+                    imageSendData.buildFrame()
+                    imageSendData.m_searchPitchRate = 0
+                    console.log("上移中...")
                 }
+            }
+            onClicked: {
+                
+            }
+        }
 
-                onClicked: {
-                    templateBindingData.host = remoteHostField.text
-                    templateBindingData.port = parseInt(remotePortField.text) || 0
-                    if (templateBindingData.connected) {
-                        templateBindingData.requestDisconnect()
-                    } else {
-                        templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
-                        connectTimer.start()
-                    }
+        // ── 下箭头 ──
+        CusButton_White {
+            id: btnDown
+            width: 40
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            contentItem: Image {
+                source: "qrc:/components/arrowDown.png"
+                width: 28
+                height: 28
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                opacity: parent.pressed ? 0.7 : 1.0
+            }
+            // 长按期间持续发送
+            Timer {
+                id: downRepeatTimer
+                interval: 250
+                repeat: true
+                running: btnDown.pressed
+                onTriggered: {
+                    imageSendData.m_searchPitchRate = adjustSpinBox.value * -1
+                    imageSendData.buildFrame()
+                    imageSendData.m_searchPitchRate = 0
+                    console.log("下移中...")
                 }
             }
         }
-        Item {
-            width: 100
-            height: remoteHostField.myheight
-            CusButton_Blue {
-                id: templateBindButton
-                width: 100
-                height: 32
-                text: "模板装订"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 5
-                onClicked: {
-                    // 同步远程主机地址和端口到模板装订数据
-                    templateBindingData.host = remoteHostField.text
-                    templateBindingData.port = parseInt(remotePortField.text) || 0
-                    // 如果已连接，尝试连接模板装订的网络
-                    templateBindingData.requestConnect(templateBindingData.host, templateBindingData.port)
-                    templateBindingPopup.visible = true
+
+        // ── 左箭头 ──
+        CusButton_White {
+            id: btnLeft
+            width: 40
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            contentItem: Image {
+                source: "qrc:/components/arrowLeft.png"
+                width: 28
+                height: 28
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                opacity: parent.pressed ? 0.7 : 1.0
+            }
+            // 长按期间持续发送
+            Timer {
+                id: leftRepeatTimer
+                interval: 250
+                repeat: true
+                running: btnLeft.pressed
+                onTriggered: {
+                    imageSendData.m_searchYawRate = adjustSpinBox.value * -1
+                    imageSendData.buildFrame()
+                    imageSendData.m_searchYawRate = 0
                 }
             }
         }
+
+        // ── 右箭头 ──
+        CusButton_White {
+            id: btnRight
+            width: 40
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            contentItem: Image {
+                source: "qrc:/components/arrowRight.png"
+                width: 28
+                height: 28
+                fillMode: Image.PreserveAspectFit
+                anchors.centerIn: parent
+                opacity: parent.pressed ? 0.7 : 1.0
+            }
+            // 长按期间持续发送
+            Timer {
+                id: rightRepeatTimer
+                interval: 250
+                repeat: true
+                running: btnRight.pressed
+                onTriggered: {
+                    imageSendData.m_searchYawRate = adjustSpinBox.value
+                    imageSendData.buildFrame()
+                    imageSendData.m_searchYawRate = 0    //赋零也可以放在buildFrame()最后
+                }
+            }
+        }
+
         Item {
             width:130
-            height: remoteHostField.myheight   
+            height: 55   
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
             Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
         Item {
             width:130
-            height: remoteHostField.myheight 
+            height: 55 
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
             Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
         Item {
             width:130
-            height: remoteHostField.myheight   
+            height: 55   
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
             Indicator { id: indVideoOut; label: "视频输出";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
@@ -465,22 +607,25 @@ Rectangle {
             mywidth: 180
             myheight: 55
             title: "光学参数装订控制字"
-            model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正", "红外非均匀校正", "模板擦除", "积分时间设置"]
+            //model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正", "红外非均匀校正", "模板擦除", "积分时间设置"]
+            model: ["默认值", "盲元校正", "红外非均匀校正", "模板擦除", "积分时间设置"]
             onCurrentIndexChanged: {
                 root.opticalParamCtrlCmd = mycurrentIndex
                 if (opticalParamCtrlCmd === 0) {
                     imageSendData.m_opticalParamCtrl = 0x00
-                } else if (opticalParamCtrlCmd === 1) {
-                    imageSendData.m_opticalParamCtrl = 0xE1
-                } else if (opticalParamCtrlCmd === 2) {
-                    imageSendData.m_opticalParamCtrl = 0xE2
-                } else if (opticalParamCtrlCmd === 3) {
+                } 
+                // else if (opticalParamCtrlCmd === 1) {
+                //     imageSendData.m_opticalParamCtrl = 0xE1
+                // } else if (opticalParamCtrlCmd === 2) {
+                //     imageSendData.m_opticalParamCtrl = 0xE2
+                // } 
+                else if (opticalParamCtrlCmd === 1) {
                     imageSendData.m_opticalParamCtrl = 0xE3
-                } else if (opticalParamCtrlCmd === 4) {
+                } else if (opticalParamCtrlCmd === 2) {
                     imageSendData.m_opticalParamCtrl = 0xE4
-                } else if (opticalParamCtrlCmd === 5) {
+                } else if (opticalParamCtrlCmd === 3) {
                     imageSendData.m_opticalParamCtrl = 0xE5
-                } else if (opticalParamCtrlCmd === 6) {
+                } else if (opticalParamCtrlCmd === 4) {
                     imageSendData.m_opticalParamCtrl = 0xE6
                 }
             }
@@ -612,6 +757,7 @@ Rectangle {
             }
         }
 
+        // TODO：删除修正指令状态
         // ── 修正指令状态 ──
         MyComboBox {
             id: myCombox7
@@ -626,21 +772,102 @@ Rectangle {
             }
         }
 
-        // ── 波门大小 ──
-        MyComboBox {
-            id: myCombox8
-            mywidth: 120
-            myheight: 55
-            title: "波门大小"
-            model: ["大", "小"]
-            onCurrentIndexChanged: {
-                if (mycurrentIndex === 0) {
-                    imageSendData.m_gateSize = 0xaa
-                } else if (mycurrentIndex === 1) {
-                    imageSendData.m_gateSize = 0x55
+        // TODO：把波门大小选择框改成增大与减小按钮，停止按下后，框大小不再变化 
+
+
+
+
+
+        // ── 波门调整（新增）──
+        Row {
+            id: gateSizeRow
+            spacing: 10
+            anchors.verticalCenter: parent.verticalCenter
+
+            // 第一部分：文字标签
+            Text {
+                text: "波门调整"
+                font.pixelSize: 18
+                font.bold: true
+                color: "#333333"
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            // 第二部分：增大按钮（plus）
+            CusButton_White {
+                id: gateSizePlusBtn
+                width: 32
+                height: 32
+                anchors.verticalCenter: parent.verticalCenter
+                contentItem: Image {
+                    source: "qrc:/components/plus.png"
+                    width: 28
+                    height: 28
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    opacity: parent.pressed ? 0.7 : 1.0
+                }
+                //按下按钮时持续发送
+                Timer {
+                id: plusRepeatTimer
+                interval: 250
+                repeat: true
+                running: gateSizePlusBtn.pressed
+                onTriggered: {
+                    // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
+                    imageSendData.m_gateSize = 0xaa   // 增大波门
+                    imageSendData.buildFrame()
+                    imageSendData.m_searchPitchRate = 0x00 //长按结束后回默认值
+                    console.log("增大波门中...")
+                }
+                }
+            }
+
+            // 第三部分：减小按钮（minus）
+            CusButton_White {
+                id: gateSizeMinusBtn
+                width: 32
+                height: 32
+                anchors.verticalCenter: parent.verticalCenter
+                contentItem: Image {
+                    source: "qrc:/components/minus.png"
+                    width: 28
+                    height: 28
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    opacity: parent.pressed ? 0.7 : 1.0
+                }
+                Timer {
+                id: minusRepeatTimer
+                interval: 250
+                repeat: true
+                running: gateSizeMinusBtn.pressed
+                onTriggered: {
+                    // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
+                    imageSendData.m_gateSize = 0x55   // 减小波门
+                    imageSendData.buildFrame()
+                    imageSendData.m_searchPitchRate = 0x00 //长按结束后回默认值
+                    console.log("减小波门中...")
+                }
                 }
             }
         }
+
+        // ── 波门大小 ──
+        // MyComboBox {
+        //     id: myCombox8
+        //     mywidth: 120
+        //     myheight: 55
+        //     title: "波门大小"
+        //     model: ["大", "小"]
+        //     onCurrentIndexChanged: {
+        //         if (mycurrentIndex === 0) {
+        //             imageSendData.m_gateSize = 0xaa
+        //         } else if (mycurrentIndex === 1) {
+        //             imageSendData.m_gateSize = 0x55
+        //         }
+        //     }
+        // }
         Item{
             width:130
             height: myCombox4.myheight   

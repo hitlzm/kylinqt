@@ -22,5 +22,11 @@
         <file>components/MessagePopup.qml</file>
         <file>components/MsgPopup2.qml</file>
         <file>components/TemplateBindingPopup.qml</file>
+        <file>components/arrowUp.jpg</file>
+        <file>components/arrowDown.png</file>
+        <file>components/arrowLeft.png</file>
+        <file>components/arrowRight.png</file>
+        <file>components/plus.png</file>
+        <file>components/minus.png</file>
     </qresource>
 </RCC>
