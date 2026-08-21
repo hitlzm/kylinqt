@@ -31,12 +31,6 @@ SerialPort::~SerialPort()
 
 void SerialPort::dowork()
 {
-    // ── 实时调度（部署到麒麟 + RT 内核后取消注释）──
-    // struct sched_param param;
-    // param.sched_priority = 80;   // 1-99，越高越优先
-    // if (sched_setscheduler(0, SCHED_FIFO, &param) != 0)
-    //     qWarning("SCHED_FIFO failed: %s", strerror(errno));
-    // mlockall(MCL_CURRENT | MCL_FUTURE);  // 锁定内存，防止缺页延迟
 
     // QSerialPort 在工作线程中创建，避免主线程创建后被 moveToThread 迁移
     m_serialPort = new QSerialPort(this);

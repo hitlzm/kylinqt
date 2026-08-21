@@ -9,7 +9,7 @@
 #include <QFileInfo>
 #include <QStringList>
 #include "serialport/serialport_laser.h"
-#include "serialport/serialport_image.h"
+#include "serialportserialport_im/age.h"
 #include "serialport/serialport_turntable_HEX.h"
 #include "serialport/serialport_BD.h"
 #include "serialport/serialport_CCD.h"
@@ -79,6 +79,9 @@ int main(int argc, char *argv[])
     TurntableSendDataHex *turntableSendData = new TurntableSendDataHex(&app);
     BDData *bdData = new BDData(&app);
     CCDData *ccdData = new CCDData(&app);
+    // CCD 串口对象固定运行在主线程（指令量小、无阻塞等待，不需要独立线程）
+    SerialPortCCD *ccdPort = new SerialPortCCD(&app);
+    ccdPort->dowork();   // 在主线程创建 QSerialPort 与定时器
     //创建模板装订数据对象（主线程，QML 直接访问）
     TemplateBindingData *templateBindingData = new TemplateBindingData(&app);
 
@@ -91,7 +94,6 @@ int main(int argc, char *argv[])
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntableHex *turntablePort = new SerialPortTurntableHex;
     SerialPortBD *bdPort = new SerialPortBD;
-    SerialPortCCD *ccdPort = new SerialPortCCD;       // 无父对象，将移到子线程
     // 网络传输 Worker（移到 NetworkThread）
     TemplateBindingWorker *networkWorker = new TemplateBindingWorker;
 
@@ -198,7 +200,7 @@ int main(int argc, char *argv[])
                    << modelCandidates.join(" / ");
     }
 
-    // 目标中心坐标 → CCD 串口线程；识别/加载错误输出到日志
+    // 目标中心坐标 → CCD 串口（主线程）；识别/加载错误输出到日志
     QObject::connect(streamProc, &StreamProcessor::targetCenterChanged,
                      ccdPort,    &SerialPortCCD::recvTargetCenter,
                      Qt::QueuedConnection);
@@ -285,7 +287,7 @@ int main(int argc, char *argv[])
     QObject::connect(bdPort, &SerialPortBD::portsChanged, bdData, &BDData::setPortList, Qt::QueuedConnection);
     QObject::connect(bdPort, &SerialPortBD::bdFrameReceived, bdData, &BDData::updateFromFrame, Qt::QueuedConnection);
 
-    // ── CCD: 主线程 Data → 工作线程 Worker ──
+    // ── CCD: Data → CCD 串口（主线程，QueuedConnection 保持原异步语义）──
     QObject::connect(ccdData, &CCDData::requestOpenPort,  ccdPort, &SerialPortCCD::onOpenPort,  Qt::QueuedConnection);
     QObject::connect(ccdData, &CCDData::requestClosePort, ccdPort, &SerialPortCCD::onClosePort, Qt::QueuedConnection);
     QObject::connect(ccdData, &CCDData::requestScanPorts, ccdPort, &SerialPortCCD::onScanPorts, Qt::QueuedConnection);
@@ -298,7 +300,7 @@ int main(int argc, char *argv[])
     QObject::connect(ccdData, &CCDData::reqBacklightclose,  ccdPort, &SerialPortCCD::sendBacklightclose,  Qt::QueuedConnection);
     QObject::connect(ccdData, &CCDData::reqResolutionchange, ccdPort, &SerialPortCCD::sendResolutionchange, Qt::QueuedConnection);
 
-    // ── CCD: 工作线程 Worker → 主线程 Data ──
+    // ── CCD: CCD 串口 → Data（主线程）──
     QObject::connect(ccdPort, &SerialPortCCD::portOpened,   ccdData, &CCDData::setPortOpen, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::portClosed,   ccdData, [ccdData]{ ccdData->setPortOpen(false); }, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::portError,    ccdData, &CCDData::setError,    Qt::QueuedConnection);
@@ -388,13 +390,11 @@ int main(int argc, char *argv[])
     QThread *Turntablethread = new QThread;
     QThread *Handlethread = new QThread;
     QThread *BDthread = new QThread;
-    QThread *CCDthread = new QThread;
     QThread *NetworkThread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
     bdPort->moveToThread(BDthread);
-    ccdPort->moveToThread(CCDthread);
     _myhandle->moveToThread(Handlethread);
     networkWorker->moveToThread(NetworkThread);
 
@@ -402,7 +402,6 @@ int main(int argc, char *argv[])
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
     QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntableHex::dowork);
     QObject::connect(BDthread, &QThread::started, bdPort, &SerialPortBD::dowork);
-    QObject::connect(CCDthread, &QThread::started, ccdPort, &SerialPortCCD::dowork);
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
     QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
@@ -415,8 +414,6 @@ int main(int argc, char *argv[])
     QObject::connect(Handlethread,    &QThread::finished, Handlethread,     &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, bdPort,           &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, BDthread,         &QObject::deleteLater);
-    QObject::connect(CCDthread,      &QThread::finished, ccdPort,          &QObject::deleteLater);
-    QObject::connect(CCDthread,      &QThread::finished, CCDthread,        &QObject::deleteLater);
     QObject::connect(NetworkThread,  &QThread::finished, networkWorker,    &QObject::deleteLater);
     QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);
 
@@ -426,7 +423,6 @@ int main(int argc, char *argv[])
     Turntablethread->start();
     Handlethread->start();
     BDthread->start();
-    CCDthread->start();
     NetworkThread->start();
     
     const int ret = app.exec();
@@ -458,7 +454,6 @@ int main(int argc, char *argv[])
     stopWorkerThread(Turntablethread);
     stopWorkerThread(Handlethread);
     stopWorkerThread(BDthread);
-    stopWorkerThread(CCDthread);
     stopWorkerThread(NetworkThread);
 
     // 3) The thread objects were allocated without a parent; collect them now.
@@ -470,7 +465,6 @@ int main(int argc, char *argv[])
     delete Turntablethread;
     delete Handlethread;
     delete BDthread;
-    delete CCDthread;
     delete NetworkThread;
 
     return ret;

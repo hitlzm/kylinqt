@@ -375,6 +375,9 @@ void ImageSendData::buildFrame()
     // frame.crc16 = crc;
     //将校验位计算移到工作线程
     emit requestSendData(frame);
+    //将导引头控制字恢复零值
+    m_seekerCtrlWord = 0;
+    emit seekerCtrlWordChanged();
 }
 
 void ImageSendData::buildDeviation(int num ,int x ,int y)
@@ -507,7 +510,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
             data[60]=0x00;   //拍摄参考图
         }
 
-        //控制导引头调节机构运动和波门调整在最后几帧要发0
+        //控制导引头调节机构运动和波门调整在最后几帧要发0,否则导引头会认为还要继续运动。也可以改成松开按钮后置零并发送几拍0
         if(sendCount >= 7)
         {
             data[54]=0x00;    

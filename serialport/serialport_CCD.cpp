@@ -13,13 +13,11 @@
 
 SerialPortCCD::SerialPortCCD(QObject *parent)
     : SerialPort(parent)
-    , m_ccdData(new CCDData(nullptr))        // 留在主线程，不随 moveToThread 迁移
-{   
-    m_serialPort = new QSerialPort(this);
-    connect(m_serialPort, &QSerialPort::errorOccurred,
-            this, &SerialPort::handleError);
+    , m_ccdData(new CCDData(nullptr))        // 主线程 Data 对象，main.cpp 中替换为 ccdData
+{
+    // QSerialPort 由 dowork() 创建（CCD 串口固定运行在主线程，dowork() 在 main.cpp 中直接调用）
     onScanPorts();
-    // CCDData 请求信号 → SerialPortCCD 执行槽（跨线程连接在 main.cpp 中统一管理）
+    // CCDData 请求信号 → SerialPortCCD 执行槽（连接在 main.cpp 中统一管理）
 }
 
 void SerialPortCCD::send30XFocus()

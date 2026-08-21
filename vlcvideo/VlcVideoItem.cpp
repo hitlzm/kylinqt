@@ -579,6 +579,7 @@ void VlcVideoItem::ensureMpvCreated()
     mpv_set_option_string(m_mpv, "hwdec", "no");
     mpv_set_option_string(m_mpv, "config", "no");
     mpv_set_option_string(m_mpv, "msg-level", "all=debug");
+    mpv_set_option_string(m_mpv, "profile", "low-latency");  // 低延迟模式，减少解码缓冲
 
     int ret = mpv_initialize(m_mpv);
     if (ret < 0) {

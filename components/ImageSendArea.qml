@@ -74,6 +74,27 @@ Rectangle {
     // ═══════════════════════════════════════════════════════
     // 左侧 — 图像导引头控制字选择框（上移，原 titleText 已注释）
     // ═══════════════════════════════════════════════════════
+
+    //控制字转换函数
+    function ctrlWordToIndex(word) {
+    switch (word) {
+    case 0x00: return 0
+    case 0x01: return 1
+    case 0x02: return 2
+    case 0x03: return 3
+    case 0x04: return 4
+    case 0x06: return 5
+    case 0x55: return 6
+    case 0x40: return 7
+    case 0xA1: return 8
+    case 0xB1: return 9
+    case 0xED: return 10
+    case 0xEE: return 11
+    }
+    return 0
+    }
+
+
     Rectangle {
         id: commandArea
         width: 160
@@ -102,7 +123,8 @@ Rectangle {
 
                 delegate: CusRadioButton {
                     text: modelData
-                    checked: index === root.currentCmd
+                    //checked: index === root.currentCmd
+                    checked: index === root.ctrlWordToIndex(imageSendData.m_seekerCtrlWord)
                     font.pixelSize: 16
 
                     indicator.width: 18
@@ -817,7 +839,7 @@ Rectangle {
                     // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
                     imageSendData.m_gateSize = 0xaa   // 增大波门
                     imageSendData.buildFrame()
-                    imageSendData.m_searchPitchRate = 0x00 //长按结束后回默认值
+                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
                     console.log("增大波门中...")
                 }
                 }
@@ -846,7 +868,7 @@ Rectangle {
                     // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
                     imageSendData.m_gateSize = 0x55   // 减小波门
                     imageSendData.buildFrame()
-                    imageSendData.m_searchPitchRate = 0x00 //长按结束后回默认值
+                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
                     console.log("减小波门中...")
                 }
                 }
