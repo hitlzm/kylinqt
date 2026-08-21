@@ -15,10 +15,10 @@ Rectangle {
     }
 
     // 模板装订弹窗
-    TemplateBindingPopup {
-        id: templateBindingPopup
-        bindingData: templateBindingData    
-    }
+    // TemplateBindingPopup {
+    //     id: templateBindingPopup
+    //     bindingData: templateBindingData    
+    // }
 
     // 下边沿
     Rectangle {

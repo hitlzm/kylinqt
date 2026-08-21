@@ -506,6 +506,17 @@ void SerialPortImage::onSendData(image_send_frame frame) {
             data[6]=0x00;    //光学参数装订控制字
             data[60]=0x00;   //拍摄参考图
         }
+
+        //控制导引头调节机构运动和波门调整在最后几帧要发0
+        if(sendCount >= 7)
+        {
+            data[54]=0x00;    
+            data[55]=0x00;    
+            data[56]=0x00;    
+            data[57]=0x00;  
+            data[59]=0x00;    //光学参数装订控制字
+        }
+
         //更新数据后重新计算并填入校验位
         uint16_t crc = crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));
         data[222] = static_cast<char>(crc & 0xFF);        // 低字节
