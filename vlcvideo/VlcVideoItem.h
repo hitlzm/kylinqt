@@ -25,6 +25,7 @@ class VlcVideoItem : public QQuickFramebufferObject
     Q_PROPERTY(qreal frameWidth READ frameWidth NOTIFY frameSizeChanged)
     Q_PROPERTY(qreal frameHeight READ frameHeight NOTIFY frameSizeChanged)
     Q_PROPERTY(bool cpuFrameConsumer READ cpuFrameConsumer WRITE setCpuFrameConsumer NOTIFY cpuFrameConsumerChanged)
+    Q_PROPERTY(bool recording READ recording NOTIFY recordingChanged)
 
 public:
     explicit VlcVideoItem(QQuickItem *parent = nullptr);
@@ -50,6 +51,12 @@ public:
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
     Q_INVOKABLE void stop();
+
+    // ── 原始码流录制（mpv record-file，零转码）──
+    // filePath 例如 video143025.ts；停止时内部把 record-file 置空以收尾文件
+    Q_INVOKABLE void startRecord(const QString &filePath);
+    Q_INVOKABLE void stopRecord();
+    bool recording() const { return m_recording; }
 
     // ── 像素读取接口 ──────────────────────────────────────
     /// QML 调用，传入控件坐标，映射为视频帧坐标并发射 reqDeviationToImg 信号
@@ -96,6 +103,7 @@ signals:
     void seekableChanged();
     void frameSizeChanged();
     void cpuFrameConsumerChanged();
+    void recordingChanged();
     void stopped();
     void ended();
     void error(const QString &errorMsg);
@@ -166,6 +174,7 @@ private:
 
     bool m_playing = false;
     bool m_playClicked = false;
+    bool m_recording = false;
     bool m_needClearDisplay = false;
     QTimer *m_playTimer = nullptr;
     int m_volume = 100;

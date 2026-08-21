@@ -20,6 +20,7 @@
 #include "ModeControl/ModeController.h"
 #include "log/LogManager.h"
 #include "network/TemplateBindingClient.h"
+#include "record/DataRecorder.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -89,6 +90,9 @@ int main(int argc, char *argv[])
     LogManager *logManager = LogManager::instance();
     logManager->setParent(&app);
 
+    // 数据保存控制器（方案 C：串口原始数据 txt + 视频 record-file 录 TS → ffmpeg 转 MP4）
+    DataRecorder *dataRecorder = new DataRecorder(&app);
+
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
     SerialPortImage *imagePort = new SerialPortImage;
@@ -130,6 +134,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
     engine.rootContext()->setContextProperty("templateBindingData", templateBindingData);
     engine.rootContext()->setContextProperty("logManager", logManager);
+    engine.rootContext()->setContextProperty("dataRecorder", dataRecorder);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
     qmlRegisterType<VlcFrameItem>("VlcVideo", 1, 0, "VlcFrame");
 
@@ -151,6 +156,7 @@ int main(int argc, char *argv[])
     if (QObject *rootObj = engine.rootObjects().value(0)) {
         if (VlcVideoItem *vlcItem = rootObj->findChild<VlcVideoItem*>()) {
             streamProc->setVideoSource(vlcItem);
+            dataRecorder->setVideoItem(vlcItem);
         } else {
             qWarning() << "[main] VlcVideoItem not found; StreamProcessor will run without video source";
         }
@@ -244,6 +250,11 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::portError,    imageData, &ImageData::setError,    Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::portsChanged, imageData, &ImageData::setPortList, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::imageFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
+    // ── 原始帧字节流 → 数据保存 ──
+    QObject::connect(imagePort, &SerialPortImage::imageFrameReceived,
+                     dataRecorder, &DataRecorder::onImageFrame, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::laserRawFrameReceived,
+                     dataRecorder, &DataRecorder::onLaserFrame, Qt::QueuedConnection);
 
     // ── 偏差像素链：QML点击 → VlcVideoItem → imageSendData(桥) → imagePort → imageSendData ──
     QObject::connect(imageSendData, &ImageSendData::deviationPixelRelayed, imagePort, &SerialPortImage::recvDeviationPixel, Qt::QueuedConnection);
@@ -455,6 +466,9 @@ int main(int argc, char *argv[])
     stopWorkerThread(Handlethread);
     stopWorkerThread(BDthread);
     stopWorkerThread(NetworkThread);
+
+    // 2.5) 退出前收尾数据保存：冲刷串口 txt、停止视频录制并触发转封装
+    dataRecorder->stopSave();
 
     // 3) The thread objects were allocated without a parent; collect them now.
     //    Any pending deleteLater events are dropped when the receiver is

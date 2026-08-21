@@ -461,6 +461,7 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
     m_pitch = frame.optical_pitch * 0.01;
 
     emit laserFrameReceived(frame);
+    emit laserRawFrameReceived(rawData);
     
     //判断激光导引头是否被选中为外引导源，是的话更新数据（1s跟踪模式）
     if(exindex == ExguideMode)

@@ -723,6 +723,34 @@ void VlcVideoItem::setSource(const QString &url)
     }
 }
 
+// ── 原始码流录制（record-file：解包后原样写盘，不转码不重封装）──
+void VlcVideoItem::startRecord(const QString &filePath)
+{
+    if (!m_mpv) {
+        qWarning() << "[MpvVideo] startRecord 被忽略：mpv 尚未创建";
+        return;
+    }
+    if (filePath.isEmpty()) {
+        qWarning() << "[MpvVideo] startRecord 被忽略：文件路径为空";
+        return;
+    }
+    mpv_set_property_string(m_mpv, "record-file", filePath.toUtf8().constData());
+    m_recording = true;
+    emit recordingChanged();
+    qDebug() << "[MpvVideo] 开始录制原始码流:" << filePath;
+}
+
+void VlcVideoItem::stopRecord()
+{
+    if (m_mpv)
+        mpv_set_property_string(m_mpv, "record-file", "");
+    if (m_recording) {
+        m_recording = false;
+        emit recordingChanged();
+    }
+    qDebug() << "[MpvVideo] 停止录制原始码流";
+}
+
 void VlcVideoItem::play()
 {
     if (!m_mpv) return;
@@ -866,6 +894,9 @@ void VlcVideoItem::releasePlayer()
 
     m_setupInProgress = false;
     m_needClearDisplay = true;   // 通知渲染器清空上一视频流的残留帧
+    // 换源时确保不再往旧文件写
+    if (m_recording)
+        stopRecord();
 
     // 复位视频参数与“连接成功”标志：每次重新加载都重新判定
     m_videoDw = 0;

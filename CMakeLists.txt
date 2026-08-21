@@ -106,6 +106,7 @@ else()
       opencv/streamprocessor.cpp
       opencv/pixelkalmantracker.cpp
       opencv/cvconvert.h
+      record/DataRecorder.cpp
       handle/myhandle.h
       ModeControl/ModeController.h
       serialport/circularbuffer.h

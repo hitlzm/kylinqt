@@ -628,20 +628,17 @@ typedef struct {
     // 字节21-22: 偏航框架角
     qint16 yaw_frame_angle;
 
-    // 字节23: 修正指令状态回告 (bit0)
-    quint8 correction_cmd_status;
-    //字节24-26预留三字节
+    //字节23-25预留三字节
     quint8 reserved3[3];
+    // 字节26: 修正指令状态回告 (bit0)
+    quint8 correction_cmd_status;
     // 字节27: 修正指令次数回告
     quint8 correction_cmd_count;
-    // 字节25-26: 俯仰陀螺
+    // 字节28-29: 俯仰陀螺
     qint16 pitch_gyro;
 
-    // 字节27-28: 偏航陀螺
+    // 字节30-31: 偏航陀螺
     qint16 yaw_gyro;
-
-    // 字节29-31: 预留3字节
-    
 
     // 字节32: 跟踪状态
     quint8 tracking_state;
@@ -694,7 +691,7 @@ typedef struct {
     // 字节95-100: 预留6字节
     quint8 reserved8[6];
 
-    // 字节101-102: Cbh_tv4405 (上位机新增)
+    // 字节101-102: Cbh_tv4405 (上位机新增) ,帧编号改成四位，不是两位
     quint16 cbh_tv4405;
 
     // 字节103-104: 未定义，作为预留

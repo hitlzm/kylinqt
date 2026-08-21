@@ -2,6 +2,7 @@
 #define SERIALPORT_LASER_H
 
 #include "serialport.h"
+#include <QByteArray>
 #include <QDateTime>
 #include <QTimer>
 #include "./circularbuffer.h"
@@ -286,6 +287,8 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void laserFrameReceived(const laser_recv_frame &frame);
+    // 原始帧字节流（与 laserFrameReceived 同帧发出，供数据保存等使用）
+    void laserRawFrameReceived(const QByteArray &rawData);
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
 
