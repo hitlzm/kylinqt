@@ -320,10 +320,10 @@ Rectangle {
     }
 
     // ═══════════════════════════════════════════════════════
-    // 右侧第二行 — 远程主机连接（新增）
+    // 右侧第二行 — 调节机构控制
     // ═══════════════════════════════════════════════════════
     Row {
-        id: remoteHostRow
+        id: dytctrlRow
         spacing: 20
         height: 60  // 显式高度 = 最高子项(remoteHostField.myheight)，保证子锚点 verticalCenter 可解析
 
@@ -409,7 +409,7 @@ Rectangle {
         // ═══════════════════════════════════════════════════════
         CusSpinBox {
             id: adjustSpinBox
-            width: 120
+            width: 80
             height: 32
             from: 1
             to: 10
@@ -540,6 +540,22 @@ Rectangle {
             }
         }
 
+        CusButton_Blue {
+            id: savebtn
+            width: 80
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            // 保存数据 ⇄ 停止保存 两种状态切换
+            text: dataRecorder.saving ? "停止保存" : "保存数据"
+            onClicked: {
+                if (dataRecorder.saving) {
+                    dataRecorder.stopSave()
+                } else {
+                    dataRecorder.startSave()
+                }
+            }
+        }
+
         Item {
             width:130
             height: 55   
@@ -571,7 +587,7 @@ Rectangle {
         spacing: 15
         height: 60  // 显式高度 = 最高子项(pitchPresetField.myheight)，保证子锚点 verticalCenter 可解析
 
-        anchors.top: remoteHostRow.bottom
+        anchors.top: dytctrlRow.bottom
         anchors.topMargin: 8
         x: serialRow.x + serialComboBox.x
 
