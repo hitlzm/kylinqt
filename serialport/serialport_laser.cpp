@@ -285,11 +285,12 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
  {  
     const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
      //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
-    frame.laser_period = (static_cast<qint16>(static_cast<unsigned char>(mydata[7])) << 8) | static_cast<unsigned char>(mydata[6]);
-    frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[9])) << 8) | static_cast<unsigned char>(mydata[8]);
-    frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[11])) << 8) | static_cast<unsigned char>(mydata[10]);
-    frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[13])) << 8) | static_cast<unsigned char>(mydata[12]);
-    frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[15])) << 8) | static_cast<unsigned char>(mydata[14]);
+     //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
+    frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(mydata[6])) << 8) | static_cast<unsigned char>(mydata[7]);
+    frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[8])) << 8) | static_cast<unsigned char>(mydata[9]);
+    frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[10])) << 8) | static_cast<unsigned char>(mydata[11]);
+    frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[12])) << 8) | static_cast<unsigned char>(mydata[13]);
+    frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[14])) << 8) | static_cast<unsigned char>(mydata[15]);
     //校验位在定时器每拍发送前统一计算，这里无需预计算
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
