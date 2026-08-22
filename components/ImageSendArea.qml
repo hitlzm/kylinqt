@@ -505,7 +505,7 @@ Rectangle {
                 repeat: true
                 running: btnLeft.pressed
                 onTriggered: {
-                    imageSendData.m_searchYawRate = adjustSpinBox.value * -1
+                    imageSendData.m_searchYawRate = adjustSpinBox.value 
                     imageSendData.buildFrame()
                     imageSendData.m_searchYawRate = 0
                 }
@@ -533,7 +533,7 @@ Rectangle {
                 repeat: true
                 running: btnRight.pressed
                 onTriggered: {
-                    imageSendData.m_searchYawRate = adjustSpinBox.value
+                    imageSendData.m_searchYawRate = adjustSpinBox.value * -1
                     imageSendData.buildFrame()
                     imageSendData.m_searchYawRate = 0    //赋零也可以放在buildFrame()最后
                 }

@@ -137,7 +137,11 @@ void DataRecorder::onImageFrame(const QByteArray &frame)
     if (!m_saving)
         return;
     ensureTxtFile();
-    m_txtBuffer.append(frame);
+    // 十六进制 ASCII 文本：原始帧字节多为非 UTF-8 二进制值，
+    // 直接落盘会导致麒麟等 Linux 文本查看器报“字符编码错误”。
+    // 每帧一行，空格分隔，可还原为原始字节（去掉空格后 hex → bytes）。
+    m_txtBuffer.append(frame.toHex(' '));
+    m_txtBuffer.append('\n');
 }
 
 void DataRecorder::onLaserFrame(const QByteArray &frame)
@@ -145,7 +149,8 @@ void DataRecorder::onLaserFrame(const QByteArray &frame)
     if (!m_saving)
         return;
     ensureTxtFile();
-    m_txtBuffer.append(frame);
+    m_txtBuffer.append(frame.toHex(' '));
+    m_txtBuffer.append('\n');
 }
 
 // ── 内部 ──
