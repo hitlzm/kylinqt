@@ -284,8 +284,7 @@ void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChange
 void SerialPortLaser::onSendData(laser_send_frame frame)
  {  
     const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
-     //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
-     //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
+    //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
     frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(mydata[6])) << 8) | static_cast<unsigned char>(mydata[7]);
     frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[8])) << 8) | static_cast<unsigned char>(mydata[9]);
     frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[10])) << 8) | static_cast<unsigned char>(mydata[11]);

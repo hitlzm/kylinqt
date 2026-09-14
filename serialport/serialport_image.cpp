@@ -10,6 +10,7 @@
 #define ExguideMode 0
 #define ExguideSrcImg 3
 #define Exguide_5ms 6
+
 #define Exguide_1s 7
 #define Maxsendcount 600 //每10分钟进行一次时间同步
 
