@@ -9,10 +9,11 @@
 #include <QFileInfo>
 #include <QStringList>
 #include "serialport/serialport_laser.h"
-#include "serialportserialport_im/age.h"
+#include "serialport/serialport_image.h"
 #include "serialport/serialport_turntable_HEX.h"
 #include "serialport/serialport_BD.h"
 #include "serialport/serialport_CCD.h"
+#include "serialport/serialport_tiltmeter.h"
 #include "vlcvideo/VlcVideoItem.h"
 #include "vlcvideo/VlcFrameItem.h"
 #include "opencv/streamprocessor.h"
@@ -70,6 +71,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
     qRegisterMetaType<RMCData>("RMCData");
     qRegisterMetaType<sendExGuideData>("sendExGuideData");
+    qRegisterMetaType<TiltFrame>("TiltFrame");
 
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);
@@ -80,6 +82,7 @@ int main(int argc, char *argv[])
     TurntableSendDataHex *turntableSendData = new TurntableSendDataHex(&app);
     BDData *bdData = new BDData(&app);
     CCDData *ccdData = new CCDData(&app);
+    TiltData *tiltData = new TiltData(&app);
     // CCD 串口对象固定运行在主线程（指令量小、无阻塞等待，不需要独立线程）
     SerialPortCCD *ccdPort = new SerialPortCCD(&app);
     ccdPort->dowork();   // 在主线程创建 QSerialPort 与定时器
@@ -98,6 +101,7 @@ int main(int argc, char *argv[])
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntableHex *turntablePort = new SerialPortTurntableHex;
     SerialPortBD *bdPort = new SerialPortBD;
+    SerialPortTiltmeter *tiltPort = new SerialPortTiltmeter;
     // 网络传输 Worker（移到 NetworkThread）
     TemplateBindingWorker *networkWorker = new TemplateBindingWorker;
 
@@ -109,6 +113,7 @@ int main(int argc, char *argv[])
     turntablePort->m_turntableDataHex = turntableData;
     turntablePort->m_turntableSendDataHex = turntableSendData;
     ccdPort->m_ccdData = ccdData;
+    tiltPort->m_tiltData = tiltData;
     //创建手柄对象
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
@@ -129,6 +134,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
     engine.rootContext()->setContextProperty("bdData", bdData);
     engine.rootContext()->setContextProperty("ccdData", ccdData);
+    engine.rootContext()->setContextProperty("tiltData", tiltData);
     // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
@@ -298,6 +304,20 @@ int main(int argc, char *argv[])
     QObject::connect(bdPort, &SerialPortBD::portsChanged, bdData, &BDData::setPortList, Qt::QueuedConnection);
     QObject::connect(bdPort, &SerialPortBD::bdFrameReceived, bdData, &BDData::updateFromFrame, Qt::QueuedConnection);
 
+    // ── Tiltmeter: 主线程 Data → 工作线程 Worker ──
+    QObject::connect(tiltData, &TiltData::requestOpenPort,       tiltPort, &SerialPortTiltmeter::onOpenPort,       Qt::QueuedConnection);
+    QObject::connect(tiltData, &TiltData::requestClosePort,      tiltPort, &SerialPortTiltmeter::onClosePort,      Qt::QueuedConnection);
+    QObject::connect(tiltData, &TiltData::requestScanPorts,      tiltPort, &SerialPortTiltmeter::onScanPorts,      Qt::QueuedConnection);
+    QObject::connect(tiltData, &TiltData::requestSetPollInterval, tiltPort, &SerialPortTiltmeter::onSetPollInterval, Qt::QueuedConnection);
+    QObject::connect(tiltData, &TiltData::requestSetSlaveAddress, tiltPort, &SerialPortTiltmeter::onSetSlaveAddress, Qt::QueuedConnection);
+
+    // ── Tiltmeter: 工作线程 Worker → 主线程 Data ──
+    QObject::connect(tiltPort, &SerialPortTiltmeter::portOpened,    tiltData, &TiltData::setPortOpen, Qt::QueuedConnection);
+    QObject::connect(tiltPort, &SerialPortTiltmeter::portClosed,    tiltData, [tiltData]{ tiltData->setPortOpen(false); }, Qt::QueuedConnection);
+    QObject::connect(tiltPort, &SerialPortTiltmeter::portError,     tiltData, &TiltData::setError,    Qt::QueuedConnection);
+    QObject::connect(tiltPort, &SerialPortTiltmeter::portsChanged,  tiltData, &TiltData::setPortList, Qt::QueuedConnection);
+    QObject::connect(tiltPort, &SerialPortTiltmeter::tiltFrameReceived, tiltData, &TiltData::updateFromFrame, Qt::QueuedConnection);
+
     // ── CCD: Data → CCD 串口（主线程，QueuedConnection 保持原异步语义）──
     QObject::connect(ccdData, &CCDData::requestOpenPort,  ccdPort, &SerialPortCCD::onOpenPort,  Qt::QueuedConnection);
     QObject::connect(ccdData, &CCDData::requestClosePort, ccdPort, &SerialPortCCD::onClosePort, Qt::QueuedConnection);
@@ -401,11 +421,13 @@ int main(int argc, char *argv[])
     QThread *Turntablethread = new QThread;
     QThread *Handlethread = new QThread;
     QThread *BDthread = new QThread;
+    QThread *Tiltthread = new QThread;
     QThread *NetworkThread = new QThread;
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
     bdPort->moveToThread(BDthread);
+    tiltPort->moveToThread(Tiltthread);
     _myhandle->moveToThread(Handlethread);
     networkWorker->moveToThread(NetworkThread);
 
@@ -413,6 +435,7 @@ int main(int argc, char *argv[])
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
     QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntableHex::dowork);
     QObject::connect(BDthread, &QThread::started, bdPort, &SerialPortBD::dowork);
+    QObject::connect(Tiltthread, &QThread::started, tiltPort, &SerialPortTiltmeter::dowork);
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
     QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
@@ -425,6 +448,8 @@ int main(int argc, char *argv[])
     QObject::connect(Handlethread,    &QThread::finished, Handlethread,     &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, bdPort,           &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, BDthread,         &QObject::deleteLater);
+    QObject::connect(Tiltthread,     &QThread::finished, tiltPort,         &QObject::deleteLater);
+    QObject::connect(Tiltthread,     &QThread::finished, Tiltthread,       &QObject::deleteLater);
     QObject::connect(NetworkThread,  &QThread::finished, networkWorker,    &QObject::deleteLater);
     QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);
 
@@ -434,6 +459,7 @@ int main(int argc, char *argv[])
     Turntablethread->start();
     Handlethread->start();
     BDthread->start();
+    Tiltthread->start();
     NetworkThread->start();
     
     const int ret = app.exec();
@@ -465,6 +491,7 @@ int main(int argc, char *argv[])
     stopWorkerThread(Turntablethread);
     stopWorkerThread(Handlethread);
     stopWorkerThread(BDthread);
+    stopWorkerThread(Tiltthread);
     stopWorkerThread(NetworkThread);
 
     // 2.5) 退出前收尾数据保存：冲刷串口 txt、停止视频录制并触发转封装
@@ -479,6 +506,7 @@ int main(int argc, char *argv[])
     delete Turntablethread;
     delete Handlethread;
     delete BDthread;
+    delete Tiltthread;
     delete NetworkThread;
 
     return ret;

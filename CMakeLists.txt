@@ -101,6 +101,7 @@ else()
       serialport/serialport_turntable_HEX.cpp
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
+      serialport/serialport_tiltmeter.cpp
       vlcvideo/VlcVideoItem.cpp
       vlcvideo/VlcFrameItem.cpp
       opencv/onnxyolodetector.cpp

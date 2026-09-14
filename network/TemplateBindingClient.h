@@ -259,13 +259,15 @@ public slots:
     void onDisconnect();
     void onSendImages();
     void onSendTxt(const QByteArray &txtData);
+    // 主线程 Data 对象与 worker 的握手回调：main.cpp 中以成员函数指针形式
+    // 连接（QObject::connect），因此必须是 public，否则外部取不到函数地址。
+    void onTxtSnapshotReady(const QByteArray &data);
+    void onImageSnapshotReady(const QString &filePath, int templateId);
 
 private slots:
     void onSocketConnected();
     void onSocketDisconnected();
     void onSocketError(QAbstractSocket::SocketError error);
-    void onTxtSnapshotReady(const QByteArray &data);
-    void onImageSnapshotReady(const QString &filePath, int templateId);
 
 signals:
     void connectedStatusChanged(bool connected);
