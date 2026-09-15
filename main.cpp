@@ -310,6 +310,8 @@ int main(int argc, char *argv[])
     QObject::connect(tiltData, &TiltData::requestScanPorts,      tiltPort, &SerialPortTiltmeter::onScanPorts,      Qt::QueuedConnection);
     QObject::connect(tiltData, &TiltData::requestSetPollInterval, tiltPort, &SerialPortTiltmeter::onSetPollInterval, Qt::QueuedConnection);
     QObject::connect(tiltData, &TiltData::requestSetSlaveAddress, tiltPort, &SerialPortTiltmeter::onSetSlaveAddress, Qt::QueuedConnection);
+    QObject::connect(tiltData, &TiltData::requestSendToPlatform, tiltPort, &SerialPortTiltmeter::onSendToPlatform, Qt::QueuedConnection);
+    QObject::connect(tiltData, &TiltData::requestSetTarget,      tiltPort, &SerialPortTiltmeter::onSetTarget,      Qt::QueuedConnection);
 
     // ── Tiltmeter: 工作线程 Worker → 主线程 Data ──
     QObject::connect(tiltPort, &SerialPortTiltmeter::portOpened,    tiltData, &TiltData::setPortOpen, Qt::QueuedConnection);
