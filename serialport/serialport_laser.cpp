@@ -12,6 +12,36 @@
 #define Exguide_1s      7
 #define Maxsendcount    600  // 每10分钟进行一次时间同步
 // ─────────────────────────────────────────────
+// 大端字节序工具：只在“位模式”层面解释字节顺序，不做任何数值缩放
+// ─────────────────────────────────────────────
+namespace {
+
+// 16 位无符号位模式 -> 有符号值：按二进制补码解释
+// 负数用 raw - 2^16 计算，避免把取值可能超过 qint16 范围的 int 直接窄化赋值
+//（C++20 之前该转换为实现定义行为，本工程为 C++14）。
+inline qint16 toSigned16(quint16 raw)
+{
+    if (raw <= 0x7FFFu)                                             // 0x0000~0x7FFF：非负
+        return static_cast<qint16>(raw);
+    return static_cast<qint16>(static_cast<qint32>(raw) - 0x10000);  // 0x8000~0xFFFF：负数
+}
+
+// 大端字节流 -> 16 位无符号值
+// quint16 参与运算前先整型提升为 int，移位结果最大 0xFFFF，落在 int 范围内，不存在移位溢出。
+inline quint16 readBigEndianU16(const uint8_t *p)
+{
+    return static_cast<quint16>((static_cast<quint16>(p[0]) << 8)
+                                | static_cast<quint16>(p[1]));
+}
+
+// 大端字节流 -> 16 位有符号值：先按 quint16 组装，再按补码解释
+inline qint16 readBigEndianI16(const uint8_t *p)
+{
+    return toSigned16(readBigEndianU16(p));
+}
+
+} // namespace
+// ─────────────────────────────────────────────
 // LaserData
 // ─────────────────────────────────────────────
 
@@ -285,11 +315,19 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
  {  
     const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
     //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
-    frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(mydata[6])) << 8) | static_cast<unsigned char>(mydata[7]);
-    frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[8])) << 8) | static_cast<unsigned char>(mydata[9]);
-    frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[10])) << 8) | static_cast<unsigned char>(mydata[11]);
-    frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[12])) << 8) | static_cast<unsigned char>(mydata[13]);
-    frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[14])) << 8) | static_cast<unsigned char>(mydata[15]);
+    //以下为原写法（int 表达式直接窄化赋给 qint16/quint16，C++20 之前属实现定义行为），
+    //现改为“先按 quint16 组装，再按二进制补码解释”，线上字节完全一致：
+    //frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(mydata[6])) << 8) | static_cast<unsigned char>(mydata[7]);
+    //frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[8])) << 8) | static_cast<unsigned char>(mydata[9]);
+    //frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[10])) << 8) | static_cast<unsigned char>(mydata[11]);
+    //frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[12])) << 8) | static_cast<unsigned char>(mydata[13]);
+    //frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[14])) << 8) | static_cast<unsigned char>(mydata[15]);
+    //注意：mydata 指向 frame 自身的内存，先读原字节、再写回字段，不依赖赋值语句的求值顺序
+    frame.laser_period = readBigEndianU16(mydata + 6);
+    frame.param2       = readBigEndianI16(mydata + 8);
+    frame.param3       = readBigEndianI16(mydata + 10);
+    frame.param4       = readBigEndianI16(mydata + 12);
+    frame.param5       = readBigEndianI16(mydata + 14);
     //校验位在定时器每拍发送前统一计算，这里无需预计算
     auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
@@ -397,6 +435,8 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
     laser_recv_frame frame{};
     //将大端序数据转化为小端序
     if(rawData.size() >= static_cast<int>(sizeof(laser_recv_frame))) {
+        // 按字节访问同一份原始数据（供下方大端序组装使用）
+        const uint8_t *rdata = reinterpret_cast<const uint8_t *>(rawData.constData());
         frame.frame_header1 = static_cast<quint8>(rawData[0]);
         frame.frame_header2 = static_cast<quint8>(rawData[1]);
         frame.frame_header3 = static_cast<quint8>(rawData[2]);
@@ -407,15 +447,26 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         frame.fault_info = static_cast<qint8>(rawData[7]);
 
         // 处理大端序的16位数据
-        frame.optical_azimuth = (static_cast<qint16>(static_cast<unsigned char>(rawData[8])) << 8) | static_cast<unsigned char>(rawData[9]);
-        frame.optical_pitch = (static_cast<qint16>(static_cast<unsigned char>(rawData[10])) << 8) | static_cast<unsigned char>(rawData[11]);
-        frame.gyro_azimuth_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[12])) << 8) | static_cast<unsigned char>(rawData[13]);
-        frame.gyro_pitch_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[14])) << 8) | static_cast<unsigned char>(rawData[15]);
-        frame.los_azimuth_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[16])) << 8) | static_cast<unsigned char>(rawData[17]);
-        frame.los_pitch_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[18])) << 8) | static_cast<unsigned char>(rawData[19]);
-        frame.deviation_azimuth = (static_cast<qint16>(static_cast<unsigned char>(rawData[20])) << 8) | static_cast<unsigned char>(rawData[21]);
-        frame.deviation_pitch = (static_cast<qint16>(static_cast<unsigned char>(rawData[22])) << 8) | static_cast<unsigned char>(rawData[23]);
-        frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(rawData[24])) << 8) | static_cast<unsigned char>(rawData[25]);
+        //以下为原写法（int 表达式直接窄化赋给 qint16/quint16，C++20 之前属实现定义行为），
+        //现改为“先按 quint16 组装，再按二进制补码解释”，解析结果完全一致：
+        //frame.optical_azimuth = (static_cast<qint16>(static_cast<unsigned char>(rawData[8])) << 8) | static_cast<unsigned char>(rawData[9]);
+        //frame.optical_pitch = (static_cast<qint16>(static_cast<unsigned char>(rawData[10])) << 8) | static_cast<unsigned char>(rawData[11]);
+        //frame.gyro_azimuth_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[12])) << 8) | static_cast<unsigned char>(rawData[13]);
+        //frame.gyro_pitch_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[14])) << 8) | static_cast<unsigned char>(rawData[15]);
+        //frame.los_azimuth_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[16])) << 8) | static_cast<unsigned char>(rawData[17]);
+        //frame.los_pitch_rate = (static_cast<qint16>(static_cast<unsigned char>(rawData[18])) << 8) | static_cast<unsigned char>(rawData[19]);
+        //frame.deviation_azimuth = (static_cast<qint16>(static_cast<unsigned char>(rawData[20])) << 8) | static_cast<unsigned char>(rawData[21]);
+        //frame.deviation_pitch = (static_cast<qint16>(static_cast<unsigned char>(rawData[22])) << 8) | static_cast<unsigned char>(rawData[23]);
+        //frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(rawData[24])) << 8) | static_cast<unsigned char>(rawData[25]);
+        frame.optical_azimuth   = readBigEndianI16(rdata + 8);
+        frame.optical_pitch     = readBigEndianI16(rdata + 10);
+        frame.gyro_azimuth_rate = readBigEndianI16(rdata + 12);
+        frame.gyro_pitch_rate   = readBigEndianI16(rdata + 14);
+        frame.los_azimuth_rate  = readBigEndianI16(rdata + 16);
+        frame.los_pitch_rate    = readBigEndianI16(rdata + 18);
+        frame.deviation_azimuth = readBigEndianI16(rdata + 20);
+        frame.deviation_pitch   = readBigEndianI16(rdata + 22);
+        frame.laser_period      = readBigEndianU16(rdata + 24);
         frame.reserved1[0] = (static_cast<quint8>(static_cast<unsigned char>(rawData[27])));
         frame.reserved1[1] = (static_cast<quint8>(static_cast<unsigned char>(rawData[26])));
         frame.gain_status = static_cast<qint8>(rawData[28]);
@@ -423,8 +474,11 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         frame.quadrant2_energy = static_cast<quint8>(rawData[30]);
         frame.quadrant3_energy = static_cast<quint8>(rawData[31]);
         frame.quadrant4_energy = static_cast<quint8>(rawData[32]);
-        frame.software_version1 = (static_cast<qint16>(static_cast<unsigned char>(rawData[33])) << 8) | static_cast<unsigned char>(rawData[34]);
-        frame.software_version2 = (static_cast<qint16>(static_cast<unsigned char>(rawData[35])) << 8) | static_cast<unsigned char>(rawData[36]);
+        //以下为原写法（除了窄化，版本号字段本身是 quint16，原来却用 qint16 中转）：
+        //frame.software_version1 = (static_cast<qint16>(static_cast<unsigned char>(rawData[33])) << 8) | static_cast<unsigned char>(rawData[34]);
+        //frame.software_version2 = (static_cast<qint16>(static_cast<unsigned char>(rawData[35])) << 8) | static_cast<unsigned char>(rawData[36]);
+        frame.software_version1 = readBigEndianU16(rdata + 33);
+        frame.software_version2 = readBigEndianU16(rdata + 35);
         frame.XOR_result = static_cast<quint8>(rawData[37]);
     }
     // memcpy(&frame, rawData.constData(), sizeof(frame));
