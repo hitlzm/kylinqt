@@ -101,6 +101,7 @@ else()
       serialport/serialport_turntable_HEX.cpp
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
+      # 倾角仪串口已停用（改为人工观看数显屏）：文件保留，仅不再被 main.cpp 使用
       serialport/serialport_tiltmeter.cpp
       vlcvideo/VlcVideoItem.cpp
       vlcvideo/VlcFrameItem.cpp
@@ -115,6 +116,7 @@ else()
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
       network/TemplateBindingClient.cpp
+      network/SixDofMotionClient.cpp
       ${TaoQuickRes}
     )
 endif()

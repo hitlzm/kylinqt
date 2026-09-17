@@ -13,14 +13,18 @@
 #include "serialport/serialport_turntable_HEX.h"
 #include "serialport/serialport_BD.h"
 #include "serialport/serialport_CCD.h"
-#include "serialport/serialport_tiltmeter.h"
+// ── 倾角仪串口已停用：不再读取倾角仪数据，改为人工观看数显屏。
+//    相关文件（serialport/serialport_tiltmeter.h/.cpp）保留，仅注释掉全部使用处。
+// #include "serialport/serialport_tiltmeter.h"
+#include "network/SixDofMotionClient.h"
 #include "vlcvideo/VlcVideoItem.h"
 #include "vlcvideo/VlcFrameItem.h"
 #include "opencv/streamprocessor.h"
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
 #include "log/LogManager.h"
-#include "network/TemplateBindingClient.h"
+// ── 模板装订已停用：不再上传，也不创建数据对象（文件保留，仅注释掉使用处）
+// #include "network/TemplateBindingClient.h"
 #include "record/DataRecorder.h"
 
 //使用GPU来做图像绘制
@@ -71,7 +75,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
     qRegisterMetaType<RMCData>("RMCData");
     qRegisterMetaType<sendExGuideData>("sendExGuideData");
-    qRegisterMetaType<TiltFrame>("TiltFrame");
+    // qRegisterMetaType<TiltFrame>("TiltFrame");   // 倾角仪串口停用
 
     // ═══ 主线程对象：QML 直接访问 ═══
     LaserData *laserData = new LaserData(&app);
@@ -82,12 +86,14 @@ int main(int argc, char *argv[])
     TurntableSendDataHex *turntableSendData = new TurntableSendDataHex(&app);
     BDData *bdData = new BDData(&app);
     CCDData *ccdData = new CCDData(&app);
-    TiltData *tiltData = new TiltData(&app);
+    // TiltData *tiltData = new TiltData(&app);        // 倾角仪串口停用
+    // 六自由度转台 UDP 倾角控制（主线程对象，QML 直接调用；接口见 SixDofMotionClient.h）
+    SixDofMotionClient *sixDofMotion = new SixDofMotionClient(&app);
     // CCD 串口对象固定运行在主线程（指令量小、无阻塞等待，不需要独立线程）
     SerialPortCCD *ccdPort = new SerialPortCCD(&app);
     ccdPort->dowork();   // 在主线程创建 QSerialPort 与定时器
-    //创建模板装订数据对象（主线程，QML 直接访问）
-    TemplateBindingData *templateBindingData = new TemplateBindingData(&app);
+    // 模板装订数据对象停用（模板装订不再由本软件上传，QML 侧也已无生效引用）
+    // TemplateBindingData *templateBindingData = new TemplateBindingData(&app);
 
     // 全局单例日志管理器
     LogManager *logManager = LogManager::instance();
@@ -101,9 +107,10 @@ int main(int argc, char *argv[])
     SerialPortImage *imagePort = new SerialPortImage;
     SerialPortTurntableHex *turntablePort = new SerialPortTurntableHex;
     SerialPortBD *bdPort = new SerialPortBD;
-    SerialPortTiltmeter *tiltPort = new SerialPortTiltmeter;
-    // 网络传输 Worker（移到 NetworkThread）
-    TemplateBindingWorker *networkWorker = new TemplateBindingWorker;
+    // SerialPortTiltmeter *tiltPort = new SerialPortTiltmeter;   // 倾角仪串口停用
+    // 模板装订上传 Worker 停用：模板装订不再由本软件上传，相关对象/线程不创建
+    // （TemplateBindingClient.h/.cpp 文件保留，仅注释掉使用处）
+    // TemplateBindingWorker *networkWorker = new TemplateBindingWorker;
 
     // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
     laserPort->m_laserData = laserData;
@@ -113,7 +120,7 @@ int main(int argc, char *argv[])
     turntablePort->m_turntableDataHex = turntableData;
     turntablePort->m_turntableSendDataHex = turntableSendData;
     ccdPort->m_ccdData = ccdData;
-    tiltPort->m_tiltData = tiltData;
+    // tiltPort->m_tiltData = tiltData;   // 倾角仪串口停用
     //创建手柄对象
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象
@@ -134,11 +141,13 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("turntableSendData", turntableSendData);
     engine.rootContext()->setContextProperty("bdData", bdData);
     engine.rootContext()->setContextProperty("ccdData", ccdData);
-    engine.rootContext()->setContextProperty("tiltData", tiltData);
+    // engine.rootContext()->setContextProperty("tiltData", tiltData);   // 倾角仪串口停用
+    // 六自由度转台倾角控制（预留接口：连接/连接判断、X/Y 倾角下发、执行时间、回中位/回底部）
+    engine.rootContext()->setContextProperty("sixDofMotion", sixDofMotion);
     // engine.rootContext()->setContextProperty("handle", _myhandle);
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
-    engine.rootContext()->setContextProperty("templateBindingData", templateBindingData);
+    // engine.rootContext()->setContextProperty("templateBindingData", templateBindingData);   // 模板装订停用
     engine.rootContext()->setContextProperty("logManager", logManager);
     engine.rootContext()->setContextProperty("dataRecorder", dataRecorder);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
@@ -304,21 +313,21 @@ int main(int argc, char *argv[])
     QObject::connect(bdPort, &SerialPortBD::portsChanged, bdData, &BDData::setPortList, Qt::QueuedConnection);
     QObject::connect(bdPort, &SerialPortBD::bdFrameReceived, bdData, &BDData::updateFromFrame, Qt::QueuedConnection);
 
-    // ── Tiltmeter: 主线程 Data → 工作线程 Worker ──
-    QObject::connect(tiltData, &TiltData::requestOpenPort,       tiltPort, &SerialPortTiltmeter::onOpenPort,       Qt::QueuedConnection);
-    QObject::connect(tiltData, &TiltData::requestClosePort,      tiltPort, &SerialPortTiltmeter::onClosePort,      Qt::QueuedConnection);
-    QObject::connect(tiltData, &TiltData::requestScanPorts,      tiltPort, &SerialPortTiltmeter::onScanPorts,      Qt::QueuedConnection);
-    QObject::connect(tiltData, &TiltData::requestSetPollInterval, tiltPort, &SerialPortTiltmeter::onSetPollInterval, Qt::QueuedConnection);
-    QObject::connect(tiltData, &TiltData::requestSetSlaveAddress, tiltPort, &SerialPortTiltmeter::onSetSlaveAddress, Qt::QueuedConnection);
-    QObject::connect(tiltData, &TiltData::requestSendToPlatform, tiltPort, &SerialPortTiltmeter::onSendToPlatform, Qt::QueuedConnection);
-    QObject::connect(tiltData, &TiltData::requestSetTarget,      tiltPort, &SerialPortTiltmeter::onSetTarget,      Qt::QueuedConnection);
+    // ── Tiltmeter: 倾角仪串口停用，改为人工观看数显屏（以下连接全部注释保留）──
+    // QObject::connect(tiltData, &TiltData::requestOpenPort,       tiltPort, &SerialPortTiltmeter::onOpenPort,       Qt::QueuedConnection);
+    // QObject::connect(tiltData, &TiltData::requestClosePort,      tiltPort, &SerialPortTiltmeter::onClosePort,      Qt::QueuedConnection);
+    // QObject::connect(tiltData, &TiltData::requestScanPorts,      tiltPort, &SerialPortTiltmeter::onScanPorts,      Qt::QueuedConnection);
+    // QObject::connect(tiltData, &TiltData::requestSetPollInterval, tiltPort, &SerialPortTiltmeter::onSetPollInterval, Qt::QueuedConnection);
+    // QObject::connect(tiltData, &TiltData::requestSetSlaveAddress, tiltPort, &SerialPortTiltmeter::onSetSlaveAddress, Qt::QueuedConnection);
+    // QObject::connect(tiltData, &TiltData::requestSendToPlatform, tiltPort, &SerialPortTiltmeter::onSendToPlatform, Qt::QueuedConnection);
+    // QObject::connect(tiltData, &TiltData::requestSetTarget,      tiltPort, &SerialPortTiltmeter::onSetTarget,      Qt::QueuedConnection);
 
     // ── Tiltmeter: 工作线程 Worker → 主线程 Data ──
-    QObject::connect(tiltPort, &SerialPortTiltmeter::portOpened,    tiltData, &TiltData::setPortOpen, Qt::QueuedConnection);
-    QObject::connect(tiltPort, &SerialPortTiltmeter::portClosed,    tiltData, [tiltData]{ tiltData->setPortOpen(false); }, Qt::QueuedConnection);
-    QObject::connect(tiltPort, &SerialPortTiltmeter::portError,     tiltData, &TiltData::setError,    Qt::QueuedConnection);
-    QObject::connect(tiltPort, &SerialPortTiltmeter::portsChanged,  tiltData, &TiltData::setPortList, Qt::QueuedConnection);
-    QObject::connect(tiltPort, &SerialPortTiltmeter::tiltFrameReceived, tiltData, &TiltData::updateFromFrame, Qt::QueuedConnection);
+    // QObject::connect(tiltPort, &SerialPortTiltmeter::portOpened,    tiltData, &TiltData::setPortOpen, Qt::QueuedConnection);
+    // QObject::connect(tiltPort, &SerialPortTiltmeter::portClosed,    tiltData, [tiltData]{ tiltData->setPortOpen(false); }, Qt::QueuedConnection);
+    // QObject::connect(tiltPort, &SerialPortTiltmeter::portError,     tiltData, &TiltData::setError,    Qt::QueuedConnection);
+    // QObject::connect(tiltPort, &SerialPortTiltmeter::portsChanged,  tiltData, &TiltData::setPortList, Qt::QueuedConnection);
+    // QObject::connect(tiltPort, &SerialPortTiltmeter::tiltFrameReceived, tiltData, &TiltData::updateFromFrame, Qt::QueuedConnection);
 
     // ── CCD: Data → CCD 串口（主线程，QueuedConnection 保持原异步语义）──
     QObject::connect(ccdData, &CCDData::requestOpenPort,  ccdPort, &SerialPortCCD::onOpenPort,  Qt::QueuedConnection);
@@ -340,36 +349,37 @@ int main(int argc, char *argv[])
     QObject::connect(ccdPort, &SerialPortCCD::portsChanged, ccdData, &CCDData::setPortList, Qt::QueuedConnection);
 
 
+    // ── TemplateBinding: 模板装订上传已停用（不再由本软件上传），以下连接全部注释保留 ──
     // ── TemplateBinding: 主线程 Data → 网络线程 Worker ──
-    QObject::connect(templateBindingData, &TemplateBindingData::requestConnect,    networkWorker, &TemplateBindingWorker::onConnect,    Qt::QueuedConnection);
-    QObject::connect(templateBindingData, &TemplateBindingData::requestDisconnect, networkWorker, &TemplateBindingWorker::onDisconnect, Qt::QueuedConnection);
-    QObject::connect(templateBindingData, &TemplateBindingData::requestSendImages, networkWorker, &TemplateBindingWorker::onSendImages,  Qt::QueuedConnection);
-    QObject::connect(templateBindingData, &TemplateBindingData::requestSendTxt,    networkWorker, &TemplateBindingWorker::onSendTxt,     Qt::QueuedConnection);
+    // QObject::connect(templateBindingData, &TemplateBindingData::requestConnect,    networkWorker, &TemplateBindingWorker::onConnect,    Qt::QueuedConnection);
+    // QObject::connect(templateBindingData, &TemplateBindingData::requestDisconnect, networkWorker, &TemplateBindingWorker::onDisconnect, Qt::QueuedConnection);
+    // QObject::connect(templateBindingData, &TemplateBindingData::requestSendImages, networkWorker, &TemplateBindingWorker::onSendImages,  Qt::QueuedConnection);
+    // QObject::connect(templateBindingData, &TemplateBindingData::requestSendTxt,    networkWorker, &TemplateBindingWorker::onSendTxt,     Qt::QueuedConnection);
 
     // Network worker -> GUI-thread data object: all status updates are queued,
     // so the worker never calls TemplateBindingData methods from its own thread.
-    QObject::connect(networkWorker, &TemplateBindingWorker::connectedStatusChanged,
-                     templateBindingData, &TemplateBindingData::setConnected, Qt::QueuedConnection);
-    QObject::connect(networkWorker, &TemplateBindingWorker::statusMessageChanged,
-                     templateBindingData, &TemplateBindingData::setStatusMessage, Qt::QueuedConnection);
-    QObject::connect(networkWorker, &TemplateBindingWorker::sendProgressChanged,
-                     templateBindingData, &TemplateBindingData::setSendProgress, Qt::QueuedConnection);
-    QObject::connect(networkWorker, &TemplateBindingWorker::imageSentStatusChanged,
-                     templateBindingData, &TemplateBindingData::setImageSent, Qt::QueuedConnection);
-    QObject::connect(networkWorker, &TemplateBindingWorker::txtSentStatusChanged,
-                     templateBindingData, &TemplateBindingData::setTxtSent, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::connectedStatusChanged,
+    //                  templateBindingData, &TemplateBindingData::setConnected, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::statusMessageChanged,
+    //                  templateBindingData, &TemplateBindingData::setStatusMessage, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::sendProgressChanged,
+    //                  templateBindingData, &TemplateBindingData::setSendProgress, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::imageSentStatusChanged,
+    //                  templateBindingData, &TemplateBindingData::setImageSent, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::txtSentStatusChanged,
+    //                  templateBindingData, &TemplateBindingData::setTxtSent, Qt::QueuedConnection);
 
     // TXT JSON snapshot handshake: worker requests -> GUI thread builds JSON -> replies
-    QObject::connect(networkWorker, &TemplateBindingWorker::requestTxtSnapshot,
-                     templateBindingData, &TemplateBindingData::provideTxtSnapshot, Qt::QueuedConnection);
-    QObject::connect(templateBindingData, &TemplateBindingData::txtSnapshotReady,
-                     networkWorker, &TemplateBindingWorker::onTxtSnapshotReady, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::requestTxtSnapshot,
+    //                  templateBindingData, &TemplateBindingData::provideTxtSnapshot, Qt::QueuedConnection);
+    // QObject::connect(templateBindingData, &TemplateBindingData::txtSnapshotReady,
+    //                  networkWorker, &TemplateBindingWorker::onTxtSnapshotReady, Qt::QueuedConnection);
 
     // 图片快照握手：worker 请求 -> 主线程提供当前图片 -> 发送图片报文
-    QObject::connect(networkWorker, &TemplateBindingWorker::requestImageSnapshot,
-                     templateBindingData, &TemplateBindingData::provideImageSnapshot, Qt::QueuedConnection);
-    QObject::connect(templateBindingData, &TemplateBindingData::imageSnapshotReady,
-                     networkWorker, &TemplateBindingWorker::onImageSnapshotReady, Qt::QueuedConnection);
+    // QObject::connect(networkWorker, &TemplateBindingWorker::requestImageSnapshot,
+    //                  templateBindingData, &TemplateBindingData::provideImageSnapshot, Qt::QueuedConnection);
+    // QObject::connect(templateBindingData, &TemplateBindingData::imageSnapshotReady,
+    //                  networkWorker, &TemplateBindingWorker::onImageSnapshotReady, Qt::QueuedConnection);
 
     //模式控制器的信号连接
     // 模式控制器 → 各串口线程（运行模式 / 外引导源 / 跟踪周期 变更通知）
@@ -423,21 +433,21 @@ int main(int argc, char *argv[])
     QThread *Turntablethread = new QThread;
     QThread *Handlethread = new QThread;
     QThread *BDthread = new QThread;
-    QThread *Tiltthread = new QThread;
-    QThread *NetworkThread = new QThread;
+    // QThread *Tiltthread = new QThread;   // 倾角仪串口停用
+    // QThread *NetworkThread = new QThread;   // 模板装订上传停用
     laserPort->moveToThread(Laserthread);
     imagePort->moveToThread(Imagethread);
     turntablePort->moveToThread(Turntablethread);
     bdPort->moveToThread(BDthread);
-    tiltPort->moveToThread(Tiltthread);
+    // tiltPort->moveToThread(Tiltthread);   // 倾角仪串口停用
     _myhandle->moveToThread(Handlethread);
-    networkWorker->moveToThread(NetworkThread);
+    // networkWorker->moveToThread(NetworkThread);   // 模板装订上传停用
 
     QObject::connect(Laserthread, &QThread::started, laserPort, &SerialPortLaser::dowork);
     QObject::connect(Imagethread, &QThread::started, imagePort, &SerialPortImage::dowork);
     QObject::connect(Turntablethread, &QThread::started, turntablePort, &SerialPortTurntableHex::dowork);
     QObject::connect(BDthread, &QThread::started, bdPort, &SerialPortBD::dowork);
-    QObject::connect(Tiltthread, &QThread::started, tiltPort, &SerialPortTiltmeter::dowork);
+    // QObject::connect(Tiltthread, &QThread::started, tiltPort, &SerialPortTiltmeter::dowork);   // 倾角仪串口停用
 
     // 线程退出 → 先删 worker（已无事件循环在使用） → 再删线程自身
     QObject::connect(Laserthread, &QThread::finished, laserPort,    &QObject::deleteLater);
@@ -450,10 +460,10 @@ int main(int argc, char *argv[])
     QObject::connect(Handlethread,    &QThread::finished, Handlethread,     &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, bdPort,           &QObject::deleteLater);
     QObject::connect(BDthread,       &QThread::finished, BDthread,         &QObject::deleteLater);
-    QObject::connect(Tiltthread,     &QThread::finished, tiltPort,         &QObject::deleteLater);
-    QObject::connect(Tiltthread,     &QThread::finished, Tiltthread,       &QObject::deleteLater);
-    QObject::connect(NetworkThread,  &QThread::finished, networkWorker,    &QObject::deleteLater);
-    QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);
+    // QObject::connect(Tiltthread,     &QThread::finished, tiltPort,         &QObject::deleteLater);   // 倾角仪串口停用
+    // QObject::connect(Tiltthread,     &QThread::finished, Tiltthread,       &QObject::deleteLater);   // 倾角仪串口停用
+    // QObject::connect(NetworkThread,  &QThread::finished, networkWorker,    &QObject::deleteLater);   // 模板装订上传停用
+    // QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);   // 模板装订上传停用
 
 
     Laserthread->start();
@@ -461,8 +471,8 @@ int main(int argc, char *argv[])
     Turntablethread->start();
     Handlethread->start();
     BDthread->start();
-    Tiltthread->start();
-    NetworkThread->start();
+    // Tiltthread->start();   // 倾角仪串口停用
+    // NetworkThread->start();   // 模板装订上传停用
     
     const int ret = app.exec();
 
@@ -493,8 +503,8 @@ int main(int argc, char *argv[])
     stopWorkerThread(Turntablethread);
     stopWorkerThread(Handlethread);
     stopWorkerThread(BDthread);
-    stopWorkerThread(Tiltthread);
-    stopWorkerThread(NetworkThread);
+    // stopWorkerThread(Tiltthread);   // 倾角仪串口停用
+    // stopWorkerThread(NetworkThread);   // 模板装订上传停用
 
     // 2.5) 退出前收尾数据保存：冲刷串口 txt、停止视频录制并触发转封装
     dataRecorder->stopSave();
@@ -508,8 +518,8 @@ int main(int argc, char *argv[])
     delete Turntablethread;
     delete Handlethread;
     delete BDthread;
-    delete Tiltthread;
-    delete NetworkThread;
+    // delete Tiltthread;   // 倾角仪串口停用
+    // delete NetworkThread;   // 模板装订上传停用
 
     return ret;
 }

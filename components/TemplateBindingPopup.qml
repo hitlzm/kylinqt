@@ -809,13 +809,17 @@ Window {
                     text: "开始装订"
                     width: 110
                     height: 36
-                    enabled: bindingData && bindingData.connected
-                             && bindingData.imageCount > 0
+                    // 上传已停用（TemplateBindingWorker 已注释），connected 恒为 false，
+                    // 因此不再依赖连接状态，只保留“生成本地装订文件”的功能
+                    enabled: bindingData && bindingData.imageCount > 0
+                    // enabled: bindingData && bindingData.connected
+                    //          && bindingData.imageCount > 0
                     onClicked: {
                         if (bindingData) {
                             bindingData.generateTxt()
-                            bindingData.requestSendImages()
-                            bindingData.requestSendTxt("")
+                            // 模板装订不再由本软件上传，以下两个上传请求已停用
+                            // bindingData.requestSendImages()
+                            // bindingData.requestSendTxt("")
                         }
                     }
                 }
