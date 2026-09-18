@@ -279,7 +279,7 @@ void LaserSendData::buildFrame()
         break;
     }
     frame.XOR_result = 0;
-    
+    //m_cmd = 0; //发送后清零控制字
     emit requestSendData(frame);
 }
 

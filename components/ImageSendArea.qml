@@ -413,7 +413,7 @@ Rectangle {
             height: 32
             from: 1
             to: 10
-            stepSize: 1.5
+            stepSize: 1
             value: 1
             anchors.verticalCenter: parent.verticalCenter
             onValueChanged: {
@@ -436,6 +436,11 @@ Rectangle {
                 anchors.centerIn: parent
                 opacity: parent.pressed ? 0.7 : 1.0
             }
+            //按下时先发送一次
+            onPressed: {
+                imageSendData.m_searchPitchRate = adjustSpinBox.value
+                imageSendData.buildFrame()      // 立即发一次
+            }
             // 长按期间持续发送
             Timer {
                 id: upRepeatTimer
@@ -443,15 +448,14 @@ Rectangle {
                 repeat: true
                 running: btnUp.pressed
                 onTriggered: {
-                    // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
-                    imageSendData.m_searchPitchRate = adjustSpinBox.value
                     imageSendData.buildFrame()
-                    imageSendData.m_searchPitchRate = 0
                     console.log("上移中...")
                 }
             }
-            onClicked: {
-                
+            //松开时停止俯仰调节
+            onReleased: {
+                imageSendData.m_searchPitchRate = 0
+                imageSendData.buildFrame()      // 若需要把复位也发出去
             }
         }
 
@@ -469,6 +473,11 @@ Rectangle {
                 anchors.centerIn: parent
                 opacity: parent.pressed ? 0.7 : 1.0
             }
+            //按下时先发送一次
+            onPressed: {
+                imageSendData.m_searchPitchRate = adjustSpinBox.value * -1
+                imageSendData.buildFrame()      // 立即发一次
+            }
             // 长按期间持续发送
             Timer {
                 id: downRepeatTimer
@@ -476,11 +485,14 @@ Rectangle {
                 repeat: true
                 running: btnDown.pressed
                 onTriggered: {
-                    imageSendData.m_searchPitchRate = adjustSpinBox.value * -1
                     imageSendData.buildFrame()
-                    imageSendData.m_searchPitchRate = 0
                     console.log("下移中...")
                 }
+            }
+            //松开时停止俯仰调节
+            onReleased: {
+                imageSendData.m_searchPitchRate = 0
+                imageSendData.buildFrame()      // 若需要把复位也发出去
             }
         }
 
@@ -498,6 +510,11 @@ Rectangle {
                 anchors.centerIn: parent
                 opacity: parent.pressed ? 0.7 : 1.0
             }
+            //按下时先发送一次
+            onPressed: {
+                imageSendData.m_searchYawRate = adjustSpinBox.value
+                imageSendData.buildFrame()      // 立即发一次
+            }
             // 长按期间持续发送
             Timer {
                 id: leftRepeatTimer
@@ -505,10 +522,13 @@ Rectangle {
                 repeat: true
                 running: btnLeft.pressed
                 onTriggered: {
-                    imageSendData.m_searchYawRate = adjustSpinBox.value 
                     imageSendData.buildFrame()
-                    imageSendData.m_searchYawRate = 0
                 }
+            }
+            //松开时停止偏航调节
+            onReleased: {
+                imageSendData.m_searchYawRate = 0
+                imageSendData.buildFrame()      // 若需要把复位也发出去
             }
         }
 
@@ -526,17 +546,25 @@ Rectangle {
                 anchors.centerIn: parent
                 opacity: parent.pressed ? 0.7 : 1.0
             }
-            // 长按期间持续发送
+            //按下时先发送一次
+            onPressed: {
+                imageSendData.m_searchYawRate = adjustSpinBox.value * -1
+                imageSendData.buildFrame()      // 立即发一次
+            }
+            // 长按期间持续发送，也可以不使用定时器持续发送，只要保证按钮松开时把速度置零即可
             Timer {
                 id: rightRepeatTimer
                 interval: 250
                 repeat: true
                 running: btnRight.pressed
                 onTriggered: {
-                    imageSendData.m_searchYawRate = adjustSpinBox.value * -1
                     imageSendData.buildFrame()
-                    imageSendData.m_searchYawRate = 0    //赋零也可以放在buildFrame()最后
                 }
+            }
+            //送开时停止偏航调节
+            onReleased: {
+                imageSendData.m_searchYawRate = 0
+                imageSendData.buildFrame()      // 若需要把复位也发出去
             }
         }
 
@@ -845,6 +873,11 @@ Rectangle {
                     anchors.centerIn: parent
                     opacity: parent.pressed ? 0.7 : 1.0
                 }
+                //按下时先发送一次
+                onPressed: {
+                    imageSendData.m_gateSize = 0xaa
+                    imageSendData.buildFrame()      // 立即发一次
+                }
                 //按下按钮时持续发送
                 Timer {
                 id: plusRepeatTimer
@@ -852,12 +885,15 @@ Rectangle {
                 repeat: true
                 running: gateSizePlusBtn.pressed
                 onTriggered: {
-                    // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
-                    imageSendData.m_gateSize = 0xaa   // 增大波门
+                    // imageSendData.m_gateSize = 0xaa   // 增大波门
                     imageSendData.buildFrame()
-                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
                     console.log("增大波门中...")
                 }
+                }
+                //送开时停止波门大小变化
+                onReleased: {
+                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
+                    imageSendData.buildFrame()
                 }
             }
 
@@ -875,18 +911,25 @@ Rectangle {
                     anchors.centerIn: parent
                     opacity: parent.pressed ? 0.7 : 1.0
                 }
+                //按下时先发送一次
+                onPressed: {
+                    imageSendData.m_gateSize = 0x55
+                    imageSendData.buildFrame()      // 立即发一次
+                }
                 Timer {
                 id: minusRepeatTimer
                 interval: 250
                 repeat: true
                 running: gateSizeMinusBtn.pressed
                 onTriggered: {
-                    // TODO: 这里写持续发送的指令（如 imageSendData.buildFrame()）
-                    imageSendData.m_gateSize = 0x55   // 减小波门
                     imageSendData.buildFrame()
-                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
                     console.log("减小波门中...")
                 }
+                }
+                //送开时停止波门大小变化
+                onReleased: {
+                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
+                    imageSendData.buildFrame()
                 }
             }
         }

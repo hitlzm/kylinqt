@@ -372,7 +372,7 @@ void SerialPortTurntableHex::sendResetCmd()
 }
 
 
-// ════════════════════════ 高级指令：开机 ════════════════════════
+// ════════════════════════ 高级指令：开机/使能 ════════════════════════
 
 void SerialPortTurntableHex::openTurntable()
 {
@@ -381,6 +381,12 @@ void SerialPortTurntableHex::openTurntable()
     sendEnableCmd(1, true);  sendEnableCmd(2, true);  sendEnableCmd(3, true);
 }
 
+// ════════════════════════ 高级指令：释放 ════════════════════════
+void SerialPortTurntableHex::releaseTurntable()
+{
+    // 释放三轴电机
+    sendEnableCmd(1, false); sendEnableCmd(2, false); sendEnableCmd(3, false);
+}
 
 // ════════════════════════ 高级指令：停机 ════════════════════════
 
@@ -642,7 +648,13 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
     cmdOuter.angle2 = frame1.angle2 + m_current_outter_angle;
     cmdOuter.angle3 = frame1.angle3 + m_current_outter_angle;
     cmdOuter.angle4 = frame1.angle4 + m_current_outter_angle;
-    sendTrackCmd_1s(cmdOuter);
+    if (cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100 || cmdOuter.angle2 < -100 || cmdOuter.angle2 > 100 ||
+        cmdOuter.angle3 < -100 || cmdOuter.angle3 > 100 || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100) {
+        qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
+    }else{
+        sendTrackCmd_1s(cmdOuter);
+    }
+    
 
     // ── 中框跟踪 (轴2) ──
     TrackingSendCmd1Hex cmdMiddle;
@@ -652,7 +664,12 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
     cmdMiddle.angle2 = frame2.angle2 + m_current_middle_angle;
     cmdMiddle.angle3 = frame2.angle3 + m_current_middle_angle;
     cmdMiddle.angle4 = frame2.angle4 + m_current_middle_angle;
-    sendTrackCmd_1s(cmdMiddle);
+    if (cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70 || cmdMiddle.angle2 < -10 || cmdMiddle.angle2 > 70 ||
+        cmdMiddle.angle3 < -10 || cmdMiddle.angle3 > 70 || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70) {
+        qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
+    } else {
+        sendTrackCmd_1s(cmdMiddle);
+    }
 
     // ── 内框跟踪 (轴1, 保持当前位置) ──
     TrackingSendCmd1Hex cmdInner;
@@ -662,7 +679,12 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
     cmdInner.angle2 = m_current_inner_angle;
     cmdInner.angle3 = m_current_inner_angle;
     cmdInner.angle4 = m_current_inner_angle;
+    if(cmdInner.angle1 < -200 || cmdInner.angle1 > 200 || cmdInner.angle2 < -200 || cmdInner.angle2 > 200 ||
+        cmdInner.angle3 < -200 || cmdInner.angle3 > 200 || cmdInner.angle4 < -200 || cmdInner.angle4 > 200) {
+        qDebug() << "内框跟踪角度超出范围";
+    } else {
     sendTrackCmd_1s(cmdInner);
+    }
 }
 
 
@@ -673,8 +695,13 @@ void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangl
     m_cmd.angle1 = m_current_inner_angle;                    // 内框保持
     m_cmd.angle2 = m_current_middle_angle + pitchangle;      // 中框 + 俯仰角
     m_cmd.angle3 = m_current_outter_angle + yawangle;        // 外框 + 方位角
-
-    sendTrackCmd_5ms(m_cmd);
+    if( m_cmd.angle2 < -10 || m_cmd.angle2 > 70 ) {
+        qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
+    }else if(m_cmd.angle3 < -100 || m_cmd.angle3 > 100){
+         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
+    }else{
+        sendTrackCmd_5ms(m_cmd);
+    }
 }
 
 
@@ -749,9 +776,22 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
         outtercmd.acceleration = defaultAccel;
         outtercmd.velocity = axisLeftX * MAX_SPEED_HEX;
 
-        sendVecCmd(innercmd);
-        sendVecCmd(middlecmd);
-        sendVecCmd(outtercmd);
+        //加入限位判断
+        if(m_current_inner_angle < 199.995 && m_current_inner_angle >-199.995){
+            sendVecCmd(innercmd);
+        }else{
+            qDebug() << "内框接近临界角，停止内框速度控制";
+        }
+        if(m_current_middle_angle < 69.995 && m_current_middle_angle >-9.995){
+            sendVecCmd(middlecmd);
+        }else{
+            qDebug() << "中框接近临界角，停止中框速度控制";
+        }
+        if(m_current_outter_angle < 99.995 && m_current_outter_angle >-99.995){
+            sendVecCmd(outtercmd);
+        }else{
+            qDebug() << "外框接近临界角，停止外框速度控制";
+        }
     }
 }
 

@@ -14,6 +14,9 @@ brief: 转台串口类（HEX十六进制协议版本）
 指令代号: 占用byte2的低6位
 多字节数据: 大端序(高位在前)
 校验和: 不含帧头的累加和 (发送:bytes2-16累加, 接收:bytes2-26累加)
+
+转台最大速度为12度每秒
+转台加速度最大为10
 */
 
 #include "serialport.h"
@@ -268,6 +271,7 @@ signals:
     void indexChanged();
 
     void reqopenTurntable();
+    void reqreleaseTurntable();
     void reqcloseTurntable();
     void reqzeroTurntable();
     void reqresetTurntable();
@@ -309,6 +313,7 @@ signals:
 public slots:
     // ── 基础指令 ──
     void openTurntable();
+    void releaseTurntable();
     void closeTurntable();
     void resetTurntable();
     void zeroTurntable();

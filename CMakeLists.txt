@@ -125,6 +125,7 @@ target_include_directories(kylinqt PRIVATE
     ${MPV_INCLUDE_DIR}
     ${ONNXRUNTIME_INCLUDE_DIR}
     ${ONNXRUNTIME_C_API_INCLUDE_DIR}
+    "E:/onnxruntime/cmake/external/eigen"
 )
 
 target_link_directories(kylinqt PRIVATE

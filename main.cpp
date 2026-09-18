@@ -289,6 +289,7 @@ int main(int argc, char *argv[])
     //Turntable 信号与槽连接
     QObject::connect(turntableSendData, &TurntableSendDataHex::requestSendProgramMode,   turntablePort, &SerialPortTurntableHex::sendProgramMode, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqopenTurntable,   turntablePort, &SerialPortTurntableHex::openTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqreleaseTurntable,   turntablePort, &SerialPortTurntableHex::releaseTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqzeroTurntable,   turntablePort, &SerialPortTurntableHex::zeroTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqresetTurntable,   turntablePort, &SerialPortTurntableHex::resetTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqcloseTurntable,   turntablePort, &SerialPortTurntableHex::closeTurntable, Qt::QueuedConnection);

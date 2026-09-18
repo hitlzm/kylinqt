@@ -512,14 +512,14 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         }
 
         //控制导引头调节机构运动和波门调整在最后几帧要发0,否则导引头会认为还要继续运动。也可以改成松开按钮后置零并发送几拍0
-        if(sendCount >= 7)
-        {
-            data[54]=0x00;    
-            data[55]=0x00;    
-            data[56]=0x00;    
-            data[57]=0x00;  
-            data[59]=0x00;    //光学参数装订控制字
-        }
+        // if(sendCount >= 7)
+        // {
+        //     data[54]=0x00;    
+        //     data[55]=0x00;    
+        //     data[56]=0x00;    
+        //     data[57]=0x00;  
+        //     data[59]=0x00;    
+        // }
 
         //更新数据后重新计算并填入校验位
         uint16_t crc = crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));

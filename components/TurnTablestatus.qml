@@ -12,6 +12,7 @@ Rectangle {
     height: myheight
     color: '#e9f0f9'
     property int stacklayoutindex: 0
+    property int enableorelease: 0
     //消息提示框
     MessagePopup {
         id: msg
@@ -36,16 +37,22 @@ Rectangle {
         }
 
         CusButton_Blue {
-            text: "开机"
+            text: enableorelease == 0 ? "使能" : "释放"
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
             onClicked: {
-                turntableSendData.reqopenTurntable()
+                if(enableorelease==0){
+                    enableorelease=1
+                    turntableSendData.reqopenTurntable()
+                }else if(enableorelease==1){
+                    enableorelease=0
+                    turntableSendData.reqreleaseTurntable()
+                }
             }
         }
         CusButton_Blue {
-            text: "停机"
+            text: "停车"
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
