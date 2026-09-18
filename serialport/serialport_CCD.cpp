@@ -106,6 +106,17 @@ void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
     // 外引导模式下，将计算出的角度喂入 Alpha-Beta 滤波器
     if (exindex == ExguideMode) {
         qint64 now = QDateTime::currentMSecsSinceEpoch();
+
+        if (m_abNeedReset)
+        {
+            // 进入外引导后首次收到本路数据：用本帧测量重建滤波器，
+            // 避免沿用上一次使用时的陈旧角速度（否则第 1 包会被旧速度推到视场边缘）。
+            // 复位后同一时间戳喂入的那一帧会被滤波器的时间戳守卫按“重复帧”丢弃，
+            // 状态已由 Init 建立，不影响后续帧。
+            m_abMgr.Init(m_azimuth, m_pitch, now);
+            m_abNeedReset = false;
+        }
+
         m_abMgr.FeedData(now, m_azimuth, m_pitch);
     }
 }
@@ -149,6 +160,8 @@ void SerialPortCCD::ExmodeChanged(int mode)
                     m_exGuideTimer = new QTimer(this);
                     m_exGuideTimer->setTimerType(Qt::PreciseTimer);
                 }
+                // 跟踪周期变化后，下一帧数据到来时用当时的测量重新初始化滤波器
+                m_abNeedReset = true;
                 // 判断跟踪模式（5ms模式或者1秒跟踪模式）
                 if(exguidesetting == Exguide_1s)
                 {
@@ -189,6 +202,8 @@ void SerialPortCCD::ExmodeChanged(int mode)
             if (m_exGuideTimer) {
                 m_exGuideTimer->stop(); //切换到其他外引导源时，暂停CCD外引导定时器
             }
+            // 本路已不是外引导源：下次被选中时重新初始化滤波器
+            m_abNeedReset = true;
         }
     }
     else
@@ -198,6 +213,8 @@ void SerialPortCCD::ExmodeChanged(int mode)
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }
+        // 退出外引导模式：下次进入时重新初始化滤波器
+        m_abNeedReset = true;
     }
 }
 

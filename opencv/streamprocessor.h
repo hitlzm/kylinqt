@@ -165,6 +165,7 @@ private:
     PixelKalmanTracker m_tracker;
     QElapsedTimer m_kalmanTimer;
     bool m_kalmanFirstFrame = true;
+    int  m_gateRejectStreak = 0;      // 连续“检测全部被门限拒绝”的帧数
 
     // 图像分辨率与视场角（视场角随广角/远焦切换更新）
     // int   m_imageWidth  = 1920;

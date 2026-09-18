@@ -11,6 +11,7 @@
 
 #include "pixelkalmantracker.h"
 #include <opencv2/core.hpp>
+#include <cmath>
 
 // ══════════════════════════════════════════════════════════════════════════════
 // 构造
@@ -136,6 +137,69 @@ void PixelKalmanTracker::correct(float mx, float my)
 {
     cv::Mat meas = (cv::Mat_<float>(2, 1) << mx, my);
     m_kf.correct(meas);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 测量门限：只读判断，不改变滤波器状态
+// ══════════════════════════════════════════════════════════════════════════
+
+void PixelKalmanTracker::predictPosition(float dt, float &px, float &py) const
+{
+    if (dt <= 0.0f)
+        dt = 0.033f;                       // 与 predict() 的保护保持一致
+
+    px = m_kf.statePost.at<float>(0) + dt * m_kf.statePost.at<float>(2);
+    py = m_kf.statePost.at<float>(1) + dt * m_kf.statePost.at<float>(3);
+}
+
+float PixelKalmanTracker::innovationVar(float dt) const
+{
+    if (dt <= 0.0f)
+        dt = 0.033f;
+
+    // 预测位置方差 = Φ·P·Φᵀ 的位置元素
+    //   Φ = [1 0 dt 0; 0 1 0 dt; 0 0 1 0; 0 0 0 1]
+    //   varX = P00 + 2·dt·P02 + dt²·P22 (+ Q00)，Y 轴同理
+    const float p00 = m_kf.errorCovPost.at<float>(0, 0);
+    const float p02 = m_kf.errorCovPost.at<float>(0, 2);
+    const float p11 = m_kf.errorCovPost.at<float>(1, 1);
+    const float p13 = m_kf.errorCovPost.at<float>(1, 3);
+    const float p22 = m_kf.errorCovPost.at<float>(2, 2);
+    const float p33 = m_kf.errorCovPost.at<float>(3, 3);
+
+    const float dt2 = dt * dt;
+    const float dt4 = dt2 * dt2;
+    const float q   = m_processNoiseVel;
+
+    const float varX = p00 + 2.0f * dt * p02 + dt2 * p22 + q * dt4 / 4.0f;
+    const float varY = p11 + 2.0f * dt * p13 + dt2 * p33 + q * dt4 / 4.0f;
+
+    // x/y 观测噪声同方差，取两轴均值后加测量噪声 R
+    return 0.5f * (varX + varY) + m_measureNoise;
+}
+
+bool PixelKalmanTracker::gateMeasurement(float mx, float my, float dt, float gamma) const
+{
+    // 尚未建立航迹（无先验）→ 不做门限
+    if (m_state == State::UNINIT)
+        return true;
+
+    // 无效测量（-1）不属于“候选检测”，直接放行
+    if (mx < 0.0f || my < 0.0f)
+        return true;
+
+    const float s = innovationVar(dt);
+    if (!(s > 0.0f) || !std::isfinite(s))
+        return true;                       // 方差异常时放行，避免误拒
+
+    float px = 0.0f, py = 0.0f;
+    predictPosition(dt, px, py);
+
+    const float dx = mx - px;
+    const float dy = my - py;
+    const float g  = (gamma > 0.0f) ? gamma : m_gateGamma;
+
+    return (dx * dx + dy * dy) <= g * g * s;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════

@@ -26,6 +26,10 @@ AlphaBetaTracker::AlphaBetaTracker(double alpha,
     m_speedLimit = 180.0;      // °/s
     m_missThreshold = 20;      // 连续20次未收到测量认为Lost
 
+    // 时间戳守卫默认值（按 50~100Hz 数据源取值，可由 setDtRange 覆盖）
+    m_dtMin = 0.002;           // 2ms 以下：重复帧/时间戳回退 → 丢弃该帧
+    m_dtMax = 0.20;            // 200ms 以上：数据中断 → 重新初始化
+
     reset();
 }
 
@@ -40,6 +44,8 @@ void AlphaBetaTracker::reset()
 
     m_angle = 0.0;
     m_velocity = 0.0;
+
+    m_saturated = false;
 }
 
 void AlphaBetaTracker::init(double angle,
@@ -56,6 +62,8 @@ void AlphaBetaTracker::init(double angle,
     m_angle = normalizeAngle(angle);
 
     m_velocity = 0.0;
+
+    m_saturated = false;
 }
 
 bool AlphaBetaTracker::initialized() const
@@ -120,6 +128,25 @@ void AlphaBetaTracker::setMissThreshold(int count)
     m_missThreshold = count;
 }
 
+void AlphaBetaTracker::setDtRange(double dtMinSec, double dtMaxSec)
+{
+    if(dtMinSec < 0.0)
+        dtMinSec = 0.0;
+
+    if(dtMaxSec <= 0.0)
+        dtMaxSec = 0.2;
+
+    if(dtMaxSec < dtMinSec)
+    {
+        const double tmp = dtMinSec;
+        dtMinSec = dtMaxSec;
+        dtMaxSec = tmp;
+    }
+
+    m_dtMin = dtMinSec;
+    m_dtMax = dtMaxSec;
+}
+
 void AlphaBetaTracker::setClampRange(double minAngle,
                                      double maxAngle)
 {
@@ -155,6 +182,21 @@ int AlphaBetaTracker::missThreshold() const
     return m_missThreshold;
 }
 
+double AlphaBetaTracker::dtMin() const
+{
+    return m_dtMin;
+}
+
+double AlphaBetaTracker::dtMax() const
+{
+    return m_dtMax;
+}
+
+bool AlphaBetaTracker::saturated() const
+{
+    return m_saturated;
+}
+
 AngleMode AlphaBetaTracker::angleMode() const
 {
     return m_mode;
@@ -177,13 +219,39 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
     }
 
     //--------------------------------------
-    // 计算dt
+    // 计算dt（时间戳守卫）
     //--------------------------------------
-    double dt =
+    const double dtRaw =
             (timestampMs - m_lastTimestamp) / 1000.0;
 
+    // ① 重复帧 / 时间戳回退（dt<=0，含 NaN）：整帧丢弃。
+    //    不推进 m_lastTimestamp、不计丢失，下一帧用正确时间基准重新算 dt。
+    if(!(dtRaw > 0.0))
+        return false;
+
+    // ② 时间戳过密（小于 dtMin，多为毫秒取整造成的同一毫秒双帧）：
+    //    同样丢弃，避免 β·残差/dt 把角速度放大一个数量级。
+    if(dtRaw < m_dtMin)
+        return false;
+
+    // ③ 数据中断（大于 dtMax）：陈旧速度已无意义，直接用本帧测量重建状态。
+    if(dtRaw > m_dtMax)
+    {
+        if(!hasMeasurement)
+        {
+            ++m_missCount;
+            if(m_missCount >= m_missThreshold)
+                m_lost = true;
+            return false;
+        }
+
+        init(measurement, timestampMs);   // 角度=测量值、速度=0、饱和标志清零
+        return true;
+    }
+
+    double dt = dtRaw;
     if (dt < MIN_DT)
-        dt = MIN_DT;
+        dt = MIN_DT;                      // 兜底下限
 
     m_lastTimestamp = timestampMs;
 
@@ -223,10 +291,16 @@ void AlphaBetaTracker::correct(double measurement,
     // Prediction
     //--------------------------------------
 
+    const double predictRaw =
+            m_angle +
+            m_velocity * dt;
+
     double predictAngle =
-            normalizeAngle(
-                m_angle +
-                m_velocity * dt);
+            normalizeAngle(predictRaw);
+
+    // 是否被限幅钳住（只有 Clamp 模式会出现 predictAngle != predictRaw）
+    const bool clamped =
+            (predictAngle != predictRaw);
 
     double predictVelocity =
             m_velocity;
@@ -249,9 +323,37 @@ void AlphaBetaTracker::correct(double measurement,
                 predictAngle +
                 m_alpha * residual);
 
+    //--------------------------------------
+    // 抗饱和：速度修正用的残差
+    //   ① 条件积分：角度已贴住限幅、且残差继续把状态往限幅外推时冻结速度积分，
+    //      避免“绕紧”后目标回到视场内的反向回摆与长时间恢复；
+    //   ② 残差限幅：单帧残差对速度的贡献不超过限速（|β·残差/dt| <= speedLimit），
+    //      防止时间戳异常时一步把角速度顶到极限。
+    //   注意：角度修正仍使用原始 residual，不影响正常跟随。
+    //--------------------------------------
+    double residualForVelocity = residual;
+
+    if (clamped &&
+        residual * (predictRaw - predictAngle) > 0.0)
+    {
+        residualForVelocity = 0.0;
+    }
+
+    if (m_beta > 0.0)
+    {
+        const double resMax =
+                m_speedLimit * dt / m_beta;
+
+        if (residualForVelocity >  resMax)
+            residualForVelocity =  resMax;
+
+        if (residualForVelocity < -resMax)
+            residualForVelocity = -resMax;
+    }
+
     m_velocity =
             predictVelocity +
-            m_beta * residual / dt;
+            m_beta * residualForVelocity / dt;
 
     //--------------------------------------
     // Speed Limit
@@ -262,6 +364,9 @@ void AlphaBetaTracker::correct(double measurement,
 
     if (m_velocity < -m_speedLimit)
         m_velocity = -m_speedLimit;
+
+    // 饱和标志（诊断用）
+    m_saturated = clamped;
 }
 
 void AlphaBetaTracker::predictOnly(double dt)

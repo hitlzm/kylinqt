@@ -1,0 +1,11 @@
+// 测试用最小替身：只提供 kalman/AlphaBetaTracker.h 需要的 qint64/quint64 类型。
+// 正式编译时由 Qt 提供，这里让滤波器源码可以脱离 Qt 单独编译。
+#ifndef STUB_QT_GLOBAL_H
+#define STUB_QT_GLOBAL_H
+
+#include <cstdint>
+
+typedef long long qint64;
+typedef unsigned long long quint64;
+
+#endif

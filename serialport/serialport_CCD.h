@@ -160,6 +160,7 @@ private:
 
     // Alpha-Beta 跟踪管理器：每帧图像更新滤波，1s定时器外推预测角度
     ABTrackManager m_abMgr{SeekerType::CCD_Wide};
+    bool m_abNeedReset = true;       // 进入外引导后首次喂数据时复位滤波器（清陈旧角速度）
 
     // 目标中心像素坐标（由 StreamProcessor 同步）
     int m_targetCenterX = -1;

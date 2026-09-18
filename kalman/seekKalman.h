@@ -54,6 +54,37 @@ public:
     // 获取角速度、角加速度
     double GetRate() const { return x[1]; }
     double GetAcc() const { return x[2]; }
+
+    // ─────────── 参数在线标定（修改后自动重算 Φ、U、Q）───────────
+    // σ_a：目标加速度标准差(°/s²)，决定滤波器对机动的适应速度；
+    //       取值应以实际目标的机动包络为准（见 tests/filter_sim 的标定扫描）。
+    void   SetSigmaA(double sigmaA);
+    // α：机动时间常数倒数(1/s)，1/α 即目标加速度的相关时间。
+    void   SetAlpha(double alpha);
+    double sigmaA() const { return m_sigmaA; }
+    double alpha()  const { return m_alpha; }
+
+    // ─────────── 外推点限幅（相对视场中心的角度范围）───────────
+    // 默认不启用（保持历史行为）；启用后 Extrapolate 的返回值会被钳位，
+    // 避免大机动时把超出视场/机械范围的预测角下发出去。
+    void SetAngleLimit(double minAngle, double maxAngle);
+    void ClearAngleLimit() { m_hasAngleLimit = false; }
+    bool angleLimitEnabled() const { return m_hasAngleLimit; }
+    double minAngle() const { return m_minAngle; }
+    double maxAngle() const { return m_maxAngle; }
+
+private:
+    // 在线标定参数（默认取头文件顶部的论文固定配置）
+    double m_alpha;                       // 机动时间常数倒数 α
+    double m_sigmaA;                      // 目标加速度标准差 σ_a
+
+    // 外推点限幅
+    bool   m_hasAngleLimit;
+    double m_minAngle;
+    double m_maxAngle;
+
+    // 限幅工具
+    double clampAngle(double angle) const;
 };
 
 // 导引头跟踪管理器：同时管理方位+俯仰双轴，生成3s下发数据包
@@ -67,13 +98,19 @@ private:
     // double miss_dist;          // 当前脱靶量(像元)
 
 public:
-    SeekerTrackManager();
+    // azLimitDeg/elLimitDeg：单轴视场半角（限幅范围 ±limit），默认按图像导引头 ±18°
+    explicit SeekerTrackManager(double azLimitDeg = 18.0, double elLimitDeg = 18.0);
     // 初始化双轴初始角度
     void Init(double az0, double el0);
     // 每20ms调用：接收导引头实测角度+脱靶量，执行滤波
     void FeedSeekerData(double t, double az_meas, double el_meas);
     // 生成单轴3s跟踪数据包：4个预测角度间隔1s
     sendExGuideData GenAxisPacket(bool is_az);
+    // 修改单轴视场限幅（如 CCD 焦距切换后按新视场更新）
+    void SetAngleLimit(double azLimitDeg, double elLimitDeg);
+    // 双轴统一设置目标机动参数（在线标定用，改动后自动重算 Φ/U/Q）
+    void SetSigmaA(double sigmaA);
+    void SetAlpha(double alpha);
     // // 获取遮挡状态
     // bool IsBlocked() const { return is_blocked; }
 };

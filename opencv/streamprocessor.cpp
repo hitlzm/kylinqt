@@ -280,13 +280,35 @@ void StreamProcessor::processFrame() {
         m_detector.detect(frame, detections);
     }
 
-    // ── 提取最高置信度检测框中心（原始测量值，供卡尔曼滤波用）──
+    // ── ③½ 帧间隔（供卡尔曼预测与测量门限使用）──
+    float trackerDt = 0.0f;
+    if (m_kalmanFirstFrame) {
+        m_kalmanTimer.start();
+        m_kalmanFirstFrame = false;
+    } else {
+        trackerDt = static_cast<float>(m_kalmanTimer.restart()) / 1000.0f;
+    }
+
+    // ── ④ 选取目标测量：门限内的检测框里取置信度最高者 ──
+    //    门限用卡尔曼的预测位置与创新方差判断（PixelKalmanTracker::gateMeasurement），
+    //    可挡掉画面其它位置冒出来的高置信度误检；若本帧所有检测都落在门限外，
+    //    则按“无检测”处理，交由 tracker 自身的丢失/复位逻辑恢复。
     float rawCenterX = -1.0f;
     float rawCenterY = -1.0f;
     const OnnxDetection *bestDet = nullptr;
     if (!detections.empty()) {
+        const bool gateOn = m_tracker.isValid();   // 未建立航迹时无先验，不做门限
+        int rejected = 0;
         float bestConf = 0.0f;
         for (const auto &det : detections) {
+            const float cx = static_cast<float>(det.bbox.x
+                                                 + det.bbox.width  / 2);
+            const float cy = static_cast<float>(det.bbox.y
+                                                 + det.bbox.height / 2);
+            if (gateOn && !m_tracker.gateMeasurement(cx, cy, trackerDt)) {
+                rejected++;
+                continue;                          // 与航迹不相容 → 丢弃该候选
+            }
             if (det.confidence > bestConf) {
                 bestConf = det.confidence;
                 bestDet  = &det;
@@ -297,10 +319,17 @@ void StreamProcessor::processFrame() {
                                             + bestDet->bbox.width  / 2);
             rawCenterY = static_cast<float>(bestDet->bbox.y
                                             + bestDet->bbox.height / 2);
+            m_gateRejectStreak = 0;
+        } else if (rejected > 0) {
+            m_gateRejectStreak++;
+            if (m_gateRejectStreak == 1 || m_gateRejectStreak % 30 == 0) {
+                qWarning() << "[StreamProcessor] 本帧检测全部落在卡尔曼测量门限外，按丢失处理，连续"
+                           << m_gateRejectStreak << "帧，被拒候选" << rejected << "个";
+            }
         }
     }
 
-    // ── ④ 绘制检测框 ──
+    // ── ④½ 绘制检测框 ──
     if (m_drawBoxes && !detections.empty()) {
         if (m_trackSingleTarget && bestDet) {
             // 单目标模式：只画最高置信度目标
@@ -311,16 +340,9 @@ void StreamProcessor::processFrame() {
         }
     }
 
-    // ── ④½ 卡尔曼滤波：消除检测框抖动，输出平滑坐标 ──
+    // ── ④¾ 卡尔曼滤波：消除检测框抖动，输出平滑坐标 ──
     {
-        float dt = 0.0f;
-        if (m_kalmanFirstFrame) {
-            m_kalmanTimer.start();
-            m_kalmanFirstFrame = false;
-        } else {
-            dt = static_cast<float>(m_kalmanTimer.restart()) / 1000.0f;
-        }
-        m_tracker.feed(rawCenterX, rawCenterY, dt);
+        m_tracker.feed(rawCenterX, rawCenterY, trackerDt);
         m_centerX = static_cast<int>(m_tracker.filteredX());
         m_centerY = static_cast<int>(m_tracker.filteredY());
         emit targetCenterChanged(m_centerX, m_centerY);

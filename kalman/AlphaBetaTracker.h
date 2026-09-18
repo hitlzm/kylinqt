@@ -128,6 +128,19 @@ public:
 
     void setMissThreshold(int count);
 
+    /**
+     * @brief 时间戳守卫范围（秒）
+     *
+     * @param dtMinSec 小于该间隔视为“重复帧/时间戳回退”，整帧丢弃
+     * @param dtMaxSec 大于该间隔视为“数据中断”，丢弃陈旧速度并重新初始化
+     *
+     * 建议按数据源标称周期设置，例如：
+     *   图像导引头(50Hz)  setDtRange(0.005, 0.20)
+     *   激光导引头(100Hz) setDtRange(0.002, 0.10)
+     *   CCD(检测帧率)     setDtRange(0.002, 0.20)
+     */
+    void setDtRange(double dtMinSec, double dtMaxSec);
+
     void setClampRange(double minAngle,
                        double maxAngle);
 
@@ -142,6 +155,15 @@ public:
     int missThreshold() const;
 
     AngleMode angleMode() const;
+
+    double dtMin() const;
+
+    double dtMax() const;
+
+    /**
+     * @brief 上一帧是否处于限幅饱和（诊断用，不参与控制）
+     */
+    bool saturated() const;
 
 private:
 
@@ -206,6 +228,20 @@ private:
     double m_speedLimit;
 
     int m_missThreshold;
+
+    //-----------------------------------
+    // 时间戳守卫
+    //-----------------------------------
+
+    double m_dtMin;
+
+    double m_dtMax;
+
+    //-----------------------------------
+    // 饱和标志（诊断）
+    //-----------------------------------
+
+    bool m_saturated;
 
     //-----------------------------------
     // Angle

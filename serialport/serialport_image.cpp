@@ -619,6 +619,8 @@ void SerialPortImage::ExmodeChanged(int mode)
                     m_exGuideTimer = new QTimer(this);
                     m_exGuideTimer->setTimerType(Qt::PreciseTimer);
                 }
+                // 跟踪周期变化后，下一帧数据到来时用当时的测量重新初始化滤波器
+                m_abNeedReset = true;
                 // 判断跟踪模式（5ms模式或者1秒跟踪模式）
                 if(exguidesetting == Exguide_1s)
                 {
@@ -632,7 +634,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                         sendExGuideData az_pkt = m_abMgr.GenAxisPacket(true,  m_sendCount_1s + 1);  // 方位轴
                         sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s +1);  // 俯仰轴
                         // 发送预测角度给转台
-                        reqExsend_1s(az_pkt, el_pkt);
+                        emit reqExsend_1s(az_pkt, el_pkt);
                         LogManager::instance()->logImageTracking(az_pkt.angle1, el_pkt.angle1);
                         if(++m_sendCount_1s >= Maxsendcount) {  // 1小时重同步
                             m_sendCount_1s = 0;
@@ -645,7 +647,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 5ms模式只发送方位角与俯仰角即可
-                        reqExsend_5ms(m_azimuth,m_pitch);
+                        emit reqExsend_5ms(m_azimuth,m_pitch);
                         LogManager::instance()->logImageTracking(m_azimuth, m_pitch);    
                     });
                     m_exGuideTimer->start(5); // 每5ms触发一次
@@ -658,6 +660,8 @@ void SerialPortImage::ExmodeChanged(int mode)
             if (m_exGuideTimer) {
                 m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
             }
+            // 本路已不是外引导源：下次被选中时重新初始化滤波器
+            m_abNeedReset = true;
         }
     }
     else
@@ -668,6 +672,8 @@ void SerialPortImage::ExmodeChanged(int mode)
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }
+        // 退出外引导模式：下次进入时重新初始化滤波器
+        m_abNeedReset = true;
     }
 }
 
@@ -718,6 +724,16 @@ void SerialPortImage::parseData(const QByteArray &rawData)
     //判断图像导引头是否被选中为外引导源，是的话更新数据（1s跟踪模式）
     if(exindex == 0)
     {
+        if (m_abNeedReset)
+        {
+            // 进入外引导后首次收到本路数据：清零虚拟时钟，并用本帧测量重建滤波器。
+            // 否则会沿用上一次使用时的角速度——滤波器角速度只由残差驱动，
+            // 目标已停住时残差≈0，旧速度会一直保留并把第 1 包推到视场边缘。
+            m_filterTime = 0;
+            m_abMgr.Init(m_azimuth, m_pitch, m_filterTime);
+            m_abNeedReset = false;
+        }
+
         m_filterTime += 20;
         m_abMgr.FeedData(m_filterTime, m_azimuth, m_pitch);
     }

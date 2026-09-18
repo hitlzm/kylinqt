@@ -1,0 +1,4 @@
+// 测试用最小替身：AlphaBetaTracker.cpp 只 include 了 <QtMath>，实际未使用其中函数。
+#ifndef STUB_QT_MATH_H
+#define STUB_QT_MATH_H
+#endif

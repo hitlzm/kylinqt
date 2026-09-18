@@ -632,6 +632,8 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
     // frame1 对应外框(轴3, 方位角), frame2 对应中框(轴2, 俯仰角)
     // 内框保持当前角度不变
 
+    //可以判断一下角度是否超过转台运动范围并给出提示，俯仰范围：-10~70，方位范围 -100~100 ，滚转范围 -200~200
+
     // ── 外框跟踪 (轴3) ──
     TrackingSendCmd1Hex cmdOuter;
     cmdOuter.axis = 3;  // 外框

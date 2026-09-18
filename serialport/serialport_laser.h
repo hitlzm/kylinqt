@@ -322,6 +322,7 @@ private:
     // Alpha-Beta 跟踪管理器：每10ms更新滤波，1s定时器外推预测角度
     ABTrackManager m_abMgr{SeekerType::Laser};
     qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每10ms+10
+    bool   m_abNeedReset = true;     // 进入外引导后首次喂数据时复位滤波器（清陈旧角速度）
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;
 

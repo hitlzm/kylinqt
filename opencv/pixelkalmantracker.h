@@ -72,6 +72,36 @@ public:
     /// 重置为 UNINIT 状态
     void reset();
 
+    // ═══════════════════════════════════════════════════════════════
+    // 测量门限（用于挡掉高置信度误检，只读判断，不改变滤波器状态）
+    //
+    //   ν = 测量 - 预测位置
+    //   S = 位置方向预测方差(ΦPΦᵀ) + R
+    //   判据: |ν|² / S ≤ γ²      γ 默认 4
+    //
+    // 调用方应先用本接口筛选候选检测框，再从中取置信度最高者；若全部被拒，
+    // 按“无检测”喂入 (-1,-1)，由 tracker 自身的丢失/复位逻辑恢复。
+    // 实测（tests/filter_sim/pixel_risk.cpp）：γ=3 起不会误拒真目标，
+    // γ=2 对 200px/s 的快速目标误拒率 99%，故不建议小于 3。
+    // ═══════════════════════════════════════════════════════════════
+
+    /// 一步预测位置（不改变滤波器状态）：px = x + dt·vx
+    void  predictPosition(float dt, float &px, float &py) const;
+
+    /// 位置方向上的创新方差 S = P_pred(pos) + R ，单位 px²
+    float innovationVar(float dt) const;
+
+    /// 测量门限判断：true = 与当前航迹统计相容，可接受
+    bool  gateMeasurement(float mx, float my, float dt, float gamma) const;
+    bool  gateMeasurement(float mx, float my, float dt) const
+    {
+        return gateMeasurement(mx, my, dt, m_gateGamma);
+    }
+
+    /// 门限倍数 γ（单位：σ），默认 4.0；小于 3 会误拒真目标
+    void  setGateGamma(float gamma) { m_gateGamma = (gamma > 0.0f) ? gamma : 4.0f; }
+    float gateGamma() const { return m_gateGamma; }
+
 private:
     void initKalman(float x0, float y0);
     void predict(float dt);
@@ -89,6 +119,7 @@ private:
 
     float  m_processNoiseVel = 1e-2f; // 速度过程噪声 q
     float  m_measureNoise    = 25.0f; // 测量噪声方差 R
+    float  m_gateGamma       = 4.0f;  // 测量门限倍数 γ（σ）
 };
 
 #endif // PIXELKALMANTRACKER_H
