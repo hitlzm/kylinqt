@@ -417,7 +417,6 @@ Rectangle {
             value: 1
             anchors.verticalCenter: parent.verticalCenter
             onValueChanged: {
-                // TODO: 把调节值 value 下发到实际控制对象（如 imageSendData 对应成员）
                 console.log("调节值 = " + value)
             }
         }

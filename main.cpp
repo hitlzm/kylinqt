@@ -301,6 +301,7 @@ int main(int argc, char *argv[])
     QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntablePort, &SerialPortTurntableHex::recvmiddle_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntableSendData, &TurntableSendDataHex::recvoutter_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntablePort, &SerialPortTurntableHex::recvoutter_angle, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
 
     // ── BD: 主线程 Data → 工作线程 Worker ──
     QObject::connect(bdData, &BDData::requestOpenPort,  bdPort, &SerialPortBD::onOpenPort,  Qt::QueuedConnection);

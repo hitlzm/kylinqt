@@ -730,6 +730,29 @@ void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangl
     }
 }
 
+// ════════════════════════ 摇摆模式  ═══════════════════════════
+void sendSwingMode(int index, float freq, float amplitude)
+{
+    if (index == 0) {
+        //三轴同时正弦运动
+        sendSwingCmd(1, freq, amplitude);
+        sendSwingCmd(2, freq, amplitude);
+        sendSwingCmd(3, freq, amplitude);
+    } else if (index == 1) {
+        // ── 仅内框 ──
+        sendSwingCmd(1, freq, amplitude);
+    } else if (index == 2) {
+        // ── 仅中框 ──
+        sendSwingCmd(2, freq, amplitude);
+    } else if (index == 3) {
+        // ── 仅外框 ──
+        sendSwingCmd(3, freq, amplitude);
+    } else {
+        qDebug() << " 程控模式: 无效index，无法正弦运动" << frame.index;
+    }
+
+}
+
 
 // ════════════════════════ 遥控模式（手柄控制）═══════════════════════════
 

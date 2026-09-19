@@ -253,6 +253,7 @@ public:
     ~TurntableSendDataHex() override {};
 
     Q_INVOKABLE void buildFrame(int m_index);
+    //Q_INVOKABLE void sinMove(int m_index, float amplitude, float frequency);
 
 public slots:
     void recvinner_angle(float angle)  { m_current_inner_angle = angle; }
@@ -275,6 +276,8 @@ signals:
     void reqcloseTurntable();
     void reqzeroTurntable();
     void reqresetTurntable();
+
+    void sinMove(int m_index, float amplitude, float frequency);//桥接信号，驱动三轴进行正弦运动
 
 private:
     int m_runtime = 1;
@@ -330,7 +333,11 @@ public slots:
     void sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);   //外引导模式下，转台内框无需转动
     void sendTrackMode_5ms(double yawangle, double pitchangle);
 
+    // ── 摇摆模式 ──
+    void sendSwingMode(int index, float freq, float amplitude);
+
     // ── 时间同步 ──
+    
     void sendTimesync(int seconds);
 
     // ── 模式切换 ──
