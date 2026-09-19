@@ -243,9 +243,7 @@ ColumnLayout{
             onClicked: {
                 turntableSendData.buildFrame(index)
             }
-        }
-
-            
+            }            
         }
     }
 }

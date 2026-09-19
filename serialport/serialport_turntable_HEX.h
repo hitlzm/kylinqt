@@ -327,7 +327,7 @@ public slots:
                         bool buttonA, bool buttonB, int Acount, int Bcount);
 
     // ── 外引导模式 ──
-    void sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);
+    void sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);   //外引导模式下，转台内框无需转动
     void sendTrackMode_5ms(double yawangle, double pitchangle);
 
     // ── 时间同步 ──
@@ -364,6 +364,7 @@ protected:
     void sendResetCmd();                                // 复位 (联合指令)
     void sendPositionCmd(const PositionModeCmd1Hex &cmd);   // 位置模式
     void sendVecCmd(const SpeedModeCmd1Hex &cmd);           // 速度模式
+    void sendSwingCmd(int axis, float freq, float amplitude); // 摇摆模式,可以单轴摇摆，也可以配置三轴摇摆
     void sendTrackCmd_1s(const TrackingSendCmd1Hex &cmd);     // 250ms跟踪(1s周期)
     void sendTrackCmd_5ms(const TrackingSendCmd2Hex &cmd);  // 5ms跟踪
     void sendTimeSetCmd(int seconds);                       // 时间设置

@@ -471,6 +471,32 @@ void SerialPortTurntableHex::sendVecCmd(const SpeedModeCmd1Hex &cmd)
 }
 
 
+// ════════════════════════ 摇摆模式 ════════════════════════
+
+void SerialPortTurntableHex::sendSwingCmd(int axis, float freq, float amplitude)
+{
+    // CMD_SWING (0x06)
+    // params[0-2] = 摇摆幅度 (3B, 有符号, 0.0001°)  → 幅度高位/中位/低位
+    // params[3-5] = 0x00
+    // params[6-7] = 摇摆频率 (2B, 无符号, 0.001Hz) → 频率高位/低位
+    // params[8-13]= 0x00
+    uint8_t params[14];
+    std::memset(params, 0, 14);
+
+    // 幅度 (3字节, 高-中-低, 大端, 0.0001°)
+    encode3BytesSigned(params + 0, amplitude, ANGLE_UNIT);
+
+    // 频率 (2字节, 高-低, 大端, 0.001Hz; 范围 0-65535 → 0-65.535Hz)
+    uint16_t freqRaw = static_cast<uint16_t>(
+        std::max(0, std::min(65535,
+            static_cast<int>(std::round(freq * FREQ_UNIT)))));
+    encode2BytesUint(params + 6, freqRaw);
+
+    uint8_t axis_cmd = ENCODE_AXIS_CMD(axis, CMD_SWING);
+    buildAndSend(axis_cmd, params);
+}
+
+
 // ════════════════════════ 250ms跟踪模式 (独立指令) ════════════════════════
 
 void SerialPortTurntableHex::sendTrackCmd_1s(const TrackingSendCmd1Hex &cmd)
@@ -698,7 +724,7 @@ void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangl
     if( m_cmd.angle2 < -10 || m_cmd.angle2 > 70 ) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
     }else if(m_cmd.angle3 < -100 || m_cmd.angle3 > 100){
-         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
+        qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
     }else{
         sendTrackCmd_5ms(m_cmd);
     }
@@ -723,11 +749,21 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle + 3.0f;
-                sendPositionCmd(cmd);
+                if(cmd.anglePos < 199.995 && cmd.anglePos >-199.995){
+                        sendPositionCmd(cmd);
+                }else{
+                        qDebug() << "内框接近临界角，停止内框步进";
+                }
+                //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle - 3.0f;
-                sendPositionCmd(cmd);
+                if(cmd.anglePos < 199.995 && cmd.anglePos >-199.995){
+                        sendPositionCmd(cmd);
+                }else{
+                        qDebug() << "内框接近临界角，停止内框步进";
+                }
+                //sendPositionCmd(cmd);
             }
         } else if (buttonL2 != 0.0f) {
             // 左扳机: 外框
@@ -737,11 +773,21 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle + 3.0f;
-                sendPositionCmd(cmd);
+                if(cmd.anglePos < 99.995 && cmd.anglePos >-99.995){
+                    sendPositionCmd(cmd);
+                }else{
+                    qDebug() << "外框接近临界角，停止外框步进";
+                }
+                //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle - 3.0f;
-                sendPositionCmd(cmd);
+                if(cmd.anglePos < 99.995 && cmd.anglePos >-99.995){
+                    sendPositionCmd(cmd);
+                }else{
+                    qDebug() << "外框接近临界角，停止外框步进";
+                }
+                //sendPositionCmd(cmd);
             }
         } else if (buttonR2 != 0.0f) {
             // 右扳机: 中框
@@ -751,11 +797,21 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle + 3.0f;
-                sendPositionCmd(cmd);
+                if(cmd.anglePos < 69.995 && cmd.anglePos >-9.995){
+                    sendPositionCmd(cmd);
+                }else{
+                    qDebug() << "中框接近临界角，停止中框步进控制";
+                }
+                //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle - 3.0f;
-                sendPositionCmd(cmd);
+                if(cmd.anglePos < 69.995 && cmd.anglePos >-9.995){
+                    sendPositionCmd(cmd);
+                }else{
+                    qDebug() << "中框接近临界角，停止中框步进控制";
+                }
+                //sendPositionCmd(cmd);
             }
         }
     } else {
