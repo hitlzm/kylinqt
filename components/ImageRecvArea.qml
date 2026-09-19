@@ -681,4 +681,98 @@ Rectangle {
             }
         }
     }
+
+    // GroupBox {
+    //     id: sixDOFBox
+    //     anchors.left: systemStatusBox.right
+    //     anchors.leftMargin: 10
+    //     anchors.right: parent.right
+    //     anchors.rightMargin: 10
+    //     anchors.top: serialBDBox.bottom
+    //     anchors.topMargin: 10
+    //     anchors.bottom: parent.bottom
+    //     anchors.bottomMargin: 10
+    //     topPadding: 18
+
+    //     title: "六自由度平台控制"
+    //     font.pixelSize: 18
+    //     label: Label {
+    //         text: parent.title
+    //         font.pixelSize: 18
+    //         font.bold: true
+    //         leftPadding: 12
+    //         topPadding: 6
+    //     }
+
+    //     background: Rectangle {
+    //         color: "#e1d8d8"
+    //         border.color: "gray"
+    //         border.width: 4
+    //         radius: 8
+    //     }
+
+    //     Column {
+    //         anchors.centerIn: parent
+    //         anchors.horizontalCenterOffset:30
+    //         spacing: 8
+    //         CusButton_Blue {
+    //         id: returnmiddleButton
+    //         width: 100
+    //         height: 32
+    //         text: "回中位"
+    //         onClicked: {
+    //             console.log("回中位已发送")
+    //         }
+    //         }
+    //         CusButton_Blue {
+    //         id: returnbottomButton
+    //         width: 100
+    //         height: 32
+    //         text: "回底部"
+    //         onClicked: {
+    //             console.log("回底部已发送")
+    //         }
+    //         }
+    //         Row {
+    //             spacing: 8
+    //             Text {
+    //                 text: "X轴倾角"
+    //                 font.pixelSize: 18
+    //                 font.bold: true
+    //                 anchors.verticalCenter: parent.verticalCenter
+    //             }
+    //             CusTextField{
+    //                 id:Xinput
+    //                 height: 40
+    //                 width: 120
+    //                 horizontalAlignment: TextInput.AlignHCenter
+    //                 // 垂直居中：设置垂直居中对齐和相同的上下内边距
+    //                 verticalAlignment: TextInput.AlignVCenter
+    //                 onEditingFinished: {
+                           
+    //                 }
+    //             }
+    //         } 
+    //         Row {
+    //             spacing: 8
+    //             Text {
+    //                 text: "Y轴倾角"
+    //                 font.pixelSize: 18
+    //                 font.bold: true
+    //                 anchors.verticalCenter: parent.verticalCenter
+    //             }
+    //             CusTextField{
+    //                 id:Yinput
+    //                 height: 40
+    //                 width: 120
+    //                 horizontalAlignment: TextInput.AlignHCenter
+    //                 // 垂直居中：设置垂直居中对齐和相同的上下内边距
+    //                 verticalAlignment: TextInput.AlignVCenter
+    //                 onEditingFinished: {
+                           
+    //                 }
+    //             }
+    //         } 
+    //     }
+    // }
 }
