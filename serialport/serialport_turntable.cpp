@@ -238,7 +238,7 @@ void  SerialPortTurntable::sendPositionCmd(const PositionModeCmd1 &cmd)
 void SerialPortTurntable::sendVecCmd(const SpeedModeCmd1 &cmd)  //参数
 {
         if (!m_serialPort->isOpen()) {
-            qWarning() << "串口未打开！";
+            //qWarning() << "串口未打开！";
             return;
         }
         // ---------- 构建数据帧 ----------
@@ -404,8 +404,7 @@ void SerialPortTurntable::sendProgramMode(programSend_frame frame)
             sendPositionCmd(cmd3);
         }else{
              qDebug() << "程控模式发送失败";
-        }
-        
+        }  
 }
 
 void SerialPortTurntable::sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount)
