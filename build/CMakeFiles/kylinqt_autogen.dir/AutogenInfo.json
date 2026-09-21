@@ -133,6 +133,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/network/SixDofMotionClient.h",
+			"MU",
+			"5SSUPNRDSB/moc_SixDofMotionClient.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/network/TemplateBindingClient.h",
 			"MU",
 			"5SSUPNRDSB/moc_TemplateBindingClient.cpp",
@@ -263,6 +269,7 @@
 	[
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
+		[ "E:/QTproject/kylinqt/network/SixDofMotionClient.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/network/TemplateBindingClient.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/serialport/serialport_BD.cpp", "MU", null ],

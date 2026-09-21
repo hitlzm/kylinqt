@@ -140,11 +140,19 @@ Rectangle {
             id: tiltButton
             Layout.fillWidth: true
             height: 32
-            text: "转台调平"
+            text: "转台底座调平"
             onClicked: {
-                turntableData.requestScanPorts()
+                sixDofPopup.showPopup()
             }
         }
+    }
+
+    // 六自由度平台调平弹窗（默认隐藏，点击「转台调平」打开）
+    SixDofMotionPopup {
+        id: sixDofPopup
+        // sixDofMotion 由 C++ 通过 setContextProperty 注入；
+        // 万一未注册，这里降级为 null 而不是抛 ReferenceError
+        motion: (typeof sixDofMotion !== "undefined") ? sixDofMotion : null
     }
 
     StackLayout {

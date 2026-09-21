@@ -22,12 +22,15 @@ E:/QTproject/kylinqt/serialport/serialport_laser.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h
  mmc:Q_OBJECT
-E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
 E:/QTproject/kylinqt/kalman/seekKalman.cpp
-E:/QTproject/kylinqt/serialport/serialport.cpp
+E:/QTproject/kylinqt/serialport/serialport_turntable.cpp
 E:/QTproject/kylinqt/main.cpp
-E:/QTproject/kylinqt/serialport/serialport_image.cpp
+E:/QTproject/kylinqt/serialport/serialport.cpp
 E:/QTproject/kylinqt/network/TemplateBindingClient.cpp
+E:/QTproject/kylinqt/serialport/serialport_image.cpp
 E:/QTproject/kylinqt/serialport/serialport_BD.cpp
 E:/QTproject/kylinqt/serialport/serialport_laser.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp
+E:/QTproject/kylinqt/network/SixDofMotionClient.h
+ mmc:Q_OBJECT
+E:/QTproject/kylinqt/network/SixDofMotionClient.cpp

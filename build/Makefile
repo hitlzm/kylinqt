@@ -237,6 +237,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+network/SixDofMotionClient.obj: network/SixDofMotionClient.cpp.obj
+.PHONY : network/SixDofMotionClient.obj
+
+# target to build an object file
+network/SixDofMotionClient.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/SixDofMotionClient.cpp.obj
+.PHONY : network/SixDofMotionClient.cpp.obj
+
+network/SixDofMotionClient.i: network/SixDofMotionClient.cpp.i
+.PHONY : network/SixDofMotionClient.i
+
+# target to preprocess a source file
+network/SixDofMotionClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/SixDofMotionClient.cpp.i
+.PHONY : network/SixDofMotionClient.cpp.i
+
+network/SixDofMotionClient.s: network/SixDofMotionClient.cpp.s
+.PHONY : network/SixDofMotionClient.s
+
+# target to generate assembly for a file
+network/SixDofMotionClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/network/SixDofMotionClient.cpp.s
+.PHONY : network/SixDofMotionClient.cpp.s
+
 network/TemplateBindingClient.obj: network/TemplateBindingClient.cpp.obj
 .PHONY : network/TemplateBindingClient.obj
 
@@ -451,6 +475,9 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... network/SixDofMotionClient.obj
+	@echo ... network/SixDofMotionClient.i
+	@echo ... network/SixDofMotionClient.s
 	@echo ... network/TemplateBindingClient.obj
 	@echo ... network/TemplateBindingClient.i
 	@echo ... network/TemplateBindingClient.s

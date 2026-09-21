@@ -64,7 +64,7 @@ else()
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable.cpp
-      serialport/serialport_BD.cpp
+      serialport/serialport_BD.cpp 
       serialport/serialport_CCD.cpp
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
@@ -72,6 +72,7 @@ else()
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
       network/TemplateBindingClient.cpp
+      network/SixDofMotionClient.cpp
     #   opencv/cvconvert.h
       ${TaoQuickRes}
     )
@@ -96,6 +97,12 @@ target_link_libraries(kylinqt
     libvlc libvlccore
     ${OpenCV_LIBS}
 )
+
+# SixDofMotionClient 直接调用 winsock 的 setsockopt()（开启 SO_BROADCAST），
+# Windows 下必须显式链接 ws2_32；Linux/麒麟上 setsockopt 在 libc 内，无需额外库。
+if(WIN32)
+  target_link_libraries(kylinqt PRIVATE ws2_32)
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${OpenCV_INCLUDE_DIRS}  # OpenCV的头文件路径

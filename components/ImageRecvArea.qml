@@ -384,7 +384,20 @@ Rectangle {
             Row {
                 spacing: 8
                 DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
-                DataLabel { fontSize: 18; labelWidth: 40;  valueWidth: 30; label: "序号:";   labelBold: true; value: turntableData.ctlnumber }
+                DataLabel { fontSize: 18; labelWidth: 40;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: turntableData.ctlnumber }
+                //根据控制字，显示具体执行的指令名称
+                // Text {
+                //     text: {
+                //         switch(turntableData.ctlnumber) {
+                //             case 0x01: return "回零"
+                //             case 0x02: return "位置控制"
+                //             case 0x03: return "速度控制"
+                //             case 0x04: return "跟踪控制"
+                //             default: return "未知"
+                //         }
+                //     }
+                //     font.pixelSize: 18
+                // }
             }
 
             // 第二行：内框

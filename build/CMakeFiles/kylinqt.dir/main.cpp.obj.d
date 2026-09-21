@@ -365,4 +365,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:\QTproject\kylinqt\main.cpp \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonobject.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonvalue.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QJsonArray \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonarray.h
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qjsonarray.h \
+ E:\QTproject\kylinqt\network/SixDofMotionClient.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h

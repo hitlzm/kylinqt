@@ -259,6 +259,12 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qcontiguouscache.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qsharedpointer_impl.h \
+ E:\QTproject\kylinqt\build\kylinqt_autogen\5SSUPNRDSB/moc_SixDofMotionClient.cpp \
+ E:/QTproject/kylinqt/network/SixDofMotionClient.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
+ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qstring.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\5SSUPNRDSB/moc_TemplateBindingClient.cpp \
  E:/QTproject/kylinqt/network/TemplateBindingClient.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/QTcpSocket \
@@ -281,8 +287,6 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportglobal.h \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/QSerialPortInfo \
  E:/QT5.12.8/5.12.8/mingw73_64/include/QtSerialPort/qserialportinfo.h \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
- E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qbytearray.h \
  E:\QTproject\kylinqt\build\kylinqt_autogen\YN6D6BICVT/moc_serialport_BD.cpp \
  E:/QTproject/kylinqt/serialport/serialport_BD.h \
  E:/QTproject/kylinqt/serialport/serialport.h \

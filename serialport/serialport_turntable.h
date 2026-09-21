@@ -243,7 +243,8 @@ public slots:
     void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号
     //外引导模式槽函数，用于对接两类导引头和CCD相机
-    void sendTrackMode(const sendExGuideData &frame1 , const sendExGuideData &frame2);    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)
+    //跟踪模式指令发送，对应外引导模式,内部调用void sendTrackCmd(const TrackingSendCmd1 &cmd)，要根据内框转角进行坐标转换，同时可以考虑一下安装偏角
+    void sendTrackMode(const sendExGuideData &frame1 , const sendExGuideData &frame2);    
 
     void sendTimesync();
 

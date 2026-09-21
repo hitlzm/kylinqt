@@ -13,6 +13,7 @@
 #include "handle/myhandle.h"
 #include "ModeControl/ModeController.h"
 #include "network/TemplateBindingClient.h"
+#include "network/SixDofMotionClient.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -56,6 +57,8 @@ int main(int argc, char *argv[])
     CCDData *ccdData = new CCDData(&app);
     //创建模板装订数据对象（主线程，QML 直接访问）
     TemplateBindingData *templateBindingData = new TemplateBindingData(&app);
+    // 六自由度平台 UDP 倾角控制（主线程对象，QML 直接调用；接口见 SixDofMotionClient.h）
+    SixDofMotionClient *sixDofMotion = new SixDofMotionClient(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
     SerialPortLaser *laserPort = new SerialPortLaser;       // 无父对象
@@ -98,6 +101,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("modeController", &m_modeController);
     engine.rootContext()->setContextProperty("gamepadBridge", m_gamepadBridge);
     engine.rootContext()->setContextProperty("templateBindingData", templateBindingData);
+    // 六自由度平台调平弹窗（components/SixDofMotionPopup.qml）依赖该上下文属性
+    engine.rootContext()->setContextProperty("sixDofMotion", sixDofMotion);
     qmlRegisterType<VlcVideoItem>("VlcVideo", 1, 0, "VlcVideo");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
