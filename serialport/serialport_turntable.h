@@ -212,6 +212,7 @@ private:
     float m_outter_startangle = 0.0f;
     float m_current_outter_angle = 0.0f;
     float m_outter_endangle = 0.0f;
+    //记录速度倍率与步进角度
 };
 
 class SerialPortTurntable : public SerialPort

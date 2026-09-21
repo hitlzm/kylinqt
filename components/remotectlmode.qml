@@ -90,7 +90,7 @@ ColumnLayout {
         anchors.left:firstcolumn.right
         anchors.leftMargin: 20
         anchors.top: firstcolumn.top
-        anchors.topMargin:50
+        anchors.topMargin:52
         spacing: 12
         // ──────────────── 扳机 ────────────────
         Rectangle {
@@ -156,7 +156,7 @@ ColumnLayout {
         anchors.left:secondcolumn.right
         anchors.leftMargin: 20
         anchors.top: firstcolumn.top
-        anchors.topMargin:50
+        anchors.topMargin:52
         spacing: 12
         Rectangle {
             Layout.preferredWidth: 200
@@ -178,6 +178,32 @@ ColumnLayout {
         DataLabel {
             label: "B:"
             value: myGamepad.buttonB
+            fontSize: 20
+        }
+        Rectangle {
+            Layout.preferredWidth: 200
+            Layout.preferredHeight: 2
+            color: "#cccccc"
+        }
+        //步进角与速度模式速度倍率设置，加两个DoubleSpinBox
+        MyDoubleSpinBox {
+            id: stepAngleSpinBox
+            label: "步进角度 (°):"
+            value: 1.0
+            from: 0.1
+            to: 5
+            stepSize: 0.1
+            decimals: 1
+            fontSize: 20
+        }
+        MyDoubleSpinBox {
+            id: speedMultiplierSpinBox
+            label: "速度倍率:"
+            value: 1.0
+            from: 0
+            to: 1
+            stepSize: 0.05
+            decimals: 2
             fontSize: 20
         }
     }
