@@ -92,6 +92,13 @@ ColumnLayout {
         anchors.top: firstcolumn.top
         anchors.topMargin:50
         spacing: 12
+
+        // ──────────────── 运行模式指示 ──────────────── ，当没有扳机按下时为速度模式，有扳机按下时为位置模式
+        DataLabel {
+            label: "当前运行模式:"
+            value: myGamepad.buttonL2 > 0.5 || myGamepad.buttonR2 > 0.5 ? "位置模式" : "速度模式"
+            fontSize: 20
+        }
         // ──────────────── 扳机 ────────────────
         Rectangle {
             Layout.preferredWidth: 200
@@ -158,6 +165,7 @@ ColumnLayout {
         anchors.top: firstcolumn.top
         anchors.topMargin:50
         spacing: 12
+        //分界线
         Rectangle {
             Layout.preferredWidth: 200
             Layout.preferredHeight: 2
@@ -178,6 +186,32 @@ ColumnLayout {
         DataLabel {
             label: "B:"
             value: myGamepad.buttonB
+            fontSize: 20
+        }
+        Rectangle {
+            Layout.preferredWidth: 200
+            Layout.preferredHeight: 2
+            color: "#cccccc"
+        }
+        // 步进角与速度模式速度倍率设置，加两个DoubleSpinBox
+        DoubleSpinBox {
+            id: stepAngleSpinBox
+            label: "步进角度 (°):"
+            value: 1.0
+            from: 0.1
+            to: 5
+            stepSize: 0.1
+            decimals: 1
+            fontSize: 20
+        }
+        DoubleSpinBox {
+            id: speedMultiplierSpinBox
+            label: "速度倍率:"
+            value: 1.0
+            from: 0
+            to: 1
+            stepSize: 0.05
+            decimals: 1
             fontSize: 20
         }
     }
