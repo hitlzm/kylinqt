@@ -161,7 +161,7 @@ uint16_t SerialPortTurntableHex::calcChecksum(const uint8_t* data, size_t len)
 void SerialPortTurntableHex::buildAndSend(uint8_t axis_cmd, const uint8_t params[14])
 {
     if (!m_serialPort || !m_serialPort->isOpen()) {
-        qWarning() << "[HEX] 串口未打开，无法发送指令";
+        //qWarning() << "[HEX] 串口未打开，无法发送指令";应该给出转台串口未打开的提示
         return;
     }
 
@@ -731,7 +731,7 @@ void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangl
 }
 
 // ════════════════════════ 摇摆模式  ═══════════════════════════
-void sendSwingMode(int index, float freq, float amplitude)
+void SerialPortTurntableHex::sendSwingMode(int index, float freq, float amplitude)
 {
     if (index == 0) {
         //三轴同时正弦运动
@@ -748,7 +748,7 @@ void sendSwingMode(int index, float freq, float amplitude)
         // ── 仅外框 ──
         sendSwingCmd(3, freq, amplitude);
     } else {
-        qDebug() << " 程控模式: 无效index，无法正弦运动" << frame.index;
+        qDebug() << " 程控模式: 无效index，无法正弦运动" << endl;
     }
 
 }
@@ -771,7 +771,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             cmd.acceleration = defaultAccel;
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
-                cmd.anglePos = m_current_inner_angle + 3.0f;
+                cmd.anglePos = m_current_inner_angle + m_step_angle;
                 if(cmd.anglePos < 199.995 && cmd.anglePos >-199.995){
                         sendPositionCmd(cmd);
                 }else{
@@ -780,7 +780,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
                 //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
-                cmd.anglePos = m_current_inner_angle - 3.0f;
+                cmd.anglePos = m_current_inner_angle - m_step_angle;
                 if(cmd.anglePos < 199.995 && cmd.anglePos >-199.995){
                         sendPositionCmd(cmd);
                 }else{
@@ -795,7 +795,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             cmd.acceleration = defaultAccel;
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
-                cmd.anglePos = m_current_outter_angle + 3.0f;
+                cmd.anglePos = m_current_outter_angle + m_step_angle;
                 if(cmd.anglePos < 99.995 && cmd.anglePos >-99.995){
                     sendPositionCmd(cmd);
                 }else{
@@ -804,7 +804,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
                 //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
-                cmd.anglePos = m_current_outter_angle - 3.0f;
+                cmd.anglePos = m_current_outter_angle - m_step_angle;
                 if(cmd.anglePos < 99.995 && cmd.anglePos >-99.995){
                     sendPositionCmd(cmd);
                 }else{
@@ -819,7 +819,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             cmd.acceleration = defaultAccel;
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
-                cmd.anglePos = m_current_middle_angle + 3.0f;
+                cmd.anglePos = m_current_middle_angle + m_step_angle;
                 if(cmd.anglePos < 69.995 && cmd.anglePos >-9.995){
                     sendPositionCmd(cmd);
                 }else{
@@ -828,7 +828,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
                 //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
-                cmd.anglePos = m_current_middle_angle - 3.0f;
+                cmd.anglePos = m_current_middle_angle - m_step_angle;
                 if(cmd.anglePos < 69.995 && cmd.anglePos >-9.995){
                     sendPositionCmd(cmd);
                 }else{
@@ -843,17 +843,17 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
         SpeedModeCmd1Hex innercmd;
         innercmd.axis = 1;
         innercmd.acceleration = defaultAccel;
-        innercmd.velocity = axisRightX * MAX_SPEED_HEX;
+        innercmd.velocity = axisRightX * MAX_SPEED_HEX * m_speed_multiplier;
 
         SpeedModeCmd1Hex middlecmd;
         middlecmd.axis = 2;
         middlecmd.acceleration = defaultAccel;
-        middlecmd.velocity = axisLeftY * MAX_SPEED_HEX;
+        middlecmd.velocity = axisLeftY * MAX_SPEED_HEX * m_speed_multiplier;
 
         SpeedModeCmd1Hex outtercmd;
         outtercmd.axis = 3;
         outtercmd.acceleration = defaultAccel;
-        outtercmd.velocity = axisLeftX * MAX_SPEED_HEX;
+        outtercmd.velocity = axisLeftX * MAX_SPEED_HEX * m_speed_multiplier;
 
         //加入限位判断
         if(m_current_inner_angle < 199.995 && m_current_inner_angle >-199.995){

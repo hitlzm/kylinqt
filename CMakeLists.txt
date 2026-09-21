@@ -73,13 +73,13 @@ find_file(ONNXRUNTIME_DLL onnxruntime.dll
     PATHS "${ONNXRUNTIME_ROOT}/bin" "${ONNXRUNTIME_ROOT}/lib"
     NO_DEFAULT_PATH)
 
-if(NOT ONNXRUNTIME_INCLUDE_DIR OR NOT ONNXRUNTIME_LIBRARY)
-    message(FATAL_ERROR
-        "ONNX Runtime 未找到。请先获取 MinGW 兼容的 ONNX Runtime 构建，"
-        "然后把安装前缀配置到 CMake 缓存变量 ONNXRUNTIME_ROOT，例如：\n"
-        "  cmake -DONNXRUNTIME_ROOT=E:/path/to/onnxruntime-install\n"
-        "当前尝试路径：${ONNXRUNTIME_ROOT}")
-endif()
+# if(NOT ONNXRUNTIME_INCLUDE_DIR OR NOT ONNXRUNTIME_LIBRARY)
+#     message(FATAL_ERROR
+#         "ONNX Runtime 未找到。请先获取 MinGW 兼容的 ONNX Runtime 构建，"
+#         "然后把安装前缀配置到 CMake 缓存变量 ONNXRUNTIME_ROOT，例如：\n"
+#         "  cmake -DONNXRUNTIME_ROOT=E:/path/to/onnxruntime-install\n"
+#         "当前尝试路径：${ONNXRUNTIME_ROOT}")
+# endif()
 
 if(ANDROID)
     add_library(kylinqt SHARED

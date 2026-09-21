@@ -208,6 +208,10 @@ signals:
     void requestClosePort();
     void requestScanPorts();
 
+    // 通知步进角度与速度倍率变化
+    void stepAngleChanged(float step_angle);
+    void speedMultiplierChanged(float speed_multiplier);
+
 public slots:
     void updateframe(StatusFeedbackHex recvdata);
     void setPortOpen(bool open);
@@ -359,6 +363,10 @@ public slots:
     void onClosePort();
     void onScanPorts();
 
+    // 遥控模式的步进角度与速度倍率设置
+    void setStepAngle(float step_angle) { m_step_angle = step_angle; }
+    void setSpeedMultiplier(float speed_multiplier) { m_speed_multiplier = speed_multiplier; }
+
 protected:
     void parseData(const QByteArray &rawData) override;
 
@@ -400,6 +408,9 @@ private:
     float m_current_inner_angle;
     float m_current_middle_angle;
     float m_current_outter_angle;
+
+    float m_step_angle = 0.0f; // 步进角度，单位度
+    float m_speed_multiplier = 1.0f; // 速度倍率，单位倍
 
     QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，按帧头+固定帧长切帧
 };

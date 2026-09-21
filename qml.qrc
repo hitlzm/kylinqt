@@ -28,5 +28,6 @@
         <file>components/arrowRight.png</file>
         <file>components/plus.png</file>
         <file>components/minus.png</file>
+        <file>components/MyDoubleSpinBox.qml</file>
     </qresource>
 </RCC>

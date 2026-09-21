@@ -90,7 +90,7 @@ ColumnLayout {
         anchors.left:firstcolumn.right
         anchors.leftMargin: 20
         anchors.top: firstcolumn.top
-        anchors.topMargin:50
+        anchors.topMargin:15
         spacing: 12
 
         // ──────────────── 运行模式指示 ──────────────── ，当没有扳机按下时为速度模式，有扳机按下时为位置模式
@@ -193,8 +193,8 @@ ColumnLayout {
             Layout.preferredHeight: 2
             color: "#cccccc"
         }
-        // 步进角与速度模式速度倍率设置，加两个DoubleSpinBox
-        DoubleSpinBox {
+        //步进角与速度模式速度倍率设置，加两个DoubleSpinBox
+        MyDoubleSpinBox {
             id: stepAngleSpinBox
             label: "步进角度 (°):"
             value: 1.0
@@ -203,16 +203,26 @@ ColumnLayout {
             stepSize: 0.1
             decimals: 1
             fontSize: 20
+            onValueModified: {
+                console.log("用户手动将值改为:", value)
+                // 发射信号，通知步进角度变化
+                turntableData.stepAngleChanged(value)
+            }
         }
-        DoubleSpinBox {
+        MyDoubleSpinBox {
             id: speedMultiplierSpinBox
             label: "速度倍率:"
             value: 1.0
             from: 0
             to: 1
             stepSize: 0.05
-            decimals: 1
+            decimals: 2
             fontSize: 20
+            onValueModified: {
+                console.log("用户手动将值改为:", value)
+                // 发射信号，通知速度倍率变化
+                turntableData.speedMultiplierChanged(value)
+            }
         }
     }
 

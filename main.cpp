@@ -181,11 +181,13 @@ int main(int argc, char *argv[])
 
     // 加载 YOLO 模型：优先可执行文件目录下的 models/，其次可执行文件目录、工作目录
     const QString appDir = QCoreApplication::applicationDirPath();
+    QDir parentDir(appDir);
+    parentDir.cdUp();  // 回到父目录
     QStringList modelCandidates;
     modelCandidates << appDir + "/models/best.onnx"
                     << appDir + "/best.onnx"
-                    << QDir::current().filePath("models/best.onnx")
-                    << QDir::current().filePath("best.onnx")
+                    << parentDir.filePath("models/best.onnx")
+                    << parentDir.filePath("best.onnx")
                     << QStringLiteral("E:/QTproject/yolov3model2/best.onnx")
                     << QStringLiteral("E:/QTproject/ONNXRUNTIME2/model/best.onnx");
     QString modelPath;
@@ -293,6 +295,7 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqzeroTurntable,   turntablePort, &SerialPortTurntableHex::zeroTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqresetTurntable,   turntablePort, &SerialPortTurntableHex::resetTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqcloseTurntable,   turntablePort, &SerialPortTurntableHex::closeTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
 
     QObject::connect(turntablePort, &SerialPortTurntableHex::requpdateframe,   turntableData, &TurntableDataHex::updateframe, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntableSendData, &TurntableSendDataHex::recvinner_angle, Qt::QueuedConnection);
@@ -301,7 +304,8 @@ int main(int argc, char *argv[])
     QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntablePort, &SerialPortTurntableHex::recvmiddle_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntableSendData, &TurntableSendDataHex::recvoutter_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntablePort, &SerialPortTurntableHex::recvoutter_angle, Qt::QueuedConnection);
-    QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::stepAngleChanged,  turntablePort, &SerialPortTurntableHex::setStepAngle, Qt::QueuedConnection);
+    QObject::connect(turntableData, &TurntableDataHex::speedMultiplierChanged,  turntablePort, &SerialPortTurntableHex::setSpeedMultiplier, Qt::QueuedConnection);
 
     // ── BD: 主线程 Data → 工作线程 Worker ──
     QObject::connect(bdData, &BDData::requestOpenPort,  bdPort, &SerialPortBD::onOpenPort,  Qt::QueuedConnection);

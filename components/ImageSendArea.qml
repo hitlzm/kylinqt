@@ -324,7 +324,7 @@ Rectangle {
     // ═══════════════════════════════════════════════════════
     Row {
         id: dytctrlRow
-        spacing: 20
+        spacing: 13
         height: 60  // 显式高度 = 最高子项(remoteHostField.myheight)，保证子锚点 verticalCenter 可解析
 
         anchors.top: serialRow.bottom
@@ -402,7 +402,14 @@ Rectangle {
         //     }
         // }
         
-        // TODO：把模板装订换成控制导引头内部调节机构运动
+        // 框架角调节
+        Text {
+            text: "框架角调节："
+            font.pixelSize: 18
+            font.bold: true
+            color: "#000000"
+            anchors.verticalCenter: adjustSpinBox.verticalCenter
+        }
 
         // ═══════════════════════════════════════════════════════
         // 数值调节 — CusSpinBox + 上下左右箭头按钮（新增）
