@@ -5986,3 +5986,121 @@ events:
       Running the CXX compiler's linker: "E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/bin/ld.exe" "-v"
       GNU ld (GNU Binutils) 2.30
 ...
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The system is: Windows - 10.0.26200 - AMD64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCompilerId.cmake:462 (find_file)"
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCompilerId.cmake:500 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/"
+    found: "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "C:/Program Files (x86)/Common Files/MVS/Runtime/Win32_i86"
+        - "C:\\Program Files (x86)\\Common Files\\MVS\\Runtime\\Win64_x64"
+        - "E:/FFmpeg/FFmpeg4.2.1_install/bin"
+        - "E:\\ubantu\\vnwaredownload\\bin\\"
+        - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath"
+        - "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v11.0\\bin"
+        - "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0/libnvvp"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:/windows/system32"
+        - "C:\\windows"
+        - "C:/windows/System32/Wbem"
+        - "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/windows/System32/OpenSSH/"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:/Program Files/NVIDIA Corporation/NVIDIA NvDLISR"
+        - "C:/WINDOWS/system32"
+        - "C:/WINDOWS"
+        - "C:/WINDOWS/System32/Wbem"
+        - "C:/WINDOWS/System32/WindowsPowerShell/v1.0/"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Program Files\\NVIDIA Corporation\\Nsight Compute 2020.1.2\\"
+        - "C:/Program Files/dotnet/"
+        - "D:\\Shared\\LabVIEW CLI"
+        - "E:/matlab2/runtime/win64"
+        - "E:\\matlab2\\bin"
+        - "C:/Program Files (x86)/STMicroelectronics/STM32 ST-LINK Utility/ST-LINK Utility"
+        - "E:\\@maven\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin"
+        - "F:/VScode/mingw64/bin"
+        - "E:\\@keil project\\VSCODEGCC\\bin"
+        - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/bin"
+        - "E:\\@keil project\\openocd-20250710\\OpenOCD-20250710-0.12.0\\bin"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:/WINDOWS/System32/OpenSSH/"
+        - "E:\\Git\\Git\\cmd"
+        - "E:/MSYS2/mingw64/bin"
+        - "E:\\ninja-win"
+        - "C:/Program Files/nodejs/"
+        - "C:\\Users\\hitlz\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin"
+        - "C:/Users/hitlz/AppData/Local/Microsoft/WindowsApps"
+        - "E:\\QT5.12.8\\5.12.8\\mingw73_64\\bin"
+        - "C:/Program Files/Bandizip/"
+        - "C:\\Users\\hitlz\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:/Users/hitlz/Downloads/Anaconda3-2021.11-Windows-x86_64.exe"
+        - "C:\\Users\\hitlz\\anaconda3\\Scripts"
+        - "C:/Users/hitlz/anaconda3/Library/bin"
+        - "C:\\Program Files\\JetBrains\\PyCharm Community Edition 2021.2.1\\bin"
+        - "D:/texlive/2022/bin/win32"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+        - "F:/qemu"
+        - "E:\\opencv-4.2.0\\mingw2\\install\\x64\\mingw\\bin"
+        - "C:/Users/hitlz/AppData/Roaming/npm"
+        - "E:\\QT5.12.8\\Tools\\mingw730_64\\bin"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/kylinqt"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "F:/VScode/cmake-4.1.0-rc2-windows-x86_64/cmake-4.1.0-rc2-windows-x86_64/share/cmake-4.1/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.exe"
+      
+      The CXX compiler identification is GNU, found in:
+        E:/QTproject/kylinqt/build/CMakeFiles/4.1.0-rc2/CompilerIdCXX/a.exe
+      

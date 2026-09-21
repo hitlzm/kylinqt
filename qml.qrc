@@ -29,5 +29,6 @@
         <file>components/plus.png</file>
         <file>components/minus.png</file>
         <file>components/MyDoubleSpinBox.qml</file>
+        <file>components/SixDofMotionPopup.qml</file>
     </qresource>
 </RCC>

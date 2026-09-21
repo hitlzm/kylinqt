@@ -141,10 +141,26 @@ Rectangle {
                 delayTimer.start()
             }
         }
+        }
+
+        //  六自由度平台调平
+        CusButton_Blue {
+                id: tiltButton
+                Layout.fillWidth: true
+                height: 32
+                text: "转台底座调平"
+                onClicked: {
+                    sixDofPopup.showPopup()
+                }
+            }
     }
 
-
-    }
+        // 六自由度平台调平弹窗（默认隐藏，点击「转台调平」打开）
+        SixDofMotionPopup {
+            id: sixDofPopup
+            // sixDofMotion 由 C++ 通过 setContextProperty 注入；
+            motion: (typeof sixDofMotion !== "undefined") ? sixDofMotion : null
+        }
 
     StackLayout {
         id: stack
