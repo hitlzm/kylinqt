@@ -135,8 +135,16 @@ Rectangle {
             }
         }
     }
-
-
+    //  六自由度平台调平
+    CusButton_Blue {
+            id: tiltButton
+            Layout.fillWidth: true
+            height: 32
+            text: "转台调平"
+            onClicked: {
+                turntableData.requestScanPorts()
+            }
+        }
     }
 
     StackLayout {
