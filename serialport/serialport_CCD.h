@@ -182,6 +182,8 @@ private:
     int   m_imageHeight = 1080;
     float m_hFov = 55.27f;   // 横向视场角（默认广角）
     float m_vFov = 32.26f;   // 纵向视场角（默认广角）
+
+    float m_rotation_angle = 0.0f;        // CCD安装旋转角度（绕光轴旋转，单位：度）
 };
 
 

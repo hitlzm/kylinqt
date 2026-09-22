@@ -5,7 +5,7 @@
 #include <cmath>
 #include <cstring>
 #include <QTime>
-
+#include "../utils/seeker_coordinate_transform.h"
 #define MAX_SPEED_HEX 12.0f
 
 // ════════════════════════ HEX状态码 → QML兼容编码转换 ════════════════════════
@@ -666,6 +666,23 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
 
     //可以判断一下角度是否超过转台运动范围并给出提示，俯仰范围：-10~70，方位范围 -100~100 ，滚转范围 -200~200
 
+    // 如果转台内框有转角，需要进行进行角度转换，利用m_current_inner_angle,frame1对应方位角，frame2对应俯仰角，内框保持当前角度不变
+    if (m_current_inner_angle != 0) {
+        //对方位角与俯仰角结构体进行更新
+        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle1, frame2.angle1, m_current_inner_angle);
+        frame1.angle1 = ang.x();
+        frame2.angle1 = ang.y();
+        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle2, frame2.angle2, m_current_inner_angle);
+        frame1.angle2 = ang.x();
+        frame2.angle2 = ang.y();
+        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle3, frame2.angle3, m_current_inner_angle);
+        frame1.angle3 = ang.x();
+        frame2.angle3 = ang.y();
+        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle4, frame2.angle4, m_current_inner_angle);
+        frame1.angle4 = ang.x();
+        frame2.angle4 = ang.y();
+    }
+
     // ── 外框跟踪 (轴3) ──
     TrackingSendCmd1Hex cmdOuter;
     cmdOuter.axis = 3;  // 外框
@@ -715,7 +732,14 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
 
 
 void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangle)
-{
+{   
+    // 对俯仰角和方位角进行变换
+    if (m_current_inner_angle != 0) {
+        //对方位角与俯仰角结构体进行更新
+        auto ang = seeker::deRollAboutBoresightDeg(yawangle, pitchangle, m_current_inner_angle);
+        yawangle = ang.x();
+        pitchangle = ang.y();
+    }
     // 5ms跟踪模式 (联合指令, 一帧包含三轴数据)
     TrackingSendCmd2Hex m_cmd;
     m_cmd.angle1 = m_current_inner_angle;                    // 内框保持

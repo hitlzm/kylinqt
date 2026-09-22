@@ -240,6 +240,19 @@ inline AzElDeg deRollAboutBoresightDeg(double azRolledDeg, double elRolledDeg, d
     return AzElDeg(rad2deg(ang.x()), rad2deg(ang.y()));
 }
 
+// 与 deRollAboutBoresight 同构的重载：同样传「角度对 + 滚转角」，但单位全部为「度」。
+//   angRolledDeg = (方位角 A', 俯仰角 E')，单位度
+//   gammaDeg     = 内框滚转角 gamma（绕视轴/基座系 x 轴，右手正向），单位度
+// 返回 (方位角 A, 俯仰角 E)，单位度
+// 警告：这里的 Vec2 分量是「度」，与弧度版同名函数的 Vec2 含义不同（Eigen 类型相同，
+//       编译器无法区分单位）。对接协议代码建议优先用上面的三参版本，语义更明确。
+inline Vec2 deRollAboutBoresightDeg(const Vec2& angRolledDeg, double gammaDeg)
+{
+    const Vec2 ang = deRollAboutBoresight(Vec2(deg2rad(angRolledDeg.x()), deg2rad(angRolledDeg.y())),
+                                          deg2rad(gammaDeg));
+    return Vec2(rad2deg(ang.x()), rad2deg(ang.y()));
+}
+
 // 反向接口：原坐标系角度(度) -> 滚转后导引头应报出的角度(度)
 inline AzElDeg toRolledFrameDeg(double azDeg, double elDeg, double gammaDeg)
 {

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QTimeZone>
 #include "../log/LogManager.h"
+#include "../utils/seeker_coordinate_transform.h"
 // ─────────────────────────────────────────────
 // 外引导模式常量
 // ─────────────────────────────────────────────
@@ -102,6 +103,13 @@ void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
     // 像素偏移 → 角度：偏移量 / 图像宽度 × 视场角，带正负方向
     m_azimuth = (centerX - m_imageWidth  / 2.0) / m_imageWidth  * m_hFov;
     m_pitch   = (centerY - m_imageHeight / 2.0) / m_imageHeight * m_vFov;
+
+    //考虑到CCD安装有一定倾斜角，要进行CCD到转台内框基坐标系的变换
+    if (m_rotation_angle != 0) {
+        auto ang = seeker::deRollAboutBoresightDeg(m_azimuth, m_pitch, m_rotation_angle);
+        m_azimuth = ang.az;
+        m_pitch = ang.el;
+    }
 
     // 外引导模式下，将计算出的角度喂入 Alpha-Beta 滤波器
     if (exindex == ExguideMode) {

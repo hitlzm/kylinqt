@@ -176,6 +176,7 @@ Window {
     }
 
     function doGoMiddle() {
+        confirmMiddleLayer.visible = false
         if (!ensureConnected())
             return
         if (motion.goMiddle())
@@ -185,9 +186,9 @@ Window {
     }
 
     function doGoBottom() {
+        confirmLayer.visible = false
         if (!ensureConnected())
             return
-        confirmLayer.visible = false
         if (motion.goBottom())
             toast.showToast("已下发：回底部（tz = -0.5m）")
         else
@@ -503,7 +504,7 @@ Window {
                                 height: 40
                                 text: "回中位"
                                 font.pixelSize: 16
-                                onClicked: popup.doGoMiddle()
+                                onClicked: confirmMiddleLayer.visible = true
                             }
 
                             CusButton_Blue {
@@ -829,6 +830,81 @@ Window {
                             text: "确认回底部"
                             font.pixelSize: 16
                             onClicked: popup.doGoBottom()
+                        }
+
+                        Item { Layout.fillWidth: true }
+                    }
+                }
+            }
+        }
+
+        // ════════════════ 回中位二次确认 ════════════════
+        Rectangle {
+            id: confirmMiddleLayer
+            z: 200
+            anchors.fill: parent
+            visible: false
+            color: "#70000000"
+            radius: 10
+
+            MouseArea {
+                anchors.fill: parent
+            }
+
+            Rectangle {
+                anchors.centerIn: parent
+                width: 460
+                height: 200
+                radius: 10
+                color: "#ffffff"
+                border.color: "#c0c0c0"
+                border.width: 1
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 14
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: "确认执行「回中位」？"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#333333"
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pixelSize: 14
+                        color: "#d93025"
+                        text: "六自由度平台将上升，请确保舱盖已打开。"
+                    }
+
+                    Item { Layout.fillHeight: true }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 16
+
+                        Item { Layout.fillWidth: true }
+
+                        CusButton_Blue {
+                            width: 110
+                            height: 40
+                            text: "取消"
+                            font.pixelSize: 16
+                            onClicked: confirmMiddleLayer.visible = false
+                        }
+
+                        CusButton_Red {
+                            width: 110
+                            height: 40
+                            text: "确认回中位"
+                            font.pixelSize: 16
+                            onClicked: popup.doGoMiddle()
                         }
 
                         Item { Layout.fillWidth: true }
