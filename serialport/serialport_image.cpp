@@ -100,9 +100,21 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         m_aFrameSequenceReply = pFrame->a_frame_sequence_reply;
         emit aFrameSequenceReplyChanged();
     }
+    // 每次发送数据后才判断A帧是否有效，设置一个是否判断发送帧有效的标志，在标志位有效时，连续检查20帧数据，对数据取并集输出
     if (m_aFrameValidFlag != pFrame->a_frame_valid_flag) {
-        m_aFrameValidFlag = pFrame->a_frame_valid_flag;
-        emit aFrameValidFlagChanged();
+        if(m_check)
+        {   
+            //每次判断是否有效前，如果当前发送帧有效标志位为0xAA，则先置零发送帧有效位。每次发送数据时，将m_check_count—>20,m_check->true
+            if(m_check_count == 20 && m_aFrameValidFlag){ m_aFrameValidFlag = 0;}
+            if(m_check_count-- > 0)   //连续检查20帧数据，判断是否有效
+            {
+                m_aFrameValidFlag = m_aFrameValidFlag || pFrame->a_frame_valid_flag;
+            }
+            else{
+                m_check = false;
+                emit aFrameValidFlagChanged();
+            }
+        }
     }
     if (m_seekerCtrlReply != pFrame->seeker_ctrl_reply) {
         m_seekerCtrlReply = pFrame->seeker_ctrl_reply;

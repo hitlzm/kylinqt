@@ -291,6 +291,9 @@ private:
     bool m_portOpen = false;
     QStringList m_availablePorts;
     QString m_errorString;
+    //加入是否判断发送帧有效的标志位与计数位，只有发送数据时，才将标志位置1并检查数据是否发送成功
+    bool m_check = false;
+    int m_check_count = 20;
 };
 
 class ImageSendData : public QObject
