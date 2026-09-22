@@ -139,7 +139,7 @@ public slots:
 
     void ExmodeChanged(int mode);
 
-    void recvTargetCenter(int centerX, int centerY);  // 接收目标中心像素坐标
+    void recvTargetCenter(int centerX, int centerY);  // 接收目标中心像素坐标,并进行俯仰角与方位角的计算，喂入卡尔曼滤波器
 
 protected:
     void parseData(const QByteArray &rawData) override{};

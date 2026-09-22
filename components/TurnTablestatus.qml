@@ -126,7 +126,7 @@ Rectangle {
 
         Timer {
             id: delayTimer
-            interval: 1  
+            interval: 500  
             onTriggered: {
                 if (turntableData.portOpen) {msg.message = "串口已打开！"; msg.open()}
                 else { msg.message = "串口打开失败！"; msg.open() }

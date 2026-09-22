@@ -260,7 +260,7 @@ Rectangle {
         anchors.leftMargin: 30
         Timer {
             id: delayTimer
-            interval: 1  
+            interval: 500  
             onTriggered: {
                 // if (laserData.portOpen) tip.show()
                 if (laserData.portOpen) {msg.message = "串口已打开！"; msg.open()}

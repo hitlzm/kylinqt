@@ -104,7 +104,7 @@ Rectangle {
 
                     Timer {
                         id: bdDelayTimer
-                        interval: 1
+                        interval: 500
                         onTriggered: {
                             if (bdData.portOpen) {
                                 bdmsg.message = "北斗串口已打开！"
@@ -251,7 +251,7 @@ Rectangle {
 
                     Timer {
                         id: ccdDelayTimer
-                        interval: 1
+                        interval: 500
                         onTriggered: {
                             if (ccdData.portOpen) {
                                 ccdmsg.message = "CCD串口已打开！"

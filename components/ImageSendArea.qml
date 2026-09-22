@@ -263,7 +263,7 @@ Rectangle {
 
             Timer {
                 id: delayTimer
-                interval: 1
+                interval: 500
                 onTriggered: {
                     if (imageData.portOpen) {
                         msg.message = "串口已打开！"
