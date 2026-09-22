@@ -18,6 +18,24 @@ Rectangle {
     MessagePopup { id: bdmsg }
     MessagePopup { id: ccdmsg }
 
+    // 根据控制字，返回具体执行的指令名称
+    function ctlNumberText(n) {
+    switch (n) {
+    case 0x01: return "使能"
+    case 0x02: return "停车"
+    case 0x03: return "回零"
+    case 0x04: return "位置"
+    case 0x05: return "速率"
+    case 0x06: return "摇摆"
+    case 0x0a: return "250ms跟踪"
+    case 0x0c: return "5ms跟踪"
+    case 0x10: return "时间设置"
+    case 0x11: return "跟踪修正"
+    case 0x1F: return "复位"
+    default:   return "未知"
+    }
+    }
+
     // ═══════════════════════════════════════════════════════════════
     // 第一行左侧：串口与北斗信息显示框
     // ═══════════════════════════════════════════════════════════════
@@ -384,15 +402,22 @@ Rectangle {
             Row {
                 spacing: 8
                 DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
-                DataLabel { fontSize: 18; labelWidth: 40;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: turntableData.ctlnumber }
+                DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.ctlnumber) }
                 //根据控制字，显示具体执行的指令名称
                 // Text {
                 //     text: {
                 //         switch(turntableData.ctlnumber) {
-                //             case 0x01: return "回零"
-                //             case 0x02: return "位置控制"
-                //             case 0x03: return "速度控制"
-                //             case 0x04: return "跟踪控制"
+                //             case 0x01: return "使能"
+                //             case 0x02: return "停车"
+                //             case 0x03: return "回零"
+                //             case 0x04: return "位置"
+                //             case 0x05: return "速率"
+                //             case 0x06: return "摇摆"
+                //             case 0x0a: return "250ms跟踪"
+                //             case 0x0c: return "5ms跟踪"
+                //             case 0x10: return "时间设置"
+                //             case 0x11: return "跟踪修正"
+                //             case 0x1F: return "复位"
                 //             default: return "未知"
                 //         }
                 //     }
