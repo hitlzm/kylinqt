@@ -285,12 +285,12 @@ Rectangle {
                 imageSendData.buildFrame()
             }
         }
-        // 字符叠加开关
-        MySwitch {
-            id: mySwitch
-            width: 120
-            height: 32
-            title: "字符叠加"
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 3
+            Indicator { id: outcommu; label: "外部通讯"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
         }
     }
 
