@@ -660,7 +660,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
 
 // ════════════════════════ 外引导模式 ════════════════════════
 
-void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2)
+void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2)
 {
     // 250ms跟踪模式: 上位机每隔1秒发送一组跟踪数据 (内/外框各一帧)
     // frame1 对应外框(轴3, 方位角), frame2 对应中框(轴2, 俯仰角)

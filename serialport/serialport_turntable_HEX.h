@@ -334,7 +334,7 @@ public slots:
                         bool buttonA, bool buttonB, int Acount, int Bcount);
 
     // ── 外引导模式 ──
-    void sendTrackMode_1s(const sendExGuideData &frame1, const sendExGuideData &frame2);   //外引导模式下，转台内框无需转动
+    void sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2);   //外引导模式下，转台内框无需转动
     void sendTrackMode_5ms(double yawangle, double pitchangle);
 
     // ── 摇摆模式 ──

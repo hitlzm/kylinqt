@@ -296,7 +296,7 @@ signals:
 
     //两类导引头的实现相同
     void reqTimesync(int seconds = 0);
-    void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
     void reqExsend_5ms(double angle1 ,double angle2 );
 
 public slots:

@@ -519,7 +519,7 @@ signals:
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
     void reqTimesync(int seconds);
-    void reqExsend_1s(const sendExGuideData &frame1 , const sendExGuideData &frame2 );
+    void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
     void reqExsend_5ms(double angle1 ,double angle2 );
 
     void reqSendDeviationPixel(int num ,int x , int y);
