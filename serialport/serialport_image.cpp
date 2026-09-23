@@ -476,9 +476,11 @@ SerialPortImage::SerialPortImage(QObject *parent)
 
 SerialPortImage::~SerialPortImage() {
     if (m_exGuideTimer) {
-        if (QThread::currentThread() != m_exGuideTimer->thread())
-            m_exGuideTimer->moveToThread(QThread::currentThread());
-        m_exGuideTimer->stop();
+        // m_exGuideTimer 是 new QTimer(this)（有父对象），不能单独 moveToThread()
+        // （Qt 会直接拒绝并打印 "Cannot move objects with a parent"）。
+        // 它随本对象一起析构，这里只在同一线程内停止计时器。
+        if (QThread::currentThread() == m_exGuideTimer->thread())
+            m_exGuideTimer->stop();
         delete m_exGuideTimer;
         m_exGuideTimer = nullptr;
     }

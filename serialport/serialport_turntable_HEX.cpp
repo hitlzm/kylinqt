@@ -307,12 +307,14 @@ SerialPortTurntableHex::SerialPortTurntableHex(QObject *parent)
 
 SerialPortTurntableHex::~SerialPortTurntableHex()
 {
-    if (m_turntableDataHex) {
-        if (QThread::currentThread() != m_turntableDataHex->thread())
-            m_turntableDataHex->moveToThread(QThread::currentThread());
-        delete m_turntableDataHex;
-        m_turntableDataHex = nullptr;
-    }
+    // m_turntableDataHex 是 main.cpp 中 new TurntableDataHex(&app) 创建、
+    // 并作为 QML context property（turntableData）暴露给界面的 Data 对象，
+    // 其生命周期由 app 管理：
+    //   * 它带父对象（app），moveToThread() 必然失败并打印
+    //     "QObject::moveToThread: Cannot move objects with a parent"；
+    //   * 更不能在这里跨线程 delete，否则 QML 绑定和其它已建立的连接会持有悬垂指针。
+    // 因此析构时不做任何迁移/释放动作，实际释放由 app 的析构链路完成
+    //（与 laser / image / BD / CCD 的 Data 对象保持一致）。
 }
 
 
@@ -670,17 +672,17 @@ void SerialPortTurntableHex::sendTrackMode_1s(const sendExGuideData &frame1, con
     if (m_current_inner_angle != 0) {
         //对方位角与俯仰角结构体进行更新
         auto ang = seeker::deRollAboutBoresightDeg(frame1.angle1, frame2.angle1, m_current_inner_angle);
-        frame1.angle1 = ang.x();
-        frame2.angle1 = ang.y();
-        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle2, frame2.angle2, m_current_inner_angle);
-        frame1.angle2 = ang.x();
-        frame2.angle2 = ang.y();
-        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle3, frame2.angle3, m_current_inner_angle);
-        frame1.angle3 = ang.x();
-        frame2.angle3 = ang.y();
-        auto ang = seeker::deRollAboutBoresightDeg(frame1.angle4, frame2.angle4, m_current_inner_angle);
-        frame1.angle4 = ang.x();
-        frame2.angle4 = ang.y();
+        frame1.angle1 = ang.az;
+        frame2.angle1 = ang.el;
+        ang = seeker::deRollAboutBoresightDeg(frame1.angle2, frame2.angle2, m_current_inner_angle);
+        frame1.angle2 = ang.az;
+        frame2.angle2 = ang.el;
+        ang = seeker::deRollAboutBoresightDeg(frame1.angle3, frame2.angle3, m_current_inner_angle);
+        frame1.angle3 = ang.az;
+        frame2.angle3 = ang.el;
+        ang = seeker::deRollAboutBoresightDeg(frame1.angle4, frame2.angle4, m_current_inner_angle);
+        frame1.angle4 = ang.az;
+        frame2.angle4 = ang.el;
     }
 
     // ── 外框跟踪 (轴3) ──
@@ -737,8 +739,8 @@ void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangl
     if (m_current_inner_angle != 0) {
         //对方位角与俯仰角结构体进行更新
         auto ang = seeker::deRollAboutBoresightDeg(yawangle, pitchangle, m_current_inner_angle);
-        yawangle = ang.x();
-        pitchangle = ang.y();
+        yawangle = ang.az;
+        pitchangle = ang.el;
     }
     // 5ms跟踪模式 (联合指令, 一帧包含三轴数据)
     TrackingSendCmd2Hex m_cmd;

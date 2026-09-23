@@ -14,14 +14,14 @@ SerialPort::SerialPort(QObject *parent)
 
 SerialPort::~SerialPort()
 {
-    // 析构可能发生在主线程，但 m_serialPort/timer 在工作线程创建。
-    // 必须先迁回当前线程再操作，否则 close() 内部停止 QSerialPort 的 timer 会跨线程报错。
-    if (m_serialPort && QThread::currentThread() != m_serialPort->thread())
-        m_serialPort->moveToThread(QThread::currentThread());
-    if (timer && QThread::currentThread() != timer->thread())
-        timer->moveToThread(QThread::currentThread());
-
-    close();  // 现在安全了，m_serialPort 已在当前线程
+    // m_serialPort / timer 都是 dowork() 里以 this 为父对象创建的子对象。
+    // 有父对象的 QObject 不能单独 moveToThread()：Qt 只会打印
+    // "QObject::moveToThread: Cannot move objects with a parent" 然后什么都不做，
+    // 所以这里不再做跨线程迁移（它们本来就会随本对象一起析构）。
+    // 只在本对象所属线程内调用 close()，避免跨线程去停 QSerialPort 内部的 notifier/timer；
+    // 非本线程的析构场景下，串口与定时器由 QObject 的父子析构链完成释放。
+    if (QThread::currentThread() == thread())
+        close();
 
     delete m_serialPort;
     m_serialPort = nullptr;
