@@ -314,13 +314,6 @@ Rectangle {
                 imageSendData.m_captureRefImgCmd = 0x00 //发三拍后恢复默认值
             }
         }
-        // // 字符叠加开关
-        // MySwitch {
-        //     id: mySwitch
-        //     width: 120
-        //     height: 32
-        //     title: "字符叠加"
-        // }
     }
 
     // ═══════════════════════════════════════════════════════
