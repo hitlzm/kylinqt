@@ -4,6 +4,7 @@
 #include "../log/LogManager.h"
 #include <QThread>
 #include <QTimer>
+#include <QTimeZone>
 // ─────────────────────────────────────────────
 // ImageData
 // ─────────────────────────────────────────────
@@ -13,6 +14,36 @@
 
 #define Exguide_1s 7
 #define Maxsendcount 600 //每10分钟进行一次时间同步
+
+// ─────────────────────────────────────────────
+// 时间戳工具
+// ─────────────────────────────────────────────
+// 取当前北京时间(UTC+8，本机时钟按北京时间显示)并换算为 UTC 毫秒时间戳
+// (1970-01-01 00:00:00 UTC 起算)。
+// 做法：先把本地“墙上时间”按 UTC 解释，再减去 8 小时固定偏差，
+// 这样无论系统时区是否已配成 Asia/Shanghai，结果都是 UTC 绝对毫秒时间。
+static quint64 beijingNowUtcMs()
+{
+    const QDateTime local = QDateTime::currentDateTime();
+    const QDateTime wallClockAsUtc(local.date(), local.time(), Qt::UTC);
+    const qint64 ms = wallClockAsUtc.toMSecsSinceEpoch() - 8LL * 3600LL * 1000LL;
+    return static_cast<quint64>(ms > 0 ? ms : 0);
+}
+
+// 8 字节时间戳按小端(低字节在前)写入/读出，与帧内其它多字节字段的字节序保持一致
+static void writeUint64LE(quint8 *dst, quint64 value)
+{
+    for (int i = 0; i < 8; ++i)
+        dst[i] = static_cast<quint8>((value >> (8 * i)) & 0xFFu);
+}
+
+static quint64 readUint64LE(const quint8 *src)
+{
+    quint64 value = 0;
+    for (int i = 0; i < 8; ++i)
+        value |= static_cast<quint64>(src[i]) << (8 * i);
+    return value;
+}
 
 uint16_t SerialPortImage::crc16_table[256] = {0};
 
@@ -72,6 +103,7 @@ int ImageData::platformSelfCheck() const { return m_platformSelfCheck; }
 int ImageData::servoRunningTime() const { return m_servoRunningTime; }
 int ImageData::servoStep() const { return m_servoStep; }
 int ImageData::infraredFrameNum() const { return m_infraredFrameNum; }
+int ImageData::temperture() const { return m_temperture; }
 int ImageData::cbhTv4405() const { return m_cbhTv4405; }
 int ImageData::infraredFrameRate() const { return m_infraredFrameRate; }
 int ImageData::tvFrameRate() const { return m_tvFrameRate; }
@@ -79,7 +111,14 @@ int ImageData::gateSize() const { return m_gateSize; }
 int ImageData::softwareVersion1() const { return m_softwareVersion1; }
 int ImageData::softwareVersion2() const { return m_softwareVersion2; }
 int ImageData::softwareVersion3() const { return m_softwareVersion3; }
+qint64 ImageData::msTime() const { return m_msTime; }
+int ImageData::usTime() const { return m_usTime; }
+qint64 ImageData::timeStampUs() const { return m_timeStampUs; }
+QDateTime ImageData::recvDateTime() const { return m_recvDateTime; }
+QString ImageData::recvTimeText() const { return m_recvTimeText; }
 
+// 本函数在 SerialPortImage::parseData() 校验完帧头与 CRC16 后，
+// 由 imageFrameReceived 信号(队列连接)触发，完成各字段的解析。
 void ImageData::updateFromFrame(const QByteArray &frame)
 {
     if (frame.size() < static_cast<int>(sizeof(image_recv_frame))) {
@@ -212,6 +251,43 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit trackerStateChanged();
     }
 
+    // 字节34-41：导引头返回时间戳的毫秒部分(8字节小端)；字节42-43：微秒部分(0~999)
+    const qint64 msTime = static_cast<qint64>(
+                readUint64LE(pFrame->ms_time));
+    const int usTime = static_cast<int>(pFrame->us_time);
+    const qint64 timeStampUs = msTime * 1000LL + usTime;
+    if (m_msTime != msTime) {
+        m_msTime = msTime;
+        emit msTimeChanged();
+    }
+    if (m_usTime != usTime) {
+        m_usTime = usTime;
+        emit usTimeChanged();
+    }
+    if (m_timeStampUs != timeStampUs) {
+        m_timeStampUs = timeStampUs;
+        emit timeStampUsChanged();
+    }
+
+    // 把返回时间戳换算成年月日时分秒保存：
+    // 时间戳按 UTC 毫秒解释(与发送侧同一基准)，再折算成北京时间(UTC+8)的“年月日时分秒.毫秒微秒”
+    if (msTime > 0) {
+        const QDateTime recvUtc = QDateTime::fromMSecsSinceEpoch(msTime, Qt::UTC);
+        // 用固定偏移时区做UTC→北京时间换算，避免Qt5.12在Windows上访问时区库出问题
+        const QDateTime recvBj = recvUtc.toTimeZone(QTimeZone(8 * 3600));
+        if (m_recvDateTime != recvUtc) {
+            m_recvDateTime = recvUtc;
+            emit recvDateTimeChanged();
+        }
+        //秒的小数部分：毫秒(3位) + 微秒(3位)，合计微秒精度，例如 2026-09-24 11:01:57.054321
+        const QString recvText = recvBj.toString("yyyy-MM-dd HH:mm:ss.zzz")
+                               + QString("%1").arg(usTime, 3, 10, QLatin1Char('0'));
+        if (m_recvTimeText != recvText) {
+            m_recvTimeText = recvText;
+            emit recvTimeTextChanged();
+        }
+    }
+
     if (m_azimuthDeviationPixel != pFrame->azimuth_deviation_pixel) {
         m_azimuthDeviationPixel = pFrame->azimuth_deviation_pixel;
         emit azimuthDeviationPixelChanged();
@@ -256,10 +332,16 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit servoStepChanged();
     }
 
-    auto infrared_frame_num = static_cast<int>(pFrame->infrared_frame_num);
-    if (m_infraredFrameNum != infrared_frame_num) {
-        m_infraredFrameNum = infrared_frame_num;
+    //auto infrared_frame_num = static_cast<int>(pFrame->infrared_frame_num);
+    if (m_infraredFrameNum != pFrame->infrared_frame_num) {
+        m_infraredFrameNum = pFrame->infrared_frame_num;
         emit infraredFrameNumChanged();
+    }
+
+    //加入温度检查
+    if (m_temperture != pFrame->temperture) {
+        m_temperture = pFrame->temperture;
+        emit tempertureChanged();
     }
 
     if (m_cbhTv4405 != pFrame->cbh_tv4405) {
@@ -317,6 +399,20 @@ int ImageData::getBitsFromQint8(qint8 value, int startBit, int endBit)
 ImageSendData::ImageSendData(QObject *parent)
     : QObject(parent)
 {
+    //每10分钟自动向导引头发送一次时间同步帧：置位时间同步信号 → 构帧发送 → 再复位
+    const int timeSyncIntervalMs = 10 * 60 * 1000;   //10分钟
+    m_timeSyncTimer = new QTimer(this);
+    m_timeSyncTimer->setTimerType(Qt::CoarseTimer);
+    m_timeSyncTimer->setInterval(timeSyncIntervalMs);
+    connect(m_timeSyncTimer, &QTimer::timeout, this, &ImageSendData::sendTimeSyncFrame);
+    m_timeSyncTimer->start();
+}
+
+void ImageSendData::sendTimeSyncFrame()
+{
+    m_timeSync = 1;                 //字节61：时间同步信号置1
+    buildFrame();                   //构帧并发送（62-69字节为当拍北京时间换算的UTC毫秒时间戳）
+    m_timeSync = 0;                 //发完立即复位，避免后续人工发送的帧都带时间同步标志
 }
 
 void ImageSendData::buildFrame() 
@@ -361,10 +457,21 @@ void ImageSendData::buildFrame()
     frame.corrected_yaw_pos = static_cast<quint16>(m_correctedYawPos);
     frame.search_pitch_rate = static_cast<qint16>(toRawValue_b(m_searchPitchRate));
     frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
-    frame.reserved2 = 0;
+    frame.reserved2 = 0;    //可以不改这个是为了测指标用。改成了红外待机指令，模拟红外故障
     frame.gate_size = static_cast<quint8>(m_gateSize);
     // frame.osd_switch = static_cast<quint8>(m_osdSwitch);
     frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
+    //加时间同步信号与具体时间：
+    //字节61：时间同步信号，只发送一拍即可；字节62-69：北京时间换算成 UTC 的毫秒时间戳(8字节小端)
+    frame.timeSync_sig = static_cast<qint8>(m_timeSync);
+    //加入判断：如果时间同步信号为真，则进行Unix毫秒计算并填入，否则该位填0
+    if(m_timeSync)
+    {
+        writeUint64LE(frame.time, beijingNowUtcMs());
+    }else{
+        memset(frame.time, 0, sizeof(frame.time));
+    }
+    
     memset(frame.reserved3, 0, sizeof(frame.reserved3));
     frame.target_altitude = static_cast<qint16>(m_targetAltitude);
     frame.aircraft_pitch = static_cast<qint16>(toRawValue_b(m_aircraftPitch));
@@ -439,6 +546,14 @@ void ImageSendData::buildDeviation(int num ,int x ,int y)
     frame.gate_size = static_cast<quint8>(m_gateSize);
     // frame.osd_switch = static_cast<quint8>(m_osdSwitch);
     frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
+    //偏差像素帧与普通发送帧结构一致，同样填入时间同步信号与 UTC 毫秒时间戳
+    frame.timeSync_sig = static_cast<qint8>(m_timeSync);
+    if(m_timeSync)
+    {
+        writeUint64LE(frame.time, beijingNowUtcMs());
+    }else{
+        memset(frame.time, 0, sizeof(frame.time));
+    }
     memset(frame.reserved3, 0, sizeof(frame.reserved3));
     frame.target_altitude = static_cast<qint16>(m_targetAltitude);
     frame.aircraft_pitch = static_cast<qint16>(toRawValue_b(m_aircraftPitch));
@@ -498,6 +613,10 @@ void SerialPortImage::onOpenPort(const QString &name, int baud) {
 void SerialPortImage::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortImage::onSendData(image_send_frame frame) { 
+    //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
+    if (!isOpen()) {
+        return;
+    }
     //校验位在定时器每拍发送前统一计算，这里无需预计算
     auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
@@ -517,7 +636,10 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         //发一拍处理
         if(sendCount >= 1){
             data[46]=0x00; //跟踪修正指令
+            data[61]=0x00; //时间同步指令
         }
+        // 时间只在时间同步信号为1的时候发送一次即可
+        //writeUint64LE(reinterpret_cast<quint8*>(data.data()) + 62, beijingNowUtcMs());
         //加入发三拍处理
         if(sendCount >= 3){
             data[5]=0x00;    //导引头控制字

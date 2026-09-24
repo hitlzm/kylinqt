@@ -3,6 +3,8 @@
 #include <QString>
 #include "../log/LogManager.h"
 #include <QTimer>
+#include <QTimeZone>
+#include <cstring>
 // ─────────────────────────────────────────────
 // 外引导模式常量
 // ─────────────────────────────────────────────
@@ -38,6 +40,35 @@ inline quint16 readBigEndianU16(const uint8_t *p)
 inline qint16 readBigEndianI16(const uint8_t *p)
 {
     return toSigned16(readBigEndianU16(p));
+}
+
+// ─────────────────────────────────────────────
+// 时间戳工具（与图像导引头保持一致的做法）
+// ─────────────────────────────────────────────
+// 取当前北京时间(UTC+8，本机时钟按北京时间显示)并换算为 UTC 毫秒时间戳
+// (1970-01-01 00:00:00 UTC 起算)：先把本地“墙上时间”按 UTC 解释，再减去 8 小时固定偏差，
+// 这样无论系统时区是否已配成 Asia/Shanghai，结果都是 UTC 绝对毫秒时间。
+inline quint64 beijingNowUtcMs()
+{
+    const QDateTime local = QDateTime::currentDateTime();
+    const QDateTime wallClockAsUtc(local.date(), local.time(), Qt::UTC);
+    const qint64 ms = wallClockAsUtc.toMSecsSinceEpoch() - 8LL * 3600LL * 1000LL;
+    return static_cast<quint64>(ms > 0 ? ms : 0);
+}
+
+// 8字节时间戳按大端(高字节在前)写入/读出：激光帧的其它多字节字段也是大端传输，保持一致
+inline void writeBigEndianU64(uint8_t *dst, quint64 value)
+{
+    for (int i = 0; i < 8; ++i)
+        dst[i] = static_cast<uint8_t>((value >> (8 * (7 - i))) & 0xFFu);
+}
+
+inline quint64 readBigEndianU64(const uint8_t *p)
+{
+    quint64 value = 0;
+    for (int i = 0; i < 8; ++i)
+        value = (value << 8) | static_cast<quint64>(p[i]);
+    return value;
 }
 
 } // namespace
@@ -87,7 +118,13 @@ float LaserData::quadrant3Energy() const { return m_quadrant3Energy; }
 float LaserData::quadrant4Energy() const { return m_quadrant4Energy; }
 float LaserData::softwareVersion1() const { return m_softwareVersion1; }
 float LaserData::softwareVersion2() const { return m_softwareVersion2; }
+qint64 LaserData::msTime() const { return m_msTime; }
+int LaserData::usTime() const { return m_usTime; }
+qint64 LaserData::timeStampUs() const { return m_timeStampUs; }
+QDateTime LaserData::recvDateTime() const { return m_recvDateTime; }
+QString LaserData::recvTimeText() const { return m_recvTimeText; }
 
+// 本函数由 SerialPortLaser::parseData() 完成帧头/异或校验与大端转小端后经信号触发
 void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
 {
     
@@ -208,6 +245,43 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
         m_softwareVersion2 = software_version2;
         emit softwareVersion2Changed();
     }
+
+    // 导引头返回时间戳：毫秒部分(8字节大端) + 微秒部分(0~999)
+    const qint64 msTime = static_cast<qint64>(
+                readBigEndianU64(reinterpret_cast<const uint8_t*>(pFrame.ms_time)));
+    const int usTime = static_cast<int>(pFrame.us_time);
+    const qint64 timeStampUs = msTime * 1000LL + usTime;
+    if (m_msTime != msTime) {
+        m_msTime = msTime;
+        emit msTimeChanged();
+    }
+    if (m_usTime != usTime) {
+        m_usTime = usTime;
+        emit usTimeChanged();
+    }
+    if (m_timeStampUs != timeStampUs) {
+        m_timeStampUs = timeStampUs;
+        emit timeStampUsChanged();
+    }
+
+    // 把返回时间戳换算成年月日时分秒保存：
+    // 时间戳按 UTC 毫秒解释(与发送侧同一基准)，再折算成北京时间(UTC+8)的“年月日时分秒.毫秒微秒”
+    if (msTime > 0) {
+        const QDateTime recvUtc = QDateTime::fromMSecsSinceEpoch(msTime, Qt::UTC);
+        // 用固定偏移时区做UTC→北京时间换算，避免Qt5.12在Windows上访问时区库出问题
+        const QDateTime recvBj = recvUtc.toTimeZone(QTimeZone(8 * 3600));
+        if (m_recvDateTime != recvUtc) {
+            m_recvDateTime = recvUtc;
+            emit recvDateTimeChanged();
+        }
+        //秒的小数部分：毫秒(3位) + 微秒(3位)，合计微秒精度，例如 2026-09-24 11:01:57.054321
+        const QString recvText = recvBj.toString("yyyy-MM-dd HH:mm:ss.zzz")
+                               + QString("%1").arg(usTime, 3, 10, QLatin1Char('0'));
+        if (m_recvTimeText != recvText) {
+            m_recvTimeText = recvText;
+            emit recvTimeTextChanged();
+        }
+    }
 }
 
 int LaserData::getBitsFromQint8(qint8 value, int startBit, int endBit)
@@ -233,6 +307,20 @@ int LaserData::getBitsFromQint8(qint8 value, int startBit, int endBit)
 LaserSendData::LaserSendData(QObject *parent)
     : QObject(parent)
 {
+    //每10分钟自动向导引头发送一次时间同步帧：置位时间同步信号 → 构帧发送 → 再复位
+    const int timeSyncIntervalMs = 10 * 60 * 1000;   //10分钟
+    m_timeSyncTimer = new QTimer(this);
+    m_timeSyncTimer->setTimerType(Qt::CoarseTimer);
+    m_timeSyncTimer->setInterval(timeSyncIntervalMs);
+    connect(m_timeSyncTimer, &QTimer::timeout, this, &LaserSendData::sendTimeSyncFrame);
+    m_timeSyncTimer->start();
+}
+
+void LaserSendData::sendTimeSyncFrame()
+{
+    m_timeSync = 1;                 //时间同步信号置1
+    buildFrame();                   //构帧并发送（time 字段为当拍北京时间换算的UTC毫秒时间戳）
+    m_timeSync = 0;                 //发完立即复位，避免后续人工发送的帧都带时间同步标志
 }
 
 void LaserSendData::buildFrame() 
@@ -278,6 +366,13 @@ void LaserSendData::buildFrame()
         frame.param5 = 0;
         break;
     }
+    //时间同步信号与Unix毫秒时间：只在时间同步帧里填时间，其余帧该位保持0
+    frame.timeSync = static_cast<qint8>(m_timeSync);
+    if (m_timeSync) {
+        writeBigEndianU64(frame.time, beijingNowUtcMs());
+    } else {
+        memset(frame.time, 0, sizeof(frame.time));
+    }
     frame.XOR_result = 0;
     //m_cmd = 0; //发送后清零控制字
     emit requestSendData(frame);
@@ -313,6 +408,10 @@ void SerialPortLaser::onClosePort()  { SerialPort::close(); emit portClosed(); }
 void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortLaser::onSendData(laser_send_frame frame)
  {  
+    //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
+    if (!isOpen()) {
+        return;
+    }
     const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
     //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
     //以下为原写法（int 表达式直接窄化赋给 qint16/quint16，C++20 之前属实现定义行为），
@@ -342,13 +441,19 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
         // 帧计数器：先写当前值（从 0 开始），发送成功后再递增
         data[3] = 0x11 | (datacount << 6);
 
+        //时间同步信号只在第一拍带出，后续拍清零（时间字节保留），避免一帧连发10拍都带同步标志
+        if (sendCount >= 1) {
+            data[16] = 0x00;
+        }
+
         // 计算异或校验位并更新，不计入帧头与校验位
         const char * checkdata2 = data.data();
         uint8_t checksum2 = 0;
         for (size_t i = 3; i < data.size() - 1; ++i) {
             checksum2 ^= checkdata2[i];
         }
-        data[16] = checksum2;
+        //校验位在帧末：帧头3字节 + 帧长/帧ID + 数据包(cmd..param5) + 时间同步信号 + 8字节时间
+        data[25] = checksum2;
 
         // 发送数据
         qint64 count = SerialPort::send(data);
@@ -479,7 +584,13 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
         //frame.software_version2 = (static_cast<qint16>(static_cast<unsigned char>(rawData[35])) << 8) | static_cast<unsigned char>(rawData[36]);
         frame.software_version1 = readBigEndianU16(rdata + 33);
         frame.software_version2 = readBigEndianU16(rdata + 35);
-        frame.XOR_result = static_cast<quint8>(rawData[37]);
+        // 返回时间戳：37-44字节为毫秒部分(8字节大端)，45-46字节为微秒部分(大端)
+        for (int i = 0; i < 8; ++i) {
+            frame.ms_time[i] = static_cast<quint8>(rawData[37 + i]);
+        }
+        frame.us_time = readBigEndianU16(rdata + 45);
+        // 校验位在帧末
+        frame.XOR_result = static_cast<quint8>(rawData[47]);
     }
     // memcpy(&frame, rawData.constData(), sizeof(frame));
 

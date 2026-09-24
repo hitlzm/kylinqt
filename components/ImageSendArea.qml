@@ -314,6 +314,13 @@ Rectangle {
                 imageSendData.m_captureRefImgCmd = 0x00 //发三拍后恢复默认值
             }
         }
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 3
+            Indicator { id: outcommu; label: "外部通讯"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag4 === 1; onFaultTriggered: testmsg.showToast(label + "故障") }
+        }
     }
 
     // ═══════════════════════════════════════════════════════
@@ -684,8 +691,7 @@ Rectangle {
             mywidth: 180
             myheight: 55
             title: "光学参数装订控制字"
-            //model: ["默认值", "非卫星图模板制作", "卫星图模板制作", "盲元校正", "红外非均匀校正", "模板擦除", "积分时间设置"]
-            model: ["默认值", "盲元校正", "红外非均匀校正", "模板擦除", "积分时间设置"]
+            model: ["默认值", "盲元校正", "红外非均匀校正", "模板擦除"]
             onCurrentIndexChanged: {
                 root.opticalParamCtrlCmd = mycurrentIndex
                 if (opticalParamCtrlCmd === 0) {
@@ -702,9 +708,7 @@ Rectangle {
                     imageSendData.m_opticalParamCtrl = 0xE4
                 } else if (opticalParamCtrlCmd === 3) {
                     imageSendData.m_opticalParamCtrl = 0xE5
-                } else if (opticalParamCtrlCmd === 4) {
-                    imageSendData.m_opticalParamCtrl = 0xE6
-                }
+                } 
             }
         }
 
@@ -742,17 +746,19 @@ Rectangle {
             mywidth: 140
             myheight: 55
             title: "预装目标类型"
-            model: ["车辆", "小型建筑物", "坦克", "舰船", "靶标"]
+            model: ["车辆", "小型建筑物","无人机", "坦克", "舰船", "靶标"]
             onCurrentIndexChanged: {
                 if (mycurrentIndex === 0) {
                     imageSendData.m_targetBackgroundType1 = 0x00
                 } else if (mycurrentIndex === 1) {
                     imageSendData.m_targetBackgroundType1 = 0x01
                 } else if (mycurrentIndex === 2) {
-                    imageSendData.m_targetBackgroundType1 = 0x02
+                    imageSendData.m_targetBackgroundType1 = 0x03
                 } else if (mycurrentIndex === 3) {
-                    imageSendData.m_targetBackgroundType1 = 0x04
+                    imageSendData.m_targetBackgroundType1 = 0x02
                 } else if (mycurrentIndex === 4) {
+                    imageSendData.m_targetBackgroundType1 = 0x04
+                } else if (mycurrentIndex === 5) {
                     imageSendData.m_targetBackgroundType1 = 0x07
                 }
             }

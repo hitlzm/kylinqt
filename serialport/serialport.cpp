@@ -93,7 +93,9 @@ bool SerialPort::open(const QString &portName, qint32 baudRate)
 
 void SerialPort::close()
 {
-    if (m_serialPort->isOpen()) {
+    // m_serialPort 由 dowork() 在工作线程中创建；未创建时（对象刚构造、线程未启动）直接返回，
+    // 避免空指针解引用
+    if (m_serialPort && m_serialPort->isOpen()) {
         m_serialPort->close();
         emit disconnected();
         emit portOpenChanged();
@@ -102,11 +104,13 @@ void SerialPort::close()
 
 bool SerialPort::isOpen() const
 {
-    return m_serialPort->isOpen();
+    return m_serialPort && m_serialPort->isOpen();
 }
 
 qint64 SerialPort::send(const QByteArray &data)
 {
+    if (!m_serialPort)
+        return -1;
     return m_serialPort->write(data);
 }
 

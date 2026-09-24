@@ -50,6 +50,14 @@ class LaserData : public QObject
     Q_PROPERTY(float quadrant4Energy READ quadrant4Energy NOTIFY quadrant4EnergyChanged)
     Q_PROPERTY(float softwareVersion1 READ softwareVersion1 NOTIFY softwareVersion1Changed)
     Q_PROPERTY(float softwareVersion2 READ softwareVersion2 NOTIFY softwareVersion2Changed)
+    // 接收帧携带的返回时间戳：毫秒部分(8字节) + 微秒部分(0~999)
+    Q_PROPERTY(qlonglong msTime READ msTime NOTIFY msTimeChanged)
+    Q_PROPERTY(int usTime READ usTime NOTIFY usTimeChanged)
+    Q_PROPERTY(qlonglong timeStampUs READ timeStampUs NOTIFY timeStampUsChanged)
+    // 返回时间换算结果：recvDateTime 为 UTC 时刻，
+    // recvTimeText 为北京时间“年月日时分秒.毫秒微秒”（秒的小数部分6位，微秒精度）
+    Q_PROPERTY(QDateTime recvDateTime READ recvDateTime NOTIFY recvDateTimeChanged)
+    Q_PROPERTY(QString recvTimeText READ recvTimeText NOTIFY recvTimeTextChanged)
 
 public:
     explicit LaserData(QObject *parent = nullptr);
@@ -81,6 +89,11 @@ public:
     float quadrant4Energy() const;
     float softwareVersion1() const;
     float softwareVersion2() const;
+    qint64 msTime() const;
+    int usTime() const;
+    qint64 timeStampUs() const;
+    QDateTime recvDateTime() const;
+    QString recvTimeText() const;
 
 
     // ── 串口状态属性（主线程，QML 直接读取）──
@@ -126,6 +139,11 @@ signals:
     void quadrant4EnergyChanged();
     void softwareVersion1Changed();
     void softwareVersion2Changed();
+    void msTimeChanged();
+    void usTimeChanged();
+    void timeStampUsChanged();
+    void recvDateTimeChanged();
+    void recvTimeTextChanged();
 
     // ── 串口状态变化信号 ──
     void portOpenChanged();
@@ -202,6 +220,12 @@ private:
     float m_quadrant4Energy = 0;
     float m_softwareVersion1 = 0;
     float m_softwareVersion2 = 0;
+    // 返回时间戳：毫秒部分(qint64) + 微秒部分(0~999)，timeStampUs 为两者合并后的微秒时间戳
+    qint64 m_msTime = 0;
+    int m_usTime = 0;
+    qint64 m_timeStampUs = 0;
+    QDateTime m_recvDateTime;      // 返回时间(UTC)
+    QString m_recvTimeText;        // 返回时间(北京时间，年月日时分秒.毫秒微秒)
 
     bool m_portOpen = false;
     QStringList m_availablePorts;
@@ -228,6 +252,10 @@ public:
     explicit LaserSendData(QObject *parent = nullptr);
 
     Q_INVOKABLE void buildFrame() ;
+
+    // 发送一次时间同步帧：m_timeSync 置1 → buildFrame() → 再置0
+    // 由内部10分钟定时器周期调用，也可从 QML 手动触发
+    Q_INVOKABLE void sendTimeSyncFrame();
 
 signals:
     void frameStatusChanged();
@@ -263,6 +291,8 @@ private:
     float m_azimuthSearchRange = 0.0f;        // 方位搜索范围
     float m_elevationSearchRange = 0.0f;      // 俯仰搜索范围
     float m_searchRadius = 0.0f;              // 搜索半径
+    int m_timeSync = 0;                       //时间同步信号（0=不发时间同步，1=本帧带UTC毫秒时间）
+    QTimer *m_timeSyncTimer = nullptr;        // 每10分钟自动发一次时间同步帧
 };
 
 class SerialPortLaser : public SerialPort
@@ -414,6 +444,10 @@ typedef struct laser_recv_frame{
 
     // 字节31-32: 软件2版本号 (控制板, UINT16, 1bit=0.01, 例0x00C9=2.01)
     quint16 software_version2;
+    // 返回的毫秒时间
+    quint8 ms_time[8];
+    //返回的微秒时间
+    quint16 us_time;
     //以下为异或校验位
     quint8 XOR_result;            //按位异或校验位
 
@@ -459,6 +493,10 @@ typedef struct laser_send_frame{
     qint16 param5;                  // 含义取决于cmd:
                                     // - 矩形搜索: 俯仰搜索范围(半幅)
                                     // - 其他指令: 无意义(填0)
+    //时间同步信号
+    qint8 timeSync;
+    //Unix毫秒时间
+    quint8 time[8];
     //以下为异或校验位
     quint8 XOR_result;            //按位异或校验位
 }l_send_frame;

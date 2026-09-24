@@ -50,7 +50,6 @@ Rectangle {
         anchors.bottom: parent.bottom   // 贴在主矩形下边沿
     }
     property var commandList: [
-
         "无动作",
         "自检",
         "锁定",
@@ -60,7 +59,9 @@ Rectangle {
         "圆形搜索",
         "定轴位置",
         "矩形位置",
-        "圆形位置"
+        "圆形位置",
+        "零漂校准",
+        "零漂保存"
     ]
 
     property int currentCmd: 0
@@ -121,18 +122,12 @@ Rectangle {
                         root.elevationSearchRangeValid = true
                         root.searchRadiusValid = true
 
-                         if (index === 0) {
+                         if (index === 0 || index === 1 || index === 10 || index === 11) {
                             firstColumn.disabledIndices = [0,1]      // 都禁用
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
                             laserSendData.m_cmd= 0x00
-                            } else if (index === 1) {
-                            firstColumn.disabledIndices = [0,1]      // 都禁用
-                            secondColumn.disabledIndices = [0,1]
-                            thirdColumn.disabledIndices = [0,1]
-                            fourthColumn.disabledIndices = [0,1]
-                            laserSendData.m_cmd= 0x01
                             } else if (index === 2) {
                             firstColumn.disabledIndices = [0]      
                             secondColumn.disabledIndices = [1]

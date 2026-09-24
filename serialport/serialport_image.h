@@ -62,6 +62,7 @@ class ImageData : public QObject
     Q_PROPERTY(int servoRunningTime READ servoRunningTime NOTIFY servoRunningTimeChanged)
     Q_PROPERTY(int servoStep READ servoStep NOTIFY servoStepChanged)
     Q_PROPERTY(int infraredFrameNum READ infraredFrameNum NOTIFY infraredFrameNumChanged)
+    Q_PROPERTY(int temperture READ temperture NOTIFY tempertureChanged)
     Q_PROPERTY(int cbhTv4405 READ cbhTv4405 NOTIFY cbhTv4405Changed)
     Q_PROPERTY(int infraredFrameRate READ infraredFrameRate NOTIFY infraredFrameRateChanged)
     Q_PROPERTY(int tvFrameRate READ tvFrameRate NOTIFY tvFrameRateChanged)
@@ -69,6 +70,14 @@ class ImageData : public QObject
     Q_PROPERTY(int softwareVersion1 READ softwareVersion1 NOTIFY softwareVersion1Changed)
     Q_PROPERTY(int softwareVersion2 READ softwareVersion2 NOTIFY softwareVersion2Changed)
     Q_PROPERTY(int softwareVersion3 READ softwareVersion3 NOTIFY softwareVersion3Changed)
+    // 接收帧携带的返回时间戳：34-41字节为毫秒部分，42-43字节为微秒部分
+    Q_PROPERTY(qlonglong msTime READ msTime NOTIFY msTimeChanged)
+    Q_PROPERTY(int usTime READ usTime NOTIFY usTimeChanged)
+    Q_PROPERTY(qlonglong timeStampUs READ timeStampUs NOTIFY timeStampUsChanged)
+    // 返回时间换算结果：recvDateTime 为 UTC 时刻，
+    // recvTimeText 为北京时间“年月日时分秒.毫秒微秒”（秒的小数部分6位，微秒精度）
+    Q_PROPERTY(QDateTime recvDateTime READ recvDateTime NOTIFY recvDateTimeChanged)
+    Q_PROPERTY(QString recvTimeText READ recvTimeText NOTIFY recvTimeTextChanged)
 
 public:
     explicit ImageData(QObject *parent = nullptr);
@@ -114,6 +123,7 @@ public:
     int servoRunningTime() const;
     int servoStep() const;
     int infraredFrameNum() const;
+    int temperture() const;
     int cbhTv4405() const;
     int infraredFrameRate() const;
     int tvFrameRate() const;
@@ -121,6 +131,11 @@ public:
     int softwareVersion1() const;
     int softwareVersion2() const;
     int softwareVersion3() const;
+    qint64 msTime() const;
+    int usTime() const;
+    qint64 timeStampUs() const;
+    QDateTime recvDateTime() const;
+    QString recvTimeText() const;
 
 
     // ── 串口状态属性（主线程，QML 直接读取）──
@@ -180,6 +195,7 @@ signals:
     void servoRunningTimeChanged();
     void servoStepChanged();
     void infraredFrameNumChanged();
+    void tempertureChanged();
     void cbhTv4405Changed();
     void infraredFrameRateChanged();
     void tvFrameRateChanged();
@@ -187,6 +203,11 @@ signals:
     void softwareVersion1Changed();
     void softwareVersion2Changed();
     void softwareVersion3Changed();
+    void msTimeChanged();
+    void usTimeChanged();
+    void timeStampUsChanged();
+    void recvDateTimeChanged();
+    void recvTimeTextChanged();
 
     // ── 串口状态变化信号 ──
     void portOpenChanged();
@@ -279,14 +300,21 @@ private:
     int m_platformSelfCheck = 0;
     int m_servoRunningTime = 0;
     int m_servoStep = 0;
-    int m_infraredFrameNum = 0;  //红外帧编号
-    int m_cbhTv4405 = 0;   //电视帧编号
+    quint32 m_infraredFrameNum = 0;  //红外帧编号
+    int m_temperture = 0;       //温度
+    quint32 m_cbhTv4405 = 0;   //电视帧编号
     int m_infraredFrameRate = 0;
     int m_tvFrameRate = 0;
     int m_gateSize = 0;
     int m_softwareVersion1 = 0;
     int m_softwareVersion2 = 0;
     int m_softwareVersion3 = 0;
+    // 接收帧时间戳：毫秒部分(qint64) + 微秒部分(0~999)，timeStampUs 为两者合并后的微秒时间戳
+    qint64 m_msTime = 0;
+    int m_usTime = 0;
+    qint64 m_timeStampUs = 0;
+    QDateTime m_recvDateTime;      // 返回时间(UTC)
+    QString m_recvTimeText;        // 返回时间(北京时间，年月日时分秒.毫秒微秒，微秒精度)
 
     bool m_portOpen = false;
     QStringList m_availablePorts;
@@ -300,8 +328,10 @@ class ImageSendData : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int m_frameLength MEMBER m_frameLength NOTIFY frameLengthChanged)
-    Q_PROPERTY(int m_aFrameSequence MEMBER m_aFrameSequence NOTIFY aFrameSequenceChanged)
+    // ── QML 接口：只暴露界面上真实读写的装订参数 ──
+    // 其余发送参数（弹体运动量、载机/吊舱/目标地理量、预留量等）界面上没有控件，
+    // 保持普通 C++ 成员即可，由 C++ 赋值后经 buildFrame()/buildDeviation() 装帧，
+    // 不需要经过元对象系统暴露给 QML。
     Q_PROPERTY(int m_seekerCtrlWord MEMBER m_seekerCtrlWord NOTIFY seekerCtrlWordChanged)
     Q_PROPERTY(int m_opticalParamCtrl MEMBER m_opticalParamCtrl NOTIFY opticalParamCtrlChanged)
     Q_PROPERTY(int m_templateIndex MEMBER m_templateIndex NOTIFY templateIndexChanged)
@@ -309,52 +339,22 @@ class ImageSendData : public QObject
     Q_PROPERTY(int m_targetBackgroundType2 MEMBER m_targetBackgroundType2 NOTIFY targetBackgroundType2Changed)
     Q_PROPERTY(int m_targetBackgroundType3 MEMBER m_targetBackgroundType3 NOTIFY targetBackgroundType3Changed)
     Q_PROPERTY(int m_targetBackgroundType4 MEMBER m_targetBackgroundType4 NOTIFY targetBackgroundType4Changed)
-    Q_PROPERTY(int m_missileTargetDistance MEMBER m_missileTargetDistance NOTIFY missileTargetDistanceChanged)
-    Q_PROPERTY(float m_missileSpeed MEMBER m_missileSpeed NOTIFY missileSpeedChanged)
-    Q_PROPERTY(float m_bodyPitchAngle MEMBER m_bodyPitchAngle NOTIFY bodyPitchAngleChanged)
-    Q_PROPERTY(float m_bodyYawAngle MEMBER m_bodyYawAngle NOTIFY bodyYawAngleChanged)
-    Q_PROPERTY(float m_bodyRollAngle MEMBER m_bodyRollAngle NOTIFY bodyRollAngleChanged)
-    Q_PROPERTY(float m_bodyPitchRate MEMBER m_bodyPitchRate NOTIFY bodyPitchRateChanged)
-    Q_PROPERTY(float m_bodyYawRate MEMBER m_bodyYawRate NOTIFY bodyYawRateChanged)
-    Q_PROPERTY(float m_bodyRollRate MEMBER m_bodyRollRate NOTIFY bodyRollRateChanged)
-    Q_PROPERTY(float m_bodyVelX MEMBER m_bodyVelX NOTIFY bodyVelXChanged)
-    Q_PROPERTY(float m_bodyVelY MEMBER m_bodyVelY NOTIFY bodyVelYChanged)
-    Q_PROPERTY(float m_bodyVelZ MEMBER m_bodyVelZ NOTIFY bodyVelZChanged)
-    Q_PROPERTY(int m_bodyPosX MEMBER m_bodyPosX NOTIFY bodyPosXChanged)
-    Q_PROPERTY(int m_bodyPosY MEMBER m_bodyPosY NOTIFY bodyPosYChanged)
-    Q_PROPERTY(int m_bodyPosZ MEMBER m_bodyPosZ NOTIFY bodyPosZChanged)
     Q_PROPERTY(float m_pitchGimbalPreset MEMBER m_pitchGimbalPreset NOTIFY pitchGimbalPresetChanged)
     Q_PROPERTY(float m_yawGimbalPreset MEMBER m_yawGimbalPreset NOTIFY yawGimbalPresetChanged)
-    Q_PROPERTY(int m_irIntegrationTime MEMBER m_irIntegrationTime NOTIFY irIntegrationTimeChanged)
     Q_PROPERTY(int m_trackingCorrectionCmd MEMBER m_trackingCorrectionCmd NOTIFY trackingCorrectionCmdChanged)
-    Q_PROPERTY(int m_correctionFrameNum MEMBER m_correctionFrameNum NOTIFY correctionFrameNumChanged)
-    Q_PROPERTY(int m_correctedPitchPos MEMBER m_correctedPitchPos NOTIFY correctedPitchPosChanged)
-    Q_PROPERTY(int m_correctedYawPos MEMBER m_correctedYawPos NOTIFY correctedYawPosChanged)
     Q_PROPERTY(float m_searchPitchRate MEMBER m_searchPitchRate NOTIFY searchPitchRateChanged)
     Q_PROPERTY(float m_searchYawRate MEMBER m_searchYawRate NOTIFY searchYawRateChanged)
     Q_PROPERTY(int m_gateSize MEMBER m_gateSize NOTIFY gateSizeChanged)
-    // Q_PROPERTY(int m_osdSwitch MEMBER m_osdSwitch NOTIFY osdSwitchChanged)
     Q_PROPERTY(int m_captureRefImgCmd MEMBER m_captureRefImgCmd NOTIFY captureRefImgCmdChanged)
-    Q_PROPERTY(int m_targetAltitude MEMBER m_targetAltitude NOTIFY targetAltitudeChanged)
-    Q_PROPERTY(float m_aircraftPitch MEMBER m_aircraftPitch NOTIFY aircraftPitchChanged)
-    Q_PROPERTY(float m_aircraftYaw MEMBER m_aircraftYaw NOTIFY aircraftYawChanged)
-    Q_PROPERTY(float m_aircraftRoll MEMBER m_aircraftRoll NOTIFY aircraftRollChanged)
-    Q_PROPERTY(int m_focalLength MEMBER m_focalLength NOTIFY focalLengthChanged)
-    Q_PROPERTY(float m_podPitchAngle MEMBER m_podPitchAngle NOTIFY podPitchAngleChanged)
-    Q_PROPERTY(float m_podYawAngle MEMBER m_podYawAngle NOTIFY podYawAngleChanged)
-    Q_PROPERTY(int m_satelliteMapScale MEMBER m_satelliteMapScale NOTIFY satelliteMapScaleChanged)
-    Q_PROPERTY(int m_podType MEMBER m_podType NOTIFY podTypeChanged)
-    Q_PROPERTY(double m_targetLongitude MEMBER m_targetLongitude NOTIFY targetLongitudeChanged)
-    Q_PROPERTY(double m_targetLatitude MEMBER m_targetLatitude NOTIFY targetLatitudeChanged)
-    Q_PROPERTY(double m_aircraftLongitude MEMBER m_aircraftLongitude NOTIFY aircraftLongitudeChanged)
-    Q_PROPERTY(double m_aircraftLatitude MEMBER m_aircraftLatitude NOTIFY aircraftLatitudeChanged)
-    Q_PROPERTY(int m_aircraftAltitude MEMBER m_aircraftAltitude NOTIFY aircraftAltitudeChanged)
-    Q_PROPERTY(int m_pixelSize MEMBER m_pixelSize NOTIFY pixelSizeChanged)
 
 public:
     explicit ImageSendData(QObject *parent = nullptr);
 
     Q_INVOKABLE void buildFrame() ;
+
+    // 发送一次时间同步帧：m_timeSync 置1 → buildFrame() → 再置0
+    // 由内部10分钟定时器周期调用，也可从 QML 手动触发
+    Q_INVOKABLE void sendTimeSyncFrame();
 
     int templateIndex() const { return m_templateIndex; }
 
@@ -362,57 +362,21 @@ public:
     Q_INVOKABLE void relayDeviationPixel(int x, int y) { emit deviationPixelRelayed(x, y); }
 
 signals:
-    void frameLengthChanged();
-    void aFrameSequenceChanged();
+    // ── 只保留 QML 需要绑定/读回的参数变更信号（与上面的 Q_PROPERTY 一一对应）──
     void seekerCtrlWordChanged();
     void opticalParamCtrlChanged();
     void templateIndexChanged();
-    void targetBackgroundTypeChanged();
     void targetBackgroundType1Changed();
     void targetBackgroundType2Changed();
     void targetBackgroundType3Changed();
     void targetBackgroundType4Changed();
-    void missileTargetDistanceChanged();
-    void missileSpeedChanged();
-    void bodyPitchAngleChanged();
-    void bodyYawAngleChanged();
-    void bodyRollAngleChanged();
-    void bodyPitchRateChanged();
-    void bodyYawRateChanged();
-    void bodyRollRateChanged();
-    void bodyVelXChanged();
-    void bodyVelYChanged();
-    void bodyVelZChanged();
-    void bodyPosXChanged();
-    void bodyPosYChanged();
-    void bodyPosZChanged();
     void pitchGimbalPresetChanged();
     void yawGimbalPresetChanged();
-    void irIntegrationTimeChanged();
     void trackingCorrectionCmdChanged();
-    void correctionFrameNumChanged();
-    void correctedPitchPosChanged();
-    void correctedYawPosChanged();
     void searchPitchRateChanged();
     void searchYawRateChanged();
     void gateSizeChanged();
-    // void osdSwitchChanged();
     void captureRefImgCmdChanged();
-    void targetAltitudeChanged();
-    void aircraftPitchChanged();
-    void aircraftYawChanged();
-    void aircraftRollChanged();
-    void focalLengthChanged();
-    void podPitchAngleChanged();
-    void podYawAngleChanged();
-    void satelliteMapScaleChanged();
-    void podTypeChanged();
-    void targetLongitudeChanged();
-    void targetLatitudeChanged();
-    void aircraftLongitudeChanged();
-    void aircraftLatitudeChanged();
-    void aircraftAltitudeChanged();
-    void pixelSizeChanged();
 
     void requestSendData(image_send_frame frame);
     void deviationPixelRelayed(int x, int y);
@@ -475,6 +439,11 @@ private:
     int m_gateSize = 0;
     // int m_osdSwitch = 0;    //字符叠加指令消失，后面的61-152字节为预留区
     int m_captureRefImgCmd = 0;
+    int m_timeSync = 0;     //字节61：时间同步信号（0=不发时间同步，可由QML置位）
+    int m_time = 0;
+
+    QTimer *m_timeSyncTimer = nullptr;   // 每10分钟自动发一次时间同步帧
+    
     int m_targetAltitude = 0;
     float m_aircraftPitch = 0;
     float m_aircraftYaw = 0;
@@ -608,7 +577,7 @@ typedef struct {
     // 字节10: 预留1
     quint8 reserved1;
 
-    // 字节11: 当前工作通道 (0x02=红外, 0x03=电视)
+    // 字节11: 当前工作通道 (0x01=红外, 0x00=电视)
     quint8 current_work_channel;
 
     // 字节12: 自检标志 (位域)
@@ -651,7 +620,11 @@ typedef struct {
     quint8 tracker_state;
 
     // 字节34-52: 预留19字节
-    quint8 reserved4[19];
+    // 现在34-41字节为返回时间戳的毫秒部分，42-43为返回时间戳的微秒部分。44-52为新预留的字节
+    quint8 ms_time[8];
+    quint16 us_time;
+    //44-52 预留9个字节
+    quint8 reserved4[9];
 
     // 字节53-54: 方位偏差像素
     qint16 azimuth_deviation_pixel;
@@ -677,14 +650,21 @@ typedef struct {
     // 字节73: 平台自检结果
     quint8 platform_self_check;
 
+    // -----------------------------------------------------
+
     // 字节74-81: 预留8字节
-    quint8 reserved6[8];
+    // 字节74-82: 预留9字节
+    quint8 reserved6[9];
 
     // 字节82: 伺服运行时间
-    quint8 servo_running_time;
+    //现在字节83是伺服运行时间
+    qint8 servo_running_time;
 
     // 字节83-89: 预留7字节
-    quint8 reserved7[7];
+    // 字节84-89：预留6字节
+    quint8 reserved7[6];
+
+    // -----------------------------------------------------
 
     // 字节90: 伺服阶跃
     quint8 servo_step;
@@ -693,13 +673,16 @@ typedef struct {
     quint32 infrared_frame_num;
 
     // 字节95-100: 预留6字节
-    quint8 reserved8[6];
+    // 字节95-96：温度
+    qint16 temperture;
+    // 97-100 4字节
+    quint8 reserved8[4];
 
-    // 字节101-102: Cbh_tv4405 (上位机新增) ,帧编号改成四位，不是两位
-    quint16 cbh_tv4405;
+    // 字节101-104: Cbh_tv4405 (上位机新增) ,帧编号改成四位，不是两位，改成qint16
+    quint32 cbh_tv4405;
 
-    // 字节103-104: 未定义，作为预留
-    quint8 reserved9[2];
+    // 字节103-104: 未定义，作为预留。去掉此预留
+    // quint8 reserved9[2];
 
     // 字节105-110: 预留6字节
     quint8 reserved10[6];
@@ -834,7 +817,7 @@ struct image_send_frame {
     // 字节56-57: 搜索方位角速度 (单位: °/s, 精度0.01)
     qint16 search_yaw_rate;
 
-    // 字节58: 预留1字节
+    // 字节58: 预留1字节,现在为红外待机指令
     quint8 reserved2;
 
     // 字节59: 波门 (0xAA=大, 0x55=小)
@@ -847,7 +830,12 @@ struct image_send_frame {
     quint8 capture_ref_img_cmd;
 
     // 字节61-152: 预留92字节
-    quint8 reserved3[92];       // 62~152 inclusive count = 152-62+1=91
+    // 现在61字节是时间同步信号，62~69 8个字节为北京时间转成毫秒
+    qint8 timeSync_sig;
+    // 62~69字节
+    quint8 time[8];
+    // 70~152字节
+    quint8 reserved3[83];       
 
     // 字节153-154: 目标海拔高度 (单位: m, 精度1)
     qint16 target_altitude;
