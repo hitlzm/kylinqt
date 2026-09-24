@@ -25,7 +25,24 @@ Rectangle {
     property bool azimuthSearchRangeValid: true
     property bool elevationSearchRangeValid: true
     property bool searchRadiusValid: true
-//下边沿
+    //控制字转换函数
+    //控制字转换函数
+    function ctrlWordToIndex(word) {
+    switch (word) {
+    case 0x00: return 0
+    case 0x01: return 1
+    case 0x02: return 2
+    case 0x03: return 3
+    case 0x06: return 4
+    case 0x07: return 5
+    case 0x08: return 6
+    case 0x09: return 7
+    case 0x0A: return 8
+    case 0x0B: return 9
+    }
+    return 0
+    }
+    //下边沿
     Rectangle {
         width: parent.width
         height: 1
@@ -33,7 +50,6 @@ Rectangle {
         anchors.bottom: parent.bottom   // 贴在主矩形下边沿
     }
     property var commandList: [
-
         "无动作",
         "自检",
         "锁定",
@@ -43,7 +59,9 @@ Rectangle {
         "圆形搜索",
         "定轴位置",
         "矩形位置",
-        "圆形位置"
+        "圆形位置",
+        "零漂校准",
+        "零漂保存"
     ]
 
     property int currentCmd: 0
@@ -52,7 +70,7 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 400
+        height: 465
         color: '#faf7f7'
         radius: 4
 
@@ -77,6 +95,7 @@ Rectangle {
                 delegate: CusRadioButton {
                     text: modelData
                     checked: index === root.currentCmd
+                    //checked: index === root.ctrlWordToIndex(laserSendData.m_cmd)
                     font.pixelSize: 16
 
                     indicator.width: 18
@@ -103,18 +122,12 @@ Rectangle {
                         root.elevationSearchRangeValid = true
                         root.searchRadiusValid = true
 
-                         if (index === 0) {
+                         if (index === 0 || index === 1 || index === 10 || index === 11) {
                             firstColumn.disabledIndices = [0,1]      // 都禁用
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
                             laserSendData.m_cmd= 0x00
-                            } else if (index === 1) {
-                            firstColumn.disabledIndices = [0,1]      // 都禁用
-                            secondColumn.disabledIndices = [0,1]
-                            thirdColumn.disabledIndices = [0,1]
-                            fourthColumn.disabledIndices = [0,1]
-                            laserSendData.m_cmd= 0x01
                             } else if (index === 2) {
                             firstColumn.disabledIndices = [0]      
                             secondColumn.disabledIndices = [1]
@@ -242,7 +255,7 @@ Rectangle {
         anchors.leftMargin: 30
         Timer {
             id: delayTimer
-            interval: 1  
+            interval: 500  
             onTriggered: {
                 // if (laserData.portOpen) tip.show()
                 if (laserData.portOpen) {msg.message = "串口已打开！"; msg.open()}
@@ -306,7 +319,7 @@ Rectangle {
         // anchors.left:commandArea.right
         // anchors.leftMargin: 120
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -120
+        anchors.horizontalCenterOffset: -180
         property var disabledIndices: []
         Repeater {
             model: [
@@ -324,9 +337,9 @@ Rectangle {
                 onTextChanged: {
                     if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.azimuthAngleValid)
-                                toastmsg.showToast("方位角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("方位角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.azimuthAngleValid = false
                         } else {
                             root.azimuthAngleValid = true
@@ -338,7 +351,7 @@ Rectangle {
                     if (index === 0) {
                         laserSendData.m_laserPeriod = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_azimuthAngle = Number(text)
                     }
                 }
@@ -374,18 +387,18 @@ Rectangle {
                 onTextChanged: {
                     if (index === 0) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.elevationAngleValid)
-                                toastmsg.showToast("俯仰角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("俯仰角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.elevationAngleValid = false
                         } else {
                             root.elevationAngleValid = true
                         }
                     } else if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.searchCenterAzimuthValid)
-                                toastmsg.showToast("搜索中心方位角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("搜索中心方位角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.searchCenterAzimuthValid = false
                         } else {
                             root.searchCenterAzimuthValid = true
@@ -395,10 +408,10 @@ Rectangle {
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_elevationAngle = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_searchCenterAzimuth = Number(text)
                     }
                 }
@@ -433,18 +446,18 @@ Rectangle {
                 onTextChanged: {
                     if (index === 0) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.searchCenterElevationValid)
-                                toastmsg.showToast("搜索中心俯仰角输入范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("搜索中心俯仰角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.searchCenterElevationValid = false
                         } else {
                             root.searchCenterElevationValid = true
                         }
                     } else if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.azimuthSearchRangeValid)
-                                toastmsg.showToast("方位搜索范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("方位搜索范围为-30°~ 30°,请重新输入", 1500)
                             root.azimuthSearchRangeValid = false
                         } else {
                             root.azimuthSearchRangeValid = true
@@ -454,10 +467,10 @@ Rectangle {
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_searchCenterElevation = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_azimuthSearchRange = Number(text)
                     }
                 }
@@ -492,18 +505,18 @@ Rectangle {
                 onTextChanged: {
                     if (index === 0) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.elevationSearchRangeValid)
-                                toastmsg.showToast("俯仰搜索范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("俯仰搜索范围为-30°~ 30°,请重新输入", 1500)
                             root.elevationSearchRangeValid = false
                         } else {
                             root.elevationSearchRangeValid = true
                         }
                     } else if (index === 1) {
                         var val = Number(text)
-                        if (!isNaN(val) && (val > 18 || val < -18)) {
+                        if (!isNaN(val) && (val > 30 || val < -30)) {
                             if (root.searchRadiusValid)
-                                toastmsg.showToast("搜索半径范围为-18°~ 18°,请重新输入")
+                                toastmsg.showToast("搜索半径范围为-30°~ 30°,请重新输入", 1500)
                             root.searchRadiusValid = false
                         } else {
                             root.searchRadiusValid = true
@@ -513,24 +526,62 @@ Rectangle {
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_elevationSearchRange = Number(text)
                     } else if (index === 1) {
-                        if(Number(text) >= -18 && Number(text) <= 18)
+                        if(Number(text) >= -30 && Number(text) <= 30)
                                 laserSendData.m_searchRadius = Number(text)
                     }
                 }
             }
         }
     }
+    Column {
+        id: fifthColumn
+        spacing: 25
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 48
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        //anchors.verticalCenter: fourthColumn.verticalCenter
+        anchors.left: fourthColumn.right
+        anchors.leftMargin: 30
+        
+        CusButton_Blue {
+            id: savebtn
+            width: 100
+            height: 35
+            // 保存数据 ⇄ 停止保存 两种状态切换
+            text: dataRecorder.saving ? "停止保存" : "保存数据"
+            onClicked: {
+                // if (dataRecorder.saving) {
+                //     dataRecorder.stopSave()
+                // } else {
+                //     dataRecorder.startSave()
+                // }
+            }
+        }
+
+
+        CusButton_Blue {
+            id: timeSync
+            width: 100
+            height: 35
+            text: "时间同步"
+            onClicked: {
+                    //时间同步
+            }
+        }
+               
+    }
 
     LaserRecvArea{
         myheight:320
-        mywidth:800
+        mywidth:880
         anchors.top: firstColumn.bottom
         anchors.topMargin: 30
         anchors.left: commandArea.right
-        anchors.leftMargin: 100
+        anchors.leftMargin: 50
         groupHeight1:150
     }
     
