@@ -102,6 +102,12 @@ int LaserData::detectorStatus3() const { return m_detectorStatus3; }
 int LaserData::faultInfo() const { return m_faultInfo; }
 int LaserData::faultInfo1() const { return m_faultInfo1; }
 int LaserData::faultInfo2() const { return m_faultInfo2; }
+int LaserData::dytfault1() const { return m_dytfault1; }
+int LaserData::dytfault2() const { return m_dytfault2; }
+int LaserData::dytfault3() const { return m_dytfault3; }
+int LaserData::dytfault4() const { return m_dytfault4; }
+int LaserData::dytfault5() const { return m_dytfault5; }
+int LaserData::dytfault6() const { return m_dytfault6; }
 float LaserData::opticalAzimuth() const { return m_opticalAzimuth; }
 float LaserData::opticalPitch() const { return m_opticalPitch; }
 float LaserData::gyroAzimuthRate() const { return m_gyroAzimuthRate; }
@@ -161,9 +167,22 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
         m_faultInfo = pFrame.fault_info;             //写位操作函数细分，qml端判断应该显示什么
         m_faultInfo1 = getBitsFromQint8(m_faultInfo,6,7);
         m_faultInfo2 = getBitsFromQint8(m_faultInfo,0,5);
+        // 故障码(bit5~bit0)按位展开为6路DYT故障标志：bit0→dytfault1 ... bit5→dytfault6
+        m_dytfault1 = getBitsFromQint8(m_faultInfo,0,0);
+        m_dytfault2 = getBitsFromQint8(m_faultInfo,1,1);
+        m_dytfault3 = getBitsFromQint8(m_faultInfo,2,2);
+        m_dytfault4 = getBitsFromQint8(m_faultInfo,3,3);
+        m_dytfault5 = getBitsFromQint8(m_faultInfo,4,4);
+        m_dytfault6 = getBitsFromQint8(m_faultInfo,5,5);
         emit faultInfoChanged();
         emit faultInfo1Changed();
         emit faultInfo2Changed();
+        emit dytfault1Changed();
+        emit dytfault2Changed();
+        emit dytfault3Changed();
+        emit dytfault4Changed();
+        emit dytfault5Changed();
+        emit dytfault6Changed();
     }
     auto opticalAzimuth = fromRawValue_a(pFrame.optical_azimuth);
     if (m_opticalAzimuth != opticalAzimuth) {

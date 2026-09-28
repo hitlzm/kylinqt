@@ -70,7 +70,7 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 400
+        height: 465
         color: '#faf7f7'
         radius: 4
 
@@ -319,7 +319,7 @@ Rectangle {
         // anchors.left:commandArea.right
         // anchors.leftMargin: 120
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: -120
+        anchors.horizontalCenterOffset: -180
         property var disabledIndices: []
         Repeater {
             model: [
@@ -536,20 +536,108 @@ Rectangle {
             }
         }
     }
+    Column {
+        id: fifthColumn
+        spacing: 28
+
+        anchors.top: sendButton.bottom
+        anchors.topMargin: 48
+        // anchors.horizontalCenter: sendButton.horizontalCenter
+        //anchors.verticalCenter: fourthColumn.verticalCenter
+        anchors.left: fourthColumn.right
+        anchors.leftMargin: 30
+        
+        CusButton_Blue {
+            id: savebtn
+            width: 100
+            height: 35
+            // 保存数据 ⇄ 停止保存 两种状态切换
+            text: dataRecorder.saving ? "停止保存" : "保存数据"
+            onClicked: {
+                if (dataRecorder.saving) {
+                    dataRecorder.stopSave()
+                } else {
+                    dataRecorder.startSave()
+                }
+            }
+        }
+
+
+        CusButton_Blue {
+            id: timeSync
+            width: 100
+            height: 35
+            text: "时间同步"
+            onClicked: {
+                    //时间同步
+            }
+        }
+               
+    }
+
+    //再加一行故障状态指示灯
+    Row
+    {
+        id:checkrow
+        spacing:15
+        anchors.top: fourthColumn.bottom
+        anchors.topMargin: 10
+        anchors.left: commandArea.right
+        anchors.leftMargin: 250
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: directiontuo; label: "方位陀螺"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.dytfault1 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: pitchtuo; label: "俯仰陀螺"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.dytfault2 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: directionmotor; label: "方位电机"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.dytfault3 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: pitchmotor; label: "俯仰电机"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.dytfault4 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: spin; label: "旋变"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.dytfault5 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+    }
 
     LaserRecvArea{
         myheight:320
         mywidth:880
-        anchors.top: firstColumn.bottom
-        anchors.topMargin: 30
+        anchors.top: checkrow.bottom
+        anchors.topMargin: 10
         anchors.left: commandArea.right
-        anchors.leftMargin: 100
+        anchors.leftMargin: 50
         groupHeight1:150
     }
     
     // // 发送数据信号
     // signal sendData(string data)
-
     // 连接到 laserSerial 信号
     // Connections {
     //     target: laserSerial
@@ -562,8 +650,5 @@ Rectangle {
     //     function onDisconnected() {
     //         console.log("Serial disconnected")
     //     }
-        
     // }
-
-    
 }

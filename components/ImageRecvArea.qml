@@ -403,7 +403,22 @@ Rectangle {
                 spacing: 8
                 DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
                 DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.ctlnumber) }
-                
+                //加入保存转台数据的按钮
+                CusButton_Blue {
+                    id: savebtn
+                    width: 80
+                    height: 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    // 保存数据 ⇄ 停止保存 两种状态切换
+                    text: dataRecorder.saving ? "停止保存" : "保存数据"
+                    onClicked: {
+                        if (dataRecorder.saving) {
+                            dataRecorder.stopSave()
+                        } else {
+                            dataRecorder.startSave()
+                        }
+                    }
+                }
             }
 
             // 第二行：内框

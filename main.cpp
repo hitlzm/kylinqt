@@ -99,7 +99,8 @@ int main(int argc, char *argv[])
     LogManager *logManager = LogManager::instance();
     logManager->setParent(&app);
 
-    // 数据保存控制器（方案 C：串口原始数据 txt + 视频 record-file 录 TS → ffmpeg 转 MP4）
+    // 数据保存控制器（方案 C：图像/激光串口原始数据 txt + 转台周期状态帧 csv
+    //                  + 视频 record-file 录 TS → ffmpeg 转 MP4）
     DataRecorder *dataRecorder = new DataRecorder(&app);
 
     // ═══ 工作线程对象：只处理串口 I/O ═══
@@ -272,6 +273,9 @@ int main(int argc, char *argv[])
                      dataRecorder, &DataRecorder::onImageFrame, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::laserRawFrameReceived,
                      dataRecorder, &DataRecorder::onLaserFrame, Qt::QueuedConnection);
+    // ── 视频录制中途被换源/重连打断 → 写日志面板，避免无声丢数据 ──
+    QObject::connect(dataRecorder, &DataRecorder::videoRecordInterrupted,
+                     logManager, [logManager](const QString &msg) { logManager->addLog("保存", msg); });
 
     // ── 偏差像素链：QML点击 → VlcVideoItem → imageSendData(桥) → imagePort → imageSendData ──
     QObject::connect(imageSendData, &ImageSendData::deviationPixelRelayed, imagePort, &SerialPortImage::recvDeviationPixel, Qt::QueuedConnection);
@@ -298,6 +302,9 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
 
     QObject::connect(turntablePort, &SerialPortTurntableHex::requpdateframe,   turntableData, &TurntableDataHex::updateframe, Qt::QueuedConnection);
+    // ── 转台周期状态帧 → 数据保存（与界面同一份反馈帧，一帧一行 csv）──
+    QObject::connect(turntablePort, &SerialPortTurntableHex::requpdateframe,
+                     dataRecorder, &DataRecorder::onTurntableFrame, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntableSendData, &TurntableSendDataHex::recvinner_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntablePort, &SerialPortTurntableHex::recvinner_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntableSendData, &TurntableSendDataHex::recvmiddle_angle, Qt::QueuedConnection);

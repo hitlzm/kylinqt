@@ -9,6 +9,12 @@ Rectangle {
     width: 1200
     height: 610
     color: '#e9f0f9'
+    //带确认按钮的弹窗
+
+    MessagePopup {
+        id: msg
+    }
+    //不带确认按钮的弹窗
 
     MsgPopup2 {
         id: testmsg
@@ -105,7 +111,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 30
         anchors.top: parent.top
-        anchors.topMargin: 40
+        anchors.topMargin: 60
 
         Column {
             spacing: 6
@@ -186,12 +192,9 @@ Rectangle {
             CusButton_Blue { text: "确定"; onClicked: tip.hide() }
         }
     }
-    MessagePopup {
-        id: msg
-    }
-    MessagePopup {
-        id: netmsg
-    }
+    // MessagePopup {
+    //     id: netmsg
+    // }
     CusPopup {
         id: tip1
         backgroundWidth: 200
@@ -328,7 +331,7 @@ Rectangle {
     // ═══════════════════════════════════════════════════════
     Row {
         id: dytctrlRow
-        spacing: 13
+        spacing: 10
         height: 60  // 显式高度 = 最高子项(remoteHostField.myheight)，保证子锚点 verticalCenter 可解析
 
         anchors.top: serialRow.bottom
@@ -408,7 +411,7 @@ Rectangle {
         
         // 框架角调节
         Text {
-            text: "框架角调节："
+            text: "框架角调节速度："
             font.pixelSize: 18
             font.bold: true
             color: "#000000"
@@ -586,6 +589,100 @@ Rectangle {
             }
         }
 
+        // ── 波门调整（新增）──
+        Row {
+            id: gateSizeRow
+            spacing: 12
+            anchors.verticalCenter: parent.verticalCenter
+
+            // 第一部分：文字标签
+            Text {
+                text: "波门调整:"
+                font.pixelSize: 18
+                font.bold: true
+                color: "#333333"
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            // 第二部分：增大按钮（plus）
+            CusButton_White {
+                id: gateSizePlusBtn
+                width: 32
+                height: 32
+                anchors.verticalCenter: parent.verticalCenter
+                contentItem: Image {
+                    source: "qrc:/components/plus.png"
+                    width: 28
+                    height: 28
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    opacity: parent.pressed ? 0.7 : 1.0
+                }
+                //按下时先发送一次
+                onPressed: {
+                    imageSendData.m_gateSize = 0xaa
+                    imageSendData.buildFrame()      // 立即发一次
+                    imageData.m_check = true;
+                    imageData.m_check_count = 20;
+                }
+                //按下按钮时持续发送
+                Timer {
+                id: plusRepeatTimer
+                interval: 250
+                repeat: true
+                running: gateSizePlusBtn.pressed
+                onTriggered: {
+                    // imageSendData.m_gateSize = 0xaa   // 增大波门
+                    imageSendData.buildFrame()
+                    console.log("增大波门中...")
+                }
+                }
+                //送开时停止波门大小变化
+                onReleased: {
+                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
+                    imageSendData.buildFrame()
+                }
+            }
+
+            // 第三部分：减小按钮（minus）
+            CusButton_White {
+                id: gateSizeMinusBtn
+                width: 32
+                height: 32
+                anchors.verticalCenter: parent.verticalCenter
+                contentItem: Image {
+                    source: "qrc:/components/minus.png"
+                    width: 28
+                    height: 28
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                    opacity: parent.pressed ? 0.7 : 1.0
+                }
+                //按下时先发送一次
+                onPressed: {
+                    imageSendData.m_gateSize = 0x55
+                    imageSendData.buildFrame()      // 立即发一次
+                    imageData.m_check = true;
+                    imageData.m_check_count = 20;
+                }
+                Timer {
+                id: minusRepeatTimer
+                interval: 250
+                repeat: true
+                running: gateSizeMinusBtn.pressed
+                onTriggered: {
+                    imageSendData.buildFrame()
+                    console.log("减小波门中...")
+                }
+                }
+                //送开时停止波门大小变化
+                onReleased: {
+                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
+                    imageSendData.buildFrame()
+                }
+            }
+        }
+
         CusButton_Blue {
             id: savebtn
             width: 80
@@ -602,20 +699,18 @@ Rectangle {
             }
         }
 
-        Item {
-            width:130
-            height: 55   
+        //加入主动进行时间同步的按钮
+        CusButton_Blue {
+            id: timeSync
+            width: 80
+            height: 40
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 3
-            Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
+            text: "时间同步"
+            onClicked: {
+                    //时间同步
+            }
         }
-        Item {
-            width:130
-            height: 55 
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 3
-            Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
-        }
+    
         Item {
             width:130
             height: 55   
@@ -630,7 +725,7 @@ Rectangle {
     // ═══════════════════════════════════════════════════════
     Row {
         id: presetComboRow1
-        spacing: 15
+        spacing: 20
         height: 60  // 显式高度 = 最高子项(pitchPresetField.myheight)，保证子锚点 verticalCenter 可解析
 
         anchors.top: dytctrlRow.bottom
@@ -764,7 +859,7 @@ Rectangle {
             }
         }
         Item{
-            width:130
+            width:140
             height: pitchPresetField.myheight   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: indComm;  label: "通讯";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
@@ -777,7 +872,7 @@ Rectangle {
     // ═══════════════════════════════════════════════════════
     Row {
         id: comboRow2
-        spacing: 15
+        spacing: 25
         height: 55  // 显式高度 = 最高子项(myCombox4.myheight)，保证子锚点 verticalCenter 可解析
 
         anchors.top: presetComboRow1.bottom
@@ -840,138 +935,26 @@ Rectangle {
             }
         }
 
-        // TODO：删除修正指令状态
-        // ── 修正指令状态 ──
-        MyComboBox {
-            id: myCombox7
-            mywidth: 160
-            myheight: 55
-            title: "修正指令状态"
-            model: ["非修正状态", "修正状态"]
-            onCurrentIndexChanged: {
-                if (mycurrentIndex !== -1) {
-                    imageSendData.m_trackingCorrectionCmd = mycurrentIndex
-                }
-            }
-        }
 
         // TODO：把波门大小选择框改成增大与减小按钮，停止按下后，框大小不再变化 
-
-
-
-
-
-        // ── 波门调整（新增）──
-        Row {
-            id: gateSizeRow
-            spacing: 10
+        Item {
+            width:137
+            height: 55   
             anchors.verticalCenter: parent.verticalCenter
-
-            // 第一部分：文字标签
-            Text {
-                text: "波门调整"
-                font.pixelSize: 18
-                font.bold: true
-                color: "#333333"
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            // 第二部分：增大按钮（plus）
-            CusButton_White {
-                id: gateSizePlusBtn
-                width: 32
-                height: 32
-                anchors.verticalCenter: parent.verticalCenter
-                contentItem: Image {
-                    source: "qrc:/components/plus.png"
-                    width: 28
-                    height: 28
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    opacity: parent.pressed ? 0.7 : 1.0
-                }
-                //按下时先发送一次
-                onPressed: {
-                    imageSendData.m_gateSize = 0xaa
-                    imageSendData.buildFrame()      // 立即发一次
-                    imageData.m_check = true;
-                    imageData.m_check_count = 20;
-                }
-                //按下按钮时持续发送
-                Timer {
-                id: plusRepeatTimer
-                interval: 250
-                repeat: true
-                running: gateSizePlusBtn.pressed
-                onTriggered: {
-                    // imageSendData.m_gateSize = 0xaa   // 增大波门
-                    imageSendData.buildFrame()
-                    console.log("增大波门中...")
-                }
-                }
-                //送开时停止波门大小变化
-                onReleased: {
-                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
-                    imageSendData.buildFrame()
-                }
-            }
-
-            // 第三部分：减小按钮（minus）
-            CusButton_White {
-                id: gateSizeMinusBtn
-                width: 32
-                height: 32
-                anchors.verticalCenter: parent.verticalCenter
-                contentItem: Image {
-                    source: "qrc:/components/minus.png"
-                    width: 28
-                    height: 28
-                    fillMode: Image.PreserveAspectFit
-                    anchors.centerIn: parent
-                    opacity: parent.pressed ? 0.7 : 1.0
-                }
-                //按下时先发送一次
-                onPressed: {
-                    imageSendData.m_gateSize = 0x55
-                    imageSendData.buildFrame()      // 立即发一次
-                    imageData.m_check = true;
-                    imageData.m_check_count = 20;
-                }
-                Timer {
-                id: minusRepeatTimer
-                interval: 250
-                repeat: true
-                running: gateSizeMinusBtn.pressed
-                onTriggered: {
-                    imageSendData.buildFrame()
-                    console.log("减小波门中...")
-                }
-                }
-                //送开时停止波门大小变化
-                onReleased: {
-                    imageSendData.m_gateSize = 0x00 //长按结束后回默认值
-                    imageSendData.buildFrame()
-                }
-            }
+            anchors.verticalCenterOffset: 3
+            Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
+        }
+        Item {
+            width:137
+            height: 55 
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: 3
+            Indicator { id: indTvVideo;  label: "电视视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag3 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
 
-        // ── 波门大小 ──
-        // MyComboBox {
-        //     id: myCombox8
-        //     mywidth: 120
-        //     myheight: 55
-        //     title: "波门大小"
-        //     model: ["大", "小"]
-        //     onCurrentIndexChanged: {
-        //         if (mycurrentIndex === 0) {
-        //             imageSendData.m_gateSize = 0xaa
-        //         } else if (mycurrentIndex === 1) {
-        //             imageSendData.m_gateSize = 0x55
-        //         }
-        //     }
-        // }
+
         Item{
-            width:130
+            width:137
             height: myCombox4.myheight   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: indServo; label: "伺服自检"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
@@ -989,7 +972,7 @@ Rectangle {
         anchors.top: comboRow2.bottom
         anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: (commandArea.x + commandArea.width + 30 + parent.width) / 2 - parent.width / 2
+        anchors.horizontalCenterOffset: (commandArea.x + commandArea.width + 30 + parent.width) / 2 - parent.width / 2 
 
         // ── 帧信息 ──
         Rectangle {
@@ -1366,7 +1349,7 @@ Rectangle {
         anchors.top: statusRow1.bottom
         anchors.topMargin: 5
         anchors.left: commandArea.right
-        anchors.leftMargin: 30
+        anchors.leftMargin: 25
 
         // ── 跟踪信息 ──
         Rectangle {
@@ -1617,9 +1600,10 @@ Rectangle {
                         if (index === 1) return "红外帧频:"
                         if (index === 2) return "电视帧频:"
                         if (index === 3) return "电视帧编号:"
-                        if (index === 4) return "波门尺寸:"
-                        if (index === 5) return "软件版本1:"
-                        if (index === 6) return "软件版本2:"
+                        if (index === 4) return "温度:"
+                        if (index === 5) return "波门尺寸:"
+                        if (index === 6) return "软件版本1:"
+                        if (index === 7) return "软件版本2:"
                         return "软件版本3:"
                     }
                     value: {
@@ -1627,10 +1611,11 @@ Rectangle {
                         if (index === 1) return imageData.infraredFrameRate + " Hz"
                         if (index === 2) return imageData.tvFrameRate + " Hz"
                         if (index === 3) return imageData.cbhTv4405
-                        if (index === 4) return imageData.gateSize
-                        if (index === 5) return imageData.softwareVersion1
-                        if (index === 6) return imageData.softwareVersion2
-                        return imageData.softwareVersion3
+                        if (index === 4) return imageData.temperture + "°"  //改成具体的温度
+                        if (index === 5) return imageData.gateSize
+                        if (index === 6) return "V" + (imageData.softwareVersion1 / 100).toFixed(2)
+                        if (index === 7) return "V" + (imageData.softwareVersion2 / 100).toFixed(2)        //软件版本的显示如果是数字201，则显示为V2.01
+                        return "V" + (imageData.softwareVersion3 / 100).toFixed(2)
                     }
                 }
             }

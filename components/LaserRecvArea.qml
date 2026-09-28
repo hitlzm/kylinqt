@@ -313,8 +313,8 @@ Rectangle {
                             spacing: 6
                             DataLabel { label: "激光周期:"; value: (laserData.laserPeriod * 2).toFixed(0) + " us" }
                             DataLabel { label: "增益状态:"; value: "0x" + laserData.gainStatus.toString(16).toUpperCase() }
-                            DataLabel { label: "软件版本1:"; value: laserData.softwareVersion1.toFixed(2) }
-                            DataLabel { label: "软件版本2:"; value: laserData.softwareVersion2.toFixed(2) }
+                            DataLabel { label: "软件版本1:"; value: "V" + (laserData.softwareVersion1 / 100).toFixed(2) }
+                            DataLabel { label: "软件版本2:"; value: "V" + (laserData.softwareVersion2 / 100).toFixed(2) }
                         }
                     
                     }

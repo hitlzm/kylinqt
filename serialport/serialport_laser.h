@@ -34,6 +34,12 @@ class LaserData : public QObject
     Q_PROPERTY(int faultInfo READ faultInfo NOTIFY faultInfoChanged)
     Q_PROPERTY(int faultInfo1 READ faultInfo1 NOTIFY faultInfo1Changed)
     Q_PROPERTY(int faultInfo2 READ faultInfo2 NOTIFY faultInfo2Changed)
+    Q_PROPERTY(int dytfault1 READ dytfault1 NOTIFY dytfault1Changed)
+    Q_PROPERTY(int dytfault2 READ dytfault2 NOTIFY dytfault2Changed)
+    Q_PROPERTY(int dytfault3 READ dytfault3 NOTIFY dytfault3Changed)
+    Q_PROPERTY(int dytfault4 READ dytfault4 NOTIFY dytfault4Changed)
+    Q_PROPERTY(int dytfault5 READ dytfault5 NOTIFY dytfault5Changed)
+    Q_PROPERTY(int dytfault6 READ dytfault6 NOTIFY dytfault6Changed)
     Q_PROPERTY(float opticalAzimuth READ opticalAzimuth NOTIFY opticalAzimuthChanged)
     Q_PROPERTY(float opticalPitch READ opticalPitch NOTIFY opticalPitchChanged)
     Q_PROPERTY(float gyroAzimuthRate READ gyroAzimuthRate NOTIFY gyroAzimuthRateChanged)
@@ -73,6 +79,12 @@ public:
     int faultInfo() const;
     int faultInfo1() const;
     int faultInfo2() const;
+    int dytfault1() const;
+    int dytfault2() const;
+    int dytfault3() const;
+    int dytfault4() const;
+    int dytfault5() const;
+    int dytfault6() const;
     float opticalAzimuth() const;
     float opticalPitch() const;
     float gyroAzimuthRate() const;
@@ -123,6 +135,12 @@ signals:
     void faultInfoChanged();
     void faultInfo1Changed();
     void faultInfo2Changed();
+    void dytfault1Changed();
+    void dytfault2Changed();
+    void dytfault3Changed();
+    void dytfault4Changed();
+    void dytfault5Changed();
+    void dytfault6Changed();
     void opticalAzimuthChanged();
     void opticalPitchChanged();
     void gyroAzimuthRateChanged();
@@ -195,15 +213,22 @@ private:
     int m_frameStatus1 = 0;//帧长
     int m_frameStatus2 = 0; //帧计数器
     int m_frameId = 0x25;
-    int m_dytStatus = 0;
+    int m_dytStatus = 0; 
+    
     quint8 m_detectorStatus = 0;  //细分为三种
     quint8 m_detectorStatus1 = 0;
     quint8 m_detectorStatus2 = 0;
     quint8 m_detectorStatus3 = 0;
 
-    quint8 m_faultInfo = 0;  //细分为2种
-    quint8 m_faultInfo1 = 0;  
-    quint8 m_faultInfo2 = 0;  
+    quint8 m_faultInfo = 0;  //细分为2种，有故障/无故障。故障码按位又可以细分为6种故障
+    quint8 m_faultInfo1 = 0;  //6-7
+    quint8 m_faultInfo2 = 0;    //0-5
+    quint8 m_dytfault1 = 0;  //方位向陀螺
+    quint8 m_dytfault2 = 0;  //俯仰向陀螺
+    quint8 m_dytfault3 = 0;  //方位电机
+    quint8 m_dytfault4 = 0;  //俯仰电机
+    quint8 m_dytfault5 = 0;  //旋变
+    quint8 m_dytfault6 = 0;  
     float m_opticalAzimuth = 0;
     float m_opticalPitch = 0;
     float m_gyroAzimuthRate = 0;
