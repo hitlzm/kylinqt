@@ -13,24 +13,32 @@
 #include "../serialport/serialport_turntable_HEX.h"
 
 class VlcVideoItem;   //没有访问成员或调用方法，也没有new/delete，只使用固定大小的指针，前置声明即可，不需要包含对应头文件
+class ImageData;      //图像导引头 B 帧解析结果（只存放指针，同理只需前置声明）
+class LaserData;      //激光导引头接收帧解析结果
 
 /**
  * @brief 数据保存控制器（方案 C）
  *
  * 一次 startSave() ~ stopSave() 为一个保存会话：
- *   - 串口数据：图像导引头、激光导引头收到的原始帧字节，各存一个 txt（分开保存，不混写）
- *     （懒创建：某一路第一个帧到达时才建该路文件；原始数据流暂存，缓冲后落盘）
+ *   - 图像数据：图像导引头 B 帧中约定的那部分字段，存成 csv（解析后的工程量，不是原始 hex）：
+ *     时间(由毫秒+微秒合并、按北京时间给出)/B帧流水号/当前工作通道/俯仰·偏航视线角速度/
+ *     光学工作状态/俯仰·偏航框架角/俯仰·偏航陀螺/跟踪状态/跟踪器状态/红外帧编号/电视帧编号
+ *   - 激光数据：激光导引头 DYT 状态返回帧中约定的那部分字段，同样存 csv（解析后的工程量）：
+ *     时间(毫秒+微秒合并、北京时间)/光轴方位角·俯仰角/方位·俯仰陀螺输出角速度/
+ *     方位·俯仰速度环指令输入/方位·俯仰偏差角/激光周期/增益状态/四象限能量强度
+ *     （懒创建：某一路第一个帧到达时才建该路文件；数据流暂存，缓冲后落盘）
  *   - 转台数据：转台按固定周期返回的状态反馈帧（解析后的 StatusFeedbackHex），
- *     单独写一个 csv：一行一帧，含主机时间(毫秒)/转台毫秒时间/三轴状态·角度·控制偏差/
- *     秒脉冲/指令提示，另加会话内自增序号便于核对周期（懒创建，同 200ms 缓冲落盘）
+ *     单独写一个 csv：一行一帧，含转台毫秒时间/指令提示/三轴状态·角度·控制偏差/秒脉冲，
+ *     另加会话内自增序号便于核对周期。状态与指令提示存中文含义（不存代号），
+ *     表头同样为中文并带 UTF-8 BOM（懒创建，同 200ms 缓冲落盘）
  *   - 视频：通过 VlcVideoItem 的 mpv record-file 录制原始码流（.ts），
  *     停止时调用 ffmpeg 转封装（-c copy）成 MP4，成功则删除临时 TS
  *     若保存过程中视频源被切换/重连（含界面自动重连），录制会就地终止：
  *     不再续录，已录到的部分立即转封装，并发 videoRecordInterrupted() 告知界面
  *
  * 文件路径规则（默认）：
- *   <saveDir>/<日期 M.d>/image<时分秒>.txt      （图像导引头原始帧，hex 文本）
- *   <saveDir>/<日期 M.d>/laser<时分秒>.txt      （激光导引头原始帧，hex 文本）
+ *   <saveDir>/<日期 M.d>/image<时分秒>.csv      （图像导引头 B 帧解析后字段）
+ *   <saveDir>/<日期 M.d>/laser<时分秒>.csv      （激光导引头接收帧解析后字段）
  *   <saveDir>/<日期 M.d>/turntable<时分秒>.csv  （转台周期状态帧）
  *   <saveDir>/<日期 M.d>/video<时分秒>.mp4
  *
@@ -56,15 +64,21 @@ public:
 
     // 视频录制对象（main.cpp 在 QML 根对象找到 VlcVideoItem 后注入）
     void setVideoItem(VlcVideoItem *item);
+    // 图像导引头解析结果对象（main.cpp 创建后注入）：csv 直接取它的解析值，不再重复换算
+    void setImageData(ImageData *data);
+    // 激光导引头解析结果对象（同理，csv 取它的解析值）
+    void setLaserData(LaserData *data);
 
 public slots:
     // QML 调用入口（后续按钮接这里）
     Q_INVOKABLE bool startSave();
     Q_INVOKABLE void stopSave();
 
-    // 串口原始帧入口（工作线程 QueuedConnection 到主线程）。当串口未打开或者串口数据不正确时，无法通过数据校验，所以不用担心保存全0值的问题
-    void onImageFrame(const QByteArray &frame);
-    void onLaserFrame(const QByteArray &frame);
+    // 图像 B 帧入口：ImageData 解析完一帧后触发（DirectConnection，读到的就是本帧解析值）
+    // 串口未打开或数据校验不过时不会走到这里，所以不用担心保存全 0 值
+    void onImageFrame();
+    // 激光接收帧入口：LaserData 解析完一帧后触发（DirectConnection，读到的就是本帧解析值）
+    void onLaserFrame();
 
     // 转台周期状态帧入口（工作线程 QueuedConnection 到主线程，每帧一行 csv）
     void onTurntableFrame(const StatusFeedbackHex &frame);
@@ -103,6 +117,10 @@ private:
     QString m_ffmpegPath = "ffmpeg";    //改成实际的FFMPEG路径
     // 用 QPointer 持有 QML 对象：engine 先于 app 销毁时自动置空，避免悬垂指针
     QPointer<VlcVideoItem> m_videoItem;
+    // 图像导引头解析结果（主线程对象，同样用 QPointer 防悬垂）
+    QPointer<ImageData> m_imageData;
+    // 激光导引头解析结果
+    QPointer<LaserData> m_laserData;
 
     // ── 本次会话（一次 startSave ~ stopSave）──
     QString m_sessionDate;   // 例如 8.21

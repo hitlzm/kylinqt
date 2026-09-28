@@ -116,7 +116,7 @@ float LaserData::losAzimuthRate() const { return m_losAzimuthRate; }
 float LaserData::losPitchRate() const { return m_losPitchRate; }
 float LaserData::deviationAzimuth() const { return m_deviationAzimuth; }
 float LaserData::deviationPitch() const { return m_deviationPitch; }
-int LaserData::laserPeriod() const { return m_laserPeriod; }
+double LaserData::laserPeriod() const { return m_laserPeriod; }
 int LaserData::gainStatus() const { return m_gainStatus; }
 float LaserData::quadrant1Energy() const { return m_quadrant1Energy; }
 float LaserData::quadrant2Energy() const { return m_quadrant2Energy; }
@@ -301,6 +301,9 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
             emit recvTimeTextChanged();
         }
     }
+
+    // 本帧各字段已全部更新，通知消费者（数据保存等）按同一份解析结果取用
+    emit frameParsed();
 }
 
 int LaserData::getBitsFromQint8(qint8 value, int startBit, int endBit)

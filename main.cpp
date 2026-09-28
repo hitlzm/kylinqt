@@ -268,11 +268,15 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::portError,    imageData, &ImageData::setError,    Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::portsChanged, imageData, &ImageData::setPortList, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::imageFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
-    // ── 原始帧字节流 → 数据保存 ──
-    QObject::connect(imagePort, &SerialPortImage::imageFrameReceived,
-                     dataRecorder, &DataRecorder::onImageFrame, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::laserRawFrameReceived,
-                     dataRecorder, &DataRecorder::onLaserFrame, Qt::QueuedConnection);
+    // ── 图像 B 帧 / 激光接收帧：取各自 Data 对象解析后的工程量存 csv（不再是原始 hex）──
+    // DirectConnection：两者同在主线程，且必须在本帧字段刚更新完时立即取值，
+    // 否则排队执行时 Data 对象可能已经读到下一帧，导致同一帧数据写两遍/漏写。
+    dataRecorder->setImageData(imageData);
+    QObject::connect(imageData, &ImageData::frameParsed,
+                     dataRecorder, &DataRecorder::onImageFrame, Qt::DirectConnection);
+    dataRecorder->setLaserData(laserData);
+    QObject::connect(laserData, &LaserData::frameParsed,
+                     dataRecorder, &DataRecorder::onLaserFrame, Qt::DirectConnection);
     // ── 视频录制中途被换源/重连打断 → 写日志面板，避免无声丢数据 ──
     QObject::connect(dataRecorder, &DataRecorder::videoRecordInterrupted,
                      logManager, [logManager](const QString &msg) { logManager->addLog("保存", msg); });

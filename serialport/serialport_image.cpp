@@ -374,6 +374,9 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         m_softwareVersion3 = pFrame->software_version3;
         emit softwareVersion3Changed();
     }
+
+    // 本帧各字段已全部更新，通知消费者（数据保存等）按同一份解析结果取用
+    emit frameParsed();
 }
 int ImageData::getBitsFromQint8(qint8 value, int startBit, int endBit)
 {

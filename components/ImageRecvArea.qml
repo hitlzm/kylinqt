@@ -402,7 +402,7 @@ Rectangle {
             Row {
                 spacing: 8
                 DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
-                DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.ctlnumber) }
+                DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.cmdHint) }
                 //加入保存转台数据的按钮
                 CusButton_Blue {
                     id: savebtn
@@ -442,6 +442,7 @@ Rectangle {
                     }
                     value: {
                         switch(turntableData.inner_statusnumber) {
+                            case 0x00: return "空闲"
                             case 0x01: return "伺服"
                             case 0x02: return "回零执行中"
                             case 0x03: return "位置执行中"
@@ -493,6 +494,7 @@ Rectangle {
                     }
                     value: {
                         switch(turntableData.middle_statusnumber) {
+                            case 0x00: return "空闲"
                             case 0x01: return "伺服"
                             case 0x02: return "回零执行中"
                             case 0x03: return "位置执行中"
@@ -544,6 +546,7 @@ Rectangle {
                     }
                     value: {
                         switch(turntableData.outter_statusnumber) {
+                            case 0x00: return "空闲"
                             case 0x01: return "伺服"
                             case 0x02: return "回零执行中"
                             case 0x03: return "位置执行中"

@@ -1,5 +1,7 @@
 #include "DataRecorder.h"
 #include "../vlcvideo/VlcVideoItem.h"
+#include "../serialport/serialport_image.h"
+#include "../serialport/serialport_laser.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -88,6 +90,16 @@ void DataRecorder::setVideoItem(VlcVideoItem *item)
     }
 }
 
+void DataRecorder::setImageData(ImageData *data)
+{
+    m_imageData = data;
+}
+
+void DataRecorder::setLaserData(LaserData *data)
+{
+    m_laserData = data;
+}
+
 // ── 开始/停止保存 ──
 bool DataRecorder::startSave()
 {
@@ -163,26 +175,193 @@ void DataRecorder::stopSave()
         startRemux();
 }
 
-// ── 串口原始帧（图像 / 激光分开保存，互不混写）──
-void DataRecorder::onImageFrame(const QByteArray &frame)
+// ── B帧枚举字段 → 直观文本（保留原始码值，便于与协议核对）──
+static QString imageCodeText(int code, const char *name)
 {
-    if (!m_saving)
-        return;
-    ensureImageFile();
-    // 十六进制 ASCII 文本：原始帧字节多为非 UTF-8 二进制值，
-    // 直接落盘会导致麒麟等 Linux 文本查看器报“字符编码错误”。
-    // 每帧一行，空格分隔，可还原为原始字节（去掉空格后 hex → bytes）。
-    m_imageBuffer.append(frame.toHex(' '));
-    m_imageBuffer.append('\n');
+    const QString hex = QString::number(static_cast<uint>(code) & 0xFFu, 16)
+                            .rightJustified(2, QLatin1Char('0')).toUpper();
+    return QString("%1(0x%2)").arg(QString::fromUtf8(name), hex);
 }
 
-void DataRecorder::onLaserFrame(const QByteArray &frame)
+// 字节11: 当前工作通道
+static QString imageWorkChannelText(int v)
 {
-    if (!m_saving)
+    switch (v) {
+    case 0x00: return imageCodeText(v, "电视");
+    case 0x01: return imageCodeText(v, "红外");
+    default:   return imageCodeText(v, "未定义");
+    }
+}
+
+// 字节18: 光学工作状态
+static QString imageOpticalWorkStateText(int v)
+{
+    switch (v) {
+    case 0x02: return imageCodeText(v, "搜索状态（预置状态）");
+    case 0x03: return imageCodeText(v, "跟踪状态");
+    case 0x04: return imageCodeText(v, "框架角电锁零位状态");
+    case 0x05: return imageCodeText(v, "记忆状态");
+    case 0x06: return imageCodeText(v, "解锁状态");
+    default:   return imageCodeText(v, "未定义");
+    }
+}
+
+// 字节32: 跟踪状态
+static QString imageTrackingStateText(int v)
+{
+    switch (v) {
+    case 0x00: return imageCodeText(v, "默认");
+    case 0x11: return imageCodeText(v, "搜索中");
+    case 0x22: return imageCodeText(v, "目标丢失");
+    case 0x33: return imageCodeText(v, "目标锁定");
+    case 0x44: return imageCodeText(v, "记忆状态");
+    default:   return imageCodeText(v, "未定义");
+    }
+}
+
+// 字节33: 跟踪器状态
+static QString imageTrackerStateText(int v)
+{
+    switch (v) {
+    case 0x00: return imageCodeText(v, "空闲状态");
+    case 0x01: return imageCodeText(v, "跟踪状态");
+    case 0x02: return imageCodeText(v, "识别状态");
+    case 0x03: return imageCodeText(v, "匹配状态");
+    case 0x04: return imageCodeText(v, "仅识别状态");
+    default:   return imageCodeText(v, "未定义");
+    }
+}
+
+// ── 图像 B 帧（解析后的工程量，一行一帧）──
+void DataRecorder::onImageFrame()
+{
+    if (!m_saving || !m_imageData)
+        return;
+    ensureImageFile();
+    if (m_imageOpenFailed)
+        return;
+
+    // 时间：由 B 帧“返回时间戳1(毫秒) + 返回时间戳2(微秒)”合并后的北京时间
+    //（与界面显示同源，ImageData 在解析时已按 UTC+8 折算好；未收到时间同步前为空）
+    const QString timeText = (m_imageData->msTime() > 0) ? m_imageData->recvTimeText()
+                                                         : QString();
+
+    QString line;
+    line.reserve(200);
+    line += timeText;
+    line += ','; line += QString::number(m_imageData->bFrameSequence());
+    line += ','; line += imageWorkChannelText(m_imageData->currentWorkChannel());
+    line += ','; line += QString::number(m_imageData->pitchLosAngVel(), 'f', 4);
+    line += ','; line += QString::number(m_imageData->yawLosAngVel(), 'f', 4);
+    line += ','; line += imageOpticalWorkStateText(m_imageData->opticalWorkState());
+    line += ','; line += QString::number(m_imageData->pitchFrameAngle(), 'f', 4);
+    line += ','; line += QString::number(m_imageData->yawFrameAngle(), 'f', 4);
+    line += ','; line += QString::number(m_imageData->pitchGyro(), 'f', 4);
+    line += ','; line += QString::number(m_imageData->yawGyro(), 'f', 4);
+    line += ','; line += imageTrackingStateText(m_imageData->trackingState());
+    line += ','; line += imageTrackerStateText(m_imageData->trackerState());
+    line += ','; line += QString::number(m_imageData->infraredFrameNum());
+    line += ','; line += QString::number(m_imageData->cbhTv4405());
+    line += '\n';
+
+    m_imageBuffer.append(line.toUtf8());
+}
+
+// 字节24: 增益状态（0xB0~0xB4 五级起控状态，与界面显示一致用十六进制）
+static QString laserGainStatusText(int v)
+{
+    return QStringLiteral("0x")
+            + QString::number(static_cast<uint>(v) & 0xFFu, 16)
+                      .rightJustified(2, QLatin1Char('0')).toUpper();
+}
+
+// ── 激光接收帧（解析后的工程量，一行一帧）──
+void DataRecorder::onLaserFrame()
+{
+    if (!m_saving || !m_laserData)
         return;
     ensureLaserFile();
-    m_laserBuffer.append(frame.toHex(' '));
-    m_laserBuffer.append('\n');
+    if (m_laserOpenFailed)
+        return;
+
+    // 时间：由接收帧“返回时间戳1(毫秒) + 返回时间戳2(微秒)”合并后的北京时间
+    //（解析时已按 UTC+8 折算好；未收到时间同步前为空）
+    const QString timeText = (m_laserData->msTime() > 0) ? m_laserData->recvTimeText()
+                                                         : QString();
+
+    QString line;
+    line.reserve(220);
+    line += timeText;
+    line += ','; line += QString::number(m_laserData->opticalAzimuth(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->opticalPitch(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->gyroAzimuthRate(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->gyroPitchRate(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->losAzimuthRate(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->losPitchRate(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->deviationAzimuth(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->deviationPitch(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->laserPeriod(), 'f', 4);
+    line += ','; line += laserGainStatusText(m_laserData->gainStatus());
+    line += ','; line += QString::number(m_laserData->quadrant1Energy(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->quadrant2Energy(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->quadrant3Energy(), 'f', 4);
+    line += ','; line += QString::number(m_laserData->quadrant4Energy(), 'f', 4);
+    line += '\n';
+
+    m_laserBuffer.append(line.toUtf8());
+}
+
+// 转台三轴状态（convertHexStatusToLegacy 得到的编码）→ 中文，与界面显示同一套叫法
+static QString turntableAxisStatusText(int code)
+{
+    switch (code) {
+    case 0x00: return QStringLiteral("空闲");
+    case 0x01: return QStringLiteral("伺服");
+    case 0x02: return QStringLiteral("回零执行中");
+    case 0x03: return QStringLiteral("位置执行中");
+    case 0x04: return QStringLiteral("速率执行中");
+    case 0x05: return QStringLiteral("速率稳定");
+    case 0x06: return QStringLiteral("摇摆执行中");
+    case 0x07: return QStringLiteral("摇摆稳定");
+    case 0x08: return QStringLiteral("停车执行中");
+    case 0x09: return QStringLiteral("跟踪模式1");      // 250ms 跟踪
+    case 0x0A: return QStringLiteral("停止跟踪");
+    case 0x0B: return QStringLiteral("跟踪模式2");      // 5ms 跟踪
+    case 0x0F: return QStringLiteral("速度环模式");
+    case 0x1F: return QStringLiteral("驱动器报警");
+    case 0x20: return QStringLiteral("伺服超差报警");
+    case 0x21: return QStringLiteral("正向限位报警");
+    case 0x22: return QStringLiteral("逆向限位报警");
+    case 0x23: return QStringLiteral("时钟同步报警");
+    case 0x24: return QStringLiteral("初始化报警");
+    case 0x25: return QStringLiteral("限位开关同时导通");
+    case 0x26: return QStringLiteral("编码器故障报警");
+    case 0x29: return QStringLiteral("瞬态电流报警");
+    case 0x2A: return QStringLiteral("连续电流报警");
+    default:   return QStringLiteral("未知(0x%1)")
+                      .arg(QString::number(code, 16).rightJustified(2, QLatin1Char('0')).toUpper());
+    }
+}
+
+// 转台指令提示（接收帧 byte26 低6位）→ 中文指令名，与界面 ctlNumberText 同一套叫法
+static QString turntableCmdHintText(int code)
+{
+    switch (code) {
+    case 0x00: return QStringLiteral("无");        // 未收到有效指令
+    case 0x01: return QStringLiteral("使能");
+    case 0x02: return QStringLiteral("停车");
+    case 0x03: return QStringLiteral("回零");
+    case 0x04: return QStringLiteral("位置");
+    case 0x05: return QStringLiteral("速率");
+    case 0x06: return QStringLiteral("摇摆");
+    case 0x0A: return QStringLiteral("250ms跟踪");
+    case 0x0C: return QStringLiteral("5ms跟踪");
+    case 0x10: return QStringLiteral("时间设置");
+    case 0x11: return QStringLiteral("跟踪修正");
+    case 0x1F: return QStringLiteral("复位");
+    default:   return QStringLiteral("未知(0x%1)")
+                      .arg(QString::number(code, 16).rightJustified(2, QLatin1Char('0')).toUpper());
+    }
 }
 
 // ── 转台周期状态帧 ──
@@ -194,28 +373,23 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     if (m_csvOpenFailed)
         return;
 
-    // 一行一帧。角度/控制偏差按工程单位（0.0001°）保留 4 位小数，
-    // 序号 + 主机毫秒时间用于事后核对转台的固定周期。
+    // 一行一帧。角度/控制偏差按工程单位（0.0001°）保留 4 位小数；
+    // 状态与指令提示存中文（不存代号），序号用于事后核对转台的固定周期。
     QString line;
     line.reserve(160);
     line += QString::number(++m_turntableSeq);
-    line += ',';
-    line += QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
-    line += ',';
-    line += QString::number(frame.m_time);
-    line += ',';
-    line += QString::number(frame.m_ctlnumber);
-    line += ','; line += QString::number(frame.m_inner_statusnumber);
+    line += ','; line += QString::number(frame.m_time);
+    line += ','; line += turntableCmdHintText(frame.m_cmdHint);
+    line += ','; line += turntableAxisStatusText(frame.m_inner_statusnumber);
     line += ','; line += QString::number(frame.m_inner_angle, 'f', 4);
     line += ','; line += QString::number(frame.m_inner_ctlDeviation, 'f', 4);
-    line += ','; line += QString::number(frame.m_middle_statusnumber);
+    line += ','; line += turntableAxisStatusText(frame.m_middle_statusnumber);
     line += ','; line += QString::number(frame.m_middle_angle, 'f', 4);
     line += ','; line += QString::number(frame.m_middle_ctlDeviation, 'f', 4);
-    line += ','; line += QString::number(frame.m_outter_statusnumber);
+    line += ','; line += turntableAxisStatusText(frame.m_outter_statusnumber);
     line += ','; line += QString::number(frame.m_outter_angle, 'f', 4);
     line += ','; line += QString::number(frame.m_outter_ctlDeviation, 'f', 4);
-    line += ','; line += QString::number(frame.m_hasSecPulse);
-    line += ','; line += QString::number(frame.m_cmdHint);
+    line += ','; line += (frame.m_hasSecPulse ? QStringLiteral("有") : QStringLiteral("无"));
     line += '\n';
 
     m_csvBuffer.append(line.toUtf8());
@@ -237,13 +411,19 @@ void DataRecorder::ensureImageFile()
     if (m_imageFile.isOpen() || m_imageOpenFailed)
         return;
 
-    m_imagePath = makeUniquePath(m_sessionDir + "/image" + m_sessionTime + ".txt");
+    m_imagePath = makeUniquePath(m_sessionDir + "/image" + m_sessionTime + ".csv");
     m_imageFile.setFileName(m_imagePath);
     if (!m_imageFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         m_imageOpenFailed = true;   // 打开失败：停止重试，避免每帧重复报错
         emit errorOccurred("无法创建图像数据文件: " + m_imagePath);
         return;
     }
+    // 表头（与 onImageFrame 的列序严格一致；带 UTF-8 BOM，方便表格软件识别中文表头）
+    m_imageFile.write("\xEF\xBB\xBF"
+                      "时间,B帧流水号,当前工作通道,俯仰视线角速度(°/s),偏航视线角速度(°/s),"
+                      "光学工作状态,俯仰框架角(°),偏航框架角(°),"
+                      "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
+                      "红外帧编号,电视帧编号\n");
     qDebug() << "[DataRecorder] 图像数据保存到:" << m_imagePath;
 }
 
@@ -252,13 +432,20 @@ void DataRecorder::ensureLaserFile()
     if (m_laserFile.isOpen() || m_laserOpenFailed)
         return;
 
-    m_laserPath = makeUniquePath(m_sessionDir + "/laser" + m_sessionTime + ".txt");
+    m_laserPath = makeUniquePath(m_sessionDir + "/laser" + m_sessionTime + ".csv");
     m_laserFile.setFileName(m_laserPath);
     if (!m_laserFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
         m_laserOpenFailed = true;
         emit errorOccurred("无法创建激光数据文件: " + m_laserPath);
         return;
     }
+    // 表头（与 onLaserFrame 的列序严格一致；带 UTF-8 BOM，方便表格软件识别中文表头）
+    m_laserFile.write("\xEF\xBB\xBF"
+                      "时间,光轴方位角(°),光轴俯仰角(°),"
+                      "方位陀螺输出角速度(°/s),俯仰陀螺输出角速度(°/s),"
+                      "方位视线角速度(°/s),俯仰视线角速度(°/s),"
+                      "方位偏差角(°),俯仰偏差角(°),激光周期(ms),增益状态,"
+                      "第一象限能量强度,第二象限能量强度,第三象限能量强度,第四象限能量强度\n");
     qDebug() << "[DataRecorder] 激光数据保存到:" << m_laserPath;
 }
 
@@ -298,12 +485,13 @@ void DataRecorder::ensureCsvFile()
         emit errorOccurred("无法创建转台数据文件: " + m_csvPath);
         return;
     }
-    // 表头（与 onTurntableFrame 的列序严格一致；全 ASCII，便于脚本与表格软件读取）
-    m_csvFile.write("seq,host_time,ms_time,ctlnumber,"
-                    "inner_status,inner_angle,inner_dev,"
-                    "middle_status,middle_angle,middle_dev,"
-                    "outter_status,outter_angle,outter_dev,"
-                    "sec_pulse,cmd_hint\n");
+    // 表头（与 onTurntableFrame 的列序严格一致；带 UTF-8 BOM，方便表格软件识别中文表头）
+    m_csvFile.write("\xEF\xBB\xBF"
+                    "序号,转台毫秒时间,指令提示,"
+                    "内框状态,内框角度(°),内框控制偏差(°),"
+                    "中框状态,中框角度(°),中框控制偏差(°),"
+                    "外框状态,外框角度(°),外框控制偏差(°),"
+                    "秒脉冲\n");
     qDebug() << "[DataRecorder] 转台数据保存到:" << m_csvPath;
 }
 

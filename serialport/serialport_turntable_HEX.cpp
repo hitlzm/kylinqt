@@ -292,7 +292,7 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
     feedback.m_cmdHint     = buf[26] & 0x3F;     // 低6位
 
     // 用指令提示作为序号（与ASCII版兼容）
-    feedback.m_ctlnumber = feedback.m_cmdHint;
+    //feedback.m_ctlnumber = feedback.m_cmdHint;
 
     emit requpdateframe(feedback);
 }
@@ -991,10 +991,10 @@ void TurntableDataHex::updateframe(StatusFeedbackHex recvdata)
         m_time = recvdata.m_time;
         emit timeChanged();
     }
-    if (m_ctlnumber != recvdata.m_ctlnumber) {
-        m_ctlnumber = recvdata.m_ctlnumber;
-        emit ctlnumberChanged();
-    }
+    // if (m_ctlnumber != recvdata.m_ctlnumber) {
+    //     m_ctlnumber = recvdata.m_ctlnumber;
+    //     emit ctlnumberChanged();
+    // }
     if (m_inner_statusnumber != recvdata.m_inner_statusnumber) {
         m_inner_statusnumber = recvdata.m_inner_statusnumber;
         emit inner_statusnumberChanged();

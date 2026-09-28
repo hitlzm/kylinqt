@@ -209,6 +209,10 @@ signals:
     void recvDateTimeChanged();
     void recvTimeTextChanged();
 
+    // ── 本帧解析完成（上面所有字段已按本帧更新）──
+    // 供数据保存等消费者使用：收到本信号时读到的一定是这一帧的解析结果
+    void frameParsed();
+
     // ── 串口状态变化信号 ──
     void portOpenChanged();
     void availablePortsChanged();

@@ -54,7 +54,7 @@ brief: 转台串口类（HEX十六进制协议版本）
 // 转台信息反馈结构体（应用层）
 typedef struct StatusFeedbackHex {
     int     m_time;                 // 毫秒时间 (0-14399999)
-    int     m_ctlnumber;            // 序号 (从指令提示中提取)
+    //int     m_ctlnumber;            // 序号 (从指令提示中提取)
     int     m_inner_statusnumber;   // 内框状态 (低4位: 状态, 高4位: 报警)
     float   m_inner_angle;          // 内框角度 (度)
     float   m_inner_ctlDeviation;   // 内框控制偏差 (度)

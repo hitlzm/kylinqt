@@ -48,7 +48,8 @@ class LaserData : public QObject
     Q_PROPERTY(float losPitchRate READ losPitchRate NOTIFY losPitchRateChanged)
     Q_PROPERTY(float deviationAzimuth READ deviationAzimuth NOTIFY deviationAzimuthChanged)
     Q_PROPERTY(float deviationPitch READ deviationPitch NOTIFY deviationPitchChanged)
-    Q_PROPERTY(int laserPeriod READ laserPeriod NOTIFY laserPeriodChanged)
+    // 激光周期：协议 1bit=2us，这里按毫秒保存（double，避免原 int 截断丢掉小数）
+    Q_PROPERTY(double laserPeriod READ laserPeriod NOTIFY laserPeriodChanged)
     Q_PROPERTY(int gainStatus READ gainStatus NOTIFY gainStatusChanged)
     Q_PROPERTY(float quadrant1Energy READ quadrant1Energy NOTIFY quadrant1EnergyChanged)
     Q_PROPERTY(float quadrant2Energy READ quadrant2Energy NOTIFY quadrant2EnergyChanged)
@@ -93,7 +94,7 @@ public:
     float losPitchRate() const;
     float deviationAzimuth() const;
     float deviationPitch() const;
-    int laserPeriod() const;
+    double laserPeriod() const;
     int gainStatus() const;
     float quadrant1Energy() const;
     float quadrant2Energy() const;
@@ -162,6 +163,10 @@ signals:
     void timeStampUsChanged();
     void recvDateTimeChanged();
     void recvTimeTextChanged();
+
+    // ── 本帧解析完成（上面所有字段已按本帧更新）──
+    // 供数据保存等消费者使用：收到本信号时读到的一定是这一帧的解析结果
+    void frameParsed();
 
     // ── 串口状态变化信号 ──
     void portOpenChanged();
@@ -237,7 +242,7 @@ private:
     float m_losPitchRate = 0;
     float m_deviationAzimuth = 0;
     float m_deviationPitch = 0;
-    int m_laserPeriod = 0;
+    double m_laserPeriod = 0;   // 激光周期(ms)，协议原始值×0.002
     int m_gainStatus = 0;
     float m_quadrant1Energy = 0;
     float m_quadrant2Energy = 0;
