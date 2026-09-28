@@ -538,7 +538,7 @@ Rectangle {
     }
     Column {
         id: fifthColumn
-        spacing: 25
+        spacing: 28
 
         anchors.top: sendButton.bottom
         anchors.topMargin: 48
@@ -554,11 +554,11 @@ Rectangle {
             // 保存数据 ⇄ 停止保存 两种状态切换
             text: dataRecorder.saving ? "停止保存" : "保存数据"
             onClicked: {
-                // if (dataRecorder.saving) {
-                //     dataRecorder.stopSave()
-                // } else {
-                //     dataRecorder.startSave()
-                // }
+                if (dataRecorder.saving) {
+                    dataRecorder.stopSave()
+                } else {
+                    dataRecorder.startSave()
+                }
             }
         }
 
@@ -575,11 +575,62 @@ Rectangle {
                
     }
 
+    //再加一行故障状态指示灯
+    Row
+    {
+        id:checkrow
+        spacing:15
+        anchors.top: fourthColumn.bottom
+        anchors.topMargin: 10
+        anchors.left: commandArea.right
+        anchors.leftMargin: 250
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: directiontuo; label: "方位陀螺"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.faultInfo === 1; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: pitchtuo; label: "俯仰陀螺"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.faultInfo === 1; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: directionmotor; label: "方位电机"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.faultInfo === 1; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: pitchmotor; label: "俯仰电机"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.faultInfo === 1; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+
+        Item {
+            width:100
+            height: 32   
+            anchors.verticalCenter: parent.verticalCenter
+            Indicator { id: spin; label: "旋变"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
+                        normal: laserData.faultInfo === 1; onFaultTriggered: toastmsg.showToast(label + "故障") }
+        }
+    }
+
     LaserRecvArea{
         myheight:320
         mywidth:880
-        anchors.top: firstColumn.bottom
-        anchors.topMargin: 30
+        anchors.top: checkrow.bottom
+        anchors.topMargin: 10
         anchors.left: commandArea.right
         anchors.leftMargin: 50
         groupHeight1:150

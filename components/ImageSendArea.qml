@@ -586,37 +586,10 @@ Rectangle {
             }
         }
 
-        CusButton_Blue {
-            id: savebtn
-            width: 80
-            height: 40
-            anchors.verticalCenter: parent.verticalCenter
-            // 保存数据 ⇄ 停止保存 两种状态切换
-            text: dataRecorder.saving ? "停止保存" : "保存数据"
-            onClicked: {
-                if (dataRecorder.saving) {
-                    dataRecorder.stopSave()
-                } else {
-                    dataRecorder.startSave()
-                }
-            }
-        }
-
-        //加入主动进行时间同步的按钮
-        CusButton_Blue {
-            id: timeSync
-            width: 80
-            height: 40
-            anchors.verticalCenter: parent.verticalCenter
-            text: "时间同步"
-            onClicked: {
-                    //时间同步
-            }
-        }
         // ── 波门调整（新增）──
         Row {
             id: gateSizeRow
-            spacing: 15
+            spacing: 12
             anchors.verticalCenter: parent.verticalCenter
 
             // 第一部分：文字标签
@@ -707,7 +680,34 @@ Rectangle {
             }
         }
 
-        
+        CusButton_Blue {
+            id: savebtn
+            width: 80
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            // 保存数据 ⇄ 停止保存 两种状态切换
+            text: dataRecorder.saving ? "停止保存" : "保存数据"
+            onClicked: {
+                if (dataRecorder.saving) {
+                    dataRecorder.stopSave()
+                } else {
+                    dataRecorder.startSave()
+                }
+            }
+        }
+
+        //加入主动进行时间同步的按钮
+        CusButton_Blue {
+            id: timeSync
+            width: 80
+            height: 40
+            anchors.verticalCenter: parent.verticalCenter
+            text: "时间同步"
+            onClicked: {
+                    //时间同步
+            }
+        }
+    
         Item {
             width:130
             height: 55   
@@ -856,7 +856,7 @@ Rectangle {
             }
         }
         Item{
-            width:130
+            width:140
             height: pitchPresetField.myheight   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: indComm;  label: "通讯";     fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag5 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
@@ -935,14 +935,14 @@ Rectangle {
 
         // TODO：把波门大小选择框改成增大与减小按钮，停止按下后，框大小不再变化 
         Item {
-            width:130
+            width:137
             height: 55   
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
             Indicator { id: indIrVideo;  label: "红外视频接收"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag2 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
         }
         Item {
-            width:130
+            width:137
             height: 55 
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 3
@@ -951,7 +951,7 @@ Rectangle {
 
 
         Item{
-            width:130
+            width:137
             height: myCombox4.myheight   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: indServo; label: "伺服自检"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; normal: imageData.selfCheckFlag6 === 1; onFaultTriggered: testmsg.showToast(label + "故障", 1500) }
@@ -1597,9 +1597,10 @@ Rectangle {
                         if (index === 1) return "红外帧频:"
                         if (index === 2) return "电视帧频:"
                         if (index === 3) return "电视帧编号:"
-                        if (index === 4) return "波门尺寸:"
-                        if (index === 5) return "软件版本1:"
-                        if (index === 6) return "软件版本2:"
+                        if (index === 4) return "温度:"
+                        if (index === 5) return "波门尺寸:"
+                        if (index === 6) return "软件版本1:"
+                        if (index === 7) return "软件版本2:"
                         return "软件版本3:"
                     }
                     value: {
@@ -1607,9 +1608,10 @@ Rectangle {
                         if (index === 1) return imageData.infraredFrameRate + " Hz"
                         if (index === 2) return imageData.tvFrameRate + " Hz"
                         if (index === 3) return imageData.cbhTv4405
-                        if (index === 4) return imageData.gateSize
-                        if (index === 5) return imageData.softwareVersion1
-                        if (index === 6) return imageData.softwareVersion2
+                        if (index === 4) return imageData.gateSize   //改成具体的温度
+                        if (index === 5) return imageData.gateSize
+                        if (index === 6) return imageData.softwareVersion1
+                        if (index === 7) return imageData.softwareVersion2        //软件版本的显示如果是数字201，则显示为V2.01
                         return imageData.softwareVersion3
                     }
                 }
