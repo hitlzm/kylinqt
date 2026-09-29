@@ -688,13 +688,13 @@ Rectangle {
             width: 80
             height: 40
             anchors.verticalCenter: parent.verticalCenter
-            // 保存数据 ⇄ 停止保存 两种状态切换
-            text: dataRecorder.saving ? "停止保存" : "保存数据"
+            // 保存数据 ⇄ 停止保存 两种状态切换（只管图像导引头这一路）
+            text: dataRecorder.savingImage ? "停止保存" : "保存数据"
             onClicked: {
-                if (dataRecorder.saving) {
-                    dataRecorder.stopSave()
+                if (dataRecorder.savingImage) {
+                    dataRecorder.stopImageSave()
                 } else {
-                    dataRecorder.startSave()
+                    dataRecorder.startImageSave()
                 }
             }
         }

@@ -17,6 +17,10 @@ Item{
 
     property var myNumbers:[]
 
+    //正弦摆动的幅值与频率range,frequency
+    property real range: 0.0
+    property real frequency: 0.0
+
     // 数字提取函数
     function extractNumbers(str) {
         // 使用正则分割：支持英文逗号、中文逗号、以及它们周围的空白字符
@@ -114,7 +118,8 @@ Item{
                     width: 120
                     //区分是哪种控制方式，给不同变量赋值
                     onEditingFinished: {
-                        var mynumber = extractNumbers(text);    
+                        var mynumber = extractNumbers(text);  
+                        range =  mynumber;
                     }
         }
         // 正弦运动频率
@@ -134,7 +139,8 @@ Item{
                     width: 120
                     //区分是哪种控制方式，给不同变量赋值
                     onEditingFinished: {
-                        var mynumber = extractNumbers(text);    
+                        var mynumber = extractNumbers(text);   
+                        frequency = mynumber;
                     }
         }
     }
@@ -288,7 +294,9 @@ Item{
                 Layout.preferredHeight: 40
                 text: "正弦运动"
                 onClicked: {
-                    turntableSendData.buildFrame(index)
+                    turntableSendData.sinMove(index,range,frequency)
+                    //为了保存正弦运动的数据，先定义为正弦运动时默认保存数据（转台这一路）
+                    dataRecorder.startTurntableSave()
                 }
                 }
                 

@@ -523,8 +523,8 @@ int main(int argc, char *argv[])
     // stopWorkerThread(Tiltthread);   // 倾角仪串口停用
     // stopWorkerThread(NetworkThread);   // 模板装订上传停用
 
-    // 2.5) 退出前收尾数据保存：冲刷串口 txt、停止视频录制并触发转封装
-    dataRecorder->stopSave();
+    // 2.5) 退出前收尾数据保存：三路各自冲刷并关闭文件，最后一路停止时停止视频录制并转封装
+    dataRecorder->stopAll();
 
     // 3) The thread objects were allocated without a parent; collect them now.
     //    Any pending deleteLater events are dropped when the receiver is

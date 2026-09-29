@@ -58,6 +58,8 @@ Rectangle {
             height: 60
             onClicked: {
                 turntableSendData.reqcloseTurntable()
+                //在正弦运动停止后，不再保存数据（只管转台这一路，其余路继续保存）
+                dataRecorder.stopTurntableSave()
             }
         }
         CusButton_Blue {

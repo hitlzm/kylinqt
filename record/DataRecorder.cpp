@@ -48,16 +48,16 @@ DataRecorder::DataRecorder(QObject *parent)
 
 DataRecorder::~DataRecorder()
 {
-    // 析构时兜底：停止录制并收尾文件（正常流程应走 stopSave）
+    // 析构时兜底：停止录制并收尾文件（正常流程应走 stopAll）
     m_flushTimer.stop();
     flushAll();
-    if (m_imageFile.isOpen())
-        m_imageFile.close();
-    if (m_laserFile.isOpen())
-        m_laserFile.close();
-    if (m_csvFile.isOpen())
-        m_csvFile.close();
-    if (m_videoItem && m_saving)
+    if (m_image.file.isOpen())
+        m_image.file.close();
+    if (m_laser.file.isOpen())
+        m_laser.file.close();
+    if (m_turntable.file.isOpen())
+        m_turntable.file.close();
+    if (m_videoItem && m_videoItem->recording())
         m_videoItem->stopRecord();
 }
 
@@ -100,78 +100,177 @@ void DataRecorder::setLaserData(LaserData *data)
     m_laserData = data;
 }
 
-// ── 开始/停止保存 ──
-bool DataRecorder::startSave()
+// ── 开始/停止保存（三路各自独立，视频按请求计数共用一份）──
+
+// 单路开始：建目录、复位该路状态、置位标记、登记一次视频请求
+bool DataRecorder::startSource(SourceState &st, const char *name)
 {
-    if (m_saving) {
-        emit errorOccurred("已经在保存中，请先停止再开始");
+    if (st.saving) {
+        emit errorOccurred(QString("%1数据已经在保存中，请先停止再开始").arg(QString::fromUtf8(name)));
         return false;
     }
-    if (m_ffmpegProc.state() != QProcess::NotRunning) {
+    // 没有别的录制在用视频时，才需要新开一份录像；此时若上一段还在转封装就等一等
+    if (m_videoRefCount == 0 && m_ffmpegProc.state() != QProcess::NotRunning) {
         emit errorOccurred("上一段视频还在转封装，请稍后再试");
         return false;
     }
 
     const QDateTime now = QDateTime::currentDateTime();
-    m_sessionDate = now.toString("M.d");      // 8.21
-    m_sessionTime = now.toString("HHmmss");   // 143025
-
-    if (!ensureSaveFolder())
+    const QString dir = m_saveDir + "/" + now.toString("M.d");   // 例如 /data/savedata/9.28
+    if (!QDir().mkpath(dir)) {
+        emit errorOccurred("无法创建保存目录: " + dir);
         return false;
+    }
 
-    // 复位上一会话的路径/状态（本会话懒创建时会重新生成）
-    m_imagePath.clear();
-    m_imageOpenFailed = false;
-    m_laserPath.clear();
-    m_laserOpenFailed = false;
-    m_csvPath.clear();
-    m_csvOpenFailed = false;
-    m_turntableSeq = 0;
-    m_videoTsPath.clear();
-    m_videoMp4Path.clear();
-    m_videoRecordLost = false;
-    // 上一会话若异常未关闭，这里兜底关闭，避免继续写旧文件
-    if (m_imageFile.isOpen())
-        m_imageFile.close();
-    if (m_laserFile.isOpen())
-        m_laserFile.close();
-    if (m_csvFile.isOpen())
-        m_csvFile.close();
+    // 复位该路状态（文件懒创建：第一帧到达时才真正建文件）
+    st.dir = dir;
+    st.time = now.toString("HHmmss");    // 例如 143025
+    st.path.clear();
+    st.openFailed = false;
+    st.buffer.clear();
+    if (st.file.isOpen())                // 上一段若异常未关闭，兜底关闭避免继续写旧文件
+        st.file.close();
+    st.saving = true;
 
-    m_saving = true;
-    emit savingChanged();
-
-    startVideoRecord();
-    m_flushTimer.start();
-    qDebug() << "[DataRecorder] 开始保存，目录:" << m_sessionDir
-             << " image:" << m_imagePath << " laser:" << m_laserPath
-             << " csv:" << m_csvPath
-             << " video:" << m_videoTsPath;
+    acquireVideoRecording(dir, st.time);
+    updateFlushTimer();
     return true;
 }
 
-void DataRecorder::stopSave()
+// 单路停止：冲刷并关闭该路文件，并释放一次视频请求
+bool DataRecorder::stopSource(SourceState &st, const char *name)
 {
-    if (!m_saving)
+    if (!st.saving)
+        return false;
+
+    st.saving = false;
+    flushSource(st, name);
+    if (st.file.isOpen())
+        st.file.close();
+
+    releaseVideoRecording();   // 该路对应的那次视频请求结束
+    updateFlushTimer();
+    return true;
+}
+
+// 任一路在保存就保持落盘定时器运行；全部停止时收尾
+void DataRecorder::updateFlushTimer()
+{
+    if (anySaving()) {
+        if (!m_flushTimer.isActive())
+            m_flushTimer.start();
+    } else {
+        m_flushTimer.stop();
+        flushAll();
+    }
+}
+
+bool DataRecorder::startImageSave()
+{
+    const bool wasSaving = anySaving();
+    if (!startSource(m_image, "图像"))
+        return false;
+    emit savingImageChanged();
+    if (!wasSaving)
+        emit savingChanged();
+    return true;
+}
+
+void DataRecorder::stopImageSave()
+{
+    if (!stopSource(m_image, "图像"))
         return;
+    emit savingImageChanged();
+    if (!anySaving())
+        emit savingChanged();
+}
 
-    m_saving = false;
-    emit savingChanged();
+bool DataRecorder::startLaserSave()
+{
+    const bool wasSaving = anySaving();
+    if (!startSource(m_laser, "激光"))
+        return false;
+    emit savingLaserChanged();
+    if (!wasSaving)
+        emit savingChanged();
+    return true;
+}
 
-    m_flushTimer.stop();
-    flushAll();
-    if (m_imageFile.isOpen())
-        m_imageFile.close();
-    if (m_laserFile.isOpen())
-        m_laserFile.close();
-    if (m_csvFile.isOpen())
-        m_csvFile.close();
+void DataRecorder::stopLaserSave()
+{
+    if (!stopSource(m_laser, "激光"))
+        return;
+    emit savingLaserChanged();
+    if (!anySaving())
+        emit savingChanged();
+}
 
+bool DataRecorder::startTurntableSave()
+{
+    const bool wasSaving = anySaving();
+    if (!startSource(m_turntable, "转台"))
+        return false;
+    m_turntableSeq = 0;                 // 序号从 1 重新开始
+    emit savingTurntableChanged();
+    if (!wasSaving)
+        emit savingChanged();
+    return true;
+}
+
+void DataRecorder::stopTurntableSave()
+{
+    if (!stopSource(m_turntable, "转台"))
+        return;
+    emit savingTurntableChanged();
+    if (!anySaving())
+        emit savingChanged();
+}
+
+void DataRecorder::stopAll()
+{
+    stopTurntableSave();
+    stopLaserSave();
+    stopImageSave();
+    // 兜底：万一计数和实际状态不一致，也要把视频收尾掉
+    if (m_videoRefCount > 0) {
+        m_videoRefCount = 0;
+        releaseVideoRecording();
+    }
+}
+
+// ── 视频：多个保存请求共用一份录像 ──
+void DataRecorder::acquireVideoRecording(const QString &dir, const QString &time)
+{
+    ++m_videoRefCount;
+    if (m_videoRefCount == 1) {
+        // 第一个请求：用它的时间开一份新录像
+        m_videoRecordLost = false;
+        startVideoRecord(dir, time);
+    } else {
+        qDebug() << "[DataRecorder] 已有录像在用，本次请求共用同一份:" << m_videoMp4Path;
+    }
+}
+
+void DataRecorder::releaseVideoRecording()
+{
+    if (m_videoRefCount > 0)
+        --m_videoRefCount;
+    if (m_videoRefCount > 0)
+        return;   // 还有别的保存在用这份录像
+
+    // 计数归零：真正停止录制并收尾（此时计数已为 0，状态回调不会误判成“被换源打断”）
     stopVideoRecord();
 
-    // 视频开录过才转封装；若录制中途被换源/重连打断，那次收尾里已经转过了
-    //（m_videoMp4Path 会被转封装结束回调清空，转封装进行中则这里不再重复启动）
-    if (!m_videoMp4Path.isEmpty() && m_ffmpegProc.state() == QProcess::NotRunning)
+    if (m_videoMp4Path.isEmpty())
+        return;   // 本次没有开过录制
+    if (!QFile::exists(m_videoTsPath)) {
+        // 没接视频/没在播时不会产生 .ts，这属于正常情况：跳过转封装，不报错
+        qDebug() << "[DataRecorder] 未产生录像文件，跳过转封装:" << m_videoTsPath;
+        m_videoMp4Path.clear();
+        return;
+    }
+    // 转封装进行中说明中断那次已经在转，等它自己完成
+    if (m_ffmpegProc.state() == QProcess::NotRunning)
         startRemux();
 }
 
@@ -235,10 +334,17 @@ static QString imageTrackerStateText(int v)
 // ── 图像 B 帧（解析后的工程量，一行一帧）──
 void DataRecorder::onImageFrame()
 {
-    if (!m_saving || !m_imageData)
+    if (!m_image.saving || !m_imageData)
         return;
-    ensureImageFile();
-    if (m_imageOpenFailed)
+    // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
+    static const QByteArray kImageHeader = QByteArrayLiteral(
+            "\xEF\xBB\xBF"
+            "时间,B帧流水号,当前工作通道,俯仰视线角速度(°/s),偏航视线角速度(°/s),"
+            "光学工作状态,俯仰框架角(°),偏航框架角(°),"
+            "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
+            "红外帧编号,电视帧编号\n");
+    ensureSourceFile(m_image, QStringLiteral("image"), kImageHeader, "图像");
+    if (m_image.openFailed)
         return;
 
     // 时间：由 B 帧“返回时间戳1(毫秒) + 返回时间戳2(微秒)”合并后的北京时间
@@ -264,7 +370,7 @@ void DataRecorder::onImageFrame()
     line += ','; line += QString::number(m_imageData->cbhTv4405());
     line += '\n';
 
-    m_imageBuffer.append(line.toUtf8());
+    m_image.buffer.append(line.toUtf8());
 }
 
 // 字节24: 增益状态（协议 0xB0~0xB4 为 5 级起控状态 → 中文）
@@ -283,10 +389,18 @@ static QString laserGainStatusText(int v)
 // ── 激光接收帧（解析后的工程量，一行一帧）──
 void DataRecorder::onLaserFrame()
 {
-    if (!m_saving || !m_laserData)
+    if (!m_laser.saving || !m_laserData)
         return;
-    ensureLaserFile();
-    if (m_laserOpenFailed)
+    // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
+    static const QByteArray kLaserHeader = QByteArrayLiteral(
+            "\xEF\xBB\xBF"
+            "时间,光轴方位角(°),光轴俯仰角(°),"
+            "方位陀螺输出角速度(°/s),俯仰陀螺输出角速度(°/s),"
+            "方位视线角速度(°/s),俯仰视线角速度(°/s),"
+            "方位偏差角(°),俯仰偏差角(°),激光周期(ms),增益状态,"
+            "第一象限能量强度,第二象限能量强度,第三象限能量强度,第四象限能量强度\n");
+    ensureSourceFile(m_laser, QStringLiteral("laser"), kLaserHeader, "激光");
+    if (m_laser.openFailed)
         return;
 
     // 时间：由接收帧“返回时间戳1(毫秒) + 返回时间戳2(微秒)”合并后的北京时间
@@ -313,7 +427,7 @@ void DataRecorder::onLaserFrame()
     line += ','; line += QString::number(m_laserData->quadrant4Energy(), 'f', 4);
     line += '\n';
 
-    m_laserBuffer.append(line.toUtf8());
+    m_laser.buffer.append(line.toUtf8());
 }
 
 // 转台三轴状态（convertHexStatusToLegacy 得到的编码）→ 中文，与界面显示同一套叫法
@@ -372,10 +486,18 @@ static QString turntableCmdHintText(int code)
 // ── 转台周期状态帧 ──
 void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
 {
-    if (!m_saving)
+    if (!m_turntable.saving)
         return;
-    ensureCsvFile();
-    if (m_csvOpenFailed)
+    // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
+    static const QByteArray kTurntableHeader = QByteArrayLiteral(
+            "\xEF\xBB\xBF"
+            "序号,转台毫秒时间,指令提示,"
+            "内框状态,内框角度(°),内框控制偏差(°),"
+            "中框状态,中框角度(°),中框控制偏差(°),"
+            "外框状态,外框角度(°),外框控制偏差(°),"
+            "秒脉冲\n");
+    ensureSourceFile(m_turntable, QStringLiteral("turntable"), kTurntableHeader, "转台");
+    if (m_turntable.openFailed)
         return;
 
     // 一行一帧。角度/控制偏差按工程单位（0.0001°）保留 4 位小数；
@@ -397,147 +519,71 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     line += ','; line += (frame.m_hasSecPulse ? QStringLiteral("有") : QStringLiteral("无"));
     line += '\n';
 
-    m_csvBuffer.append(line.toUtf8());
+    m_turntable.buffer.append(line.toUtf8());
 }
 
 // ── 内部 ──
-bool DataRecorder::ensureSaveFolder()
+// 某一路的数据文件懒创建：第一帧到达时才建文件并写表头（header 需与写行顺序一致）
+void DataRecorder::ensureSourceFile(SourceState &st, const QString &prefix,
+                                    const QByteArray &header, const char *name)
 {
-    m_sessionDir = m_saveDir + "/" + m_sessionDate;
-    if (!QDir().mkpath(m_sessionDir)) {
-        emit errorOccurred("无法创建保存目录: " + m_sessionDir);
-        return false;
-    }
-    return true;
-}
-
-void DataRecorder::ensureImageFile()
-{
-    if (m_imageFile.isOpen() || m_imageOpenFailed)
+    if (st.file.isOpen() || st.openFailed)
         return;
 
-    m_imagePath = makeUniquePath(m_sessionDir + "/image" + m_sessionTime + ".csv");
-    m_imageFile.setFileName(m_imagePath);
-    if (!m_imageFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        m_imageOpenFailed = true;   // 打开失败：停止重试，避免每帧重复报错
-        emit errorOccurred("无法创建图像数据文件: " + m_imagePath);
+    st.path = makeUniquePath(st.dir + "/" + prefix + st.time + ".csv");
+    st.file.setFileName(st.path);
+    if (!st.file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        st.openFailed = true;   // 打开失败：停止重试，避免每帧重复报错
+        emit errorOccurred(QString("无法创建%1数据文件: %2").arg(QString::fromUtf8(name), st.path));
         return;
     }
-    // 表头（与 onImageFrame 的列序严格一致；带 UTF-8 BOM，方便表格软件识别中文表头）
-    m_imageFile.write("\xEF\xBB\xBF"
-                      "时间,B帧流水号,当前工作通道,俯仰视线角速度(°/s),偏航视线角速度(°/s),"
-                      "光学工作状态,俯仰框架角(°),偏航框架角(°),"
-                      "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
-                      "红外帧编号,电视帧编号\n");
-    qDebug() << "[DataRecorder] 图像数据保存到:" << m_imagePath;
+    st.file.write(header);
+    qDebug() << "[DataRecorder]" << name << "数据保存到:" << st.path;
 }
 
-void DataRecorder::ensureLaserFile()
+// 某一路缓冲落盘
+void DataRecorder::flushSource(SourceState &st, const char *name)
 {
-    if (m_laserFile.isOpen() || m_laserOpenFailed)
+    if (!st.file.isOpen() || st.buffer.isEmpty())
         return;
-
-    m_laserPath = makeUniquePath(m_sessionDir + "/laser" + m_sessionTime + ".csv");
-    m_laserFile.setFileName(m_laserPath);
-    if (!m_laserFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        m_laserOpenFailed = true;
-        emit errorOccurred("无法创建激光数据文件: " + m_laserPath);
-        return;
-    }
-    // 表头（与 onLaserFrame 的列序严格一致；带 UTF-8 BOM，方便表格软件识别中文表头）
-    m_laserFile.write("\xEF\xBB\xBF"
-                      "时间,光轴方位角(°),光轴俯仰角(°),"
-                      "方位陀螺输出角速度(°/s),俯仰陀螺输出角速度(°/s),"
-                      "方位视线角速度(°/s),俯仰视线角速度(°/s),"
-                      "方位偏差角(°),俯仰偏差角(°),激光周期(ms),增益状态,"
-                      "第一象限能量强度,第二象限能量强度,第三象限能量强度,第四象限能量强度\n");
-    qDebug() << "[DataRecorder] 激光数据保存到:" << m_laserPath;
-}
-
-void DataRecorder::flushImage()
-{
-    if (!m_imageFile.isOpen() || m_imageBuffer.isEmpty())
-        return;
-    const qint64 written = m_imageFile.write(m_imageBuffer);
+    const qint64 written = st.file.write(st.buffer);
     if (written < 0) {
-        emit errorOccurred("图像数据写入失败: " + m_imagePath);
+        emit errorOccurred(QString("%1数据写入失败: %2").arg(QString::fromUtf8(name), st.path));
         return;   // 保留缓冲，下次 flush 重试
     }
-    m_imageBuffer.clear();
-}
-
-void DataRecorder::flushLaser()
-{
-    if (!m_laserFile.isOpen() || m_laserBuffer.isEmpty())
-        return;
-    const qint64 written = m_laserFile.write(m_laserBuffer);
-    if (written < 0) {
-        emit errorOccurred("激光数据写入失败: " + m_laserPath);
-        return;   // 保留缓冲，下次 flush 重试
-    }
-    m_laserBuffer.clear();
-}
-
-void DataRecorder::ensureCsvFile()
-{
-    if (m_csvFile.isOpen() || m_csvOpenFailed)
-        return;
-
-    m_csvPath = makeUniquePath(m_sessionDir + "/turntable" + m_sessionTime + ".csv");
-    m_csvFile.setFileName(m_csvPath);
-    if (!m_csvFile.open(QIODevice::WriteOnly | QIODevice::Append)) {
-        m_csvOpenFailed = true;   // 打开失败：停止重试，避免每帧重复报错
-        emit errorOccurred("无法创建转台数据文件: " + m_csvPath);
-        return;
-    }
-    // 表头（与 onTurntableFrame 的列序严格一致；带 UTF-8 BOM，方便表格软件识别中文表头）
-    m_csvFile.write("\xEF\xBB\xBF"
-                    "序号,转台毫秒时间,指令提示,"
-                    "内框状态,内框角度(°),内框控制偏差(°),"
-                    "中框状态,中框角度(°),中框控制偏差(°),"
-                    "外框状态,外框角度(°),外框控制偏差(°),"
-                    "秒脉冲\n");
-    qDebug() << "[DataRecorder] 转台数据保存到:" << m_csvPath;
-}
-
-void DataRecorder::flushCsv()
-{
-    if (!m_csvFile.isOpen() || m_csvBuffer.isEmpty())
-        return;
-    const qint64 written = m_csvFile.write(m_csvBuffer);
-    if (written < 0) {
-        emit errorOccurred("转台数据写入失败: " + m_csvPath);
-        return;   // 保留缓冲，下次 flush 重试
-    }
-    m_csvBuffer.clear();
+    st.buffer.clear();
 }
 
 void DataRecorder::flushAll()
 {
-    flushImage();
-    flushLaser();
-    flushCsv();
+    flushSource(m_image, "图像");
+    flushSource(m_laser, "激光");
+    flushSource(m_turntable, "转台");
 }
 
-void DataRecorder::startVideoRecord()
+void DataRecorder::startVideoRecord(const QString &dir, const QString &time)
 {
     if (!m_videoItem) {
-        emit errorOccurred("视频录制不可用：未找到视频播放器");
+        // 没有视频播放器就只保存数据，不产生视频文件（不弹错误）
+        qWarning() << "[DataRecorder] 未找到视频播放器，本次只保存数据、不保存视频";
         return;
     }
-    // ts 与 mp4 成对判重，避免 -y 覆盖同秒内上一会话生成的 mp4
-    QString stem = "video" + m_sessionTime;
-    QString tsBase = m_sessionDir + "/" + stem + ".ts";
-    QString mp4Path = m_sessionDir + "/" + stem + ".mp4";
+    if (!m_videoItem->isPlaying())
+        qWarning() << "[DataRecorder] 当前视频未在播放，录像可能为空（有画面后再录才会有内容）";
+    // ts 与 mp4 成对判重，避免 -y 覆盖同秒内上一份录像
+    QString stem = "video" + time;
+    QString tsBase = dir + "/" + stem + ".ts";
+    QString mp4Path = dir + "/" + stem + ".mp4";
     int n = 1;
     while (QFile::exists(tsBase) || QFile::exists(mp4Path)) {
-        stem = "video" + m_sessionTime + "_" + QString::number(n++);
-        tsBase = m_sessionDir + "/" + stem + ".ts";
-        mp4Path = m_sessionDir + "/" + stem + ".mp4";
+        stem = "video" + time + "_" + QString::number(n++);
+        tsBase = dir + "/" + stem + ".ts";
+        mp4Path = dir + "/" + stem + ".mp4";
     }
     m_videoTsPath = tsBase;
     m_videoMp4Path = mp4Path;
     m_videoItem->startRecord(m_videoTsPath);
+    qDebug() << "[DataRecorder] 开始录像:" << m_videoTsPath;
 }
 
 void DataRecorder::stopVideoRecord()
@@ -546,11 +592,11 @@ void DataRecorder::stopVideoRecord()
         m_videoItem->stopRecord();
 }
 
-// 视频录制状态变化：保存期间由 true 变 false，说明录制被换源/重连打断了
-//（VlcVideoItem::releasePlayer() → stopRecord()；正常收尾时 m_saving 已先置 false，不会走到这里）
+// 视频录制状态变化：录制请求还存在（计数>0）时由 true 变 false，说明被换源/重连打断了
+//（VlcVideoItem::releasePlayer() → stopRecord()；正常收尾时计数已先减到 0，不会走到这里）
 void DataRecorder::handleVideoRecordingChanged()
 {
-    if (!m_saving || !m_videoItem)
+    if (m_videoRefCount <= 0 || !m_videoItem)
         return;
     if (m_videoItem->recording() || m_videoRecordLost)
         return;   // 只处理 true -> false，且每次会话只处理一次
@@ -558,7 +604,7 @@ void DataRecorder::handleVideoRecordingChanged()
     m_videoRecordLost = true;
 
     // 视频录制就地停止，本会话不再续录：把已录到的部分立刻转封装，
-    // 这样界面上立刻能拿到可用的 mp4，而不是等到 stopSave 才发现内容缺失。
+    // 这样界面上立刻能拿到可用的 mp4，而不是等到最后一路停止时才发现内容缺失。
     QString detail;
     if (m_videoMp4Path.isEmpty()) {
         detail = "本次会话没有产生录像文件";

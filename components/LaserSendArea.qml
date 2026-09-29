@@ -551,13 +551,13 @@ Rectangle {
             id: savebtn
             width: 100
             height: 35
-            // 保存数据 ⇄ 停止保存 两种状态切换
-            text: dataRecorder.saving ? "停止保存" : "保存数据"
+            // 保存数据 ⇄ 停止保存 两种状态切换（只管激光导引头这一路）
+            text: dataRecorder.savingLaser ? "停止保存" : "保存数据"
             onClicked: {
-                if (dataRecorder.saving) {
-                    dataRecorder.stopSave()
+                if (dataRecorder.savingLaser) {
+                    dataRecorder.stopLaserSave()
                 } else {
-                    dataRecorder.startSave()
+                    dataRecorder.startLaserSave()
                 }
             }
         }

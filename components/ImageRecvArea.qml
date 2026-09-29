@@ -413,13 +413,13 @@ Rectangle {
                             height: 30
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
-                            // 保存数据 ⇄ 停止保存 两种状态切换
-                            text: dataRecorder.saving ? "停止保存" : "保存数据"
+                            // 保存数据 ⇄ 停止保存 两种状态切换（只管转台这一路）
+                            text: dataRecorder.savingTurntable ? "停止保存" : "保存数据"
                             onClicked: {
-                                if (dataRecorder.saving) {
-                                    dataRecorder.stopSave()
+                                if (dataRecorder.savingTurntable) {
+                                    dataRecorder.stopTurntableSave()
                                 } else {
-                                    dataRecorder.startSave()
+                                    dataRecorder.startTurntableSave()
                                 }
                             }
                         }
