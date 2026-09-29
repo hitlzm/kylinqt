@@ -54,7 +54,6 @@ brief: 转台串口类（HEX十六进制协议版本）
 // 转台信息反馈结构体（应用层）
 typedef struct StatusFeedbackHex {
     int     m_time;                 // 毫秒时间 (0-14399999)
-    //int     m_ctlnumber;            // 序号 (从指令提示中提取)
     int     m_inner_statusnumber;   // 内框状态 (低4位: 状态, 高4位: 报警)
     float   m_inner_angle;          // 内框角度 (度)
     float   m_inner_ctlDeviation;   // 内框控制偏差 (度)
@@ -152,7 +151,6 @@ class TurntableDataHex : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int time MEMBER m_time NOTIFY timeChanged)
-    Q_PROPERTY(int ctlnumber MEMBER m_ctlnumber NOTIFY ctlnumberChanged)
     Q_PROPERTY(int inner_statusnumber MEMBER m_inner_statusnumber NOTIFY inner_statusnumberChanged)
     Q_PROPERTY(float inner_angle MEMBER m_inner_angle NOTIFY inner_angleChanged)
     Q_PROPERTY(float inner_ctlDeviation MEMBER m_inner_ctlDeviation NOTIFY inner_ctlDeviationChanged)
@@ -183,7 +181,6 @@ public:
 
 signals:
     void timeChanged();
-    void ctlnumberChanged();
     void inner_statusnumberChanged();
     void inner_angleChanged();
     void inner_ctlDeviationChanged();
@@ -220,7 +217,6 @@ public slots:
 
 private:
     int m_time = 0;
-    int m_ctlnumber = 0;
     int m_inner_statusnumber = 0;
     float m_inner_angle = 0;
     float m_inner_ctlDeviation = 0;

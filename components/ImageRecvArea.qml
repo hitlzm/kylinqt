@@ -296,7 +296,7 @@ Rectangle {
             // 第二行：焦距 + 背光补偿 + 分辨率
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 4
+                spacing: 5
                 Text {
                     text: "焦距:"
                     font.pixelSize: 15
@@ -306,7 +306,7 @@ Rectangle {
                 ButtonGroup { id: focusGroup }
                 CusRadioButton {
                     id: focal30X
-                    width: 65
+                    width: 75
                     text: "30X"
                     font.pixelSize: 14
                     ButtonGroup.group: focusGroup
@@ -400,24 +400,29 @@ Rectangle {
 
             // 第一行：时间和序号
             Row {
-                spacing: 8
+                spacing: 20
                 DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
                 DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.cmdHint) }
                 //加入保存转台数据的按钮
-                CusButton_Blue {
-                    id: savebtn
-                    width: 80
-                    height: 40
-                    anchors.verticalCenter: parent.verticalCenter
-                    // 保存数据 ⇄ 停止保存 两种状态切换
-                    text: dataRecorder.saving ? "停止保存" : "保存数据"
-                    onClicked: {
-                        if (dataRecorder.saving) {
-                            dataRecorder.stopSave()
-                        } else {
-                            dataRecorder.startSave()
+                Item{
+                    width: 180
+                    height: 30
+                        CusButton_Blue {
+                            id: savebtn
+                            width: 80
+                            height: 30
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            // 保存数据 ⇄ 停止保存 两种状态切换
+                            text: dataRecorder.saving ? "停止保存" : "保存数据"
+                            onClicked: {
+                                if (dataRecorder.saving) {
+                                    dataRecorder.stopSave()
+                                } else {
+                                    dataRecorder.startSave()
+                                }
+                            }
                         }
-                    }
                 }
             }
 

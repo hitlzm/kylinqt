@@ -175,21 +175,21 @@ void DataRecorder::stopSave()
         startRemux();
 }
 
-// ── B帧枚举字段 → 直观文本（保留原始码值，便于与协议核对）──
-static QString imageCodeText(int code, const char *name)
+// ── B帧枚举字段 → 中文（不写码值；只有映射表里没有的取值才回退成 未知(0xNN)，避免丢信息）──
+static QString imageUnknownText(int code)
 {
     const QString hex = QString::number(static_cast<uint>(code) & 0xFFu, 16)
                             .rightJustified(2, QLatin1Char('0')).toUpper();
-    return QString("%1(0x%2)").arg(QString::fromUtf8(name), hex);
+    return QStringLiteral("未知(0x%1)").arg(hex);
 }
 
 // 字节11: 当前工作通道
 static QString imageWorkChannelText(int v)
 {
     switch (v) {
-    case 0x00: return imageCodeText(v, "电视");
-    case 0x01: return imageCodeText(v, "红外");
-    default:   return imageCodeText(v, "未定义");
+    case 0x00: return QStringLiteral("电视");
+    case 0x01: return QStringLiteral("红外");
+    default:   return imageUnknownText(v);
     }
 }
 
@@ -197,12 +197,12 @@ static QString imageWorkChannelText(int v)
 static QString imageOpticalWorkStateText(int v)
 {
     switch (v) {
-    case 0x02: return imageCodeText(v, "搜索状态（预置状态）");
-    case 0x03: return imageCodeText(v, "跟踪状态");
-    case 0x04: return imageCodeText(v, "框架角电锁零位状态");
-    case 0x05: return imageCodeText(v, "记忆状态");
-    case 0x06: return imageCodeText(v, "解锁状态");
-    default:   return imageCodeText(v, "未定义");
+    case 0x02: return QStringLiteral("搜索状态（预置状态）");
+    case 0x03: return QStringLiteral("跟踪状态");
+    case 0x04: return QStringLiteral("框架角电锁零位状态");
+    case 0x05: return QStringLiteral("记忆状态");
+    case 0x06: return QStringLiteral("解锁状态");
+    default:   return imageUnknownText(v);
     }
 }
 
@@ -210,12 +210,12 @@ static QString imageOpticalWorkStateText(int v)
 static QString imageTrackingStateText(int v)
 {
     switch (v) {
-    case 0x00: return imageCodeText(v, "默认");
-    case 0x11: return imageCodeText(v, "搜索中");
-    case 0x22: return imageCodeText(v, "目标丢失");
-    case 0x33: return imageCodeText(v, "目标锁定");
-    case 0x44: return imageCodeText(v, "记忆状态");
-    default:   return imageCodeText(v, "未定义");
+    case 0x00: return QStringLiteral("默认");
+    case 0x11: return QStringLiteral("搜索中");
+    case 0x22: return QStringLiteral("目标丢失");
+    case 0x33: return QStringLiteral("目标锁定");
+    case 0x44: return QStringLiteral("记忆状态");
+    default:   return imageUnknownText(v);
     }
 }
 
@@ -223,12 +223,12 @@ static QString imageTrackingStateText(int v)
 static QString imageTrackerStateText(int v)
 {
     switch (v) {
-    case 0x00: return imageCodeText(v, "空闲状态");
-    case 0x01: return imageCodeText(v, "跟踪状态");
-    case 0x02: return imageCodeText(v, "识别状态");
-    case 0x03: return imageCodeText(v, "匹配状态");
-    case 0x04: return imageCodeText(v, "仅识别状态");
-    default:   return imageCodeText(v, "未定义");
+    case 0x00: return QStringLiteral("空闲状态");
+    case 0x01: return QStringLiteral("跟踪状态");
+    case 0x02: return QStringLiteral("识别状态");
+    case 0x03: return QStringLiteral("匹配状态");
+    case 0x04: return QStringLiteral("仅识别状态");
+    default:   return imageUnknownText(v);
     }
 }
 
@@ -267,12 +267,17 @@ void DataRecorder::onImageFrame()
     m_imageBuffer.append(line.toUtf8());
 }
 
-// 字节24: 增益状态（0xB0~0xB4 五级起控状态，与界面显示一致用十六进制）
+// 字节24: 增益状态（协议 0xB0~0xB4 为 5 级起控状态 → 中文）
 static QString laserGainStatusText(int v)
 {
-    return QStringLiteral("0x")
-            + QString::number(static_cast<uint>(v) & 0xFFu, 16)
-                      .rightJustified(2, QLatin1Char('0')).toUpper();
+    switch (v) {
+    case 0xB0: return QStringLiteral("起控1级");
+    case 0xB1: return QStringLiteral("起控2级");
+    case 0xB2: return QStringLiteral("起控3级");
+    case 0xB3: return QStringLiteral("起控4级");
+    case 0xB4: return QStringLiteral("起控5级");
+    default:   return imageUnknownText(v);   // 与图像同一套回退：未知(0xNN)
+    }
 }
 
 // ── 激光接收帧（解析后的工程量，一行一帧）──
