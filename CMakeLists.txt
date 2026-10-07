@@ -115,6 +115,8 @@ else()
       ModeControl/ModeController.h
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
+      utils/videolatencyprobe.cpp
+      utils/videolatencyprobe.h
       network/TemplateBindingClient.cpp
       network/SixDofMotionClient.cpp
       ${TaoQuickRes}
@@ -142,6 +144,15 @@ target_link_libraries(kylinqt
     ${OpenCV_LIBS}
     ${ONNXRUNTIME_LIBRARY}
 )
+
+# ── 视频接收侧延迟探针（utils/videolatencyprobe.*）─────────────────────
+# 默认关闭，对现有功能零影响。需要出延迟报告时取消下面注释并重新编译，
+# 也可以在运行时用环境变量 KYLIN_LATPROBE=1 临时打开（无需重编译）。
+# target_compile_definitions(kylinqt PRIVATE
+#     KYLIN_LATPROBE_DEFAULT_ON=1
+#     KYLIN_LATPROBE_DEFAULT_CSV="/tmp/video_latency.csv"
+# )
+#   说明：KYLIN_LATPROBE_DEFAULT_CSV 的值必须带引号，写成字符串字面量。
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${OpenCV_INCLUDE_DIRS}  # OpenCV的头文件路径

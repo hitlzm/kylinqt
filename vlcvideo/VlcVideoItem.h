@@ -6,12 +6,14 @@
 #include <QMutex>
 #include <QColor>
 #include <QSize>
+#include <QVariantMap>
 #include <atomic>
 
 struct mpv_handle;
 struct mpv_render_context;
 
 class VlcVideoRenderer;
+class VideoLatencyProbe;
 
 class VlcVideoItem : public QQuickFramebufferObject
 {
@@ -87,6 +89,13 @@ public:
     bool cpuFrameConsumer() const { return m_cpuConsumerActive.load(); }
     Q_INVOKABLE void setCpuFrameConsumer(bool on);
 
+    // ── 视频接收侧延迟探针（测试用，默认关闭）──────────────
+    /// 等价于环境变量 KYLIN_LATPROBE=1；打开后无需重启即可持续测量
+    Q_INVOKABLE void setLatencyProbeEnabled(bool on);
+    Q_INVOKABLE bool latencyProbeEnabled() const;
+    /// 当前统计：samples/avgMs/p50Ms/p95Ms/p99Ms/minMs/maxMs/misses/anchorReady
+    Q_INVOKABLE QVariantMap latencyProbeStats() const;
+
     /// 视频固有显示尺寸（mpv video-params 的 dw/dh）。
     /// 供放大镜等"一帧多显"场景裁剪 mpv 离屏渲染时在帧内留下的黑边。
     QSize videoNativeSize() const { return QSize(m_videoDw, m_videoDh); }
@@ -132,6 +141,9 @@ private:
     void releasePlayer();
     void ensureMpvCreated();
 
+    // 视频接收侧延迟探针打点（仅导引头直显、且探针打开时生效）
+    void reportLatencySample(bool newFrameRendered);
+
     // ── mpv 回调 ─────────────────────────────────────────
     static void onMpvWakeup(void *ctx);
 
@@ -139,6 +151,9 @@ private:
 
     // mpv 核心句柄：创建/命令/属性访问（线程安全）
     mpv_handle *m_mpv = nullptr;
+
+    // 视频接收侧延迟探针（默认关闭；KYLIN_LATPROBE=1 或 setEnabled(true) 打开）
+    VideoLatencyProbe *m_latencyProbe = nullptr;
 
     // mpv 渲染上下文：由 VlcVideoRenderer 在渲染线程创建和使用
     mpv_render_context *m_mpvCtx = nullptr;

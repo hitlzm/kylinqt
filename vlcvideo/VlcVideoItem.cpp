@@ -1,4 +1,5 @@
 #include "VlcVideoItem.h"
+#include "utils/videolatencyprobe.h"
 #include <mpv/client.h>
 #include <mpv/render_gl.h>
 #include <QOpenGLFunctions>
@@ -193,6 +194,11 @@ public:
 
         // 重置 OpenGL 状态，避免干扰 Qt Quick 后续渲染
         m_item->window()->resetOpenGLState();
+
+        // ── 3. 视频延迟探针打点 ──────────────────────────────────────
+        //    仅导引头直显、且探针已打开时执行；内部只读一次 mpv 属性，
+        //    不改变任何渲染行为。探针关闭时在 reportLatencySample 里直接返回。
+        m_item->reportLatencySample(m_renderedNewFrame);
     }
 
 private:
@@ -247,6 +253,8 @@ private:
     // ---- 让 mpv 渲染到离屏 FBO（优先视频原生分辨率），然后读回 CPU 帧缓冲 ----
     void renderMpvFrame()
     {
+        m_renderedNewFrame = false;
+
         if (!m_item->m_mpvCtx)
             return;
 
@@ -328,6 +336,8 @@ private:
                 m_item->m_frameUpdated = true;
             }
         }
+
+        m_renderedNewFrame = true;   // 本轮确实渲染出了新的一帧
 
         // ── 恢复 Qt FBO + viewport（关键！否则后续绘制错位） ──
         glBindFramebuffer(GL_FRAMEBUFFER, qtFbo);
@@ -506,6 +516,7 @@ private:
     QSize   m_videoSize;
     QSize   m_lastQuadVideoSize;
     bool    m_textureDirty = false;
+    bool    m_renderedNewFrame = false;   // 本轮 render() 是否真的画出了新的一帧
 
     // 顶点数据（动态更新以保持宽高比）
     QVector<float> m_vertices;
@@ -543,6 +554,10 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
     : QQuickFramebufferObject(parent)
 {
     setAcceptedMouseButtons(Qt::LeftButton);
+
+    // 视频接收侧延迟探针：默认关闭，关闭时不抓包、不查询 mpv、零开销。
+    // 打开方式：环境变量 KYLIN_LATPROBE=1，或调用 m_latencyProbe->setEnabled(true)。
+    m_latencyProbe = new VideoLatencyProbe(this);
 }
 
 // QML 组件完成布局后才调用 —— 此时 width/height 有效，update() 能触发 render()
@@ -598,6 +613,13 @@ void VlcVideoItem::ensureMpvCreated()
 
 VlcVideoItem::~VlcVideoItem()
 {
+    // 先停探针（会等待抓包线程退出并落盘 CSV），避免析构期间渲染线程还在打点。
+    // m_latencyProbe 是 this 的子对象，仍由 QObject 负责释放，这里只置空引用。
+    if (m_latencyProbe) {
+        m_latencyProbe->setEnabled(false);
+        m_latencyProbe = nullptr;
+    }
+
     releasePlayer();
 
     // 注意：m_mpvCtx 由 VlcVideoRenderer 在其析构函数中释放（渲染线程）
@@ -712,6 +734,65 @@ void VlcVideoItem::submitProcessedFrame(const QImage &frame)
                               "update", Qt::QueuedConnection);
 }
 
+// ══════════════════════════════════════════════════════════════════
+// 视频接收侧延迟探针
+//
+// 由渲染线程在 render() 末尾调用。只有在"本轮画出了新帧 + 探针已打开 +
+// 导引头直显（无 CPU 回读）"三个条件同时满足时，才做一次只读的 mpv 属性
+// 查询，再交给探针换算延迟。探针关闭时这里只剩一次空指针与一次 bool 判断。
+// ══════════════════════════════════════════════════════════════════
+void VlcVideoItem::reportLatencySample(bool newFrameRendered)
+{
+    if (!m_latencyProbe || !newFrameRendered)
+        return;
+    if (!m_latencyProbe->isEnabled())
+        return;
+    if (m_cpuConsumerActive.load())     // 仅导引头直显路径，CCD 模式不测
+        return;
+    if (!m_mpv)
+        return;
+
+    // 优先用 video-pts；个别版本读不到时退回 time-pos。
+    // 两者都在 mpv 的归一化时间轴上，探针里的基准逻辑对二者同样适用。
+    double pts = 0.0;
+    if (mpv_get_property(m_mpv, "video-pts", MPV_FORMAT_DOUBLE, &pts) < 0
+            && mpv_get_property(m_mpv, "time-pos", MPV_FORMAT_DOUBLE, &pts) < 0)
+        return;                          // 视频参数尚未就绪时读不到，忽略即可
+
+    m_latencyProbe->onFrameDisplayed(pts);
+}
+
+// ── 供 QML 使用的探针控制与读数（测试用）─────────────────────────
+void VlcVideoItem::setLatencyProbeEnabled(bool on)
+{
+    if (m_latencyProbe)
+        m_latencyProbe->setEnabled(on);
+}
+
+bool VlcVideoItem::latencyProbeEnabled() const
+{
+    return m_latencyProbe && m_latencyProbe->isEnabled();
+}
+
+QVariantMap VlcVideoItem::latencyProbeStats() const
+{
+    QVariantMap m;
+    if (!m_latencyProbe)
+        return m;
+    const VideoLatencyProbe::Stats s = m_latencyProbe->stats();
+    m.insert(QStringLiteral("samples"),     QVariant::fromValue(s.samples));
+    m.insert(QStringLiteral("misses"),      QVariant::fromValue(s.misses));
+    m.insert(QStringLiteral("avgMs"),       s.avgMs);
+    m.insert(QStringLiteral("p50Ms"),       s.p50Ms);
+    m.insert(QStringLiteral("p95Ms"),       s.p95Ms);
+    m.insert(QStringLiteral("p99Ms"),       s.p99Ms);
+    m.insert(QStringLiteral("minMs"),       s.minMs);
+    m.insert(QStringLiteral("maxMs"),       s.maxMs);
+    m.insert(QStringLiteral("anchorReady"), s.anchorReady);
+    m.insert(QStringLiteral("frameMs"),     s.ptsStepMs);
+    return m;
+}
+
 // ===== 播放控制 =====
 void VlcVideoItem::setSource(const QString &url)
 {
@@ -719,6 +800,9 @@ void VlcVideoItem::setSource(const QString &url)
         m_source = url;
         emit sourceChanged();
         ensureMpvCreated();  // QML 对象构造完成后，首次 setSource 时才初始化 mpv
+        // 延迟探针跟随视频源：udp:// 组播地址开始抓包；空串或非组播协议则停止
+        if (m_latencyProbe)
+            m_latencyProbe->setStreamUrl(url);
         setupPlayer();
     }
 }
@@ -873,6 +957,11 @@ void VlcVideoItem::doSetupPlayer()
     mpv_observe_property(m_mpv, 0, "video-params",   MPV_FORMAT_NODE);
 
     // 加载媒体文件/流
+    // 延迟探针：把 loadfile 之后收到的第一帧作为 PTS 基准（mpv 会把时间轴归零，
+    // 而 TS 里是原始 PTS，两侧需要这个基准才能对上同一帧）。
+    if (m_latencyProbe)
+        m_latencyProbe->notePlaybackStart();
+
     const QByteArray url = m_source.toUtf8();
     const char *cmd[] = {"loadfile", url.constData(), nullptr};
     mpv_command_async(m_mpv, 0, cmd);
