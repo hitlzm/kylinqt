@@ -26,6 +26,7 @@
 // ── 模板装订已停用：不再上传，也不创建数据对象（文件保留，仅注释掉使用处）
 // #include "network/TemplateBindingClient.h"
 #include "record/DataRecorder.h"
+#include "utils/sendlatencyprobe.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -304,6 +305,16 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqresetTurntable,   turntablePort, &SerialPortTurntableHex::resetTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqcloseTurntable,   turntablePort, &SerialPortTurntableHex::closeTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
+
+    // ── 转台：人工发送延迟探针打点（T1）──────────────────────────────
+    // 只测程控"发送数据"这一个入口（TurntableSendDataHex::buildFrame → 本信号）。
+    // 以 turntableSendData 作 context，lambda 在主线程随信号发射同步执行，
+    // 取到的就是点击时刻。
+    // 探针关闭时这个连接只做一次原子读后返回，不影响原有功能。
+    QObject::connect(turntableSendData, &TurntableSendDataHex::requestSendProgramMode,
+                     turntableSendData, [](const programSend_frameHex &) {
+                         SendLat::markClick(SendLat::Turntable);
+                     });
 
     QObject::connect(turntablePort, &SerialPortTurntableHex::requpdateframe,   turntableData, &TurntableDataHex::updateframe, Qt::QueuedConnection);
     // ── 转台周期状态帧 → 数据保存（与界面同一份反馈帧，一帧一行 csv）──

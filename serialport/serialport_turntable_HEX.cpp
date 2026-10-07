@@ -6,6 +6,7 @@
 #include <cstring>
 #include <QTime>
 #include "../utils/seeker_coordinate_transform.h"
+#include "../utils/sendlatencyprobe.h"
 #define MAX_SPEED_HEX 12.0f
 
 // ════════════════════════ HEX状态码 → QML兼容编码转换 ════════════════════════
@@ -162,6 +163,8 @@ void SerialPortTurntableHex::buildAndSend(uint8_t axis_cmd, const uint8_t params
 {
     if (!m_serialPort || !m_serialPort->isOpen()) {
         //qWarning() << "[HEX] 串口未打开，无法发送指令";应该给出转台串口未打开的提示
+        // 发送延迟探针：本次请求没有发出去，弹出配对令牌，避免后续样本错配
+        SendLat::discardClick(SendLat::Turntable);
         return;
     }
 
@@ -178,6 +181,10 @@ void SerialPortTurntableHex::buildAndSend(uint8_t axis_cmd, const uint8_t params
     buf[18] = sum & 0xFF;           // 校验和低字节
 
     QByteArray data(reinterpret_cast<const char*>(buf), 19);
+    // 发送延迟探针打点：本次人工请求的第一次 write
+    // （开转台/停车/回零这类一次点击发多帧的，只取第一帧；外引导与手柄等
+    //   自动来源没有配对令牌，只会落到探针的 unmatched 计数）
+    SendLat::markSend(SendLat::Turntable);
     qint64 written = m_serialPort->write(data);
     if (written == -1) {
         qCritical() << "[HEX] 指令发送失败:" << m_serialPort->errorString();
@@ -592,11 +599,13 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
 {
     if (!m_isProgramMode) {
         qDebug() << "[HEX] 未进入程控模式，无法发送程控指令";
+        SendLat::discardClick(SendLat::Turntable);
         return;
     }
 
     if (frame.runtime <= 0) {
         qDebug() << "[HEX] 程控模式: runtime无效 (" << frame.runtime << ")";
+        SendLat::discardClick(SendLat::Turntable);
         return;
     }
 

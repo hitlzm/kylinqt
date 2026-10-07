@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QTimeZone>
 #include <cstring>
+#include "../utils/sendlatencyprobe.h"
 // ─────────────────────────────────────────────
 // 外引导模式常量
 // ─────────────────────────────────────────────
@@ -347,6 +348,10 @@ void LaserSendData::sendTimeSyncFrame()
 
 void LaserSendData::buildFrame() 
 {
+    // 发送延迟探针：只统计人工点击发送按钮。
+    // 时间同步帧由 10 分钟定时器触发（m_timeSync != 0），不是人工操作，不打点。
+    if (!m_timeSync) SendLat::markClick(SendLat::Laser);
+
     laser_send_frame frame = {};
 
     frame.frame_header1 = 0x55;
@@ -432,6 +437,8 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
  {  
     //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
     if (!isOpen()) {
+        // 本次请求没有发出去，弹出配对令牌，避免后续样本错配到这次点击上
+        SendLat::discardClick(SendLat::Laser);
         return;
     }
     const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
@@ -478,6 +485,8 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
         data[25] = checksum2;
 
         // 发送数据
+        // 发送延迟探针打点：本次请求的第一次 write（补发拍由探针内部忽略）。
+        SendLat::markSend(SendLat::Laser);
         qint64 count = SerialPort::send(data);
         // 发送成功才递增帧计数器（失败则下帧重发同一计数）
         if (count >= data.size()) {

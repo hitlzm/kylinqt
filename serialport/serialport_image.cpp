@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QTimeZone>
+#include "../utils/sendlatencyprobe.h"
 // ─────────────────────────────────────────────
 // ImageData
 // ─────────────────────────────────────────────
@@ -420,6 +421,10 @@ void ImageSendData::sendTimeSyncFrame()
 
 void ImageSendData::buildFrame() 
 {
+    // 发送延迟探针：只统计人工点击发送按钮。
+    // 时间同步帧由 10 分钟定时器触发（m_timeSync != 0），不是人工操作，不打点。
+    if (!m_timeSync) SendLat::markClick(SendLat::Image);
+
     image_send_frame frame = {};
 
     frame.frame_header1 = 0x77;
@@ -618,6 +623,8 @@ void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChange
 void SerialPortImage::onSendData(image_send_frame frame) { 
     //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
     if (!isOpen()) {
+        // 本次请求没有发出去，弹出配对令牌，避免后续样本错配到这次点击上
+        SendLat::discardClick(SendLat::Image);
         return;
     }
     //校验位在定时器每拍发送前统一计算，这里无需预计算
@@ -666,6 +673,9 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         data[223] = static_cast<char>((crc >> 8) & 0xFF); // 高字节
 
         qDebug() << "SerialPortImage::onSendData:" << data.toHex();
+        // 发送延迟探针打点：本次请求的第一次 write（补发拍由探针内部忽略）。
+        // 注意上面那行 qDebug 的开销会被计入延迟，要拿干净数字请关掉逐帧打印。
+        SendLat::markSend(SendLat::Image);
         // 发送数据
         qint64 count=SerialPort::send(data);
         //发送成功才递增流水号（失败则下帧重发同一流水号）
@@ -681,7 +691,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         }
     });
 
-    // 启动定时器（立即触发第一次发送，若想先等20ms再发，可改为 timer->start(20) 但默认立即触发）
+    // 启动定时器（等20ms后才发送一次）
     timer->start();
 }
 void SerialPortImage::onReadyRead()

@@ -117,6 +117,8 @@ else()
       kalman/seekKalman.cpp
       utils/videolatencyprobe.cpp
       utils/videolatencyprobe.h
+      utils/sendlatencyprobe.cpp
+      utils/sendlatencyprobe.h
       network/TemplateBindingClient.cpp
       network/SixDofMotionClient.cpp
       ${TaoQuickRes}
@@ -153,6 +155,18 @@ target_link_libraries(kylinqt
 #     KYLIN_LATPROBE_DEFAULT_CSV="/tmp/video_latency.csv"
 # )
 #   说明：KYLIN_LATPROBE_DEFAULT_CSV 的值必须带引号，写成字符串字面量。
+
+# ── 串口发送延迟探针（utils/sendlatencyprobe.*）────────────────────────
+# 默认关闭，对现有功能零影响。运行时用环境变量 KYLIN_SENDLAT=1 打开即可，
+# 无需重新编译。下面两个宏是可选的：
+#   SENDLAT_COMPILED=0    探针完全不参与编译：sendlatencyprobe.cpp 编译成空
+#                         文件，打点调用点也编译成空函数，二进制里不留任何
+#                         探针代码（连 setEnabled/stats 这些接口一起没有）
+#   SENDLAT_DEFAULT_ON=1  编译期就把探针默认打开（一般不用，留 0）
+# target_compile_definitions(kylinqt PRIVATE
+#     SENDLAT_COMPILED=1
+#     SENDLAT_DEFAULT_ON=0
+# )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${OpenCV_INCLUDE_DIRS}  # OpenCV的头文件路径
