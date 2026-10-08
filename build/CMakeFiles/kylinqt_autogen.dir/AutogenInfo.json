@@ -121,6 +121,12 @@
 			null
 		],
 		[
+			"E:/QTproject/kylinqt/auth/AuthManager.h",
+			"MU",
+			"RDF3ATUBBW/moc_AuthManager.cpp",
+			null
+		],
+		[
 			"E:/QTproject/kylinqt/handle/myhandle.h",
 			"MU",
 			"62PF24DQ2C/moc_myhandle.cpp",
@@ -267,6 +273,7 @@
 	"SETTINGS_FILE" : "E:/QTproject/kylinqt/build/CMakeFiles/kylinqt_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "E:/QTproject/kylinqt/auth/AuthManager.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/kalman/seekKalman.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/main.cpp", "MU", null ],
 		[ "E:/QTproject/kylinqt/network/SixDofMotionClient.cpp", "MU", null ],

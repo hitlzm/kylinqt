@@ -141,6 +141,30 @@ kylinqt_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt_autogen.dir\build.make CMakeFiles/kylinqt_autogen.dir/build
 .PHONY : kylinqt_autogen/fast
 
+auth/AuthManager.obj: auth/AuthManager.cpp.obj
+.PHONY : auth/AuthManager.obj
+
+# target to build an object file
+auth/AuthManager.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/auth/AuthManager.cpp.obj
+.PHONY : auth/AuthManager.cpp.obj
+
+auth/AuthManager.i: auth/AuthManager.cpp.i
+.PHONY : auth/AuthManager.i
+
+# target to preprocess a source file
+auth/AuthManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/auth/AuthManager.cpp.i
+.PHONY : auth/AuthManager.cpp.i
+
+auth/AuthManager.s: auth/AuthManager.cpp.s
+.PHONY : auth/AuthManager.s
+
+# target to generate assembly for a file
+auth/AuthManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\kylinqt.dir\build.make CMakeFiles/kylinqt.dir/auth/AuthManager.cpp.s
+.PHONY : auth/AuthManager.cpp.s
+
 kalman/seekKalman.obj: kalman/seekKalman.cpp.obj
 .PHONY : kalman/seekKalman.obj
 
@@ -463,6 +487,9 @@ help:
 	@echo ... rebuild_cache
 	@echo ... kylinqt_autogen
 	@echo ... kylinqt
+	@echo ... auth/AuthManager.obj
+	@echo ... auth/AuthManager.i
+	@echo ... auth/AuthManager.s
 	@echo ... kalman/seekKalman.obj
 	@echo ... kalman/seekKalman.i
 	@echo ... kalman/seekKalman.s

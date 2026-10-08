@@ -14,6 +14,7 @@
 #include "ModeControl/ModeController.h"
 #include "network/TemplateBindingClient.h"
 #include "network/SixDofMotionClient.h"
+#include "auth/AuthManager.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -83,12 +84,16 @@ int main(int argc, char *argv[])
     ModeController m_modeController(&app);  //释放的信号分别连接到手柄线程和导引头串口线程
     GamepadBridge *m_gamepadBridge = new GamepadBridge(&app);
 
+    // 启动登录校验：口令只以 HMAC 摘要形式存在（见 auth/AuthManager.h）
+    AuthManager auth(&app);
+
 
     // ═══ 1) 先加载 QML，建立绑定 ═══
     QQmlApplicationEngine engine;
     engine.addImportPath(TaoQuickImportPath);
     engine.addImportPath(app.applicationDirPath());
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
+    engine.rootContext()->setContextProperty("auth", &auth);
     engine.rootContext()->setContextProperty("laserData", laserData);
     engine.rootContext()->setContextProperty("laserSendData", laserSendData);
     engine.rootContext()->setContextProperty("imageData", imageData);
@@ -261,12 +266,18 @@ int main(int argc, char *argv[])
     QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);
 
 
-    Laserthread->start();
-    Imagethread->start();
-    Turntablethread->start();
-    Handlethread->start();
-    BDthread->start();
-    NetworkThread->start();
-    
+    // ═══ 4) 登录校验通过后才启动串口/手柄线程 ═══
+    // 这些线程的 started 信号连着各 worker 的 dowork()（打开串口），
+    // 因此不启动线程 = 不碰硬件。QML 侧校验通过后会先实例化主界面，
+    // 再调用 AuthManager::beginStartup()，从而发出 startupRequested。
+    QObject::connect(&auth, &AuthManager::startupRequested, &app, [&]() {
+        Laserthread->start();
+        Imagethread->start();
+        Turntablethread->start();
+        Handlethread->start();
+        BDthread->start();
+        NetworkThread->start();
+    });
+
     return app.exec();
 }

@@ -69,6 +69,8 @@ else()
       vlcvideo/VlcVideoItem.cpp
       handle/myhandle.h
       ModeControl/ModeController.h
+      auth/AuthManager.cpp
+      auth/AuthManager.h
       serialport/circularbuffer.h
       kalman/seekKalman.cpp
       network/TemplateBindingClient.cpp
