@@ -27,6 +27,7 @@
 // #include "network/TemplateBindingClient.h"
 #include "record/DataRecorder.h"
 #include "utils/sendlatencyprobe.h"
+#include "auth/AuthManager.h"
 
 //使用GPU来做图像绘制
 #ifdef _WIN32
@@ -92,7 +93,8 @@ int main(int argc, char *argv[])
     SixDofMotionClient *sixDofMotion = new SixDofMotionClient(&app);
     // CCD 串口对象固定运行在主线程（指令量小、无阻塞等待，不需要独立线程）
     SerialPortCCD *ccdPort = new SerialPortCCD(&app);
-    ccdPort->dowork();   // 在主线程创建 QSerialPort 与定时器
+    // dowork() 会创建 QSerialPort 与定时器（即真正打开串口），已推迟到登录校验通过后
+    // 执行，见文件末尾 startupRequested 的处理。
     // 模板装订数据对象停用（模板装订不再由本软件上传，QML 侧也已无生效引用）
     // TemplateBindingData *templateBindingData = new TemplateBindingData(&app);
 
@@ -129,12 +131,16 @@ int main(int argc, char *argv[])
     ModeController m_modeController(&app);  //释放的信号分别连接到手柄线程和导引头串口线程
     GamepadBridge *m_gamepadBridge = new GamepadBridge(&app);
 
+    // 启动登录校验：口令只以 HMAC 摘要形式存在（见 auth/AuthManager.h）
+    AuthManager auth(&app);
+
 
     // ═══ 1) 先加载 QML，建立绑定 ═══
     QQmlApplicationEngine engine;
     engine.addImportPath(TaoQuickImportPath);
     engine.addImportPath(app.applicationDirPath());
     engine.rootContext()->setContextProperty("taoQuickImportPath", TaoQuickImportPath);
+    engine.rootContext()->setContextProperty("auth", &auth);
     engine.rootContext()->setContextProperty("laserData", laserData);
     engine.rootContext()->setContextProperty("laserSendData", laserSendData);
     engine.rootContext()->setContextProperty("imageData", imageData);
@@ -166,80 +172,11 @@ int main(int argc, char *argv[])
     engine.load(url);
 
     // ── 视频流目标检测：VlcVideoItem → StreamProcessor（工作线程）→ 回传显示 / CCD 目标中心 ──
-    StreamProcessor *streamProc = new StreamProcessor;   // 无父对象，随后移入视频处理线程
-    QThread *streamThread = new QThread;
-
-    // 从 QML 场景中找到视频播放器（当前界面中唯一的 VlcVideo 实例）
-    if (QObject *rootObj = engine.rootObjects().value(0)) {
-        if (VlcVideoItem *vlcItem = rootObj->findChild<VlcVideoItem*>()) {
-            streamProc->setVideoSource(vlcItem);
-            dataRecorder->setVideoItem(vlcItem);
-        } else {
-            qWarning() << "[main] VlcVideoItem not found; StreamProcessor will run without video source";
-        }
-    } else {
-        qWarning() << "[main] QML root object missing; StreamProcessor will run without video source";
-    }
-
-    // 加载 YOLO 模型：优先可执行文件目录下的 models/，其次可执行文件目录、工作目录
-    const QString appDir = QCoreApplication::applicationDirPath();
-    QDir parentDir(appDir);
-    parentDir.cdUp();  // 回到父目录
-    QStringList modelCandidates;
-    modelCandidates << appDir + "/models/best.onnx"
-                    << appDir + "/best.onnx"
-                    << parentDir.filePath("models/best.onnx")
-                    << parentDir.filePath("best.onnx")
-                    << QStringLiteral("E:/QTproject/yolov3model2/best.onnx")
-                    << QStringLiteral("E:/QTproject/ONNXRUNTIME2/model/best.onnx");
-    QString modelPath;
-    for (const QString &candidate : modelCandidates) {
-        if (QFileInfo::exists(candidate)) {
-            modelPath = candidate;
-            break;
-        }
-    }
-    // 推理参数与参考工程一致（best.onnx 为单类 armored_vehicle 模型）
-    streamProc->setConfThreshold(0.4f);
-    streamProc->setNmsThreshold(0.5f);
-    streamProc->setInputSize(416, 416);
-    streamProc->setTargetFps(30);
-    if (!modelPath.isEmpty()) {
-        QString namesPath;
-        QStringList namesCandidates;
-        namesCandidates << QFileInfo(modelPath).dir().filePath("test.names")
-                        << QFileInfo(modelPath).dir().filePath("best.names")
-                        << appDir + "/test.names"
-                        << QStringLiteral("E:/QTproject/yolov4model/test.names");
-        for (const QString &candidate : namesCandidates) {
-            if (QFileInfo::exists(candidate)) {
-                namesPath = candidate;
-                break;
-            }
-        }
-        if (!streamProc->loadYoloModel(modelPath, namesPath)) {
-            qWarning() << "[main] YOLO 模型加载失败:" << modelPath;
-        }
-    } else {
-        qWarning() << "[main] 未找到 YOLO 模型文件（已禁用检测，仅透传视频帧）:"
-                   << modelCandidates.join(" / ");
-    }
-
-    // 目标中心坐标 → CCD 串口（主线程）；识别/加载错误输出到日志
-    QObject::connect(streamProc, &StreamProcessor::targetCenterChanged,
-                     ccdPort,    &SerialPortCCD::recvTargetCenter,
-                     Qt::QueuedConnection);
-    QObject::connect(streamProc, &StreamProcessor::errorOccurred, [](const QString &msg) {
-        qWarning() << "[StreamProcessor]" << msg;
-    });
-
-    // 线程启动 → 开始处理；finished → 退出线程并回收
-    QObject::connect(streamThread, &QThread::started, streamProc, &StreamProcessor::start);
-    QObject::connect(streamProc, &StreamProcessor::finished, streamThread, &QThread::quit);
-    QObject::connect(streamThread, &QThread::finished, streamProc, &QObject::deleteLater);
-    QObject::connect(streamThread, &QThread::finished, streamThread, &QObject::deleteLater);
-    streamProc->moveToThread(streamThread);
-    streamThread->start();
+    // 创建、模型加载与线程启动全部推迟到登录校验通过之后（见文件末尾 startupRequested
+    // 的处理）：视频播放器位于登录门禁之后的 Loader 里，必须等主界面实例化才能找到它。
+    // 在这里先声明指针，是因为关停段还要引用它们（登录未通过时始终为 nullptr）。
+    StreamProcessor *streamProc = nullptr;
+    QThread *streamThread = nullptr;
 
     // ═══ 2) 连线：Data（主线程）↔ Worker（工作线程），全部 QueuedConnection ═══
 
@@ -494,13 +431,96 @@ int main(int argc, char *argv[])
     // QObject::connect(NetworkThread,  &QThread::finished, NetworkThread,    &QObject::deleteLater);   // 模板装订上传停用
 
 
-    Laserthread->start();
-    Imagethread->start();
-    Turntablethread->start();
-    Handlethread->start();
-    BDthread->start();
-    // Tiltthread->start();   // 倾角仪串口停用
-    // NetworkThread->start();   // 模板装订上传停用
+    // ═══ 4) 登录校验通过后才启动硬件相关部分 ═══
+    // 串口线程的 started 信号连着各 worker 的 dowork()（打开串口），视频线程会拉起
+    // 取流与 YOLO 推理，CCD 串口的 dowork() 也在这里才执行 —— 校验没通过就一行都不跑。
+    // QML 侧顺序固定：先实例化主界面（Loader 激活），再调用 beginStartup()。
+    QObject::connect(&auth, &AuthManager::startupRequested, &app, [&]() {
+        ccdPort->dowork();   // 在主线程创建 QSerialPort 与定时器
+
+        // ── 视频流目标检测：VlcVideoItem → StreamProcessor（工作线程）→ 回传显示 / CCD 目标中心 ──
+        streamProc = new StreamProcessor;   // 无父对象，随后移入视频处理线程
+        streamThread = new QThread;
+
+        // 从 QML 场景中找到视频播放器（当前界面中唯一的 VlcVideo 实例）
+        if (QObject *rootObj = engine.rootObjects().value(0)) {
+            if (VlcVideoItem *vlcItem = rootObj->findChild<VlcVideoItem*>()) {
+                streamProc->setVideoSource(vlcItem);
+                dataRecorder->setVideoItem(vlcItem);
+            } else {
+                qWarning() << "[main] VlcVideoItem not found; StreamProcessor will run without video source";
+            }
+        } else {
+            qWarning() << "[main] QML root object missing; StreamProcessor will run without video source";
+        }
+
+        // 加载 YOLO 模型：优先可执行文件目录下的 models/，其次可执行文件目录、工作目录
+        const QString appDir = QCoreApplication::applicationDirPath();
+        QDir parentDir(appDir);
+        parentDir.cdUp();  // 回到父目录
+        QStringList modelCandidates;
+        modelCandidates << appDir + "/models/best.onnx"
+                        << appDir + "/best.onnx"
+                        << parentDir.filePath("models/best.onnx")
+                        << parentDir.filePath("best.onnx")
+                        << QStringLiteral("E:/QTproject/yolov3model2/best.onnx")
+                        << QStringLiteral("E:/QTproject/ONNXRUNTIME2/model/best.onnx");
+        QString modelPath;
+        for (const QString &candidate : modelCandidates) {
+            if (QFileInfo::exists(candidate)) {
+                modelPath = candidate;
+                break;
+            }
+        }
+        // 推理参数与参考工程一致（best.onnx 为单类 armored_vehicle 模型）
+        streamProc->setConfThreshold(0.4f);
+        streamProc->setNmsThreshold(0.5f);
+        streamProc->setInputSize(416, 416);
+        streamProc->setTargetFps(30);
+        if (!modelPath.isEmpty()) {
+            QString namesPath;
+            QStringList namesCandidates;
+            namesCandidates << QFileInfo(modelPath).dir().filePath("test.names")
+                            << QFileInfo(modelPath).dir().filePath("best.names")
+                            << appDir + "/test.names"
+                            << QStringLiteral("E:/QTproject/yolov4model/test.names");
+            for (const QString &candidate : namesCandidates) {
+                if (QFileInfo::exists(candidate)) {
+                    namesPath = candidate;
+                    break;
+                }
+            }
+            if (!streamProc->loadYoloModel(modelPath, namesPath)) {
+                qWarning() << "[main] YOLO 模型加载失败:" << modelPath;
+            }
+        } else {
+            qWarning() << "[main] 未找到 YOLO 模型文件（已禁用检测，仅透传视频帧）:"
+                       << modelCandidates.join(" / ");
+        }
+
+        // 目标中心坐标 → CCD 串口（主线程）；识别/加载错误输出到日志
+        QObject::connect(streamProc, &StreamProcessor::targetCenterChanged,
+                         ccdPort,    &SerialPortCCD::recvTargetCenter,
+                         Qt::QueuedConnection);
+        QObject::connect(streamProc, &StreamProcessor::errorOccurred, [](const QString &msg) {
+            qWarning() << "[StreamProcessor]" << msg;
+        });
+
+        // 线程启动 → 开始处理；finished → 退出线程并回收
+        QObject::connect(streamThread, &QThread::started, streamProc, &StreamProcessor::start);
+        QObject::connect(streamProc, &StreamProcessor::finished, streamThread, &QThread::quit);
+        QObject::connect(streamThread, &QThread::finished, streamProc, &QObject::deleteLater);
+        QObject::connect(streamThread, &QThread::finished, streamThread, &QObject::deleteLater);
+        streamProc->moveToThread(streamThread);
+        streamThread->start();
+        Laserthread->start();
+        Imagethread->start();
+        Turntablethread->start();
+        Handlethread->start();
+        BDthread->start();
+        // Tiltthread->start();   // 倾角仪串口停用
+        // NetworkThread->start();   // 模板装订上传停用
+    });
     
     const int ret = app.exec();
 
@@ -513,7 +533,7 @@ int main(int argc, char *argv[])
 
     // 1) Video processing thread: ask StreamProcessor to stop inside its own
     //    thread (BlockingQueuedConnection), then quit and wait.
-    if (streamThread->isRunning()) {
+    if (streamThread && streamThread->isRunning()) {
         QMetaObject::invokeMethod(streamProc, "stop", Qt::BlockingQueuedConnection);
         streamThread->quit();
         streamThread->wait();
