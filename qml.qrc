@@ -24,5 +24,6 @@
         <file>components/MsgPopup2.qml</file>
         <file>components/TemplateBindingPopup.qml</file>
         <file>components/SixDofMotionPopup.qml</file>
+        <file>components/CusTitleBar.qml</file>
     </qresource>
 </RCC>

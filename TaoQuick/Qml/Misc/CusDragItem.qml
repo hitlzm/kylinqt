@@ -39,6 +39,11 @@ Item {
         onPositionChanged: {
             if (pressed) {
                 posChange(mouseX - lastX, mouseY - lastY)
+                // 必须把基准点推到当前位置：消费方（CusResizeBorder 等）用的是
+                // control.x/width += offset 这种累加写法，需要的是“每次移动的增量”，
+                // 而不是“从按下开始的累计位移”，否则窗口会越拖越快。
+                lastX = mouseX
+                lastY = mouseY
             }
         }
     }
