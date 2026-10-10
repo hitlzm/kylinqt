@@ -104,7 +104,7 @@ void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
     m_azimuth = (centerX - m_imageWidth  / 2.0) / m_imageWidth  * m_hFov;
     m_pitch   = (centerY - m_imageHeight / 2.0) / m_imageHeight * m_vFov;
 
-    //考虑到CCD安装有一定倾斜角，要进行CCD到转台内框基坐标系的变换
+    //考虑到CCD安装有一定倾斜角，要进行CCD到转台内框基坐标系的变换,CCD转角固定为22.5度
     if (m_rotation_angle != 0) {
         auto ang = seeker::deRollAboutBoresightDeg(m_azimuth, m_pitch, m_rotation_angle);
         m_azimuth = ang.az;
