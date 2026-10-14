@@ -98,7 +98,8 @@ public:
 
     /// 视频固有显示尺寸（mpv video-params 的 dw/dh）。
     /// 供放大镜等"一帧多显"场景裁剪 mpv 离屏渲染时在帧内留下的黑边。
-    QSize videoNativeSize() const { return QSize(m_videoDw, m_videoDh); }
+    /// 内部在 m_frameMutex 下取值，可从渲染线程或主线程调用。
+    QSize videoNativeSize() const;
 
     // ---- QQuickFramebufferObject 接口 ----
     Renderer *createRenderer() const override;
@@ -174,8 +175,12 @@ private:
 
     // 视频固有显示尺寸（mpv video-params 的 dw/dh）。
     // 用于判断点击是否落在帧内真实视频画面上（剔除 mpv 渲染时留下的黑边）。
-    int m_videoDw = 0;
-    int m_videoDh = 0;
+    // dw/dh 是一对值，必须同时更新、同时读取，否则会算出错误的宽高比：
+    //   写：主线程 processMpvEvents()（video-params 事件）与 releasePlayer()
+    //   读：渲染线程 renderMpvFrame() 与 VlcFrameItem 的渲染器
+    // 因此与帧缓冲一起归 m_frameMutex 保护；对外只经 videoNativeSize() 读取。
+    int m_videoDw = 0;   // guarded by m_frameMutex
+    int m_videoDh = 0;   // guarded by m_frameMutex
     bool m_videoReady = false;   // 本次连接是否已判定成功（每次 releasePlayer 复位）
 
     // StreamProcessor 处理后回传的帧

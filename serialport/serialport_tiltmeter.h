@@ -166,7 +166,9 @@ public:
     explicit SerialPortTiltmeter(QObject *parent = nullptr);
     ~SerialPortTiltmeter() override;
 
-    TiltData *m_tiltData = nullptr;   // 主线程 Data 对象，main.cpp 中挂入
+    // 该指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
+    // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
+    void setTiltData(TiltData *data) { m_tiltData = data; }
 
     // Modbus 常量
     static constexpr quint8  kFuncReadInput = 0x04;   // 读输入寄存器
@@ -212,6 +214,8 @@ protected:
     void parseData(const QByteArray &rawData) override; // 解析 04H 应答
 
 private:
+    // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
+    TiltData *m_tiltData = nullptr;
     void       initPollTimer();
     void       startPolling();
     void       stopPolling();

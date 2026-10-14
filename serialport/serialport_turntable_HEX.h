@@ -303,8 +303,10 @@ public:
     explicit SerialPortTurntableHex(QObject *parent = nullptr);
     ~SerialPortTurntableHex() override;
 
-    TurntableDataHex * m_turntableDataHex;
-    TurntableSendDataHex * m_turntableSendDataHex;
+    // 这两个指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
+    // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
+    void setTurntableDataHex(TurntableDataHex *data) { m_turntableDataHex = data; }
+    void setTurntableSendDataHex(TurntableSendDataHex *data) { m_turntableSendDataHex = data; }
 
 signals:
     void requpdateframe(StatusFeedbackHex recvdata);
@@ -399,6 +401,9 @@ protected:
     static float rawToSpeed(int32_t raw);
 
 private:
+    // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
+    TurntableDataHex *m_turntableDataHex = nullptr;
+    TurntableSendDataHex *m_turntableSendDataHex = nullptr;
     bool m_isProgramMode;
 
     float m_current_inner_angle;

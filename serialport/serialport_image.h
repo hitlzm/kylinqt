@@ -3,6 +3,7 @@
 
 #include "serialport.h"
 #include "./circularbuffer.h"
+#include <atomic>
 #include <QDateTime>
 #include <QTimer>
 #include "kalman/AlphaBetaTracker.h"
@@ -262,7 +263,10 @@ private:
     }
 
     int m_frameLength = 0;
-    int m_bFrameSequence = 0;
+    // 帧编号：唯一写方是主线程的 updateFromFrame()，但 image 工作线程也要读它
+    //（外引导定时器里判断帧号是否更新），因此用原子量消除跨线程数据竞争。
+    // 这里只需“最终可见”，不承担发布其它字段的职责，故读写统一用 relaxed 序。
+    std::atomic<int> m_bFrameSequence{0};
     int m_aFrameSequenceReply = 0;
     int m_aFrameValidFlag = 0;
     int m_seekerCtrlReply = 0;
@@ -474,8 +478,10 @@ public:
 
     ImageData* imageData() const;
     ImageSendData* imageSendData() const;
-    ImageData *m_imageData;
-    ImageSendData *m_imageSendData;
+    // 这两个指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
+    // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
+    void setImageData(ImageData *data) { m_imageData = data; }
+    void setImageSendData(ImageSendData *data) { m_imageSendData = data; }
 
 public slots:
     void dowork() { SerialPort::dowork(); onScanPorts(); }
@@ -526,6 +532,9 @@ protected:
 
 private:
     static uint16_t crc16_table[256];
+    // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
+    ImageData *m_imageData = nullptr;
+    ImageSendData *m_imageSendData = nullptr;
     //图像导引头每20ms接收一次数据，1s共50组数据，预留200个位置
     CircularBuffer<imageExGuideData> m_circularbuf;
     // Alpha-Beta 跟踪管理器：每20ms更新滤波，1s定时器外推预测角度

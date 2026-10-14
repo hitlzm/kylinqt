@@ -269,8 +269,14 @@ private:
         constexpr int kMaxFboWidth  = 1920;
         constexpr int kMaxFboHeight = 1080;
         int w, h;
-        const int videoW = m_item->m_videoDw;
-        const int videoH = m_item->m_videoDh;
+        // dw/dh 由主线程写入，这里在 m_frameMutex 下取一份“成对”的快照，
+        // 避免拿到“新宽 + 旧高”这类跨帧组合而算出错误比例
+        int videoW, videoH;
+        {
+            QMutexLocker lock(&m_item->m_frameMutex);
+            videoW = m_item->m_videoDw;
+            videoH = m_item->m_videoDh;
+        }
         if (videoW > 0 && videoH > 0) {
             const float capScale = qMin(1.0f,
                                         qMin(static_cast<float>(kMaxFboWidth) / videoW,
@@ -735,6 +741,21 @@ void VlcVideoItem::submitProcessedFrame(const QImage &frame)
 }
 
 // ══════════════════════════════════════════════════════════════════
+// 视频固有尺寸（dw/dh）
+//
+// 写方在主线程（mpv video-params 事件 / releasePlayer 复位），读方在渲染线程
+// （renderMpvFrame、VlcFrameItem 的渲染器）。dw 与 dh 必须成对读取，因此不直接
+// 暴露成员，统一走这里；调用点若已持有 m_frameMutex 就不能再走本函数（QMutex
+// 非递归，会自锁）。
+// ══════════════════════════════════════════════════════════════════
+
+QSize VlcVideoItem::videoNativeSize() const
+{
+    QMutexLocker lock(&m_frameMutex);
+    return QSize(m_videoDw, m_videoDh);
+}
+
+// ══════════════════════════════════════════════════════════════════
 // 视频接收侧延迟探针
 //
 // 由渲染线程在 render() 末尾调用。只有在"本轮画出了新帧 + 探针已打开 +
@@ -987,14 +1008,15 @@ void VlcVideoItem::releasePlayer()
     if (m_recording)
         stopRecord();
 
-    // 复位视频参数与“连接成功”标志：每次重新加载都重新判定
-    m_videoDw = 0;
-    m_videoDh = 0;
+    // “连接成功”标志：仅主线程访问，每次重新加载都重新判定
     m_videoReady = false;
 
-    // 清空帧缓冲
+    // 清空帧缓冲 + 复位视频参数（同一把锁：渲染线程要么看到“旧尺寸 + 旧帧”，
+    // 要么看到“0 + 空帧”，不会出现半新半旧的组合）
     {
         QMutexLocker lock(&m_frameMutex);
+        m_videoDw = 0;
+        m_videoDh = 0;
         m_frameBuf[0] = QImage();
         m_frameBuf[1] = QImage();
         m_writeIdx = 0;
@@ -1125,18 +1147,38 @@ void VlcVideoItem::processMpvEvents()
             } else if (strcmp(prop->name, "video-params") == 0) {
                 // 记录视频固有显示尺寸，供 requestPixelAt 剔除黑边、判定点击是否落在视频画面内
                 if (prop->format == MPV_FORMAT_NODE) {
-                    int dw = m_videoDw, dh = m_videoDh;
+                    // mpv 只回传发生变化的 key，所以先取当前值当初值
+                    int dw, dh;
+                    {
+                        QMutexLocker lock(&m_frameMutex);
+                        dw = m_videoDw;
+                        dh = m_videoDh;
+                    }
+                    // 解析本身是纯计算，放到锁外，避免占着 m_frameMutex
                     parseVideoParamsNode(static_cast<mpv_node *>(prop->data), &dw, &dh);
-                    if (dw != m_videoDw || dh != m_videoDh) {
-                        m_videoDw = dw;
-                        m_videoDh = dh;
+
+                    bool sizeChanged = false;
+                    {
+                        QMutexLocker lock(&m_frameMutex);
+                        if (dw != m_videoDw || dh != m_videoDh) {
+                            m_videoDw = dw;
+                            m_videoDh = dh;
+                            sizeChanged = true;
+                        }
+                    }
+                    if (sizeChanged) {
                         qDebug() << "[MpvVideo] video-params (native size):"
-                                 << m_videoDw << "x" << m_videoDh;
+                                 << dw << "x" << dh;
                     }
                 }
                 // 解析到真实视频参数即代表流中确实有视频数据，判定连接成功
                 // （UDP/RTSP 仅打开协议、无数据时不会触发）
-                if (m_videoDw > 0 && m_videoDh > 0 && !m_videoReady) {
+                bool hasNativeSize = false;
+                {
+                    QMutexLocker lock(&m_frameMutex);
+                    hasNativeSize = (m_videoDw > 0 && m_videoDh > 0);
+                }
+                if (hasNativeSize && !m_videoReady) {
                     m_videoReady = true;
                     emit videoReady();
                 }

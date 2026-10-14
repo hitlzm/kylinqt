@@ -111,7 +111,9 @@ public:
     ~SerialPortBD() override{ }
 
     BDData* bdData() const;
-    BDData *m_bdData;
+    // 该指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
+    // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
+    void setBdData(BDData *data) { m_bdData = data; }
 
 public slots:
     //初始化串口对象，并扫描可用串口
@@ -132,6 +134,8 @@ protected:
     void parseData(const QByteArray &rawData) override;
     void onReadyRead() override;
 private:
+    // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
+    BDData *m_bdData = nullptr;
     double nmeaToDecimal(const QString& coord, const QString& dir);  //将 NMEA 纬度/经度（ddmm.mmmmm）转换为十进制度数
     QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一条 NMEA 语句的一部分，攒到 '\n' 再解析
 };

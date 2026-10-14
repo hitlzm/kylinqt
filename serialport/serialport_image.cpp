@@ -65,7 +65,7 @@ void ImageData::setPortList(const QStringList &ports) { if (m_availablePorts != 
 void ImageData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
 
 int ImageData::frameLength() const { return m_frameLength; }
-int ImageData::bFrameSequence() const { return m_bFrameSequence; }
+int ImageData::bFrameSequence() const { return m_bFrameSequence.load(std::memory_order_relaxed); }
 int ImageData::aFrameSequenceReply() const { return m_aFrameSequenceReply; }
 int ImageData::aFrameValidFlag() const { return m_aFrameValidFlag; }
 int ImageData::seekerCtrlReply() const { return m_seekerCtrlReply; }
@@ -132,8 +132,11 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         m_frameLength = pFrame->frame_length;
         emit frameLengthChanged();
     }
-    if (m_bFrameSequence != pFrame->b_frame_sequence) {
-        m_bFrameSequence = pFrame->b_frame_sequence;
+    // 本槽是 m_bFrameSequence 的唯一写方（只在主线程执行），
+    // 因此“读-比较-写”不需要 CAS，逐个 relaxed 存取即可
+    const int bSeq = static_cast<int>(pFrame->b_frame_sequence);
+    if (m_bFrameSequence.load(std::memory_order_relaxed) != bSeq) {
+        m_bFrameSequence.store(bSeq, std::memory_order_relaxed);
         emit bFrameSequenceChanged();
     }
     if (m_aFrameSequenceReply != pFrame->a_frame_sequence_reply) {
@@ -774,6 +777,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                 if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        //可以加入一个帧编号的判断，如果帧编号没有更新，就不再进行外引导，而是弹窗提示，并退出外引导模式.帧编号从data指针中的bFrameSequence()获取
                         // 每发送完固定次数后，重新发送时间同步信号并重新计时
                         if(m_sendCount_1s == 0)
                         {
@@ -785,7 +789,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
                         LogManager::instance()->logImageTracking(az_pkt.angle1, el_pkt.angle1);
-                        if(++m_sendCount_1s >= Maxsendcount) {  // 1小时重同步
+                        if(++m_sendCount_1s >= Maxsendcount) {  //10分钟重新同步
                             m_sendCount_1s = 0;
                         }
                     });

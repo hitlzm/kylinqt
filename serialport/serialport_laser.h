@@ -334,8 +334,10 @@ public:
 
     LaserData* laserData() const;
     LaserSendData* laserSendData() const;
-    LaserData *m_laserData;
-    LaserSendData *m_laserSendData;
+    // 这两个指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
+    // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
+    void setLaserData(LaserData *data) { m_laserData = data; }
+    void setLaserSendData(LaserSendData *data) { m_laserSendData = data; }
 
 public slots:
     void dowork() { SerialPort::dowork(); onScanPorts(); }   // 创建 QSerialPort 后立即推送可用串口列表
@@ -373,6 +375,9 @@ protected:
     void onReadyRead() override;
 
 private:
+    // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
+    LaserData *m_laserData = nullptr;
+    LaserSendData *m_laserSendData = nullptr;
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
     uint8_t xorChecksum(const QByteArray& data);
     //维护一个存储导引头反馈的俯仰角与方位角的数据容器

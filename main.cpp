@@ -116,15 +116,15 @@ int main(int argc, char *argv[])
     // （TemplateBindingClient.h/.cpp 文件保留，仅注释掉使用处）
     // TemplateBindingWorker *networkWorker = new TemplateBindingWorker;
 
-    // 把 Data 对象挂给 Worker 存引用（parseData 需要 m_laserData->updateFromFrame）
-    laserPort->m_laserData = laserData;
-    laserPort->m_laserSendData = laserSendData;
-    imagePort->m_imageData = imageData;
-    imagePort->m_imageSendData = imageSendData;
-    turntablePort->m_turntableDataHex = turntableData;
-    turntablePort->m_turntableSendDataHex = turntableSendData;
-    ccdPort->m_ccdData = ccdData;
-    // tiltPort->m_tiltData = tiltData;   // 倾角仪串口停用
+    // 把 Data 对象注入给 Worker 存引用（parseData 需要 laserData->updateFromFrame）
+    laserPort->setLaserData(laserData);
+    laserPort->setLaserSendData(laserSendData);
+    imagePort->setImageData(imageData);
+    imagePort->setImageSendData(imageSendData);
+    turntablePort->setTurntableDataHex(turntableData);
+    turntablePort->setTurntableSendDataHex(turntableSendData);
+    ccdPort->setCcdData(ccdData);
+    // tiltPort->setTiltData(tiltData);   // 倾角仪串口停用
     //创建手柄对象
     Myhandle *_myhandle = new Myhandle(nullptr);   // 无父对象，将移到子线程
     //创建模式管理对象

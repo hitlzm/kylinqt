@@ -109,7 +109,9 @@ public:
     ~SerialPortCCD() override { }
 
     CCDData* ccdData() const;
-    CCDData *m_ccdData;
+    // 该指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
+    // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
+    void setCcdData(CCDData *data) { m_ccdData = data; }
 signals:
     void portOpened(bool success);
     void portClosed();
@@ -145,6 +147,8 @@ protected:
     void parseData(const QByteArray &rawData) override{};
     void onReadyRead() override{};
 private:
+    // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
+    CCDData *m_ccdData = nullptr;
     void updateFovLimits();  // 焦距切换时同步更新滤波器限幅
 
     const QByteArray cmd_30X = QByteArray::fromHex("81010983140001020CFF");
