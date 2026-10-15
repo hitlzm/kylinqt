@@ -102,10 +102,10 @@ else()
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
       # 倾角仪串口已停用（改为人工观看数显屏）：文件保留，仅不再被 main.cpp 使用
-      serialport/serialport_tiltmeter.cpp
+      #serialport/serialport_tiltmeter.cpp
       vlcvideo/VlcVideoItem.cpp
       vlcvideo/VlcFrameItem.cpp
-      opencv/onnxyolodetector.cpp
+      #opencv/onnxyolodetector.cpp
       opencv/onnxyolov5detector.cpp
       opencv/streamprocessor.cpp
       opencv/pixelkalmantracker.cpp 
@@ -115,13 +115,15 @@ else()
       ModeControl/ModeController.h
       auth/AuthManager.cpp
       auth/AuthManager.h
-      serialport/circularbuffer.h
-      kalman/seekKalman.cpp
-      utils/videolatencyprobe.cpp
-      utils/videolatencyprobe.h
-      utils/sendlatencyprobe.cpp
-      utils/sendlatencyprobe.h
-      network/TemplateBindingClient.cpp
+      log/LogManager.cpp
+      #serialport/circularbuffer.h
+      #kalman/seekKalman.cpp
+      #kalman/AlphaBetaTracker.cpp
+      #utils/videolatencyprobe.cpp
+      #utils/videolatencyprobe.h
+      #utils/sendlatencyprobe.cpp
+      #utils/sendlatencyprobe.h
+      #network/TemplateBindingClient.cpp
       network/SixDofMotionClient.cpp
       ${TaoQuickRes}
     )
