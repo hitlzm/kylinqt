@@ -15,6 +15,7 @@
 
 #define Exguide_1s 7
 #define Maxsendcount 600 //每10分钟进行一次时间同步
+#define Exguide_FrameLostMs 1000 //外引导时帧编号超过该时长(ms)未更新，即认为通信中断
 
 // ─────────────────────────────────────────────
 // 时间戳工具
@@ -778,6 +779,13 @@ void SerialPortImage::ExmodeChanged(int mode)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         //可以加入一个帧编号的判断，如果帧编号没有更新，就不再进行外引导，而是弹窗提示，并退出外引导模式.帧编号从data指针中的bFrameSequence()获取
+                        //读取帧编号如果帧编号没变化，则认为通信中断
+                        // 帧编号停止更新 → 导引头已不再回传数据：本拍不再外引导，
+                        // 直接退出外引导模式并弹窗提示（见 abortExGuideByLinkLost）
+                        if (!isImageFrameUpdated()) {
+                            abortExGuideByLinkLost();
+                            return;
+                        }
                         // 每发送完固定次数后，重新发送时间同步信号并重新计时
                         if(m_sendCount_1s == 0)
                         {
@@ -793,16 +801,26 @@ void SerialPortImage::ExmodeChanged(int mode)
                             m_sendCount_1s = 0;
                         }
                     });
+                    // 开始外引导：以当前帧编号为基准启动看门狗
+                    armExGuideFrameWatch();
                     m_exGuideTimer->start(1000); // 每1s触发一次
                     m_lastexguidesetting = Exguide_1s;
                 }
                 else if(exguidesetting == Exguide_5ms)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        // 5ms 模式同样用帧编号判断通信是否正常：
+                        // 帧编号未更新则不再发送外推角度，退出外引导并弹窗提示
+                        if (!isImageFrameUpdated()) {
+                            abortExGuideByLinkLost();
+                            return;
+                        }
                         // 5ms模式只发送方位角与俯仰角即可
                         emit reqExsend_5ms(m_azimuth,m_pitch);
                         LogManager::instance()->logImageTracking(m_azimuth, m_pitch);    
                     });
+                    // 开始外引导：以当前帧编号为基准启动看门狗
+                    armExGuideFrameWatch();
                     m_exGuideTimer->start(5); // 每5ms触发一次
                     m_lastexguidesetting = Exguide_5ms;
                 }
@@ -819,15 +837,66 @@ void SerialPortImage::ExmodeChanged(int mode)
     }
     else
     {
-        exsrcindex = -1; //非外引导模式下，外引导源索引置0
-        exguidesetting = -1; //非外引导模式下，外引导发送时间间隔索引置0
         // 非外引导模式：停止定时器
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
         }
+        // 外引导源/跟踪周期的选择与界面单选保持一致，这里不再清零；
+        // 只把“本次绑定”作废，这样重新选中外引导模式时会重新绑定并重启定时器
+        // （否则退出一次外引导后，必须重新点选外引导源和跟踪周期才能再次外引导）
+        m_lastexguidesetting = -1;
         // 退出外引导模式：下次进入时重新初始化滤波器
         m_abNeedReset = true;
     }
+}
+
+// ── 外引导通信看门狗（帧编号）──
+// 外引导定时器启动前调用：以当前帧编号为基准开始计时，
+// 之后每拍检查帧编号是否还在变化
+void SerialPortImage::armExGuideFrameWatch()
+{
+    m_lastExGuideFrameSeq = m_imageData ? m_imageData->bFrameSequence() : -1;
+    m_exGuideFrameClock.start();
+}
+
+// 判断导引头是否仍在回传数据：帧编号超过 Exguide_FrameLostMs 未变化即认为通信中断
+bool SerialPortImage::isImageFrameUpdated()
+{
+    // 没有注入 ImageData 时无从判断链路，保持原有行为（继续外引导）
+    if (!m_imageData)
+        return true;
+
+    // 帧编号由主线程解析帧数据时写入（原子量），这里只取一次快照
+    const int seq = m_imageData->bFrameSequence();
+    if (seq != m_lastExGuideFrameSeq) {
+        m_lastExGuideFrameSeq = seq;
+        m_exGuideFrameClock.restart();
+        return true;
+    }
+
+    // 帧编号没变：还没超过判定时长就再等等（5ms 定时器同一帧内会多次进入本函数）
+    if (!m_exGuideFrameClock.isValid())
+        return true;
+    return m_exGuideFrameClock.elapsed() < Exguide_FrameLostMs;
+}
+
+// 通信中断处理：不再进行外引导，退出外引导模式并请求弹窗提示
+void SerialPortImage::abortExGuideByLinkLost()
+{
+    // 先停掉定时器并解绑，保证中断期间不会再把外推角度发给转台
+    if (m_exGuideTimer) {
+        m_exGuideTimer->stop();
+        disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+    }
+    m_sendCount_1s = 0;
+    m_abNeedReset = true;          // 重新进入外引导时用当帧测量重建滤波器
+    m_lastexguidesetting = -1;     // 本次绑定作废，重新选中外引导模式时会重新绑定并重启定时器
+    m_lastExGuideFrameSeq = -1;    // 看门狗复位
+    m_exGuideFrameClock.invalidate();
+    exindex = -1;                  // 退出外引导模式（等界面重新选择）
+
+    // 工作线程只发信号：主线程收到后弹窗提示，并把界面上的外引导模式取消
+    emit exguideLinkLost(QStringLiteral("图像导引头帧编号未更新，外引导通信中断，已退出外引导模式"));
 }
 
 ImageData* SerialPortImage::imageData() const

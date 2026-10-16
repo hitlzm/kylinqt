@@ -7,6 +7,22 @@ import "./"
 Item{
     id: root
     property int myindex: -1
+
+    // 外引导通信中断（导引头帧编号停止更新）时，C++ 侧已经退出外引导模式，
+    // 这里同步取消界面上的「外引导模式」单选：互斥组置为 Unchecked 会取消
+    // 当前选中项，避免界面仍显示外引导模式而实际已停止外引导。
+    function exitExGuideMode() {
+        if (radio1.checked) {
+            modeGroup.checkState = Qt.Unchecked
+            root.myindex = -1
+        }
+    }
+
+    Connections {
+        target: modeController
+        onExguideAborted: root.exitExGuideMode()
+    }
+
     GroupBox {
         background: Rectangle {
         color: "transparent"

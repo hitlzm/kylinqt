@@ -5,6 +5,7 @@
 #include "./circularbuffer.h"
 #include <atomic>
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include "kalman/AlphaBetaTracker.h"
 
@@ -123,9 +124,9 @@ public:
     int platformSelfCheck() const;
     int servoRunningTime() const;
     int servoStep() const;
-    int infraredFrameNum() const;
+    int infraredFrameNum() const;  //红外帧号
     int temperture() const;
-    int cbhTv4405() const;
+    int cbhTv4405() const;       //电视帧号
     int infraredFrameRate() const;
     int tvFrameRate() const;
     int gateSize() const;
@@ -367,7 +368,7 @@ public:
     int templateIndex() const { return m_templateIndex; }
 
     // ── 偏差像素桥接：QML → ImageSendData → SerialPortImage ──
-    Q_INVOKABLE void relayDeviationPixel(int x, int y) { emit deviationPixelRelayed(x, y); }
+    Q_INVOKABLE void relayDeviationPixel(int x, int y, int infraredFrameNum, int cbhTv4405, int templateIndex) { emit deviationPixelRelayed(x, y, infraredFrameNum, cbhTv4405, templateIndex); }
 
 signals:
     // ── 只保留 QML 需要绑定/读回的参数变更信号（与上面的 Q_PROPERTY 一一对应）──
@@ -387,7 +388,7 @@ signals:
     void captureRefImgCmdChanged();
 
     void requestSendData(image_send_frame frame);
-    void deviationPixelRelayed(int x, int y);
+    void deviationPixelRelayed(int x, int y,int infraredFrameNum, int cbhTv4405, int templateIndex);
 
 public slots:
     //用于构建偏差像素发送帧
@@ -497,6 +498,9 @@ signals:
     void imageFrameReceived(const QByteArray &rawData);
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
+    // 外引导过程中导引头帧编号(bFrameSequence)不再更新，即通信中断：
+    // 工作线程只负责发信号，由主线程弹窗提示并复位外引导模式选择
+    void exguideLinkLost(const QString &msg);
     void reqTimesync(int seconds);
     void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
     void reqExsend_5ms(double angle1 ,double angle2 );
@@ -510,18 +514,18 @@ public slots:
     void ExmodeChanged(int mode);
 
     
-    void recvDeviationPixel(int x ,int y){
+    void recvDeviationPixel(int x ,int y,int infraredFrameNum, int cbhTv4405, int templateIndex){
         //后期修改：可以判断串口是否打开，未打开时弹窗提示：未打开图像串口，无法发送偏差像素
         //获取图像帧序号 or电视帧序号
-        if(m_imageSendData->templateIndex() == 0)
+        if(templateIndex == 0)
         {
             //读取电视帧序号
-            Cbh_tv = m_imageData->cbhTv4405();
-            reqSendDeviationPixel(Cbh_tv,x,y);
+            // Cbh_tv = cbhTv4405;
+            reqSendDeviationPixel(cbhTv4405,x,y);
         }else{
             //读取红外帧序号
-            Infrared_num = m_imageData->infraredFrameNum();
-            reqSendDeviationPixel(Infrared_num,x,y);
+            // Infrared_num = infraredFrameNum;
+            reqSendDeviationPixel(infraredFrameNum,x,y);
         }
         // x与y为偏差像素信息
     };
@@ -556,8 +560,21 @@ private:
     int m_startvalue =0 ;
     
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器 ，和串口发送定时器不同
-    int Cbh_tv; //电视帧编号
-    int Infrared_num; //红外帧编号
+    // int Cbh_tv; //电视帧编号
+    // int Infrared_num; //红外帧编号
+
+    // ── 外引导通信看门狗（依据帧编号 bFrameSequence）──
+    // 图像导引头约每 20ms 回传一帧，帧编号每收到一帧就变一次，可当作链路心跳：
+    // 帧编号还在变说明导引头仍在回传实时角度；一旦停止变化，说明反馈已中断，
+    // 此时若继续外引导，送给转台的就是滤波器外推出来的陈旧角度，必须停下来。
+    // 注意 5ms 外引导定时器的周期小于图像帧周期(20ms)，同一帧内会被调用多次，
+    // 所以判断依据不是“与上一拍相比是否变化”，而是“帧编号已多久没变化”。
+    int m_lastExGuideFrameSeq = -1;   // 上一次观察到的帧编号
+    QElapsedTimer m_exGuideFrameClock; // 帧编号最近一次发生变化的时间点
+    void armExGuideFrameWatch();      // 外引导启动时用当前帧编号作基准，开始计时
+    bool isImageFrameUpdated();       // 帧编号是否仍在更新（否则视为通信中断）
+    void abortExGuideByLinkLost();    // 通信中断：退出外引导模式并请求弹窗提示
+
     QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，攒到完整帧头+固定帧长再切出交给 parseData
 };
 

@@ -367,6 +367,12 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::exguideSerialNotOpen, imageData, &ImageData::popupMessage, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::exguideSerialNotOpen, ccdData, &CCDData::popupMessage, Qt::QueuedConnection);
 
+    // 外引导过程中图像导引头帧编号不再更新（通信中断）：弹窗提示，
+    // 并让模式控制器退出外引导模式、通知界面取消外引导模式单选
+    QObject::connect(imagePort, &SerialPortImage::exguideLinkLost, imageData, &ImageData::popupMessage, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::exguideLinkLost,
+                     &m_modeController, &ModeController::onExguideLinkLost, Qt::QueuedConnection);
+
     //手柄信号连接
     QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntableHex::sendHandleMode, Qt::QueuedConnection);
 

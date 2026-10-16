@@ -322,7 +322,7 @@ Rectangle {
         }
         onReqDeviationToImg: {
             console.log("偏差像素请求: (" + frameX + ", " + frameY + ")")
-            imageSendData.relayDeviationPixel(frameX, frameY)
+            imageSendData.relayDeviationPixel(frameX, frameY,imageData.infraredFrameNum,imageData.cbhTv4405,imageSendData.m_templateIndex)   //再加入红外/电视画面帧，模板序号 一并传输
         }
         onErrorReadingPixel: {
             console.warn("读取像素失败:", message)
