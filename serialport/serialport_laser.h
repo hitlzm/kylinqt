@@ -382,7 +382,7 @@ private:
     uint8_t xorChecksum(const QByteArray& data);
     //维护一个存储导引头反馈的俯仰角与方位角的数据容器
     //激光导引头数据周期为10ms，3s接收300个数据，环形缓冲区大小设置为360
-    CircularBuffer<laserExGuideData> m_circularbuf;
+    // CircularBuffer<laserExGuideData> m_circularbuf;
 
     // Alpha-Beta 跟踪管理器：每10ms更新滤波，1s定时器外推预测角度
     ABTrackManager m_abMgr{SeekerType::Laser};

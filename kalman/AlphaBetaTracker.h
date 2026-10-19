@@ -50,9 +50,12 @@ public:
      * @param minAngle Clamp模式下最小角度
      * @param maxAngle Clamp模式下最大角度
      */
+    // 通用折中参数：比旧 0.85/0.05 更平滑且速度修正更快。
+    // 基于 tests/filter_sim/ab_tuning_sweep.cpp 的 50/100Hz、机动、
+    // 野值和停止场景扫描结果选定。
     explicit AlphaBetaTracker(
-            double alpha = 0.85,
-            double beta = 0.05,
+            double alpha = 0.50,
+            double beta = 0.15,
             AngleMode mode = AngleMode::Wrap180,
             double minAngle = -90.0,
             double maxAngle = 90.0);
@@ -106,6 +109,45 @@ public:
     qint64 lastTimestamp() const;
 
     int missCount() const;
+
+    /**
+     * @brief 配置角度创新门限
+     *
+     * @param minAngleDeg 自适应门限下限（°）
+     * @param maxAngleDeg 自适应门限上限（°）
+     * @param gamma       残差标准差倍数
+     * @param sigmaTauSec 残差标准差自适应时间常数（秒）
+     * @param reacquireFrames 连续超门限且彼此一致的帧数，达到后重捕
+     */
+    void setInnovationGate(double minAngleDeg,
+                           double maxAngleDeg,
+                           double gamma = 4.0,
+                           double sigmaTauSec = 0.5,
+                           int reacquireFrames = 3);
+
+    void disableInnovationGate();
+
+    bool innovationGateEnabled() const;
+
+    /**
+     * @brief 最近一帧使用的门限（°）
+     */
+    double innovationGate() const;
+
+    /**
+     * @brief 最近一帧的预测残差（°）
+     */
+    double innovation() const;
+
+    /**
+     * @brief 最近一帧量测是否被接受。无测量时为 false。
+     */
+    bool lastMeasurementAccepted() const;
+
+    /**
+     * @brief 当前航迹累计拒绝量测数（诊断用）
+     */
+    int rejectedMeasurementCount() const;
 
     //------------------------------
     // 预测
@@ -182,6 +224,14 @@ private:
      */
     void predictOnly(double dt);
 
+    void updateInnovationStats(double innovation,
+                               double dt);
+
+    bool checkReacquire(double measurement,
+                        double gate);
+
+    void resetInnovationTracking();
+
     /**
      * @brief 根据模式规范化角度
      */
@@ -252,6 +302,36 @@ private:
     double m_minAngle;
 
     double m_maxAngle;
+
+    //-----------------------------------
+    // 量测创新门限
+    //-----------------------------------
+
+    bool m_gateEnabled;
+
+    double m_gateMin;
+
+    double m_gateMax;
+
+    double m_gateGamma;
+
+    double m_gateTauSec;
+
+    double m_gateSigmaSq;
+
+    int m_reacquireFrames;
+
+    int m_reacquireCount;
+
+    double m_reacquireAngle;
+
+    int m_rejectedMeasurements;
+
+    double m_lastInnovation;
+
+    double m_lastGate;
+
+    bool m_lastMeasurementAccepted;
 };
 
 #include "../serialport/serialport.h"  // sendExGuideData

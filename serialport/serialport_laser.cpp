@@ -413,7 +413,7 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
     : SerialPort(parent)
     , m_laserData(new LaserData(nullptr))        // 留在主线程，不随 moveToThread 迁移
     , m_laserSendData(new LaserSendData(nullptr))
-    , m_circularbuf(360)
+    //, m_circularbuf(360)
 {
 
 }

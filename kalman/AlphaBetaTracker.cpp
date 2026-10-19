@@ -30,6 +30,16 @@ AlphaBetaTracker::AlphaBetaTracker(double alpha,
     m_dtMin = 0.002;           // 2ms 以下：重复帧/时间戳回退 → 丢弃该帧
     m_dtMax = 0.20;            // 200ms 以上：数据中断 → 重新初始化
 
+    // 单独构造 AlphaBetaTracker 时门限默认关闭；
+    // ABTrackManager 会按导引头类型默认启用。
+    m_gateEnabled = false;
+    m_gateMin = 0.30;
+    m_gateMax = 1.00;
+    m_gateGamma = 4.0;
+    m_gateTauSec = 0.5;
+    m_reacquireFrames = 3;
+    m_rejectedMeasurements = 0;
+
     reset();
 }
 
@@ -46,6 +56,9 @@ void AlphaBetaTracker::reset()
     m_velocity = 0.0;
 
     m_saturated = false;
+
+    m_rejectedMeasurements = 0;
+    resetInnovationTracking();
 }
 
 void AlphaBetaTracker::init(double angle,
@@ -64,6 +77,8 @@ void AlphaBetaTracker::init(double angle,
     m_velocity = 0.0;
 
     m_saturated = false;
+
+    resetInnovationTracking();
 }
 
 bool AlphaBetaTracker::initialized() const
@@ -94,6 +109,122 @@ qint64 AlphaBetaTracker::lastTimestamp() const
 int AlphaBetaTracker::missCount() const
 {
     return m_missCount;
+}
+
+void AlphaBetaTracker::setInnovationGate(double minAngleDeg,
+                                         double maxAngleDeg,
+                                         double gamma,
+                                         double sigmaTauSec,
+                                         int reacquireFrames)
+{
+    if (!(minAngleDeg > 0.0) || !std::isfinite(minAngleDeg))
+        minAngleDeg = 0.30;
+    if (!(maxAngleDeg > 0.0) || !std::isfinite(maxAngleDeg))
+        maxAngleDeg = 1.00;
+    if (maxAngleDeg < minAngleDeg)
+        std::swap(minAngleDeg, maxAngleDeg);
+    if (!(gamma > 0.0) || !std::isfinite(gamma))
+        gamma = 4.0;
+    if (!(sigmaTauSec > 0.0) || !std::isfinite(sigmaTauSec))
+        sigmaTauSec = 0.5;
+    if (reacquireFrames < 1)
+        reacquireFrames = 1;
+
+    m_gateEnabled = true;
+    m_gateMin = minAngleDeg;
+    m_gateMax = maxAngleDeg;
+    m_gateGamma = gamma;
+    m_gateTauSec = sigmaTauSec;
+    m_reacquireFrames = reacquireFrames;
+    m_rejectedMeasurements = 0;
+    resetInnovationTracking();
+}
+
+void AlphaBetaTracker::disableInnovationGate()
+{
+    m_gateEnabled = false;
+    m_rejectedMeasurements = 0;
+    resetInnovationTracking();
+}
+
+bool AlphaBetaTracker::innovationGateEnabled() const
+{
+    return m_gateEnabled;
+}
+
+double AlphaBetaTracker::innovationGate() const
+{
+    const double sigma = std::sqrt(std::max(0.0, m_gateSigmaSq));
+    double gate = m_gateGamma * sigma;
+    gate = std::max(m_gateMin, gate);
+    gate = std::min(m_gateMax, gate);
+    return gate;
+}
+
+double AlphaBetaTracker::innovation() const
+{
+    return m_lastInnovation;
+}
+
+bool AlphaBetaTracker::lastMeasurementAccepted() const
+{
+    return m_lastMeasurementAccepted;
+}
+
+int AlphaBetaTracker::rejectedMeasurementCount() const
+{
+    return m_rejectedMeasurements;
+}
+
+void AlphaBetaTracker::resetInnovationTracking()
+{
+    const double initialSigma = m_gateMin / m_gateGamma;
+    m_gateSigmaSq = initialSigma * initialSigma;
+    m_reacquireCount = 0;
+    m_reacquireAngle = 0.0;
+    m_lastInnovation = 0.0;
+    m_lastGate = m_gateMin;
+    m_lastMeasurementAccepted = false;
+}
+
+void AlphaBetaTracker::updateInnovationStats(double innovation,
+                                             double dt)
+{
+    if (dt <= 0.0)
+        return;
+
+    const double lambda =
+            std::min(1.0, std::max(0.0, dt / m_gateTauSec));
+    const double sampleSq = innovation * innovation;
+    m_gateSigmaSq =
+            (1.0 - lambda) * m_gateSigmaSq + lambda * sampleSq;
+}
+
+bool AlphaBetaTracker::checkReacquire(double measurement,
+                                      double gate)
+{
+    const int required = std::max(1, m_reacquireFrames);
+    if (m_reacquireCount == 0)
+    {
+        m_reacquireAngle = measurement;
+        m_reacquireCount = 1;
+        return required <= 1;
+    }
+
+    const double step =
+            std::fabs(angleResidual(measurement, m_reacquireAngle));
+    const double maxStep = std::max(gate, m_gateMin);
+
+    if (step > maxStep)
+    {
+        m_reacquireAngle = measurement;
+        m_reacquireCount = 1;
+        return required <= 1;
+    }
+
+    m_reacquireAngle = measurement;
+    ++m_reacquireCount;
+    return m_reacquireCount >= required;
 }
 
 void AlphaBetaTracker::setAlpha(double alpha)
@@ -212,9 +343,13 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
     if (!m_initialized)
     {
         if (!hasMeasurement)
+        {
+            m_lastMeasurementAccepted = false;
             return false;
+        }
 
         init(measurement, timestampMs);
+        m_lastMeasurementAccepted = true;
         return true;
     }
 
@@ -227,18 +362,25 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
     // ① 重复帧 / 时间戳回退（dt<=0，含 NaN）：整帧丢弃。
     //    不推进 m_lastTimestamp、不计丢失，下一帧用正确时间基准重新算 dt。
     if(!(dtRaw > 0.0))
+    {
+        m_lastMeasurementAccepted = false;
         return false;
+    }
 
     // ② 时间戳过密（小于 dtMin，多为毫秒取整造成的同一毫秒双帧）：
     //    同样丢弃，避免 β·残差/dt 把角速度放大一个数量级。
     if(dtRaw < m_dtMin)
+    {
+        m_lastMeasurementAccepted = false;
         return false;
+    }
 
     // ③ 数据中断（大于 dtMax）：陈旧速度已无意义，直接用本帧测量重建状态。
     if(dtRaw > m_dtMax)
     {
         if(!hasMeasurement)
         {
+            m_lastMeasurementAccepted = false;
             ++m_missCount;
             if(m_missCount >= m_missThreshold)
                 m_lost = true;
@@ -246,6 +388,7 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
         }
 
         init(measurement, timestampMs);   // 角度=测量值、速度=0、饱和标志清零
+        m_lastMeasurementAccepted = true;
         return true;
     }
 
@@ -260,11 +403,47 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
     //--------------------------------------
     if (hasMeasurement)
     {
+        const double predicted =
+                normalizeAngle(m_angle + m_velocity * dt);
+        const double residual =
+                angleResidual(measurement, predicted);
+        const double gate = innovationGate();
+
+        m_lastInnovation = residual;
+        m_lastGate = gate;
+
+        if (m_gateEnabled && std::fabs(residual) > gate)
+        {
+            ++m_rejectedMeasurements;
+            m_lastMeasurementAccepted = false;
+
+            // 异常帧只推进预测状态，不使用该量测修正角度或速度。
+            predictOnly(dt);
+            ++m_missCount;
+            if (m_missCount >= m_missThreshold)
+                m_lost = true;
+
+            if (checkReacquire(measurement, gate))
+            {
+                // 连续异常帧彼此一致，认为目标确实发生了大范围移动，
+                // 用最新量测重建航迹，速度从零重新估计。
+                init(measurement, timestampMs);
+                m_lastInnovation = residual;
+                m_lastGate = gate;
+                m_lastMeasurementAccepted = true;
+                return true;
+            }
+            return false;
+        }
+
         correct(measurement, dt);
 
         m_missCount = 0;
 
         m_lost = false;
+        m_reacquireCount = 0;
+        m_lastMeasurementAccepted = true;
+        updateInnovationStats(residual, dt);
 
         return true;
     }
@@ -273,6 +452,9 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
     // 无测量
     //--------------------------------------
     predictOnly(dt);
+
+    m_reacquireCount = 0;
+    m_lastMeasurementAccepted = false;
 
     ++m_missCount;
 
@@ -483,25 +665,36 @@ double AlphaBetaTracker::angleResidual(
 ABTrackManager::ABTrackManager(SeekerType type)
     : sys_time(0)
 {
-    double az_limit, el_limit;
+    double az_limit = 18.0;
+    double el_limit = 18.0;
+    double gate_min = 0.50;
+    double gate_max = 1.50;
 
     switch (type)
     {
     case SeekerType::Laser:
         az_limit = 20.0;
         el_limit = 20.0;
+        gate_min = 0.30;
+        gate_max = 1.00;
         break;
     case SeekerType::Image:
         az_limit = 18.0;
         el_limit = 18.0;
+        gate_min = 0.50;
+        gate_max = 1.50;
         break;
     case SeekerType::CCD_Wide:
         az_limit = 27.0;
         el_limit = 16.0;
+        gate_min = 0.50;
+        gate_max = 1.50;
         break;
     case SeekerType::CCD_Tele:
         az_limit = 1.33;
         el_limit = 0.75;
+        gate_min = 0.20;
+        gate_max = 0.60;
         break;
     }
 
@@ -510,6 +703,11 @@ ABTrackManager::ABTrackManager(SeekerType type)
 
     el_tracker.setAngleMode(AngleMode::Clamp);
     el_tracker.setClampRange(-el_limit, el_limit);
+
+    // 默认启用创新门限。各数据源门限根据当前测试残差分布选取，
+    // 现场噪声明显不同或 CCD 焦距切换时应重新调用 setInnovationGate。
+    az_tracker.setInnovationGate(gate_min, gate_max, 4.0, 0.5, 3);
+    el_tracker.setInnovationGate(gate_min, gate_max, 4.0, 0.5, 3);
 }
 
 void ABTrackManager::Init(double az0, double el0, qint64 timestampMs)

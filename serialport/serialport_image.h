@@ -540,7 +540,7 @@ private:
     ImageData *m_imageData = nullptr;
     ImageSendData *m_imageSendData = nullptr;
     //图像导引头每20ms接收一次数据，1s共50组数据，预留200个位置
-    CircularBuffer<imageExGuideData> m_circularbuf;
+    // CircularBuffer<imageExGuideData> m_circularbuf;
     // Alpha-Beta 跟踪管理器：每20ms更新滤波，1s定时器外推预测角度
     ABTrackManager m_abMgr{SeekerType::Image};
     qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每20ms+20

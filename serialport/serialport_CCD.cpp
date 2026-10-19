@@ -43,6 +43,13 @@ void SerialPortCCD::updateFovLimits()
     double elLimit = m_vFov / 2.0;
     m_abMgr.AzTracker().setClampRange(-azLimit, azLimit);
     m_abMgr.ElTracker().setClampRange(-elLimit, elLimit);
+
+    // 远焦视场更小，像素抖动折算到角度后的异常波动也应更小。
+    const bool tele = m_hFov < 10.0f;
+    const double gateMin = tele ? 0.20 : 0.50;
+    const double gateMax = tele ? 0.60 : 1.50;
+    m_abMgr.AzTracker().setInnovationGate(gateMin, gateMax, 4.0, 0.5, 3);
+    m_abMgr.ElTracker().setInnovationGate(gateMin, gateMax, 4.0, 0.5, 3);
 }
 void SerialPortCCD::senddigZoomopen()
 {

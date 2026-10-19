@@ -596,7 +596,7 @@ SerialPortImage::SerialPortImage(QObject *parent)
     : SerialPort(parent)
     , m_imageData(new ImageData(nullptr))        // 留在主线程，不随 moveToThread 迁移
     , m_imageSendData(new ImageSendData(nullptr))
-    , m_circularbuf(200)
+    //, m_circularbuf(200)
 {
     init_crc16_table();
 }

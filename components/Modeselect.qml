@@ -40,7 +40,7 @@ Item{
             color: 'black'
             anchors.verticalCenter: parent.verticalCenter
         }
-        ButtonGroup { id: modeGroup }
+    ButtonGroup { id: modeGroup }
     CusRadioButton {
         id: radio1
         width: 160
