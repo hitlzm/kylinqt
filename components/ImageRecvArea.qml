@@ -437,10 +437,10 @@ Rectangle {
                         text: "内框（滚转轴）"
                         font.pixelSize: 18
                         font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
+                        horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int innerstatus: turntableData.inner_statusnumber
                         onInnerstatusChanged: {
@@ -473,12 +473,12 @@ Rectangle {
                         }
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: String(turntableData.inner_angle)
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: String(turntableData.inner_ctlDeviation)
                     }
@@ -492,10 +492,10 @@ Rectangle {
                         text: "中框（俯仰轴）"
                         font.pixelSize: 18
                         font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
+                        horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int middlestatus: turntableData.middle_statusnumber
                         onMiddlestatusChanged: {
@@ -528,12 +528,12 @@ Rectangle {
                         }
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: String(turntableData.middle_angle)
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: String(turntableData.middle_ctlDeviation)
                     }
@@ -547,10 +547,10 @@ Rectangle {
                         text: "外框（方位轴）"
                         font.pixelSize: 18
                         font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
+                        horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int outterstatus: turntableData.outter_statusnumber
                         onOutterstatusChanged: {
@@ -583,12 +583,12 @@ Rectangle {
                         }
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: String(turntableData.outter_angle)
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: String(turntableData.outter_ctlDeviation)
                     }

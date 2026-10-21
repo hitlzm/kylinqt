@@ -9,289 +9,251 @@ Item{
     anchors.fill: parent
 
     property var controlNames: [
-        "三轴控制",
-        "内框控制",
-        "中框控制",
-        "外框控制"
+        "内框（滚转轴）",
+        "中框（俯仰轴）",
+        "外框（方位轴）"
     ]
 
-    property var myNumbers:[]
+    // 三个轴的联动选择。勾选只表示该轴参与联动，不改变单轴发送入口。
+    property bool innerLinked: true
+    property bool middleLinked: true
+    property bool outterLinked: true
 
-    // 数字提取函数
-    function extractNumbers(str) {
-        // 使用正则分割：支持英文逗号、中文逗号、以及它们周围的空白字符
-        var parts = str.split(/[,，\s]+/);
-        var numbers = [];
-        for (var i = 0; i < parts.length; i++) {
-            var trimmed = parts[i].trim();
-            if (trimmed === "") continue;
-            var num = parseFloat(trimmed);
-            if (!isNaN(num)) {
-                numbers.push(num);
-            }
-        }
-        return numbers;  // 返回数字数组
+    function setLinked(axisIndex, checked) {
+        if (axisIndex === 0) innerLinked = checked
+        else if (axisIndex === 1) middleLinked = checked
+        else if (axisIndex === 2) outterLinked = checked
     }
 
-    // 角度格式化：固定两位小数，非法值按 0 处理
-    function formatAngle(value) {
-        var num = Number(value)
-        return isFinite(num) ? num.toFixed(2) : "0.00"
+    function linked(axisIndex) {
+        if (axisIndex === 0) return innerLinked
+        if (axisIndex === 1) return middleLinked
+        if (axisIndex === 2) return outterLinked
+        return false
     }
 
-    // 读取转台当前角度：TurntableData 中实时反馈的 current 角度
-    // （inner_angle / middle_angle / outter_angle 即各轴当前角度）
-    function currentAngles() {
-        var angles = { inner: 0, middle: 0, outter: 0 }
-        if (typeof turntableData !== "undefined" && turntableData) {
-            angles.inner = Number(turntableData.inner_angle) || 0
-            angles.middle = Number(turntableData.middle_angle) || 0
-            angles.outter = Number(turntableData.outter_angle) || 0
-        }
-        return angles
+    function normalisedNumber(text) {
+        var value = Number(text)
+        return isFinite(value) ? value : 0
     }
 
-    // 一键填入起点：把当前角度写进各行「起点(度)」输入框
-    function fillStartAngles() {
-        var cur = currentAngles()
-        // 各行起点文本：三轴控制依次为 内框、中框、外框
-        var texts = [
-            formatAngle(cur.inner) + ", " + formatAngle(cur.middle) + ", " + formatAngle(cur.outter),
-            formatAngle(cur.inner),
-            formatAngle(cur.middle),
-            formatAngle(cur.outter)
-        ]
-
-        for (var i = 0; i < angleRowRepeater.count && i < texts.length; ++i) {
-            var row = angleRowRepeater.itemAt(i)
-            if (row) {
-                row.startText = texts[i]
-            }
-        }
-
-        // 同步写入发送数据对象，保证「发送数据」用的起点与界面一致
-        // （程序改 text 不会触发 onEditingFinished）
-        if (typeof turntableSendData !== "undefined" && turntableSendData) {
-            turntableSendData.inner_startangle = cur.inner
-            turntableSendData.middle_startangle = cur.middle
-            turntableSendData.outter_startangle = cur.outter
-        }
-    }
-
-    Row {
-        id: sinRow
-        spacing: 10
-
+    RowLayout {
+        id: modeRow
+        spacing: 8
         anchors.top: parent.top
         anchors.topMargin: 10
-        anchors.left: parent. left
-        anchors.leftMargin: 20 
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
 
-        // 一键填入起始位置
-        CusButton_Blue {
-            text: "一键填入起点"
-            font.pixelSize: 15
-            width: 100
-            height: 35
-            onClicked: {
-                fillStartAngles()
-            }
+        Text {
+            text: "模式选择："
+            font.pixelSize: 16
+            font.bold: true
+            color: "#000000"
+            Layout.alignment: Qt.AlignVCenter
         }
-        // 正弦运动幅度
+        CusComboBox {
+            id: programModeComboBox
+            Layout.preferredWidth: 110
+            Layout.preferredHeight: 35
+            model: ["位置模式", "速率模式"]
+            popupMinWidth: 130
+        }
+
         Text {
             text: "正弦运动幅度："
-            font.pixelSize: 18
+            font.pixelSize: 16
             font.bold: true
             color: "#000000"
-            anchors.verticalCenter: sinInput.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
         }
-        CusTextField{
-                    id:sinInput
-                    horizontalAlignment: TextInput.AlignHCenter
-                    // 垂直居中：设置垂直居中对齐和相同的上下内边距
-                    verticalAlignment: TextInput.AlignVCenter
-                    height: 35
-                    width: 120
-                    //区分是哪种控制方式，给不同变量赋值
-                    onEditingFinished: {
-                        var mynumber = extractNumbers(text);    
-                    }
+        CusTextField {
+            id: sinInput
+            Layout.preferredWidth: 80
+            Layout.preferredHeight: 35
+            horizontalAlignment: TextInput.AlignHCenter
+            verticalAlignment: TextInput.AlignVCenter
+            placeholderText: "0.0000"
         }
-        // 正弦运动频率
+
         Text {
             text: "正弦运动频率："
-            font.pixelSize: 18
+            font.pixelSize: 16
             font.bold: true
             color: "#000000"
-            anchors.verticalCenter: sinInput.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
         }
-        CusTextField{
-                    id:frequencyInput
-                    horizontalAlignment: TextInput.AlignHCenter
-                    // 垂直居中：设置垂直居中对齐和相同的上下内边距
-                    verticalAlignment: TextInput.AlignVCenter
-                    height: 35
-                    width: 120
-                    //区分是哪种控制方式，给不同变量赋值
-                    onEditingFinished: {
-                        var mynumber = extractNumbers(text);    
-                    }
+        CusTextField {
+            id: frequencyInput
+            Layout.preferredWidth: 80
+            Layout.preferredHeight: 35
+            horizontalAlignment: TextInput.AlignHCenter
+            verticalAlignment: TextInput.AlignVCenter
+            placeholderText: "0.0000"
         }
     }
 
-    ColumnLayout{
-        //anchors.fill: parent
-        //anchors.width: parent.width
+    ColumnLayout {
         anchors.left: parent.left
-        anchors.leftMargin: 10  
-        anchors.top: sinRow.bottom
-        anchors.topMargin: 20
-        spacing: 25
-        RowLayout{
-            spacing: 10
+        anchors.leftMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        anchors.top: modeRow.bottom
+        anchors.topMargin: 18
+        spacing: 16
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 11
             Layout.alignment: Qt.AlignLeft
 
-            // 占位：对齐下方控制名列（width: 120）
-            Item { Layout.preferredWidth: 80 }
-
+            Item { Layout.preferredWidth: 118 }
             Text {
-                text: "起点(度)"
-                font.pixelSize: 20
+                text: "目标位置(°)"
+                font.pixelSize: 14
                 font.bold: true
                 color: "#000000"
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 85
                 horizontalAlignment: Text.AlignHCenter
             }
             Text {
-                text: "终点(度)"
-                font.pixelSize: 20
+                text: "速度(°/s)"
+                font.pixelSize: 14
                 font.bold: true
                 color: "#000000"
-                Layout.preferredWidth: 150
+                Layout.preferredWidth: 75
                 horizontalAlignment: Text.AlignHCenter
             }
             Text {
-                text: "运动时间（秒）"
-                font.pixelSize: 20
+                text: "加速度(°/s²)"
+                font.pixelSize: 14
                 font.bold: true
                 color: "#000000"
-                Layout.preferredWidth: 100
+                Layout.preferredWidth: 88
                 horizontalAlignment: Text.AlignHCenter
             }
-            // 占位：对齐下方按钮列（Layout.fillWidth: true）
-            Item { Layout.fillWidth: true }
+            Text {
+                text: "运动时间(s)"
+                font.pixelSize: 14
+                font.bold: true
+                color: "#000000"
+                Layout.preferredWidth: 72
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Text {
+                text: "联动"
+                font.pixelSize: 14
+                font.bold: true
+                color: "#000000"
+                Layout.preferredWidth: 45
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Item { Layout.preferredWidth: 48 }
+            Item { Layout.preferredWidth: 48 }
         }
 
         Repeater {
             id: angleRowRepeater
             model: root.controlNames
             delegate: RowLayout {
-                spacing: 10
+                Layout.fillWidth: true
+                spacing: 11
                 Layout.alignment: Qt.AlignLeft
-
-                // 供「一键填入起点」按钮访问本行起点输入框
-                property alias startText: input1.text
 
                 Text {
                     text: controlNames[index]
-                    font.pixelSize: 20
+                    font.pixelSize: 15
                     font.bold: true
                     color: '#000000'
-                    Layout.preferredWidth: 80
+                    Layout.preferredWidth: 118
                 }
 
-                CusTextField{
-                    id:input1
-                    // width:150
+                CusTextField {
+                    id: targetInput
                     horizontalAlignment: TextInput.AlignHCenter
-                    // 垂直居中：设置垂直居中对齐和相同的上下内边距
                     verticalAlignment: TextInput.AlignVCenter
-                    Layout.preferredHeight: 40
-                    Layout.preferredWidth: 150
-                    //区分是哪种控制方式，给不同变量赋值
+                    Layout.preferredHeight: 38
+                    Layout.preferredWidth: 85
+                    placeholderText: "0.0000"
                     onEditingFinished: {
-                        var mynumber = extractNumbers(text);
-                        if (index === 0) {                            // 三轴控制
-                            turntableSendData.inner_startangle = mynumber[0] || 0;
-
-                            turntableSendData.middle_startangle = mynumber[1] || 0;
-
-                            turntableSendData.outter_startangle = mynumber[2] || 0;
-                            turntableSendData.index = 0;
-                            
-                        } else if (index === 1) {
-                            turntableSendData.inner_startangle = Number(text)
-                            // turntableSendData.index = 1;
-                        } else if (index === 2) {
-                            turntableSendData.middle_startangle = Number(text)
-                            // turntableSendData.index = 2;
-                        } else if (index === 3) {
-                            turntableSendData.outter_startangle = Number(text)
-                            // turntableSendData.index = 3;
-                        } 
+                        var value = root.normalisedNumber(text)
+                        text = value.toFixed(4)
+                        if (index === 0) turntableSendData.inner_endangle = value
+                        else if (index === 1) turntableSendData.middle_endangle = value
+                        else if (index === 2) turntableSendData.outter_endangle = value
                     }
                 }
-                CusTextField{
-                    id:input2
-                    // width:150
-                    Layout.preferredHeight: 40
-                    Layout.preferredWidth: 150
+
+                CusTextField {
+                    id: speedInput
                     horizontalAlignment: TextInput.AlignHCenter
-                    // 垂直居中：设置垂直居中对齐和相同的上下内边距
                     verticalAlignment: TextInput.AlignVCenter
-
+                    Layout.preferredHeight: 38
+                    Layout.preferredWidth: 75
+                    placeholderText: "0.0000"
                     onEditingFinished: {
-                        var mynumber = extractNumbers(text);
-                        if (index === 0) {                            // 三轴控制
-
-                            turntableSendData.inner_endangle = mynumber[0] || 0;
-                            
-                            turntableSendData.middle_endangle = mynumber[1] || 0;
-                            
-                            turntableSendData.outter_endangle = mynumber[2] || 0;
-
-                        } else if (index === 1) {
-                            turntableSendData.inner_endangle = Number(text)
-                        } else if (index === 2) {
-                            turntableSendData.middle_endangle = Number(text)
-                        }else if (index === 3) {
-                            turntableSendData.outter_endangle = Number(text)
-                        }  
+                        text = root.normalisedNumber(text).toFixed(4)
                     }
                 }
-                CusTextField{
-                    id:input3
-                    // width:150
-                    Layout.preferredHeight: 40
-                    Layout.preferredWidth: 100
+
+                CusTextField {
+                    id: accelerationInput
                     horizontalAlignment: TextInput.AlignHCenter
-                    // 垂直居中：设置垂直居中对齐和相同的上下内边距
                     verticalAlignment: TextInput.AlignVCenter
+                    Layout.preferredHeight: 38
+                    Layout.preferredWidth: 88
+                    placeholderText: "0.0000"
                     onEditingFinished: {
-                            turntableSendData.runtime = Number(text)
+                        text = root.normalisedNumber(text).toFixed(4)
                     }
                 }
-                CusButton_Blue {
-                id: sendButton
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-                text: "发送数据"
 
-                onClicked: {
-                    turntableSendData.buildFrame(index)
+                CusTextField {
+                    id: runtimeInput
+                    horizontalAlignment: TextInput.AlignHCenter
+                    verticalAlignment: TextInput.AlignVCenter
+                    Layout.preferredHeight: 38
+                    Layout.preferredWidth: 72
+                    placeholderText: "1"
+                    onEditingFinished: {
+                        var value = root.normalisedNumber(text)
+                        if (value <= 0) value = 1
+                        text = value.toFixed(2)
+                        turntableSendData.runtime = value
+                    }
                 }
+
+                CusCheckBox {
+                    id: linkedCheckBox
+                    Layout.preferredWidth: 45
+                    Layout.preferredHeight: 38
+                    checked: root.linked(index)
+                    onCheckedChanged: root.setLinked(index, checked)
                 }
 
                 CusButton_Blue {
-                id: sinmoveButton
-                Layout.fillWidth: true
-                Layout.preferredHeight: 40
-                text: "正弦运动"
-                onClicked: {
-                    turntableSendData.buildFrame(index)
+                    id: sendButton
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 38
+                    font.pixelSize: 14
+                    text: "发送"
+                    onClicked: {
+                        turntableSendData.buildFrame(index + 1)
+                    }
                 }
+
+                CusButton_Blue {
+                    id: sinmoveButton
+                    Layout.preferredWidth: 48
+                    Layout.preferredHeight: 38
+                    font.pixelSize: 14
+                    text: "正弦"
+                    onClicked: {
+                        turntableSendData.buildFrame(index + 1)
+                    }
                 }
-                
             }
         }
     }
