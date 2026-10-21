@@ -36,6 +36,24 @@ Rectangle {
     }
     }
 
+    // 转台时间以毫秒为单位，按 4 小时循环，显示为 时:分:秒
+    function formatTurntableTime(timeMs) {
+        var ms = Number(timeMs)
+        if (!isFinite(ms) || ms < 0)
+            return "--"
+
+        var loopMs = Math.floor(ms) % 14400000
+        var totalSeconds = Math.floor(loopMs / 1000)
+        var hours = Math.floor(totalSeconds / 3600)
+        var minutes = Math.floor((totalSeconds % 3600) / 60)
+        var seconds = totalSeconds % 60
+
+        var hh = hours < 10 ? "0" + hours : String(hours)
+        var mm = minutes < 10 ? "0" + minutes : String(minutes)
+        var ss = seconds < 10 ? "0" + seconds : String(seconds)
+        return hh + ":" + mm + ":" + ss
+    }
+
     // ═══════════════════════════════════════════════════════════════
     // 第一行左侧：串口与北斗信息显示框
     // ═══════════════════════════════════════════════════════════════
@@ -393,189 +411,188 @@ Rectangle {
             radius: 8
         }
 
-        // 四行状态数据（纵向排列）
+        // 顶部运行信息 + 三轴分组状态
         Column {
-            spacing: 6
+            spacing: 10
             anchors.centerIn: parent
 
-            // 第一行：时间和序号
+            // 时间和运行指令
             Row {
+                anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 8
-                DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 45; label: "秒时间:"; labelBold: true; value: turntableData.time }
+                DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 100; label: "时间:"; labelBold: true; value: formatTurntableTime(turntableData.time) }
                 DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 30; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.ctlnumber) }
-                //根据控制字，显示具体执行的指令名称
-                // Text {
-                //     text: {
-                //         switch(turntableData.ctlnumber) {
-                //             case 0x01: return "使能"
-                //             case 0x02: return "停车"
-                //             case 0x03: return "回零"
-                //             case 0x04: return "位置"
-                //             case 0x05: return "速率"
-                //             case 0x06: return "摇摆"
-                //             case 0x0a: return "250ms跟踪"
-                //             case 0x0c: return "5ms跟踪"
-                //             case 0x10: return "时间设置"
-                //             case 0x11: return "跟踪修正"
-                //             case 0x1F: return "复位"
-                //             default: return "未知"
-                //         }
-                //     }
-                //     font.pixelSize: 18
-                // }
             }
 
-            // 第二行：内框
+            // 三轴分别显示状态、角度值和偏差
             Row {
-                spacing: 6
-                DataLabel {
-                    fontSize: 18; labelWidth: 68; valueWidth: 150; labelBold: true
-                    label: "内框状态:"
-                    property int innerstatus: turntableData.inner_statusnumber
-                    onInnerstatusChanged: {
-                        if (innerstatus === 0x1F) innermsg.showToast("转台内框驱动器报警")
-                        else if (innerstatus === 0x20) innermsg.showToast("转台内框伺服超差报警")
-                        else if (innerstatus === 0x21) innermsg.showToast("转台内框正向限位报警")
-                        else if (innerstatus === 0x22) innermsg.showToast("转台内框逆向限位报警")
-                        else if (innerstatus === 0x23) innermsg.showToast("转台内框时钟同步报警")
-                        else if (innerstatus === 0x24) innermsg.showToast("转台内框初始化信息报警")
-                        else if (innerstatus === 0x25) innermsg.showToast("转台内框限位开关同时导通")
-                        else if (innerstatus === 0x26) innermsg.showToast("转台内框编码器数据故障报警")
-                        else if (innerstatus === 0x29) innermsg.showToast("转台内框瞬态电流报警")
-                        else if (innerstatus === 0x2A) innermsg.showToast("转台内框连续电流报警")
-                    }
-                    value: {
-                        switch(turntableData.inner_statusnumber) {
-                            case 0x01: return "伺服"
-                            case 0x02: return "回零执行中"
-                            case 0x03: return "位置执行中"
-                            case 0x04: return "速率执行中"
-                            case 0x05: return "速率稳定"
-                            case 0x06: return "摇摆执行中"
-                            case 0x07: return "摇摆稳定"
-                            case 0x08: return "停车执行中"
-                            case 0x09: return "跟踪模式1"
-                            case 0x0A: return "停止跟踪"
-                            case 0x0B: return "跟踪模式2"
-                            case 0x0F: return "速度环模式"
-                            case 0x1F: return "驱动器报警"
-                            case 0x20: return "伺服超差报警"
-                            case 0x21: return "正向限位报警"
-                            case 0x22: return "逆向限位报警"
-                            case 0x23: return "时钟同步报警"
-                            case 0x24: return "初始化报警"
-                            case 0x25: return "限位开关同时导通"
-                            case 0x26: return "编码器故障报警"
-                            case 0x29: return "瞬态电流报警"
-                            case 0x2A: return "连续电流报警"
-                            default: return "未知"
-                        }
-                    }
-                }
-                DataLabel { fontSize: 18; labelWidth: 82; valueWidth: 65; labelBold: true; label: "内框角度值:"; value: String(turntableData.inner_angle) }
-                DataLabel { fontSize: 18; labelWidth: 95; valueWidth: 65; labelBold: true; label: "内框控制偏差:"; value: String(turntableData.inner_ctlDeviation) }
-            }
+                id: axisStatusRow
+                spacing: 14
 
-            // 第三行：中框
-            Row {
-                spacing: 6
-                DataLabel {
-                    fontSize: 18; labelWidth: 68; valueWidth: 150; labelBold: true
-                    label: "中框状态:"
-                    property int middlestatus: turntableData.middle_statusnumber
-                    onMiddlestatusChanged: {
-                        if (middlestatus === 0x1F) middlemsg.showToast("转台中框驱动器报警")
-                        else if (middlestatus === 0x20) middlemsg.showToast("转台中框伺服超差报警")
-                        else if (middlestatus === 0x21) middlemsg.showToast("转台中框正向限位报警")
-                        else if (middlestatus === 0x22) middlemsg.showToast("转台中框逆向限位报警")
-                        else if (middlestatus === 0x23) middlemsg.showToast("转台中框时钟同步报警")
-                        else if (middlestatus === 0x24) middlemsg.showToast("转台中框初始化信息报警")
-                        else if (middlestatus === 0x25) middlemsg.showToast("转台中框限位开关同时导通")
-                        else if (middlestatus === 0x26) middlemsg.showToast("转台中框编码器数据故障报警")
-                        else if (middlestatus === 0x29) middlemsg.showToast("转台中框瞬态电流报警")
-                        else if (middlestatus === 0x2A) middlemsg.showToast("转台中框连续电流报警")
+                // 内框（滚转轴）
+                Column {
+                    spacing: 3
+                    Text {
+                        width: 215
+                        text: "内框（滚转轴）"
+                        font.pixelSize: 18
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
                     }
-                    value: {
-                        switch(turntableData.middle_statusnumber) {
-                            case 0x01: return "伺服"
-                            case 0x02: return "回零执行中"
-                            case 0x03: return "位置执行中"
-                            case 0x04: return "速率执行中"
-                            case 0x05: return "速率稳定"
-                            case 0x06: return "摇摆执行中"
-                            case 0x07: return "摇摆稳定"
-                            case 0x08: return "停车执行中"
-                            case 0x09: return "跟踪模式1"
-                            case 0x0A: return "停止跟踪"
-                            case 0x0B: return "跟踪模式2"
-                            case 0x0F: return "速度环模式"
-                            case 0x1F: return "驱动器报警"
-                            case 0x20: return "伺服超差报警"
-                            case 0x21: return "正向限位报警"
-                            case 0x22: return "逆向限位报警"
-                            case 0x23: return "时钟同步报警"
-                            case 0x24: return "初始化报警"
-                            case 0x25: return "限位开关同时导通"
-                            case 0x26: return "编码器故障报警"
-                            case 0x29: return "瞬态电流报警"
-                            case 0x2A: return "连续电流报警"
-                            default: return "未知"
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "状态："
+                        property int innerstatus: turntableData.inner_statusnumber
+                        onInnerstatusChanged: {
+                            if (innerstatus === 0x1F) innermsg.showToast("转台内框驱动器报警")
+                            else if (innerstatus === 0x20) innermsg.showToast("转台内框伺服超差报警")
+                            else if (innerstatus === 0x21) innermsg.showToast("转台内框正向限位报警")
+                            else if (innerstatus === 0x22) innermsg.showToast("转台内框逆向限位报警")
+                            else if (innerstatus === 0x23) innermsg.showToast("转台内框时钟同步报警")
+                            else if (innerstatus === 0x24) innermsg.showToast("转台内框初始化信息报警")
+                            else if (innerstatus === 0x25) innermsg.showToast("转台内框限位开关同时导通")
+                            else if (innerstatus === 0x26) innermsg.showToast("转台内框编码器数据故障报警")
+                            else if (innerstatus === 0x29) innermsg.showToast("转台内框瞬态电流报警")
+                            else if (innerstatus === 0x2A) innermsg.showToast("转台内框连续电流报警")
+                        }
+                        value: {
+                            switch(turntableData.inner_statusnumber) {
+                                case 0x00: return "空闲"
+                                case 0x01: return "伺服"
+                                case 0x02: return "回零执行中"
+                                case 0x03: return "位置执行中"
+                                case 0x04: return "速率执行中"
+                                case 0x05: return "速率稳定"
+                                case 0x06: return "摇摆执行中"
+                                case 0x07: return "摇摆稳定"
+                                case 0x0a: return "250ms跟踪模式"
+                                case 0x0c: return "5ms跟踪模式"
+                                case 0x0f: return "停车执行中"
+                                default: return "未知"
+                            }
                         }
                     }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "角度值："
+                        value: String(turntableData.inner_angle)
+                    }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "偏差："
+                        value: String(turntableData.inner_ctlDeviation)
+                    }
                 }
-                DataLabel { fontSize: 18; labelWidth: 82; valueWidth: 65; labelBold: true; label: "中框角度值:"; value: turntableData.middle_angle }
-                DataLabel { fontSize: 18; labelWidth: 95; valueWidth: 65; labelBold: true; label: "中框控制偏差:"; value: turntableData.middle_ctlDeviation }
-            }
 
-            // 第四行：外框
-            Row {
-                spacing: 6
-                DataLabel {
-                    fontSize: 18; labelWidth: 68; valueWidth: 150; labelBold: true
-                    label: "外框状态:"
-                    property int outterstatus: turntableData.outter_statusnumber
-                    onOutterstatusChanged: {
-                        if (outterstatus === 0x1F) outmsg.showToast("转台外框驱动器报警")
-                        else if (outterstatus === 0x20) outmsg.showToast("转台外框伺服超差报警")
-                        else if (outterstatus === 0x21) outmsg.showToast("转台外框正向限位报警")
-                        else if (outterstatus === 0x22) outmsg.showToast("转台外框逆向限位报警")
-                        else if (outterstatus === 0x23) outmsg.showToast("转台外框时钟同步报警")
-                        else if (outterstatus === 0x24) outmsg.showToast("转台外框初始化信息报警")
-                        else if (outterstatus === 0x25) outmsg.showToast("转台外框限位开关同时导通")
-                        else if (outterstatus === 0x26) outmsg.showToast("转台外框编码器数据故障报警")
-                        else if (outterstatus === 0x29) outmsg.showToast("转台外框瞬态电流报警")
-                        else if (outterstatus === 0x2A) outmsg.showToast("转台外框连续电流报警")
+                // 中框（俯仰轴）
+                Column {
+                    spacing: 3
+                    Text {
+                        width: 215
+                        text: "中框（俯仰轴）"
+                        font.pixelSize: 18
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
                     }
-                    value: {
-                        switch(turntableData.outter_statusnumber) {
-                            case 0x01: return "伺服"
-                            case 0x02: return "回零执行中"
-                            case 0x03: return "位置执行中"
-                            case 0x04: return "速率执行中"
-                            case 0x05: return "速率稳定"
-                            case 0x06: return "摇摆执行中"
-                            case 0x07: return "摇摆稳定"
-                            case 0x08: return "停车执行中"
-                            case 0x09: return "跟踪模式1"
-                            case 0x0A: return "停止跟踪"
-                            case 0x0B: return "跟踪模式2"
-                            case 0x0F: return "速度环模式"
-                            case 0x1F: return "驱动器报警"
-                            case 0x20: return "伺服超差报警"
-                            case 0x21: return "正向限位报警"
-                            case 0x22: return "逆向限位报警"
-                            case 0x23: return "时钟同步报警"
-                            case 0x24: return "初始化报警"
-                            case 0x25: return "限位开关同时导通"
-                            case 0x26: return "编码器故障报警"
-                            case 0x29: return "瞬态电流报警"
-                            case 0x2A: return "连续电流报警"
-                            default: return "未知"
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "状态："
+                        property int middlestatus: turntableData.middle_statusnumber
+                        onMiddlestatusChanged: {
+                            if (middlestatus === 0x1F) middlemsg.showToast("转台中框驱动器报警")
+                            else if (middlestatus === 0x20) middlemsg.showToast("转台中框伺服超差报警")
+                            else if (middlestatus === 0x21) middlemsg.showToast("转台中框正向限位报警")
+                            else if (middlestatus === 0x22) middlemsg.showToast("转台中框逆向限位报警")
+                            else if (middlestatus === 0x23) middlemsg.showToast("转台中框时钟同步报警")
+                            else if (middlestatus === 0x24) middlemsg.showToast("转台中框初始化信息报警")
+                            else if (middlestatus === 0x25) middlemsg.showToast("转台中框限位开关同时导通")
+                            else if (middlestatus === 0x26) middlemsg.showToast("转台中框编码器数据故障报警")
+                            else if (middlestatus === 0x29) middlemsg.showToast("转台中框瞬态电流报警")
+                            else if (middlestatus === 0x2A) middlemsg.showToast("转台中框连续电流报警")
+                        }
+                        value: {
+                            switch(turntableData.middle_statusnumber) {
+                                case 0x00: return "空闲"
+                                case 0x01: return "伺服"
+                                case 0x02: return "回零执行中"
+                                case 0x03: return "位置执行中"
+                                case 0x04: return "速率执行中"
+                                case 0x05: return "速率稳定"
+                                case 0x06: return "摇摆执行中"
+                                case 0x07: return "摇摆稳定"
+                                case 0x0a: return "250ms跟踪模式"
+                                case 0x0c: return "5ms跟踪模式"
+                                case 0x0f: return "停车执行中"
+                                default: return "未知"
+                            }
                         }
                     }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "角度值："
+                        value: String(turntableData.middle_angle)
+                    }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "偏差："
+                        value: String(turntableData.middle_ctlDeviation)
+                    }
                 }
-                DataLabel { fontSize: 18; labelWidth: 82; valueWidth: 65; labelBold: true; label: "外框角度值:"; value: turntableData.outter_angle }
-                DataLabel { fontSize: 18; labelWidth: 95; valueWidth: 65; labelBold: true; label: "外框控制偏差:"; value: turntableData.outter_ctlDeviation }
+
+                // 外框（方位轴）
+                Column {
+                    spacing: 3
+                    Text {
+                        width: 215
+                        text: "外框（方位轴）"
+                        font.pixelSize: 18
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "状态："
+                        property int outterstatus: turntableData.outter_statusnumber
+                        onOutterstatusChanged: {
+                            if (outterstatus === 0x1F) outmsg.showToast("转台外框驱动器报警")
+                            else if (outterstatus === 0x20) outmsg.showToast("转台外框伺服超差报警")
+                            else if (outterstatus === 0x21) outmsg.showToast("转台外框正向限位报警")
+                            else if (outterstatus === 0x22) outmsg.showToast("转台外框逆向限位报警")
+                            else if (outterstatus === 0x23) outmsg.showToast("转台外框时钟同步报警")
+                            else if (outterstatus === 0x24) outmsg.showToast("转台外框初始化信息报警")
+                            else if (outterstatus === 0x25) outmsg.showToast("转台外框限位开关同时导通")
+                            else if (outterstatus === 0x26) outmsg.showToast("转台外框编码器数据故障报警")
+                            else if (outterstatus === 0x29) outmsg.showToast("转台外框瞬态电流报警")
+                            else if (outterstatus === 0x2A) outmsg.showToast("转台外框连续电流报警")
+                        }
+                        value: {
+                            switch(turntableData.outter_statusnumber) {
+                                case 0x00: return "空闲"
+                                case 0x01: return "伺服"
+                                case 0x02: return "回零执行中"
+                                case 0x03: return "位置执行中"
+                                case 0x04: return "速率执行中"
+                                case 0x05: return "速率稳定"
+                                case 0x06: return "摇摆执行中"
+                                case 0x07: return "摇摆稳定"
+                                case 0x0a: return "250ms跟踪模式"
+                                case 0x0c: return "5ms跟踪模式"
+                                case 0x0f: return "停车执行中"
+                                default: return "未知"
+                            }
+                        }
+                    }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "角度值："
+                        value: String(turntableData.outter_angle)
+                    }
+                    DataLabel {
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true
+                        label: "偏差："
+                        value: String(turntableData.outter_ctlDeviation)
+                    }
+                }
             }
         }
     }

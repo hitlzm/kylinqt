@@ -40,11 +40,11 @@ void SerialPortTurntable::parseData(const QByteArray &rawData)
     }
 
     bool ok = false;
-    // 4. 秒时间（范围：0000-3599，表示半天内的秒数）
-    int seconds = fields[0].toInt(&ok);
-    feedback.m_time = seconds;
-    if (!ok || seconds < 0 || seconds > 3599) {
-        qDebug() << "[SerialPort] 秒时间无效:" << fields[0];
+    // 4. 时间（单位：ms，范围：0-14399999，4 小时循环）
+    int timeMs = fields[0].toInt(&ok);
+    feedback.m_time = timeMs;
+    if (!ok || timeMs < 0 || timeMs > 14399999) {
+        qDebug() << "[SerialPort] 时间无效:" << fields[0];
         return;
     }
     // 5. 序号（范围：00-99，表示10ms计数值）
