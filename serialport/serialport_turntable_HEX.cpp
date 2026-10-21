@@ -554,6 +554,52 @@ void SerialPortTurntableHex::sendTrackCmd_5ms(const TrackingSendCmd2Hex &cmd)
 }
 
 
+// ════════════════════════ 跟踪修正 ════════════════════════
+
+void SerialPortTurntableHex::sendTrackingCorrection(TrackingCorrectionCmdHex cmd)
+{
+    sendCorrectionCmd(cmd);
+}
+
+
+void SerialPortTurntableHex::sendCorrectionCmd(const TrackingCorrectionCmdHex &cmd)
+{
+    // CMD_CORRECTION (0x11)
+    // byte2 高2位 = 1/2 (内/外框), 低6位 = 0x11
+    // params[0-2] = 内框修正角 (3B, 有符号, 0.0001°)
+    // params[3-5] = 中框修正角
+    // params[6-8] = 外框修正角
+    // params[9-13]= 0x00
+    if (cmd.target != 1 && cmd.target != 2) {
+        qWarning() << "[HEX] 跟踪修正目标无效，仅支持1=内框或2=外框:" << cmd.target;
+        SendLat::discardClick(SendLat::Turntable);
+        return;
+    }
+    if (!std::isfinite(cmd.innerDeviation)
+            || !std::isfinite(cmd.middleDeviation)
+            || !std::isfinite(cmd.outerDeviation)) {
+        qWarning() << "[HEX] 跟踪修正角包含无效数值";
+        SendLat::discardClick(SendLat::Turntable);
+        return;
+    }
+
+    uint8_t params[14];
+    std::memset(params, 0, 14);
+
+    encode3BytesSigned(params + 0, cmd.innerDeviation, ANGLE_UNIT);
+    encode3BytesSigned(params + 3, cmd.middleDeviation, ANGLE_UNIT);
+    encode3BytesSigned(params + 6, cmd.outerDeviation, ANGLE_UNIT);
+
+    const uint8_t axis_cmd = ENCODE_AXIS_CMD(cmd.target, CMD_CORRECTION);
+    qDebug() << "[HEX] 跟踪修正:"
+             << "目标" << cmd.target
+             << "内框" << cmd.innerDeviation
+             << "中框" << cmd.middleDeviation
+             << "外框" << cmd.outerDeviation;
+    buildAndSend(axis_cmd, params);
+}
+
+
 // ════════════════════════ 时间设置 ════════════════════════
 
 void SerialPortTurntableHex::sendTimeSetCmd(int seconds)
@@ -966,6 +1012,20 @@ void TurntableSendDataHex::buildFrame(int m_index)
     }
 
     emit requestSendProgramMode(m_frame);
+}
+
+
+void TurntableSendDataHex::requestTrackingCorrection(float innerDeviation,
+                                                     float middleDeviation,
+                                                     float outerDeviation,
+                                                     int target)
+{
+    TrackingCorrectionCmdHex cmd;
+    cmd.target = target;
+    cmd.innerDeviation = innerDeviation;
+    cmd.middleDeviation = middleDeviation;
+    cmd.outerDeviation = outerDeviation;
+    emit reqTrackingCorrection(cmd);
 }
 
 

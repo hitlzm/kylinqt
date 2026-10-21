@@ -18,4 +18,16 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
     }
+
+    // 与右侧导引头视频及转台控制区之间的分隔线
+    Rectangle {
+        id: rightSeparator
+        width: 1
+        color: "black"
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        z: 100
+    }
+
 }

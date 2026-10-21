@@ -68,15 +68,50 @@ ApplicationWindow {
                         width: parent.width
 
                         TabButton {
+                            id: imageTab
                             text: qsTr("图像导引头")
-                            font.pixelSize: CusConfig.fontPixel + 6
+                            font.pixelSize: 20
+
+                            background: Rectangle {
+                                color: imageTab.checked
+                                       ? "#000000"
+                                       : imageTab.hovered
+                                         ? "#9e9e9e"
+                                         : "#ffffff"
+                            }
+
+                            contentItem: Text {
+                                text: imageTab.text
+                                font: imageTab.font
+                                color: imageTab.checked ? "#ffffff" : "#000000"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
                         }
 
                         TabButton {
+                            id: laserTab
                             text: qsTr("激光导引头")
-                            font.pixelSize: CusConfig.fontPixel + 6
+                            font.pixelSize: 20
+
+                            background: Rectangle {
+                                color: laserTab.checked
+                                       ? "#000000"
+                                       : laserTab.hovered
+                                         ? "#9e9e9e"
+                                         : "#ffffff"
+                            }
+
+                            contentItem: Text {
+                                text: laserTab.text
+                                font: laserTab.font
+                                color: laserTab.checked ? "#ffffff" : "#000000"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
                         }
                     }
+
                     // ===== 页面区域 =====
                     StackLayout {
                         id: stack

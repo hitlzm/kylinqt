@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<image_recv_frame>("image_recv_frame");
     qRegisterMetaType<programSend_frameHex>("programSend_frameHex");
     qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
+    qRegisterMetaType<TrackingCorrectionCmdHex>("TrackingCorrectionCmdHex");
     qRegisterMetaType<RMCData>("RMCData");
     qRegisterMetaType<sendExGuideData>("sendExGuideData");
     // qRegisterMetaType<TiltFrame>("TiltFrame");   // 倾角仪串口停用
@@ -242,6 +243,9 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqresetTurntable,   turntablePort, &SerialPortTurntableHex::resetTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqcloseTurntable,   turntablePort, &SerialPortTurntableHex::closeTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqTrackingCorrection,
+                     turntablePort, &SerialPortTurntableHex::sendTrackingCorrection,
+                     Qt::QueuedConnection);
 
     // ── 转台：人工发送延迟探针打点（T1）──────────────────────────────
     // 只测程控"发送数据"这一个入口（TurntableSendDataHex::buildFrame → 本信号）。

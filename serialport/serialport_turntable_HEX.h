@@ -111,6 +111,18 @@ typedef struct {
     float   angle3;         // 外框角度 (度)
 } TrackingSendCmd2Hex;
 
+// 跟踪修正命令（应用层）
+// byte2 高2位: 1/2 = 内/外框；低6位固定为 CMD_CORRECTION (0x11)
+// byte3-11: 内框、中框、外框修正角 (各3字节, 有符号, 0.0001°, 大端)
+typedef struct {
+    int     target;         // 1=内框, 2=中框，3=外框
+    float   innerDeviation; // 内框修正角 (度)
+    float   middleDeviation;// 中框修正角 (度)
+    float   outerDeviation; // 外框修正角 (度)
+} TrackingCorrectionCmdHex;
+
+Q_DECLARE_METATYPE(TrackingCorrectionCmdHex)
+
 
 // ════════════════════════ HEX协议打包结构体 (packed) ════════════════════════
 // #pragma pack(push,1)
@@ -254,6 +266,11 @@ public:
 
     Q_INVOKABLE void buildFrame(int m_index);
     //Q_INVOKABLE void sinMove(int m_index, float amplitude, float frequency);
+    // 跟踪修正入口：以当前三个轴的控制偏差直接生成一帧修正指令。
+    Q_INVOKABLE void requestTrackingCorrection(float innerDeviation,
+                                               float middleDeviation,
+                                               float outerDeviation,
+                                               int target = 1);
 
 public slots:
     void recvinner_angle(float angle)  { m_current_inner_angle = angle; }
@@ -278,6 +295,7 @@ signals:
     void reqresetTurntable();
 
     void sinMove(int m_index, float amplitude, float frequency);//桥接信号，驱动三轴进行正弦运动
+    void reqTrackingCorrection(TrackingCorrectionCmdHex cmd);
 
 private:
     int m_runtime = 1;
@@ -333,6 +351,9 @@ public slots:
     void sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2);   //外引导模式下，转台内框无需转动
     void sendTrackMode_5ms(double yawangle, double pitchangle);
 
+    // ── 跟踪修正 ──
+    void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
+
     // ── 摇摆模式 ──
     void sendSwingMode(int index, float freq, float amplitude);
 
@@ -378,6 +399,7 @@ protected:
     void sendSwingCmd(int axis, float freq, float amplitude); // 摇摆模式,可以单轴摇摆，也可以配置三轴摇摆
     void sendTrackCmd_1s(const TrackingSendCmd1Hex &cmd);     // 250ms跟踪(1s周期)
     void sendTrackCmd_5ms(const TrackingSendCmd2Hex &cmd);  // 5ms跟踪
+    void sendCorrectionCmd(const TrackingCorrectionCmdHex &cmd); // 跟踪修正
     void sendTimeSetCmd(int seconds);                       // 时间设置
 
     // ── 协议辅助函数 ──

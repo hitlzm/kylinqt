@@ -80,6 +80,7 @@ Rectangle {
                 turntableSendData.reqresetTurntable()
             }
         }
+        
     }
 
     //加入串口扫描与串口连接
