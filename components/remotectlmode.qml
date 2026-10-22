@@ -228,7 +228,7 @@ ColumnLayout {
 
 //以固定周期更新手柄数据
 Timer {
-    interval: 100        // 50Hz
+    interval: 20         // 50Hz
     repeat: true
     running: true
 

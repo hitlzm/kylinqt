@@ -430,10 +430,10 @@ void DataRecorder::onLaserFrame()
     m_laser.buffer.append(line.toUtf8());
 }
 
-// 转台三轴状态（convertHexStatusToLegacy 得到的编码）→ 中文，与界面显示同一套叫法
-static QString turntableAxisStatusText(int code)
+// 转台三轴状态：原始状态字节低4位 → 中文。
+static QString turntableAxisStatusText(int status)
 {
-    switch (code) {
+    switch (status) {
     case 0x00: return QStringLiteral("空闲");
     case 0x01: return QStringLiteral("伺服");
     case 0x02: return QStringLiteral("回零执行中");
@@ -442,23 +442,31 @@ static QString turntableAxisStatusText(int code)
     case 0x05: return QStringLiteral("速率稳定");
     case 0x06: return QStringLiteral("摇摆执行中");
     case 0x07: return QStringLiteral("摇摆稳定");
-    case 0x08: return QStringLiteral("停车执行中");
-    case 0x09: return QStringLiteral("跟踪模式1");      // 250ms 跟踪
-    case 0x0A: return QStringLiteral("停止跟踪");
-    case 0x0B: return QStringLiteral("跟踪模式2");      // 5ms 跟踪
-    case 0x0F: return QStringLiteral("速度环模式");
-    case 0x1F: return QStringLiteral("驱动器报警");
-    case 0x20: return QStringLiteral("伺服超差报警");
-    case 0x21: return QStringLiteral("正向限位报警");
-    case 0x22: return QStringLiteral("逆向限位报警");
-    case 0x23: return QStringLiteral("时钟同步报警");
-    case 0x24: return QStringLiteral("初始化报警");
-    case 0x25: return QStringLiteral("限位开关同时导通");
-    case 0x26: return QStringLiteral("编码器故障报警");
-    case 0x29: return QStringLiteral("瞬态电流报警");
-    case 0x2A: return QStringLiteral("连续电流报警");
+    case 0x0A: return QStringLiteral("250ms跟踪模式");
+    case 0x0C: return QStringLiteral("5ms跟踪模式");
+    case 0x0F: return QStringLiteral("停车执行中");
     default:   return QStringLiteral("未知(0x%1)")
-                      .arg(QString::number(code, 16).rightJustified(2, QLatin1Char('0')).toUpper());
+                      .arg(QString::number(status, 16).rightJustified(1, QLatin1Char('0')).toUpper());
+    }
+}
+
+// 转台三轴报警：原始状态字节高4位 → 中文。
+static QString turntableAxisAlarmText(int alarm)
+{
+    switch (alarm) {
+    case 0x0: return QStringLiteral("无");
+    case 0x1: return QStringLiteral("驱动器报警");
+    case 0x2: return QStringLiteral("伺服超差报警");
+    case 0x3: return QStringLiteral("正向限位报警");
+    case 0x4: return QStringLiteral("逆向限位报警");
+    case 0x5: return QStringLiteral("时钟同步报警");
+    case 0x6: return QStringLiteral("初始化信息报警");
+    case 0x7: return QStringLiteral("限位开关同时导通");
+    case 0x8: return QStringLiteral("编码器数据故障报警");
+    case 0xA: return QStringLiteral("瞬态电流报警");
+    case 0xB: return QStringLiteral("连续电流报警");
+    default:  return QStringLiteral("未知(0x%1)")
+                      .arg(QString::number(alarm, 16).rightJustified(1, QLatin1Char('0')).toUpper());
     }
 }
 
@@ -492,28 +500,31 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     static const QByteArray kTurntableHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
             "序号,转台毫秒时间,指令提示,"
-            "内框状态,内框角度(°),内框控制偏差(°),"
-            "中框状态,中框角度(°),中框控制偏差(°),"
-            "外框状态,外框角度(°),外框控制偏差(°),"
+            "内框报警,内框状态,内框角度(°),内框控制偏差(°),"
+            "中框报警,中框状态,中框角度(°),中框控制偏差(°),"
+            "外框报警,外框状态,外框角度(°),外框控制偏差(°),"
             "秒脉冲\n");
     ensureSourceFile(m_turntable, QStringLiteral("turntable"), kTurntableHeader, "转台");
     if (m_turntable.openFailed)
         return;
 
     // 一行一帧。角度/控制偏差按工程单位（0.0001°）保留 4 位小数；
-    // 状态与指令提示存中文（不存代号），序号用于事后核对转台的固定周期。
+    // 报警、状态与指令提示存中文（不存代号），序号用于事后核对转台的固定周期。
     QString line;
     line.reserve(160);
     line += QString::number(++m_turntableSeq);
     line += ','; line += QString::number(frame.m_time);
     line += ','; line += turntableCmdHintText(frame.m_cmdHint);
-    line += ','; line += turntableAxisStatusText(frame.m_inner_statusnumber);
+    line += ','; line += turntableAxisAlarmText(frame.m_inner_alarm);
+    line += ','; line += turntableAxisStatusText(frame.m_inner_status);
     line += ','; line += QString::number(frame.m_inner_angle, 'f', 4);
     line += ','; line += QString::number(frame.m_inner_ctlDeviation, 'f', 4);
-    line += ','; line += turntableAxisStatusText(frame.m_middle_statusnumber);
+    line += ','; line += turntableAxisAlarmText(frame.m_middle_alarm);
+    line += ','; line += turntableAxisStatusText(frame.m_middle_status);
     line += ','; line += QString::number(frame.m_middle_angle, 'f', 4);
     line += ','; line += QString::number(frame.m_middle_ctlDeviation, 'f', 4);
-    line += ','; line += turntableAxisStatusText(frame.m_outter_statusnumber);
+    line += ','; line += turntableAxisAlarmText(frame.m_outter_alarm);
+    line += ','; line += turntableAxisStatusText(frame.m_outter_status);
     line += ','; line += QString::number(frame.m_outter_angle, 'f', 4);
     line += ','; line += QString::number(frame.m_outter_ctlDeviation, 'f', 4);
     line += ','; line += (frame.m_hasSecPulse ? QStringLiteral("有") : QStringLiteral("无"));

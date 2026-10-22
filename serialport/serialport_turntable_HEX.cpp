@@ -8,57 +8,7 @@
 #include "../utils/seeker_coordinate_transform.h"
 #include "../utils/sendlatencyprobe.h"
 #define MAX_SPEED_HEX 12.0f
-
-// ════════════════════════ HEX状态码 → QML兼容编码转换 ════════════════════════
-//
-// HEX协议: 1字节 = 高4位报警 + 低4位状态
-//   状态(低4位): 0=空闲, 1=伺服, 2=回零, 3=位置, 4=速率, 5=速率稳定,
-//                6=摇摆, 7=摇摆稳定, A=250ms跟踪, C=5ms跟踪, F=停车
-//   报警(高4位): 0=无, 1=驱动器, 2=伺服超差, 5=时钟同步, 6=参数初始化,
-//                7=限位开关, 8=传感器, A=瞬态电流, B=连续电流
-//
-// QML端沿用ASCII协议遗留编码:
-//   0x01=伺服, 0x02=回零, 0x03=位置, 0x04=速率, 0x05=速率稳定,
-//   0x06=摇摆, 0x07=摇摆稳定, 0x08=停车, 0x09=跟踪1, 0x0B=跟踪2
-//   0x1F=驱动器报警, 0x20=伺服超差, 0x23=时钟同步, 0x24=初始化,
-//   0x25=限位开关, 0x26=传感器, 0x29=瞬态电流, 0x2A=连续电流
-
-static int convertHexStatusToLegacy(uint8_t alarmStatus)
-{
-    int alarm  = (alarmStatus >> 4) & 0x0F;
-    int status = alarmStatus & 0x0F;
-
-    if (alarm == 0) {
-        // 正常状态 → QML遗留编码
-        switch (status) {
-            case 0x0: return 0x00;   // 空闲
-            case 0x1: return 0x01;   // 伺服
-            case 0x2: return 0x02;   // 回零执行中
-            case 0x3: return 0x03;   // 位置执行中
-            case 0x4: return 0x04;   // 速率执行中
-            case 0x5: return 0x05;   // 速率稳定
-            case 0x6: return 0x06;   // 摇摆执行中
-            case 0x7: return 0x07;   // 摇摆稳定
-            case 0xA: return 0x09;   // 250ms跟踪模式
-            case 0xC: return 0x0B;   // 5ms跟踪模式
-            case 0xF: return 0x08;   // 停车执行中
-            default:  return status; // 未知状态原样返回
-        }
-    } else {
-        // 报警状态 → QML遗留报警编码
-        switch (alarm) {
-            case 0x1: return 0x1F;   // 驱动器报警
-            case 0x2: return 0x20;   // 伺服超差报警
-            case 0x5: return 0x23;   // 时钟同步报警
-            case 0x6: return 0x24;   // 参数初始化错误
-            case 0x7: return 0x25;   // 限位开关同时导通
-            case 0x8: return 0x26;   // 角度传感器数据错误
-            case 0xA: return 0x29;   // 瞬态电流报警
-            case 0xB: return 0x2A;   // 连续电流报警
-            default:  return (alarm << 4) | 0x0F;  // 未知报警
-        }
-    }
-}
+#define MAX_ACCELERATION_HEX 10.0f
 
 // ════════════════════════ 数值编解码实现 ════════════════════════
 
@@ -267,8 +217,9 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
     // 毫秒时间 (3字节无符号, 范围 0-14399999)
     feedback.m_time = static_cast<int>(decode3BytesUint(buf + 2));
 
-    // 内框状态 — 转换为QML兼容编码
-    feedback.m_inner_statusnumber = convertHexStatusToLegacy(buf[5]);
+    // 三轴状态字节：高4位为报警标志，低4位为运行状态标志。
+    feedback.m_inner_alarm = (buf[5] >> 4) & 0x0F;
+    feedback.m_inner_status = buf[5] & 0x0F;
 
     // 内框角度 (3字节有符号, 0.0001°)
     feedback.m_inner_angle = decode3BytesSigned(buf + 6, ANGLE_UNIT);
@@ -277,7 +228,8 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
     feedback.m_inner_ctlDeviation = decode3BytesSigned(buf + 9, ANGLE_UNIT);
 
     // 中框状态
-    feedback.m_middle_statusnumber = convertHexStatusToLegacy(buf[12]);
+    feedback.m_middle_alarm = (buf[12] >> 4) & 0x0F;
+    feedback.m_middle_status = buf[12] & 0x0F;
 
     // 中框角度
     feedback.m_middle_angle = decode3BytesSigned(buf + 13, ANGLE_UNIT);
@@ -286,7 +238,8 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
     feedback.m_middle_ctlDeviation = decode3BytesSigned(buf + 16, ANGLE_UNIT);
 
     // 外框状态
-    feedback.m_outter_statusnumber = convertHexStatusToLegacy(buf[19]);
+    feedback.m_outter_alarm = (buf[19] >> 4) & 0x0F;
+    feedback.m_outter_status = buf[19] & 0x0F;
 
     // 外框角度
     feedback.m_outter_angle = decode3BytesSigned(buf + 20, ANGLE_UNIT);
@@ -408,6 +361,12 @@ void SerialPortTurntableHex::closeTurntable()
 
 void SerialPortTurntableHex::zeroTurntable()
 {
+    // 回零是状态切换指令。清除遥控轴状态，保证下一周期摇杆仍为零时
+    // 不会补发停车指令覆盖回零。
+    m_handleInnerMoving = false;
+    m_handleMiddleMoving = false;
+    m_handleOutterMoving = false;
+
     sendZeroCmd(1);
     sendZeroCmd(2);
     sendZeroCmd(3);
@@ -554,6 +513,52 @@ void SerialPortTurntableHex::sendTrackCmd_5ms(const TrackingSendCmd2Hex &cmd)
 }
 
 
+// ════════════════════════ 跟踪修正 ════════════════════════
+
+void SerialPortTurntableHex::sendTrackingCorrection(TrackingCorrectionCmdHex cmd)
+{
+    sendCorrectionCmd(cmd);
+}
+
+
+void SerialPortTurntableHex::sendCorrectionCmd(const TrackingCorrectionCmdHex &cmd)
+{
+    // CMD_CORRECTION (0x11)
+    // byte2 高2位 = 1/2 (内/外框), 低6位 = 0x11
+    // params[0-2] = 内框修正角 (3B, 有符号, 0.0001°)
+    // params[3-5] = 中框修正角
+    // params[6-8] = 外框修正角
+    // params[9-13]= 0x00
+    if (cmd.target != 1 && cmd.target != 2) {
+        qWarning() << "[HEX] 跟踪修正目标无效，仅支持1=内框或2=外框:" << cmd.target;
+        SendLat::discardClick(SendLat::Turntable);
+        return;
+    }
+    if (!std::isfinite(cmd.innerDeviation)
+            || !std::isfinite(cmd.middleDeviation)
+            || !std::isfinite(cmd.outerDeviation)) {
+        qWarning() << "[HEX] 跟踪修正角包含无效数值";
+        SendLat::discardClick(SendLat::Turntable);
+        return;
+    }
+
+    uint8_t params[14];
+    std::memset(params, 0, 14);
+
+    encode3BytesSigned(params + 0, cmd.innerDeviation, ANGLE_UNIT);
+    encode3BytesSigned(params + 3, cmd.middleDeviation, ANGLE_UNIT);
+    encode3BytesSigned(params + 6, cmd.outerDeviation, ANGLE_UNIT);
+
+    const uint8_t axis_cmd = ENCODE_AXIS_CMD(cmd.target, CMD_CORRECTION);
+    qDebug() << "[HEX] 跟踪修正:"
+             << "目标" << cmd.target
+             << "内框" << cmd.innerDeviation
+             << "中框" << cmd.middleDeviation
+             << "外框" << cmd.outerDeviation;
+    buildAndSend(axis_cmd, params);
+}
+
+
 // ════════════════════════ 时间设置 ════════════════════════
 
 void SerialPortTurntableHex::sendTimeSetCmd(int seconds)
@@ -592,6 +597,13 @@ void SerialPortTurntableHex::sendTimesync(int seconds)
 void SerialPortTurntableHex::ProgramModeChanged(int mode)
 {
     m_isProgramMode = (mode == 1);
+
+    // 进入遥控模式后，第一次摇杆归零时发送一次停车，确保从其它模式切入时
+    // 不会继承之前的速度状态；之后静止期间不再重复发送停车。
+    const bool remoteMode = (mode == 2);
+    m_handleInnerMoving = remoteMode;
+    m_handleMiddleMoving = remoteMode;
+    m_handleOutterMoving = remoteMode;
 }
 
 
@@ -874,7 +886,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
         // axisLeftX → 外框, axisLeftY → 中框, axisRightX → 内框
         SpeedModeCmd1Hex innercmd;
         innercmd.axis = 1;
-        innercmd.acceleration = defaultAccel;
+        innercmd.acceleration = defaultAccel;          //可以把默认的加速度改成希望的加速度
         innercmd.velocity = axisRightX * MAX_SPEED_HEX * m_speed_multiplier;
 
         SpeedModeCmd1Hex middlecmd;
@@ -887,20 +899,50 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
         outtercmd.acceleration = defaultAccel;
         outtercmd.velocity = axisLeftX * MAX_SPEED_HEX * m_speed_multiplier;
 
-        //加入限位判断
-        if(m_current_inner_angle < 199.995 && m_current_inner_angle >-199.995){
+        // 摇杆归零时发送停车指令，退出速度模式；非零时受软件限位约束。
+        if(axisRightX == 0.0f){
+            if(m_handleInnerMoving){
+                sendStopCmd(1);
+                m_handleInnerMoving = false;
+            }
+        }else if(m_current_inner_angle < 199.995 && m_current_inner_angle >-199.995){
             sendVecCmd(innercmd);
+            m_handleInnerMoving = true;
         }else{
+            if(m_handleInnerMoving){
+                sendStopCmd(1);
+                m_handleInnerMoving = false;
+            }
             qDebug() << "内框接近临界角，停止内框速度控制";
         }
-        if(m_current_middle_angle < 69.995 && m_current_middle_angle >-9.995){
+        if(axisLeftY == 0.0f){
+            if(m_handleMiddleMoving){
+                sendStopCmd(2);
+                m_handleMiddleMoving = false;
+            }
+        }else if(m_current_middle_angle < 80 && m_current_middle_angle >-10){
             sendVecCmd(middlecmd);
+            m_handleMiddleMoving = true;
         }else{
+            if(m_handleMiddleMoving){
+                sendStopCmd(2);
+                m_handleMiddleMoving = false;
+            }
             qDebug() << "中框接近临界角，停止中框速度控制";
         }
-        if(m_current_outter_angle < 99.995 && m_current_outter_angle >-99.995){
+        if(axisLeftX == 0.0f){
+            if(m_handleOutterMoving){
+                sendStopCmd(3);
+                m_handleOutterMoving = false;
+            }
+        }else if(m_current_outter_angle < 99.995 && m_current_outter_angle >-99.995){
             sendVecCmd(outtercmd);
+            m_handleOutterMoving = true;
         }else{
+            if(m_handleOutterMoving){
+                sendStopCmd(3);
+                m_handleOutterMoving = false;
+            }
             qDebug() << "外框接近临界角，停止外框速度控制";
         }
     }
@@ -969,6 +1011,20 @@ void TurntableSendDataHex::buildFrame(int m_index)
 }
 
 
+void TurntableSendDataHex::requestTrackingCorrection(float innerDeviation,
+                                                     float middleDeviation,
+                                                     float outerDeviation,
+                                                     int target)
+{
+    TrackingCorrectionCmdHex cmd;
+    cmd.target = target;
+    cmd.innerDeviation = innerDeviation;
+    cmd.middleDeviation = middleDeviation;
+    cmd.outerDeviation = outerDeviation;
+    emit reqTrackingCorrection(cmd);
+}
+
+
 // ════════════════════════ TurntableDataHex ════════════════════════
 
 TurntableDataHex::TurntableDataHex(QObject *parent)
@@ -997,9 +1053,13 @@ void TurntableDataHex::updateframe(StatusFeedbackHex recvdata)
         m_time = recvdata.m_time;
         emit timeChanged();
     }
-    if (m_inner_statusnumber != recvdata.m_inner_statusnumber) {
-        m_inner_statusnumber = recvdata.m_inner_statusnumber;
-        emit inner_statusnumberChanged();
+    if (m_inner_alarm != recvdata.m_inner_alarm) {
+        m_inner_alarm = recvdata.m_inner_alarm;
+        emit inner_alarmChanged();
+    }
+    if (m_inner_status != recvdata.m_inner_status) {
+        m_inner_status = recvdata.m_inner_status;
+        emit inner_statusChanged();
     }
     if (m_inner_angle != recvdata.m_inner_angle) {
         m_inner_angle = recvdata.m_inner_angle;
@@ -1010,9 +1070,13 @@ void TurntableDataHex::updateframe(StatusFeedbackHex recvdata)
         m_inner_ctlDeviation = recvdata.m_inner_ctlDeviation;
         emit inner_ctlDeviationChanged();
     }
-    if (m_middle_statusnumber != recvdata.m_middle_statusnumber) {
-        m_middle_statusnumber = recvdata.m_middle_statusnumber;
-        emit middle_statusnumberChanged();
+    if (m_middle_alarm != recvdata.m_middle_alarm) {
+        m_middle_alarm = recvdata.m_middle_alarm;
+        emit middle_alarmChanged();
+    }
+    if (m_middle_status != recvdata.m_middle_status) {
+        m_middle_status = recvdata.m_middle_status;
+        emit middle_statusChanged();
     }
     if (m_middle_angle != recvdata.m_middle_angle) {
         m_middle_angle = recvdata.m_middle_angle;
@@ -1023,9 +1087,13 @@ void TurntableDataHex::updateframe(StatusFeedbackHex recvdata)
         m_middle_ctlDeviation = recvdata.m_middle_ctlDeviation;
         emit middle_ctlDeviationChanged();
     }
-    if (m_outter_statusnumber != recvdata.m_outter_statusnumber) {
-        m_outter_statusnumber = recvdata.m_outter_statusnumber;
-        emit outter_statusnumberChanged();
+    if (m_outter_alarm != recvdata.m_outter_alarm) {
+        m_outter_alarm = recvdata.m_outter_alarm;
+        emit outter_alarmChanged();
+    }
+    if (m_outter_status != recvdata.m_outter_status) {
+        m_outter_status = recvdata.m_outter_status;
+        emit outter_statusChanged();
     }
     if (m_outter_angle != recvdata.m_outter_angle) {
         m_outter_angle = recvdata.m_outter_angle;

@@ -54,13 +54,16 @@ brief: 转台串口类（HEX十六进制协议版本）
 // 转台信息反馈结构体（应用层）
 typedef struct StatusFeedbackHex {
     int     m_time;                 // 毫秒时间 (0-14399999)
-    int     m_inner_statusnumber;   // 内框状态 (低4位: 状态, 高4位: 报警)
+    int     m_inner_alarm;          // 内框报警标志 (原始状态字节高4位)
+    int     m_inner_status;         // 内框状态标志 (原始状态字节低4位)
     float   m_inner_angle;          // 内框角度 (度)
     float   m_inner_ctlDeviation;   // 内框控制偏差 (度)
-    int     m_middle_statusnumber;  // 中框状态
+    int     m_middle_alarm;         // 中框报警标志 (原始状态字节高4位)
+    int     m_middle_status;        // 中框状态标志 (原始状态字节低4位)
     float   m_middle_angle;         // 中框角度
     float   m_middle_ctlDeviation;  // 中框控制偏差
-    int     m_outter_statusnumber;  // 外框状态
+    int     m_outter_alarm;         // 外框报警标志 (原始状态字节高4位)
+    int     m_outter_status;        // 外框状态标志 (原始状态字节低4位)
     float   m_outter_angle;         // 外框角度
     float   m_outter_ctlDeviation;  // 外框控制偏差
     int     m_hasSecPulse;          // 是否接收到秒脉冲 (0/1)
@@ -111,6 +114,18 @@ typedef struct {
     float   angle3;         // 外框角度 (度)
 } TrackingSendCmd2Hex;
 
+// 跟踪修正命令（应用层）
+// byte2 高2位: 1/2 = 内/外框；低6位固定为 CMD_CORRECTION (0x11)
+// byte3-11: 内框、中框、外框修正角 (各3字节, 有符号, 0.0001°, 大端)
+typedef struct {
+    int     target;         // 1=内框, 2=外框
+    float   innerDeviation; // 内框修正角 (度)
+    float   middleDeviation;// 中框修正角 (度)
+    float   outerDeviation; // 外框修正角 (度)
+} TrackingCorrectionCmdHex;
+
+Q_DECLARE_METATYPE(TrackingCorrectionCmdHex)
+
 
 // ════════════════════════ HEX协议打包结构体 (packed) ════════════════════════
 // #pragma pack(push,1)
@@ -151,13 +166,16 @@ class TurntableDataHex : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int time MEMBER m_time NOTIFY timeChanged)
-    Q_PROPERTY(int inner_statusnumber MEMBER m_inner_statusnumber NOTIFY inner_statusnumberChanged)
+    Q_PROPERTY(int inner_alarm MEMBER m_inner_alarm NOTIFY inner_alarmChanged)
+    Q_PROPERTY(int inner_status MEMBER m_inner_status NOTIFY inner_statusChanged)
     Q_PROPERTY(float inner_angle MEMBER m_inner_angle NOTIFY inner_angleChanged)
     Q_PROPERTY(float inner_ctlDeviation MEMBER m_inner_ctlDeviation NOTIFY inner_ctlDeviationChanged)
-    Q_PROPERTY(int middle_statusnumber MEMBER m_middle_statusnumber NOTIFY middle_statusnumberChanged)
+    Q_PROPERTY(int middle_alarm MEMBER m_middle_alarm NOTIFY middle_alarmChanged)
+    Q_PROPERTY(int middle_status MEMBER m_middle_status NOTIFY middle_statusChanged)
     Q_PROPERTY(float middle_angle MEMBER m_middle_angle NOTIFY middle_angleChanged)
     Q_PROPERTY(float middle_ctlDeviation MEMBER m_middle_ctlDeviation NOTIFY middle_ctlDeviationChanged)
-    Q_PROPERTY(int outter_statusnumber MEMBER m_outter_statusnumber NOTIFY outter_statusnumberChanged)
+    Q_PROPERTY(int outter_alarm MEMBER m_outter_alarm NOTIFY outter_alarmChanged)
+    Q_PROPERTY(int outter_status MEMBER m_outter_status NOTIFY outter_statusChanged)
     Q_PROPERTY(float outter_angle MEMBER m_outter_angle NOTIFY outter_angleChanged)
     Q_PROPERTY(float outter_ctlDeviation MEMBER m_outter_ctlDeviation NOTIFY outter_ctlDeviationChanged)
     Q_PROPERTY(int hasSecPulse MEMBER m_hasSecPulse NOTIFY hasSecPulseChanged)
@@ -181,13 +199,16 @@ public:
 
 signals:
     void timeChanged();
-    void inner_statusnumberChanged();
+    void inner_alarmChanged();
+    void inner_statusChanged();
     void inner_angleChanged();
     void inner_ctlDeviationChanged();
-    void middle_statusnumberChanged();
+    void middle_alarmChanged();
+    void middle_statusChanged();
     void middle_angleChanged();
     void middle_ctlDeviationChanged();
-    void outter_statusnumberChanged();
+    void outter_alarmChanged();
+    void outter_statusChanged();
     void outter_angleChanged();
     void outter_ctlDeviationChanged();
     void hasSecPulseChanged();
@@ -217,13 +238,16 @@ public slots:
 
 private:
     int m_time = 0;
-    int m_inner_statusnumber = 0;
+    int m_inner_alarm = 0;
+    int m_inner_status = 0;
     float m_inner_angle = 0;
     float m_inner_ctlDeviation = 0;
-    int m_middle_statusnumber = 0;
+    int m_middle_alarm = 0;
+    int m_middle_status = 0;
     float m_middle_angle = 0;
     float m_middle_ctlDeviation = 0;
-    int m_outter_statusnumber = 0;
+    int m_outter_alarm = 0;
+    int m_outter_status = 0;
     float m_outter_angle = 0;
     float m_outter_ctlDeviation = 0;
     int m_hasSecPulse = 0;
@@ -254,6 +278,11 @@ public:
 
     Q_INVOKABLE void buildFrame(int m_index);
     //Q_INVOKABLE void sinMove(int m_index, float amplitude, float frequency);
+    // 跟踪修正入口：以当前三个轴的控制偏差直接生成一帧修正指令。
+    Q_INVOKABLE void requestTrackingCorrection(float innerDeviation,
+                                               float middleDeviation,
+                                               float outerDeviation,
+                                               int target = 1);
 
 public slots:
     void recvinner_angle(float angle)  { m_current_inner_angle = angle; }
@@ -278,6 +307,7 @@ signals:
     void reqresetTurntable();
 
     void sinMove(int m_index, float amplitude, float frequency);//桥接信号，驱动三轴进行正弦运动
+    void reqTrackingCorrection(TrackingCorrectionCmdHex cmd);
 
 private:
     int m_runtime = 1;
@@ -335,6 +365,9 @@ public slots:
     void sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2);   //外引导模式下，转台内框无需转动
     void sendTrackMode_5ms(double yawangle, double pitchangle);
 
+    // ── 跟踪修正 ──
+    void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
+
     // ── 摇摆模式 ──
     void sendSwingMode(int index, float freq, float amplitude);
 
@@ -380,6 +413,7 @@ protected:
     void sendSwingCmd(int axis, float freq, float amplitude); // 摇摆模式,可以单轴摇摆，也可以配置三轴摇摆
     void sendTrackCmd_1s(const TrackingSendCmd1Hex &cmd);     // 250ms跟踪(1s周期)
     void sendTrackCmd_5ms(const TrackingSendCmd2Hex &cmd);  // 5ms跟踪
+    void sendCorrectionCmd(const TrackingCorrectionCmdHex &cmd); // 跟踪修正
     void sendTimeSetCmd(int seconds);                       // 时间设置
 
     // ── 协议辅助函数 ──
@@ -409,6 +443,12 @@ private:
     float m_current_inner_angle;
     float m_current_middle_angle;
     float m_current_outter_angle;
+
+    // 遥控速度模式的轴状态：仅在“运动中 → 摇杆归零”的边沿发送一次停车，
+    // 避免静止期间周期性停车指令覆盖回零等一次性指令。
+    bool m_handleInnerMoving = false;
+    bool m_handleMiddleMoving = false;
+    bool m_handleOutterMoving = false;
 
     float m_step_angle = 0.0f; // 步进角度，单位度
     float m_speed_multiplier = 1.0f; // 速度倍率，单位倍

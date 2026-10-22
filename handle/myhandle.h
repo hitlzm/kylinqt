@@ -32,7 +32,7 @@ public slots:
     void modechanged(int index)
     {
         if (index == 2) {
-            m_timer->start(50);
+            m_timer->start(20);
         } else {
             m_timer->stop();
         }

@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 Row {
     spacing: 5
+    clip: true
     property string label: ""
     property string value: ""
     property color valueColor: "#1a73e8"
@@ -10,6 +11,8 @@ Row {
     property int labelWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
     property int valueWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
     property bool labelBold: false
+    property int labelHorizontalAlignment: labelWidth > 0 ? Text.AlignRight : Text.AlignLeft
+    property int valueHorizontalAlignment: Text.AlignLeft
 
     // 固定行高 = fontSize + 3（18px → 21px）。
     // 避免因系统字体行高不同（Win 宋体 21 / 雅黑 24 vs 麒麟 Noto ~27）导致列表行距不一致
@@ -20,7 +23,8 @@ Row {
         font.pixelSize: parent.fontSize
         font.bold: parent.labelBold
         width: parent.labelWidth > 0 ? parent.labelWidth : implicitWidth
-        horizontalAlignment: parent.labelWidth > 0 ? Text.AlignRight : Text.AlignLeft
+        horizontalAlignment: parent.labelHorizontalAlignment
+        elide: parent.labelWidth > 0 ? Text.ElideRight : Text.ElideNone
         height: parent.height
         verticalAlignment: Text.AlignVCenter
     }
@@ -30,6 +34,8 @@ Row {
         font.bold: true
         color: parent.valueColor
         width: parent.valueWidth > 0 ? parent.valueWidth : implicitWidth
+        horizontalAlignment: parent.valueHorizontalAlignment
+        elide: parent.valueWidth > 0 ? Text.ElideRight : Text.ElideNone
         height: parent.height
         verticalAlignment: Text.AlignVCenter
     }
