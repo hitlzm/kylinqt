@@ -8,6 +8,9 @@ Item{
     id:root
     anchors.fill: parent
 
+    // 转台正弦运动允许的最大加速度（°/s²）
+    readonly property real maxSineAcceleration: 10.0
+
     property var controlNames: [
         "三轴控制",
         "内框控制",
@@ -20,6 +23,11 @@ Item{
     //正弦摆动的幅值与频率range,frequency
     property real range: 0.0
     property real frequency: 0.0
+
+    // 加速度限位提示
+    MessagePopup {
+        id: sineAccelerationMsg
+    }
 
     // 数字提取函数
     function extractNumbers(str) {
@@ -35,6 +43,18 @@ Item{
             }
         }
         return numbers;  // 返回数字数组
+    }
+
+    // 输入框只取第一个有效数字作为幅值或频率
+    function parseInputNumber(str) {
+        var numbers = extractNumbers(str)
+        return numbers.length > 0 ? Number(numbers[0]) : 0
+    }
+
+    // 正弦运动峰值加速度：a_max = (2πf)² × A
+    function sinePeakAcceleration(amplitude, freq) {
+        var omega = 2 * Math.PI * Math.abs(Number(freq))
+        return omega * omega * Math.abs(Number(amplitude))
     }
 
     // 角度格式化：固定两位小数，非法值按 0 处理
@@ -118,8 +138,7 @@ Item{
                     width: 120
                     //区分是哪种控制方式，给不同变量赋值
                     onEditingFinished: {
-                        var mynumber = extractNumbers(text);  
-                        range =  mynumber;
+                        range = parseInputNumber(text)
                     }
         }
         // 正弦运动频率
@@ -139,8 +158,7 @@ Item{
                     width: 120
                     //区分是哪种控制方式，给不同变量赋值
                     onEditingFinished: {
-                        var mynumber = extractNumbers(text);   
-                        frequency = mynumber;
+                        frequency = parseInputNumber(text)
                     }
         }
     }
@@ -294,7 +312,20 @@ Item{
                 Layout.preferredHeight: 40
                 text: "正弦运动"
                 onClicked: {
-                    turntableSendData.sinMove(index,range,frequency)
+                    // 以点击瞬间输入框中的值为准，避免尚未触发 editingFinished 时使用旧值
+                    range = parseInputNumber(sinInput.text)
+                    frequency = parseInputNumber(frequencyInput.text)
+
+                    var acceleration = sinePeakAcceleration(range, frequency)
+                    if (acceleration > maxSineAcceleration) {
+                        sineAccelerationMsg.message =
+                            "输入数据应满足（2πf）² × A 得到的加速度小于10 °/s²。\n"
+                            + "当前计算值为 " + acceleration.toFixed(3) + " °/s²。"
+                        sineAccelerationMsg.open()
+                        return
+                    }
+
+                    turntableSendData.sinMove(index, range, frequency)
                     //为了保存正弦运动的数据，先定义为正弦运动时默认保存数据（转台这一路）
                     dataRecorder.startTurntableSave()
                 }

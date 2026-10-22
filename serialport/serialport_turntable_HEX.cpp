@@ -7,7 +7,7 @@
 #include <QTime>
 #include "../utils/seeker_coordinate_transform.h"
 #include "../utils/sendlatencyprobe.h"
-#define MAX_SPEED_HEX 12.0f
+#define MAX_SPEED_HEX 12.0f           //转台的最大速度可以再加大一些
 #define MAX_ACCELERATION_HEX 10.0f
 
 // ════════════════════════ 数值编解码实现 ════════════════════════
@@ -775,7 +775,7 @@ void SerialPortTurntableHex::sendTrackMode_5ms(double yawangle, double pitchangl
 }
 
 // ════════════════════════ 摇摆模式  ═══════════════════════════
-void SerialPortTurntableHex::sendSwingMode(int index, float freq, float amplitude)
+void SerialPortTurntableHex::sendSwingMode(int index, float amplitude, float freq)
 {
     if (index == 0) {
         //三轴同时正弦运动

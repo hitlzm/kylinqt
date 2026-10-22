@@ -369,7 +369,7 @@ public slots:
     void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
 
     // ── 摇摆模式 ──
-    void sendSwingMode(int index, float freq, float amplitude);
+    void sendSwingMode(int index, float amplitude, float freq);
 
     // ── 时间同步 ──
     

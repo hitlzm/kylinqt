@@ -8,6 +8,11 @@
 #include <QFileInfo>
 #include <QDebug>
 
+// 三路数据的标称采样率（Hz），与各自串口协议周期一致。
+static constexpr int kImageSampleRateHz = 50;       // 20 ms
+static constexpr int kLaserSampleRateHz = 100;      // 10 ms
+static constexpr int kTurntableSampleRateHz = 200;  // 5 ms
+
 DataRecorder::DataRecorder(QObject *parent)
     : QObject(parent)
 {
@@ -339,7 +344,7 @@ void DataRecorder::onImageFrame()
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kImageHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "时间,B帧流水号,当前工作通道,俯仰视线角速度(°/s),偏航视线角速度(°/s),"
+            "采样率(Hz),时间,B帧流水号,当前工作通道,俯仰视线角速度(°/s),偏航视线角速度(°/s),"
             "光学工作状态,俯仰框架角(°),偏航框架角(°),"
             "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
             "红外帧编号,电视帧编号\n");
@@ -354,6 +359,8 @@ void DataRecorder::onImageFrame()
 
     QString line;
     line.reserve(200);
+    line += QString::number(kImageSampleRateHz);
+    line += ',';
     line += timeText;
     line += ','; line += QString::number(m_imageData->bFrameSequence());
     line += ','; line += imageWorkChannelText(m_imageData->currentWorkChannel());
@@ -394,7 +401,7 @@ void DataRecorder::onLaserFrame()
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kLaserHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "时间,光轴方位角(°),光轴俯仰角(°),"
+            "采样率(Hz),时间,光轴方位角(°),光轴俯仰角(°),"
             "方位陀螺输出角速度(°/s),俯仰陀螺输出角速度(°/s),"
             "方位视线角速度(°/s),俯仰视线角速度(°/s),"
             "方位偏差角(°),俯仰偏差角(°),激光周期(ms),增益状态,"
@@ -410,6 +417,8 @@ void DataRecorder::onLaserFrame()
 
     QString line;
     line.reserve(220);
+    line += QString::number(kLaserSampleRateHz);
+    line += ',';
     line += timeText;
     line += ','; line += QString::number(m_laserData->opticalAzimuth(), 'f', 4);
     line += ','; line += QString::number(m_laserData->opticalPitch(), 'f', 4);
@@ -499,7 +508,7 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kTurntableHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "序号,转台毫秒时间,指令提示,"
+            "采样率(Hz),序号,转台毫秒时间,指令提示,"
             "内框报警,内框状态,内框角度(°),内框控制偏差(°),"
             "中框报警,中框状态,中框角度(°),中框控制偏差(°),"
             "外框报警,外框状态,外框角度(°),外框控制偏差(°),"
@@ -512,6 +521,8 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     // 报警、状态与指令提示存中文（不存代号），序号用于事后核对转台的固定周期。
     QString line;
     line.reserve(160);
+    line += QString::number(kTurntableSampleRateHz);
+    line += ',';
     line += QString::number(++m_turntableSeq);
     line += ','; line += QString::number(frame.m_time);
     line += ','; line += turntableCmdHintText(frame.m_cmdHint);
