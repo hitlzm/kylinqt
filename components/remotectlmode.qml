@@ -29,7 +29,7 @@ Item {
 
         // ──────────────── 连接状态 ────────────────
         Indicator {
-            label: "手柄连接状态"
+            label: myGamepad.connected ? "手柄已连接" : "手柄未连接"
             normal: myGamepad.connected
         }
 

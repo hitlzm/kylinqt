@@ -118,7 +118,7 @@ typedef struct {
 // byte2 高2位: 1/2 = 内/外框；低6位固定为 CMD_CORRECTION (0x11)
 // byte3-11: 内框、中框、外框修正角 (各3字节, 有符号, 0.0001°, 大端)
 typedef struct {
-    int     target;         // 1=内框, 2=外框
+    int     target;         // 1=内框, 2=中框，3=外框
     float   innerDeviation; // 内框修正角 (度)
     float   middleDeviation;// 中框修正角 (度)
     float   outerDeviation; // 外框修正角 (度)

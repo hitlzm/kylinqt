@@ -155,9 +155,18 @@ void SerialPortCCD::ExmodeChanged(int mode)
         // CCD相机被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcCCD)
         {
-            // 判断CCD相机串口是否开启，未开启时触发弹窗提示
-            if (!isOpen()) {
-                emit exguideSerialNotOpen("CCD串口未打开");
+            // CCD 外引导依赖真实视频流；未接入时不启动外引导并取消本路外引导源
+            if (!m_ccdData || !m_ccdData->videoStreamConnected()) {
+                emit exguideSerialNotOpen("CCD视频流未接入");
+                if (m_exGuideTimer) {
+                    m_exGuideTimer->stop();
+                    disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                }
+                m_lastexguidesetting = -1;
+                m_sendCount_1s = 0;
+                exsrcindex = -1;
+                emit exguideSourceUnavailable();
+                return;
             }
 
             // 只有时间间隔设置改变时才重新绑定
@@ -191,8 +200,9 @@ void SerialPortCCD::ExmodeChanged(int mode)
                         sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s);  // 俯仰轴
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
-                        // 记录追踪日志
-                        LogManager::instance()->logCCDTracking(az_pkt.angle1, el_pkt.angle1);
+                        // 串口未打开时不输出外引导跟踪日志
+                        if (isOpen())
+                            LogManager::instance()->logCCDTracking(az_pkt.angle1, el_pkt.angle1);
                         if(++m_sendCount_1s >= Maxsendcount) {  // 10分钟重同步
                             m_sendCount_1s = 0;
                         }
@@ -205,7 +215,9 @@ void SerialPortCCD::ExmodeChanged(int mode)
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 5ms模式直接发送当前计算角度
                         emit reqExsend_5ms(m_azimuth, m_pitch);
-                        LogManager::instance()->logCCDTracking(m_azimuth, m_pitch);
+                        // 串口未打开时不输出外引导跟踪日志
+                        if (isOpen())
+                            LogManager::instance()->logCCDTracking(m_azimuth, m_pitch);
                     });
                     m_exGuideTimer->start(15); // 每5ms触发一次 ，考虑到数据更新没那么快，切换为15ms模式
                     m_lastexguidesetting = Exguide_5ms;
@@ -230,6 +242,22 @@ void SerialPortCCD::ExmodeChanged(int mode)
         }
         // 退出外引导模式：下次进入时重新初始化滤波器
         m_abNeedReset = true;
+    }
+}
+
+void SerialPortCCD::onVideoStreamConnectedChanged()
+{
+    if (m_ccdData && !m_ccdData->videoStreamConnected()
+            && exsrcindex == ExguideSrcCCD) {
+        if (m_exGuideTimer) {
+            m_exGuideTimer->stop();
+            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+        }
+        m_lastexguidesetting = -1;
+        m_sendCount_1s = 0;
+        exsrcindex = -1;
+        m_abNeedReset = true;
+        emit exguideSourceUnavailable();
     }
 }
 
@@ -281,5 +309,13 @@ void CCDData::setResolution(int index) {
         m_resolutionIndex = index;
         emit resolutionIndexChanged();
         emit reqResolutionchange(index);
+    }
+}
+
+void CCDData::setVideoStreamConnected(bool connected)
+{
+    if (m_videoStreamConnected != connected) {
+        m_videoStreamConnected = connected;
+        emit videoStreamConnectedChanged();
     }
 }

@@ -316,6 +316,10 @@ int main(int argc, char *argv[])
     QObject::connect(ccdPort, &SerialPortCCD::portClosed,   ccdData, [ccdData]{ ccdData->setPortOpen(false); }, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::portError,    ccdData, &CCDData::setError,    Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::portsChanged, ccdData, &CCDData::setPortList, Qt::QueuedConnection);
+    // CCD 视频流接入状态由 Myvideo5.qml 写入；断开时停止并取消 CCD 外引导源
+    QObject::connect(ccdData, &CCDData::videoStreamConnectedChanged,
+                     ccdPort, &SerialPortCCD::onVideoStreamConnectedChanged,
+                     Qt::QueuedConnection);
 
 
     // ── TemplateBinding: 模板装订上传已停用（不再由本软件上传），以下连接全部注释保留 ──
@@ -366,13 +370,25 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
 
-    // 外引导源串口未打开时，弹窗提示（工作线程 → 主线程 Data → QML 弹窗）
+    // 外引导源不可用（串口未打开/CCD视频未接入）时，弹窗提示
     QObject::connect(laserPort, &SerialPortLaser::exguideSerialNotOpen, laserData, &LaserData::popupMessage, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::exguideSerialNotOpen, imageData, &ImageData::popupMessage, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::exguideSerialNotOpen, ccdData, &CCDData::popupMessage, Qt::QueuedConnection);
 
+    // 激光串口或 CCD 视频流不可用时：保留外引导模式，只取消对应外引导源
+    QObject::connect(laserPort, &SerialPortLaser::exguideSourceUnavailable,
+                     &m_modeController, &ModeController::onExguideLaserSourceLost,
+                     Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::exguideSourceUnavailable,
+                     &m_modeController, &ModeController::onExguideCcdSourceLost,
+                     Qt::QueuedConnection);
+
+    // 图像头串口打开期间：每500ms检查帧编号，未变化时弹窗提示通信故障
+    QObject::connect(imagePort, &SerialPortImage::imageCommunicationFault,
+                     imageData, &ImageData::popupMessage, Qt::QueuedConnection);
+
     // 外引导过程中图像导引头帧编号不再更新（通信中断）：弹窗提示，
-    // 并让模式控制器退出外引导模式、通知界面取消外引导模式单选
+    // 保留外引导模式，只通知界面取消图像导引头外引导源选择
     QObject::connect(imagePort, &SerialPortImage::exguideLinkLost, imageData, &ImageData::popupMessage, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::exguideLinkLost,
                      &m_modeController, &ModeController::onExguideLinkLost, Qt::QueuedConnection);

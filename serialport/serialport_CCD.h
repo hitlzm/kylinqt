@@ -19,6 +19,7 @@ class CCDData : public QObject
     Q_PROPERTY(int focusMode READ focusMode NOTIFY focusModeChanged)           // 0=30X, 1=1X
     Q_PROPERTY(bool backlightOn READ backlightOn NOTIFY backlightOnChanged)
     Q_PROPERTY(int resolutionIndex READ resolutionIndex NOTIFY resolutionIndexChanged)  // 0=1080p/30, 1=1080p/25, 2=720p/30, 3=720p/25
+    Q_PROPERTY(bool videoStreamConnected READ videoStreamConnected NOTIFY videoStreamConnectedChanged)
 
 public:
     explicit CCDData(QObject *parent = nullptr);
@@ -35,6 +36,7 @@ public:
     int focusMode() const { return m_focusMode; }
     bool backlightOn() const { return m_backlightOn; }
     int resolutionIndex() const { return m_resolutionIndex; }
+    bool videoStreamConnected() const { return m_videoStreamConnected; }
 
     // ── QML 可调用方法 ──
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
@@ -45,6 +47,7 @@ public:
     Q_INVOKABLE void setFocusMode(int mode);       // 0=30X, 1=1X
     Q_INVOKABLE void setBacklight(bool on);        // true=开, false=关
     Q_INVOKABLE void setResolution(int index);     // 0=1080p/30, 1=1080p/25, 2=720p/30, 3=720p/25
+    Q_INVOKABLE void setVideoStreamConnected(bool connected);
 
 signals:
 
@@ -60,6 +63,7 @@ signals:
     void focusModeChanged();
     void backlightOnChanged();
     void resolutionIndexChanged();
+    void videoStreamConnectedChanged();
 
     // ── 请求信号（→ 排队到工作线程）──
     void requestOpenPort(const QString &portName, int baudRate);
@@ -94,6 +98,7 @@ private:
     int m_focusMode = 0;         // 0=30X, 1=1X
     bool m_backlightOn = false;
     int m_resolutionIndex = 0;   // 0=1080p/30, 1=1080p/25, 2=720p/30, 3=720p/25
+    bool m_videoStreamConnected = false;
 
     // bool m_isValid = false;             // 数据有效标识
     // TODO: 补充 CCD 数据成员
@@ -119,6 +124,8 @@ signals:
     void portsChanged(const QStringList &ports);
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
+    // 外引导源不可用：通知界面只取消对应外引导源
+    void exguideSourceUnavailable();
 
     // 外引导模式请求信号（连接转台串口线程）
     void reqTimesync(int seconds = 0);
@@ -140,6 +147,7 @@ public slots:
     void sendResolutionchange(int index);
 
     void ExmodeChanged(int mode);
+    void onVideoStreamConnectedChanged();
 
     void recvTargetCenter(int centerX, int centerY);  // 接收目标中心像素坐标,并进行俯仰角与方位角的计算，喂入卡尔曼滤波器
 

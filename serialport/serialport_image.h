@@ -496,10 +496,12 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void imageFrameReceived(const QByteArray &rawData);
+    // 图像头串口已打开，但帧编号连续 500ms 未变化：通信故障，通知 QML 弹窗
+    void imageCommunicationFault(const QString &msg);
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
     // 外引导过程中导引头帧编号(bFrameSequence)不再更新，即通信中断：
-    // 工作线程只负责发信号，由主线程弹窗提示并复位外引导模式选择
+    // 工作线程只负责发信号，由主线程弹窗提示并取消图像导引头外引导源选择
     void exguideLinkLost(const QString &msg);
     void reqTimesync(int seconds);
     void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
@@ -574,6 +576,16 @@ private:
     void armExGuideFrameWatch();      // 外引导启动时用当前帧编号作基准，开始计时
     bool isImageFrameUpdated();       // 帧编号是否仍在更新（否则视为通信中断）
     void abortExGuideByLinkLost();    // 通信中断：退出外引导模式并请求弹窗提示
+
+    // ── 图像头串口通信看门狗（串口打开期间始终运行）──
+    // 每 500ms 比较一次 bFrameSequence；恢复变化后清除故障状态，
+    // 以保证下一次通信中断能够再次弹窗。
+    QTimer *m_frameWatchTimer = nullptr;
+    int m_lastWatchedFrameSeq = -1;
+    bool m_frameFaultNotified = false;
+    void startFrameWatch();
+    void stopFrameWatch();
+    void checkImageFrameAlive();
 
     QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，攒到完整帧头+固定帧长再切出交给 parseData
 };

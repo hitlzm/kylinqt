@@ -16,6 +16,7 @@
 #define Exguide_1s 7
 #define Maxsendcount 600 //每10分钟进行一次时间同步
 #define Exguide_FrameLostMs 1000 //外引导时帧编号超过该时长(ms)未更新，即认为通信中断
+#define Image_FrameWatchMs 1000 //图像头串口打开期间，帧编号检查周期
 
 // ─────────────────────────────────────────────
 // 时间戳工具
@@ -599,6 +600,11 @@ SerialPortImage::SerialPortImage(QObject *parent)
     //, m_circularbuf(200)
 {
     init_crc16_table();
+    m_frameWatchTimer = new QTimer(this);
+    m_frameWatchTimer->setInterval(Image_FrameWatchMs);
+    m_frameWatchTimer->setTimerType(Qt::CoarseTimer);
+    connect(m_frameWatchTimer, &QTimer::timeout,
+            this, &SerialPortImage::checkImageFrameAlive);
 }
 
 SerialPortImage::~SerialPortImage() {
@@ -617,12 +623,33 @@ SerialPortImage::~SerialPortImage() {
 
 // ── Worker slots ──
 void SerialPortImage::onOpenPort(const QString &name, int baud) {
-    if (SerialPort::open(name, baud))
+    if (SerialPort::open(name, baud)) {
+        startFrameWatch();
         emit portOpened(true);
-    else
+    } else {
+        stopFrameWatch();
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
+    }
 }
-void SerialPortImage::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortImage::onClosePort()  {
+    const bool wasExguideSource = (exsrcindex == ExguideSrcImg);
+    stopFrameWatch();
+    if (m_exGuideTimer) {
+        m_exGuideTimer->stop();
+        disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+    }
+    m_lastexguidesetting = -1;
+    m_sendCount_1s = 0;
+    m_abNeedReset = true;
+    SerialPort::close();
+    emit portClosed();
+
+    if (wasExguideSource) {
+        exsrcindex = -1;
+        emit exguideLinkLost(
+            QStringLiteral("图像导引头串口已关闭，已取消图像导引头外引导源选择"));
+    }
+}
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortImage::onSendData(image_send_frame frame) { 
     //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
@@ -751,9 +778,18 @@ void SerialPortImage::ExmodeChanged(int mode)
         // 图像导引头被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcImg )
         {
-            // 判断图像导引头串口是否开启，未开启时触发弹窗提示
+            // 串口未打开时不启动外引导，也不写跟踪日志；只取消本路外引导源
             if (!isOpen()) {
-                emit exguideSerialNotOpen("图像导引头串口未打开");
+                if (m_exGuideTimer) {
+                    m_exGuideTimer->stop();
+                    disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                }
+                m_lastexguidesetting = -1;
+                m_sendCount_1s = 0;
+                exsrcindex = -1;
+                emit exguideLinkLost(
+                    QStringLiteral("图像导引头串口未打开，已取消图像导引头外引导源选择"));
+                return;
             }
 
             // 只有时间间隔设置改变时才重新绑定
@@ -778,6 +814,16 @@ void SerialPortImage::ExmodeChanged(int mode)
                 if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        if (!isOpen()) {
+                            m_exGuideTimer->stop();
+                            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                            m_lastexguidesetting = -1;
+                            m_sendCount_1s = 0;
+                            exsrcindex = -1;
+                            emit exguideLinkLost(
+                                QStringLiteral("图像导引头串口已断开，已取消图像导引头外引导源选择"));
+                            return;
+                        }
                         //可以加入一个帧编号的判断，如果帧编号没有更新，就不再进行外引导，而是弹窗提示，并退出外引导模式.帧编号从data指针中的bFrameSequence()获取
                         //读取帧编号如果帧编号没变化，则认为通信中断
                         // 帧编号停止更新 → 导引头已不再回传数据：本拍不再外引导，
@@ -809,6 +855,16 @@ void SerialPortImage::ExmodeChanged(int mode)
                 else if(exguidesetting == Exguide_5ms)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        if (!isOpen()) {
+                            m_exGuideTimer->stop();
+                            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                            m_lastexguidesetting = -1;
+                            m_sendCount_1s = 0;
+                            exsrcindex = -1;
+                            emit exguideLinkLost(
+                                QStringLiteral("图像导引头串口已断开，已取消图像导引头外引导源选择"));
+                            return;
+                        }
                         // 5ms 模式同样用帧编号判断通信是否正常：
                         // 帧编号未更新则不再发送外推角度，退出外引导并弹窗提示
                         if (!isImageFrameUpdated()) {
@@ -850,6 +906,44 @@ void SerialPortImage::ExmodeChanged(int mode)
     }
 }
 
+// ── 图像头串口通信看门狗（帧编号）──
+// 串口成功打开后每 500ms 检查一次帧编号；帧号恢复变化后清除已提示状态，
+// 这样同一次打开期间发生多次通信中断时，每次都能重新弹窗。
+void SerialPortImage::startFrameWatch()
+{
+    m_lastWatchedFrameSeq = m_imageData ? m_imageData->bFrameSequence() : -1;
+    m_frameFaultNotified = false;
+    m_frameWatchTimer->start(Image_FrameWatchMs);
+}
+
+void SerialPortImage::stopFrameWatch()
+{
+    m_frameWatchTimer->stop();
+    m_lastWatchedFrameSeq = -1;
+    m_frameFaultNotified = false;
+}
+
+void SerialPortImage::checkImageFrameAlive()
+{
+    if (!isOpen()) {
+        stopFrameWatch();
+        return;
+    }
+
+    const int seq = m_imageData ? m_imageData->bFrameSequence() : -1;
+    if (seq != m_lastWatchedFrameSeq) {
+        m_lastWatchedFrameSeq = seq;
+        m_frameFaultNotified = false;
+        return;
+    }
+
+    if (!m_frameFaultNotified) {
+        m_frameFaultNotified = true;
+        emit imageCommunicationFault(
+            QStringLiteral("图像头通信故障：帧编号连续500ms未变化"));
+    }
+}
+
 // ── 外引导通信看门狗（帧编号）──
 // 外引导定时器启动前调用：以当前帧编号为基准开始计时，
 // 之后每拍检查帧编号是否还在变化
@@ -880,7 +974,7 @@ bool SerialPortImage::isImageFrameUpdated()
     return m_exGuideFrameClock.elapsed() < Exguide_FrameLostMs;
 }
 
-// 通信中断处理：不再进行外引导，退出外引导模式并请求弹窗提示
+// 通信中断处理：停止本路外引导，保留外引导模式并请求弹窗提示
 void SerialPortImage::abortExGuideByLinkLost()
 {
     // 先停掉定时器并解绑，保证中断期间不会再把外推角度发给转台
@@ -889,14 +983,16 @@ void SerialPortImage::abortExGuideByLinkLost()
         disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
     }
     m_sendCount_1s = 0;
-    m_abNeedReset = true;          // 重新进入外引导时用当帧测量重建滤波器
-    m_lastexguidesetting = -1;     // 本次绑定作废，重新选中外引导模式时会重新绑定并重启定时器
+    m_abNeedReset = true;          // 重新选择图像源时用当帧测量重建滤波器
+    m_lastexguidesetting = -1;     // 本次绑定作废，重新选中图像源时会重新绑定并重启定时器
     m_lastExGuideFrameSeq = -1;    // 看门狗复位
     m_exGuideFrameClock.invalidate();
-    exindex = -1;                  // 退出外引导模式（等界面重新选择）
+    // 保留外引导模式，只清除本路导引头来源；界面取消图像导引头选择后，
+    // 可重新选择图像源以恢复外引导（届时会重新收到 ExguideSrcImg）。
+    exsrcindex = -1;
 
-    // 工作线程只发信号：主线程收到后弹窗提示，并把界面上的外引导模式取消
-    emit exguideLinkLost(QStringLiteral("图像导引头帧编号未更新，外引导通信中断，已退出外引导模式"));
+    // 工作线程只发信号：主线程收到后弹窗提示，并只取消图像导引头外引导源选择
+    emit exguideLinkLost(QStringLiteral("图像导引头帧编号未更新，已取消图像导引头外引导源选择"));
 }
 
 ImageData* SerialPortImage::imageData() const

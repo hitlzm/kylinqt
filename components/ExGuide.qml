@@ -7,6 +7,31 @@ Item {
     id: root
     anchors.fill: parent
 
+    // 1s 跟踪模式允许发送一次三轴跟踪偏差修正
+    readonly property bool guide1sSelected: period250ms.checked
+
+    function applyTrackingCorrection() {
+        turntableSendData.requestTrackingCorrection(
+                    turntableData.inner_ctlDeviation,
+                    turntableData.middle_ctlDeviation,
+                    turntableData.outter_ctlDeviation)
+    }
+
+    // 外引导源不可用：C++ 侧已停止对应外引导，
+    // 界面只取消对应源选择，保留外引导模式和跟踪周期设置。
+    function clearSource(source) {
+        if ((source === 3 && guideImage.checked)
+                || (source === 4 && guideLaser.checked)
+                || (source === 5 && guideCCD.checked)) {
+            guideSourceGroup.checkState = Qt.Unchecked
+        }
+    }
+
+    Connections {
+        target: modeController
+        onExguideSourceLost: root.clearSource(source)
+    }
+
     // 日志条目由 C++ LogManager 单例提供，格式已包含时间戳和来源标签
     // 可通过 logManager.addLog("来源", "消息") 从任意 QML 或 C++ 添加日志
     // 可通过 logManager.clearLog() 清空日志
@@ -117,10 +142,25 @@ Item {
             text: "日志"; font.pixelSize: 18; color: '#000000'
         }
 
+        // 仅 1s 跟踪模式显示；修正量取转台当前三轴控制偏差
+        CusButton_Blue {
+            id: correctionButton
+            anchors.top: parent.top; anchors.topMargin: 3
+            anchors.right: parent.right; anchors.rightMargin: 8
+            width: 96
+            height: 26
+            text: "跟踪修正"
+            font.pixelSize: 14
+            visible: root.guide1sSelected
+            z: 2
+            onClicked: root.applyTrackingCorrection()
+        }
+
         // 日志列表
         CusListView {
             id: logList
-            anchors.top: parent.top; anchors.topMargin: 22
+            anchors.top: parent.top
+            anchors.topMargin: correctionButton.visible ? 34 : 22
             anchors.left: parent.left;   anchors.leftMargin: 5
             anchors.right: parent.right; anchors.rightMargin: 5
             anchors.bottom: parent.bottom; anchors.bottomMargin: 4

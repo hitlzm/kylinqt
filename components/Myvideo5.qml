@@ -18,6 +18,11 @@ Rectangle {
     property int _retryCount: 0
     property int _maxRetries: 1
     property var magnifierWindow: null
+    // _connectedSourceIsCCD 记录当前真正连上的流是否来自 CCD，
+    // 避免切换到导引头单选后仍沿用上一路视频的连接状态。
+    property bool _connectedSourceIsCCD: false
+    readonly property bool ccdVideoConnected: _connected && _connectedSourceIsCCD && !_stopped
+    onCcdVideoConnectedChanged: ccdData.setVideoStreamConnected(ccdVideoConnected)
 
     // ── CPU 帧消费开关（导引头/CCD 模式切换处翻转）──
     // 导引头模式（视频直接显示）→ false：渲染线程跳过 glReadPixels，显示/放大镜纯 GPU、零回读
@@ -201,6 +206,7 @@ Rectangle {
         _retrying = false
         if (!isRetry) _retryCount = 0
         _connected = false
+        _connectedSourceIsCCD = sourceCCD.checked
         _stopped = false
         _isPlaying = false
         videoPlayer.stop()
@@ -300,6 +306,7 @@ Rectangle {
             // 仅打开 UDP/RTSP 协议、没有视频数据时不会触发
             console.log("VlcVideo: 检测到真实视频流，连接成功")
             _connected = true
+            _connectedSourceIsCCD = sourceCCD.checked
             _stopped = false
             _retrying = false
             _retryCount = 0
@@ -311,6 +318,8 @@ Rectangle {
         }
         onEnded: {
             console.log("VlcVideo: 播放结束")
+            _connected = false
+            _connectedSourceIsCCD = false
             _isPlaying = false
             stopOverlay.visible = true
         }

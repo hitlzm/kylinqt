@@ -36,13 +36,20 @@ public slots:
         }
     }
 
-    // 外引导过程中导引头帧编号停止更新（通信中断）：
-    // 由导引头串口线程发信号触发，这里退出外引导模式（-1 = 未选择任何模式），
-    // 并通知界面取消「外引导模式」单选，
-    // 避免界面仍显示外引导模式而实际已停止外引导。
+    // 图像导引头作为外引导源时帧编号停止更新（通信中断）：
+    // 保留当前外引导模式，只通知界面取消「图像导引头」外引导源选择。
     void onExguideLinkLost() {
-        setCurrentMode(-1);
-        emit exguideAborted();
+        emit exguideSourceLost(3);
+    }
+
+    // 激光导引头串口未打开：保留外引导模式，只取消激光导引头选择。
+    void onExguideLaserSourceLost() {
+        emit exguideSourceLost(4);
+    }
+
+    // CCD 视频流未接入：保留外引导模式，只取消 CCD 相机选择。
+    void onExguideCcdSourceLost() {
+        emit exguideSourceLost(5);
     }
 
 signals:
@@ -50,7 +57,7 @@ signals:
     void modeChanged(int newMode); // 新增信号，通知模式已改变，数值取0，1，2
     void exguideSrcChanged(int exsrc);  //通知外引导源变化， 数值取3，4，5
     void exguideSettingChanged(int setting); //通知外引导发送时间间隔变化 6,7
-    void exguideAborted();  //外引导通信中断，通知界面复位外引导模式选择
+    void exguideSourceLost(int source);  //外引导源不可用，通知界面只取消对应源
 private slots:
     
 

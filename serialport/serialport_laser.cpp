@@ -431,7 +431,24 @@ void SerialPortLaser::onOpenPort(const QString &name, int baud) {
     else
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
 }
-void SerialPortLaser::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortLaser::onClosePort()
+{
+    const bool wasExguideSource = (exsrcindex == ExguideSrcLaser);
+    if (m_exGuideTimer) {
+        m_exGuideTimer->stop();
+        disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+    }
+    m_lastexguidesetting = -1;
+    m_sendCount_1s = 0;
+    m_abNeedReset = true;
+    SerialPort::close();
+    emit portClosed();
+
+    if (wasExguideSource) {
+        exsrcindex = -1;
+        emit exguideSourceUnavailable();
+    }
+}
 void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortLaser::onSendData(laser_send_frame frame)
  {  
@@ -694,9 +711,18 @@ void SerialPortLaser::ExmodeChanged(int mode)
         // 激光导引头被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcLaser)
         {
-            // 判断激光导引头串口是否开启，未开启时触发弹窗提示
+            // 串口未打开时不启动外引导，也不写跟踪日志；只取消本路外引导源
             if (!isOpen()) {
                 emit exguideSerialNotOpen("激光导引头串口未打开");
+                if (m_exGuideTimer) {
+                    m_exGuideTimer->stop();
+                    disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                }
+                m_lastexguidesetting = -1;
+                m_sendCount_1s = 0;
+                exsrcindex = -1;
+                emit exguideSourceUnavailable();
+                return;
             }
 
             // 只有时间间隔设置改变时才重新绑定
@@ -720,6 +746,15 @@ void SerialPortLaser::ExmodeChanged(int mode)
                 if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        if (!isOpen()) {
+                            m_exGuideTimer->stop();
+                            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                            m_lastexguidesetting = -1;
+                            m_sendCount_1s = 0;
+                            exsrcindex = -1;
+                            emit exguideSourceUnavailable();
+                            return;
+                        }
                         // 每发送完固定次数后，重新发送时间同步信号并重新计时
                         if(m_sendCount_1s == 0)
                         {
@@ -741,6 +776,15 @@ void SerialPortLaser::ExmodeChanged(int mode)
                 else if(exguidesetting == Exguide_5ms)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
+                        if (!isOpen()) {
+                            m_exGuideTimer->stop();
+                            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
+                            m_lastexguidesetting = -1;
+                            m_sendCount_1s = 0;
+                            exsrcindex = -1;
+                            emit exguideSourceUnavailable();
+                            return;
+                        }
                         // 5ms模式直接发送角度数据
                         emit reqExsend_5ms(m_azimuth, m_pitch);
                         LogManager::instance()->logLaserTracking(m_azimuth, m_pitch);

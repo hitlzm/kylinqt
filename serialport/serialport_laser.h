@@ -353,6 +353,8 @@ signals:
     void laserRawFrameReceived(const QByteArray &rawData);
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
+    // 激光导引头不可用：通知界面只取消激光导引头外引导源
+    void exguideSourceUnavailable();
 
     // void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
