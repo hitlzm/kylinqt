@@ -82,6 +82,9 @@ public:
     qreal frameWidth() const { return m_width; }
     qreal frameHeight() const { return m_height; }
 
+    /// 已实际渲染的视频帧序号（单调递增）。QML 用它判断直播流是否还在出帧。
+    Q_INVOKABLE quint64 renderedFrameSerial() const;
+
     // ── CPU 帧消费开关 ────────────────────────────────────
     /// 是否有 CPU 侧消费者（如 StreamProcessor 检测）需要读回像素。
     /// false（导引头纯显示）时渲染线程跳过 glReadPixels，
@@ -172,6 +175,7 @@ private:
     unsigned m_width = 0;
     unsigned m_height = 0;
     volatile bool m_frameUpdated = false;
+    std::atomic<quint64> m_renderedFrameSerial{0};
 
     // 视频固有显示尺寸（mpv video-params 的 dw/dh）。
     // 用于判断点击是否落在帧内真实视频画面上（剔除 mpv 渲染时留下的黑边）。

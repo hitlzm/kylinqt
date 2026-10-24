@@ -165,10 +165,11 @@ private:
     const QByteArray cmd_digZoomclose = QByteArray::fromHex("8101040603FF");
     const QByteArray cmd_Backlightopen = QByteArray::fromHex("8101043302FF");
     const QByteArray cmd_Backlightclose = QByteArray::fromHex("8101043303FF");
-    const QByteArray cmd_Resolutionchange1 = QByteArray::fromHex("81010424730007FF");  //1080P 30帧
-    const QByteArray cmd_Resolutionchange2 = QByteArray::fromHex("8101042473000FFF");  //720P 30帧
-    const QByteArray cmd_Resolutionchange3 = QByteArray::fromHex("81010424730008FF");  //1080P 25帧
-    const QByteArray cmd_Resolutionchange4 = QByteArray::fromHex("81010424730101FF");  //720P 25帧
+    // 协议格式：8x 01 04 24 73 0p 0q FF，其中 0xpq 为 VO 分辨率编号。
+    const QByteArray cmd_resolution1080p30 = QByteArray::fromHex("81010424730007FF");
+    const QByteArray cmd_resolution1080p25 = QByteArray::fromHex("81010424730008FF");
+    const QByteArray cmd_resolution720p30  = QByteArray::fromHex("8101042473000FFF");
+    const QByteArray cmd_resolution720p25  = QByteArray::fromHex("81010424730011FF");
 
     // Alpha-Beta 跟踪管理器：每帧图像更新滤波，1s定时器外推预测角度
     ABTrackManager m_abMgr{SeekerType::CCD_Wide};

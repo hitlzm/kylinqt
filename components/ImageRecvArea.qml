@@ -18,6 +18,8 @@ Rectangle {
 
     property var axisAlarmQueue: []
     property bool axisAlarmShowing: false
+    property int lastValidCmdHint: -1
+    property string runCommandText: "未知"
 
     Connections {
         target: axisAlarmMsg
@@ -25,6 +27,11 @@ Rectangle {
             axisAlarmShowing = false
             Qt.callLater(function() { showNextAxisAlarm() })
         }
+    }
+
+    Connections {
+        target: turntableData
+        onCmdHintChanged: updateRunCommandText(turntableData.cmdHint)
     }
 
     // 根据控制字，返回具体执行的指令名称
@@ -43,6 +50,17 @@ Rectangle {
         case 0x1F: return "复位"
         default:   return "未知"
     }
+    }
+
+    // 反馈中的指令提示只在收到指令时出现一帧，后续无效提示沿用最近一次有效指令。
+    function updateRunCommandText(n) {
+        var cmd = Number(n)
+        if (ctlNumberText(cmd) !== "未知")
+            lastValidCmdHint = cmd
+
+        runCommandText = lastValidCmdHint >= 0
+                ? ctlNumberText(lastValidCmdHint)
+                : "未知"
     }
 
     // 转台时间以毫秒为单位，按 4 小时循环，显示为 时:分:秒
@@ -140,6 +158,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
+        updateRunCommandText(turntableData.cmdHint)
         handleAxisAlarm("内框", turntableData.inner_alarm)
         handleAxisAlarm("中框", turntableData.middle_alarm)
         handleAxisAlarm("外框", turntableData.outter_alarm)
@@ -356,7 +375,7 @@ Rectangle {
                     id: ccdBaudComboBox
                     width: 90
                     height: 28
-                    model: ["115200"]
+                    model: ["9600"]
                     font.pixelSize: 14
                     currentIndex: 0
                     popupMinWidth: 200
@@ -511,7 +530,7 @@ Rectangle {
             Row {
                 spacing: 20
                 DataLabel { fontSize: 18; labelWidth: 55;  valueWidth: 100; label: "时间:"; labelBold: true; value: formatTurntableTime(turntableData.time) }
-                DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 100; label: "运行指令:";   labelBold: true; value: ctlNumberText(turntableData.cmdHint) }
+                DataLabel { fontSize: 18; labelWidth: 100;  valueWidth: 100; label: "运行指令:";   labelBold: true; value: runCommandText }
                 //加入保存转台数据的按钮
                 Item{
                     width: 180

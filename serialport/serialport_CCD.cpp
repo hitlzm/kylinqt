@@ -71,25 +71,25 @@ void SerialPortCCD::sendResolutionchange(int index)
 {
     switch(index){
         case 0: {
-            m_serialPort->write(cmd_Resolutionchange1);
+            m_serialPort->write(cmd_resolution1080p30);
             m_imageWidth  = 1920;
             m_imageHeight = 1080;
             break;
         }
         case 1: {
-            m_serialPort->write(cmd_Resolutionchange2);
-            m_imageWidth  = 1280;
-            m_imageHeight = 720;
-            break;
-        }
-        case 2: {
-            m_serialPort->write(cmd_Resolutionchange1);
+            m_serialPort->write(cmd_resolution1080p25);
             m_imageWidth  = 1920;
             m_imageHeight = 1080;
             break;
         }
+        case 2: {
+            m_serialPort->write(cmd_resolution720p30);
+            m_imageWidth  = 1280;
+            m_imageHeight = 720;
+            break;
+        }
         case 3: {
-            m_serialPort->write(cmd_Resolutionchange2);
+            m_serialPort->write(cmd_resolution720p25);
             m_imageWidth  = 1280;
             m_imageHeight = 720;
             break;

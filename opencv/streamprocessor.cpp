@@ -221,6 +221,26 @@ void StreamProcessor::stop() {
     emit finished();
 }
 
+void StreamProcessor::setInferenceEnabled(bool enabled) {
+    const bool wasEnabled = m_inferenceEnabled.exchange(enabled);
+    if (wasEnabled == enabled)
+        return;
+
+    if (!enabled) {
+        // 退出 CCD 外引导后不保留旧航迹，避免下次进入时把新目标
+        // 与上一次的预测位置做门限关联。
+        m_tracker.reset();
+        m_kalmanFirstFrame = true;
+        m_gateRejectStreak = 0;
+        m_centerX = -1;
+        m_centerY = -1;
+        emit targetCenterChanged(-1, -1);
+    }
+
+    qDebug() << "[StreamProcessor] inference"
+             << (enabled ? "enabled" : "disabled");
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 // 核心帧处理循环
 //
@@ -237,9 +257,10 @@ void StreamProcessor::processFrame() {
 
     // 固定目标帧间隔（ms）
     const int targetInterval = std::max(5, 1000 / m_targetFps);
-    // Guide-head mode (CPU readback disabled): pause detection entirely,
-    // otherwise stale CCD frames left in the buffer keep feeding YOLO.
-    if (m_videoSource && !m_videoSource->cpuFrameConsumer()) {
+    // 未满足“外引导 + CCD 源 + 跟踪周期”时不取帧、不推理。
+    // 该门控独立于 QML 的 CPU 回读开关，防止状态切换瞬间消费残留帧。
+    if (!m_inferenceEnabled.load()
+            || (m_videoSource && !m_videoSource->cpuFrameConsumer())) {
         m_timer->start(targetInterval);
         return;
     }

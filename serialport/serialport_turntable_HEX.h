@@ -450,7 +450,7 @@ private:
     bool m_handleMiddleMoving = false;
     bool m_handleOutterMoving = false;
 
-    float m_step_angle = 0.0f; // 步进角度，单位度
+    float m_step_angle = 1.0f; // 步进角度，单位度（与遥控界面默认值一致）
     float m_speed_multiplier = 1.0f; // 速度倍率，单位倍
 
     QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，按帧头+固定帧长切帧

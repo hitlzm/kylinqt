@@ -27,9 +27,23 @@ Item {
         }
     }
 
+    // ExGuide 页面会随控制模式切换而重新加载，重新加载后从控制器恢复选择。
+    function syncSelection() {
+        var source = modeController.exguideSource
+        if (source === 4) guideLaser.checked = true
+        else if (source === 3) guideImage.checked = true
+        else if (source === 5) guideCCD.checked = true
+
+        var period = modeController.exguidePeriod
+        if (period === 7) period250ms.checked = true
+        else if (period === 6) period5ms.checked = true
+    }
+
     Connections {
         target: modeController
         onExguideSourceLost: root.clearSource(source)
+        onExguideSourceChanged: root.syncSelection()
+        onExguidePeriodChanged: root.syncSelection()
     }
 
     // 日志条目由 C++ LogManager 单例提供，格式已包含时间戳和来源标签
@@ -60,7 +74,7 @@ Item {
             font.pixelSize: 16
             ButtonGroup.group: guideSourceGroup
             onCheckedChanged: {
-                if (checked) modeController.exguideSrcChanged(4)
+                if (checked) modeController.setExguideSource(4)
             }
         }
         CusRadioButton {
@@ -70,7 +84,7 @@ Item {
             font.pixelSize: 16
             ButtonGroup.group: guideSourceGroup
             onCheckedChanged: {
-                if (checked) modeController.exguideSrcChanged(3)
+                if (checked) modeController.setExguideSource(3)
             }
         }
         CusRadioButton {
@@ -80,7 +94,7 @@ Item {
             font.pixelSize: 16
             ButtonGroup.group: guideSourceGroup
             onCheckedChanged: {
-                if (checked) modeController.exguideSrcChanged(5)
+                if (checked) modeController.setExguideSource(5)
             }
         }
     }
@@ -108,7 +122,7 @@ Item {
             font.pixelSize: 16
             ButtonGroup.group: guidePeriodGroup
             onCheckedChanged: {
-                if (checked) modeController.exguideSettingChanged(7)
+                if (checked) modeController.setExguidePeriod(7)
             }
         }
         CusRadioButton {
@@ -118,10 +132,12 @@ Item {
             font.pixelSize: 16
             ButtonGroup.group: guidePeriodGroup
             onCheckedChanged: {
-                if (checked) modeController.exguideSettingChanged(6)
+                if (checked) modeController.setExguidePeriod(6)
             }
         }
     }
+
+    Component.onCompleted: root.syncSelection()
 
     Rectangle {
         id: logArea

@@ -344,6 +344,7 @@ private:
         }
 
         m_renderedNewFrame = true;   // 本轮确实渲染出了新的一帧
+        m_item->m_renderedFrameSerial.fetch_add(1, std::memory_order_relaxed);
 
         // ── 恢复 Qt FBO + viewport（关键！否则后续绘制错位） ──
         glBindFramebuffer(GL_FRAMEBUFFER, qtFbo);
@@ -597,9 +598,12 @@ void VlcVideoItem::ensureMpvCreated()
     qDebug() << "[MpvVideo] mpv_create OK";
 
     mpv_set_option_string(m_mpv, "vo", "libmpv");
-    mpv_set_option_string(m_mpv, "hwdec", "no");
+    // 优先使用安全的硬件解码后端；不支持的格式会由 mpv 自动回退到软件解码。
+    mpv_set_option_string(m_mpv, "hwdec", "auto-safe");
+    // 本应用只显示视频：不选择音频轨，避免音频解码和播放。
+    mpv_set_option_string(m_mpv, "aid", "no");
     mpv_set_option_string(m_mpv, "config", "no");
-    mpv_set_option_string(m_mpv, "msg-level", "all=debug");
+    mpv_set_option_string(m_mpv, "msg-level", "all=warn");
     mpv_set_option_string(m_mpv, "profile", "low-latency");  // 低延迟模式，减少解码缓冲
 
     int ret = mpv_initialize(m_mpv);
@@ -613,7 +617,7 @@ void VlcVideoItem::ensureMpvCreated()
 
     qDebug() << "[MpvVideo] mpv_initialize OK";
 
-    mpv_request_log_messages(m_mpv, "info");
+    mpv_request_log_messages(m_mpv, "warn");
     mpv_set_wakeup_callback(m_mpv, onMpvWakeup, this);
 }
 
@@ -753,6 +757,11 @@ QSize VlcVideoItem::videoNativeSize() const
 {
     QMutexLocker lock(&m_frameMutex);
     return QSize(m_videoDw, m_videoDh);
+}
+
+quint64 VlcVideoItem::renderedFrameSerial() const
+{
+    return m_renderedFrameSerial.load(std::memory_order_relaxed);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -970,7 +979,9 @@ void VlcVideoItem::doSetupPlayer()
     // 先设为暂停状态，等用户点击 play() 再取消暂停
     int paused = 1;
     mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
-    mpv_set_property_string(m_mpv, "rtsp-transport", "tcp");
+    // RTSP 优先使用 UDP，减少 TCP 重传和队头阻塞带来的额外延迟。
+    // 若现场网络丢包导致花屏，可改回 "tcp"。
+    mpv_set_property_string(m_mpv, "rtsp-transport", "udp");
     // 观察属性变化以获取播放状态
     mpv_observe_property(m_mpv, 0, "pause",          MPV_FORMAT_FLAG);
     mpv_observe_property(m_mpv, 0, "duration",       MPV_FORMAT_DOUBLE);
@@ -987,12 +998,6 @@ void VlcVideoItem::doSetupPlayer()
     const char *cmd[] = {"loadfile", url.constData(), nullptr};
     mpv_command_async(m_mpv, 0, cmd);
 
-    // 设置音量和初始状态
-    {
-        char buf[16];
-        snprintf(buf, sizeof(buf), "%d", m_volume);
-        mpv_set_property_string(m_mpv, "volume", buf);
-    }
 }
 
 void VlcVideoItem::releasePlayer()

@@ -103,6 +103,7 @@ public slots:
     void start();
     void processFrame();
     void stop();
+    void setInferenceEnabled(bool enabled);
     // 这里槽函数监听外引导源切换为CCD相机时，以固定时间间隔发送角度信息给转台线程
     // void CCDguide(){
     //     //如果为外引导模式，且外引导源为CCD相机
@@ -141,6 +142,7 @@ private:
 
     QTimer *m_timer = nullptr;
     std::atomic<bool> m_running{false};
+    std::atomic<bool> m_inferenceEnabled{false};
 
     int m_targetFps = 30;
 

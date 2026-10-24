@@ -18,17 +18,26 @@ Rectangle {
     property int _retryCount: 0
     property int _maxRetries: 1
     property var magnifierWindow: null
+    property bool _failureDialogShown: false
+    property real _lastWatchdogFrameSerial: 0
+    property real _lastVideoFrameAt: 0
+    readonly property int _streamStallTimeoutMs: 3000
     // _connectedSourceIsCCD 记录当前真正连上的流是否来自 CCD，
     // 避免切换到导引头单选后仍沿用上一路视频的连接状态。
     property bool _connectedSourceIsCCD: false
-    readonly property bool ccdVideoConnected: _connected && _connectedSourceIsCCD && !_stopped
+    readonly property bool ccdVideoConnected: _connected && sourceCCD.checked
+                                              && _connectedSourceIsCCD && !_stopped
     onCcdVideoConnectedChanged: ccdData.setVideoStreamConnected(ccdVideoConnected)
 
-    // ── CPU 帧消费开关（导引头/CCD 模式切换处翻转）──
-    // 导引头模式（视频直接显示）→ false：渲染线程跳过 glReadPixels，显示/放大镜纯 GPU、零回读
-    // CCD 模式（需 YOLO 检测）  → true ：保留 CPU 回读供 StreamProcessor 取帧
-    // 默认 true = 保持现有行为；在接入/切换视频源时按模式置位即可
-    property bool cpuFrameConsumer: true
+    // ── CPU 帧消费开关 ────────────────────────────────────────────────
+    // 仅在“CCD 视频已连接 + 外引导模式 + CCD 外引导源 + 已选跟踪周期”
+    // 四项同时成立时回读 CPU 帧并执行视觉推理。只选中 CCD 或只连接流时，
+    // 视频走 GPU 直显，逐帧 glReadPixels 和 YOLO 都不会启动。
+    readonly property bool ccdInferenceActive: ccdVideoConnected
+                                               && modeController.currentMode === 0
+                                               && modeController.exguideSource === 5
+                                               && modeController.exguidePeriod > 0
+    property bool cpuFrameConsumer: ccdInferenceActive
     onCpuFrameConsumerChanged: videoPlayer.setCpuFrameConsumer(cpuFrameConsumer)
 
     // 视频源选择互斥组（标题栏 radio）
@@ -121,7 +130,19 @@ Rectangle {
         }
     }
 
-    MessagePopup { id: connFailMsg }
+    // 直播流断网时，mpv 往往只停在最后一帧，不会发出 error/end-file。
+    // 因此以“实际渲染出的新帧”为准：3 秒没有新帧就判定中断。
+    Timer {
+        id: streamWatchdog
+        interval: 500
+        repeat: true
+        onTriggered: checkStreamAlive()
+    }
+
+    MessagePopup {
+        id: connFailMsg
+        onClosed: root._failureDialogShown = false
+    }
     MessagePopup { id: connectFirstMsg }
 
     // // 像素信息显示（悬浮于视频右下角）
@@ -167,6 +188,7 @@ Rectangle {
             onClicked: {
                 // 停止 = 断开当前视频源：停止播放并清空源，再次播放需重新连接
                 retryTimer.stop()
+                streamWatchdog.stop()
                 _retrying = false
                 _retryCount = 0
                 videoPlayer.stop()
@@ -203,8 +225,15 @@ Rectangle {
     function connectToUrl(newUrl, isRetry) {
         if (newUrl === "") return
         retryTimer.stop()
+        streamWatchdog.stop()
         _retrying = false
-        if (!isRetry) _retryCount = 0
+        if (!isRetry) {
+            _retryCount = 0
+            if (_failureDialogShown) {
+                connFailMsg.close()
+                _failureDialogShown = false
+            }
+        }
         _connected = false
         _connectedSourceIsCCD = sourceCCD.checked
         _stopped = false
@@ -218,25 +247,55 @@ Rectangle {
 
     // 连接失败统一处理（由连接返回的失败信号触发）：
     // 置未连接 → 2 秒后自动重连（最多 _maxRetries 次）→ 仍失败则弹窗提示
-    function handleConnectionFailure(msg) {
+    function handleConnectionFailure(msg, notifyImmediately) {
+        streamWatchdog.stop()
         _connected = false
         _stopped = false
         _isPlaying = false
-        stopOverlay.visible = false
+        stopOverlay.visible = true
         if (_retrying) return
-        if (_retryCount < _maxRetries) {
+        const retryScheduled = _retryCount < _maxRetries
+        if (retryScheduled) {
             _retryCount++
             _retrying = true
             retryTimer.start()
-        } else {
+        }
+        // 已连接后的中断立即提示；首次连接失败仍先静默重试一次。
+        if (notifyImmediately || !retryScheduled) {
             connFailMsg.message = msg
-            connFailMsg.open()
+            if (!connFailMsg.opened) connFailMsg.open()
+            _failureDialogShown = true
         }
     }
 
-    // 视频源选择：CCD → 保留 CPU 回读供 YOLO 检测；导引头 → 跳过回读纯 GPU 显示
+    function checkStreamAlive() {
+        if (_stopped || !_connected || !_isPlaying) {
+            streamWatchdog.stop()
+            return
+        }
+
+        const serial = videoPlayer.renderedFrameSerial()
+        if (serial !== _lastWatchdogFrameSerial) {
+            _lastWatchdogFrameSerial = serial
+            _lastVideoFrameAt = Date.now()
+            return
+        }
+
+        if (Date.now() - _lastVideoFrameAt >= _streamStallTimeoutMs) {
+            streamWatchdog.stop()
+            handleConnectionFailure(
+                "视频流已中断，正在尝试重连，请检查网线或网络连接", true)
+        }
+    }
+
+    function startStreamWatchdog() {
+        _lastWatchdogFrameSerial = videoPlayer.renderedFrameSerial()
+        _lastVideoFrameAt = Date.now()
+        streamWatchdog.restart()
+    }
+
+    // 视频源选择只决定取流地址；是否回读 CPU 帧由 ccdInferenceActive 决定。
     function selectSource(isCCD) {
-        cpuFrameConsumer = isCCD
         // 切换视频源时填入对应默认地址。
         if (isCCD && urlInput) {
             urlInput.text = "rtsp://admin:abcd1234@192.168.1.68:554/Streaming/Channels/101"
@@ -249,6 +308,9 @@ Rectangle {
     // 初始默认导引头模式：关闭 CPU 回读 + 填入默认 RTSP（此时子对象均已创建）
     Component.onCompleted: {
         sourceGuide.checked = true
+        // VlcVideoItem 的默认值与本页门控绑定可能相同，不会触发
+        // onCpuFrameConsumerChanged，因此初始化时显式同步一次。
+        videoPlayer.setCpuFrameConsumer(cpuFrameConsumer)
     }
 
     function toggleMagnifier() {
@@ -315,21 +377,32 @@ Rectangle {
             videoPlayer.play()
             _isPlaying = true
             stopOverlay.visible = false
+            startStreamWatchdog()
+            if (_failureDialogShown)
+                connFailMsg.message = "视频流已恢复"
         }
         onEnded: {
             console.log("VlcVideo: 播放结束")
+            const wasConnected = _connected && !_stopped
+            streamWatchdog.stop()
             _connected = false
             _connectedSourceIsCCD = false
             _isPlaying = false
             stopOverlay.visible = true
+            if (wasConnected)
+                handleConnectionFailure(
+                    "视频流已中断，正在尝试重连，请检查网线或网络连接", true)
         }
         onError: {
             console.log("VlcVideo error:", errorMsg)
             if (_stopped) return          // 用户已主动停止，不再自动重连
-            handleConnectionFailure("视频流连接失败，请检查视频源地址或网络后重试")
+            const wasConnected = _connected
+            handleConnectionFailure(
+                "视频流连接失败，请检查视频源地址或网络后重试", wasConnected)
         }
         onStopped: {
             console.log("VlcVideo: 已停止")
+            streamWatchdog.stop()
             _isPlaying = false
             stopOverlay.visible = true
         }

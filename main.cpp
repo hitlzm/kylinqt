@@ -531,6 +531,12 @@ int main(int argc, char *argv[])
         QObject::connect(streamProc, &StreamProcessor::errorOccurred, [](const QString &msg) {
             qWarning() << "[StreamProcessor]" << msg;
         });
+        // 视觉推理门控：外引导模式 + CCD 外引导源 + 跟踪周期均选定才放行。
+        // 信号跨线程投递到 StreamProcessor，确保推理只在其工作线程中执行。
+        QObject::connect(&m_modeController, &ModeController::ccdInferenceRequestChanged,
+                         streamProc, &StreamProcessor::setInferenceEnabled,
+                         Qt::QueuedConnection);
+        streamProc->setInferenceEnabled(m_modeController.ccdInferenceRequested());
 
         // 线程启动 → 开始处理；finished → 退出线程并回收
         QObject::connect(streamThread, &QThread::started, streamProc, &StreamProcessor::start);
