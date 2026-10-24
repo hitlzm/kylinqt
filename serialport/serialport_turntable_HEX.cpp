@@ -9,6 +9,7 @@
 #include "../utils/sendlatencyprobe.h"
 #define MAX_SPEED_HEX 12.0f           //转台的最大速度可以再加大一些
 #define MAX_ACCELERATION_HEX 10.0f
+#define HANDLE_SPEED_CHANGE_EPSILON 0.1f  // 低于此变化的摇杆噪声不触发停车重设
 
 // ════════════════════════ 数值编解码实现 ════════════════════════
 
@@ -251,6 +252,12 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
     feedback.m_hasSecPulse = (buf[26] & 0x80) ? 1 : 0;
     feedback.m_cmdHint     = buf[26] & 0x3F;     // 低6位
 
+    // 停车完成后对应轴会回到伺服状态(0x01)。在这里处理反馈，可以在收到
+    // 状态帧的第一时间下发等待中的新速度，而不必再等下一个 20ms 手柄周期。
+    applyPendingHandleSpeed(1, feedback.m_inner_status, feedback.m_inner_alarm);
+    applyPendingHandleSpeed(2, feedback.m_middle_status, feedback.m_middle_alarm);
+    applyPendingHandleSpeed(3, feedback.m_outter_status, feedback.m_outter_alarm);
+
     emit requpdateframe(feedback);
 }
 
@@ -335,6 +342,7 @@ void SerialPortTurntableHex::sendResetCmd()
 
 void SerialPortTurntableHex::openTurntable()
 {
+    resetAllHandleSpeedStates();
     // 开机流程: 先释放再使能三个轴电机
     sendEnableCmd(1, false); sendEnableCmd(2, false); sendEnableCmd(3, false);
     sendEnableCmd(1, true);  sendEnableCmd(2, true);  sendEnableCmd(3, true);
@@ -343,6 +351,7 @@ void SerialPortTurntableHex::openTurntable()
 // ════════════════════════ 高级指令：释放 ════════════════════════
 void SerialPortTurntableHex::releaseTurntable()
 {
+    resetAllHandleSpeedStates();
     // 释放三轴电机
     sendEnableCmd(1, false); sendEnableCmd(2, false); sendEnableCmd(3, false);
 }
@@ -351,6 +360,7 @@ void SerialPortTurntableHex::releaseTurntable()
 
 void SerialPortTurntableHex::closeTurntable()
 {
+    resetAllHandleSpeedStates();
     sendStopCmd(1);
     sendStopCmd(2);
     sendStopCmd(3);
@@ -361,11 +371,8 @@ void SerialPortTurntableHex::closeTurntable()
 
 void SerialPortTurntableHex::zeroTurntable()
 {
-    // 回零是状态切换指令。清除遥控轴状态，保证下一周期摇杆仍为零时
-    // 不会补发停车指令覆盖回零。
-    m_handleInnerMoving = false;
-    m_handleMiddleMoving = false;
-    m_handleOutterMoving = false;
+    // 回零是状态切换指令。清除遥控轴状态，避免等待中的新速度覆盖回零。
+    resetAllHandleSpeedStates();
 
     sendZeroCmd(1);
     sendZeroCmd(2);
@@ -377,6 +384,7 @@ void SerialPortTurntableHex::zeroTurntable()
 
 void SerialPortTurntableHex::resetTurntable()
 {
+    resetAllHandleSpeedStates();
     sendResetCmd();
 }
 
@@ -598,12 +606,10 @@ void SerialPortTurntableHex::ProgramModeChanged(int mode)
 {
     m_isProgramMode = (mode == 1);
 
-    // 进入遥控模式后，第一次摇杆归零时发送一次停车，确保从其它模式切入时
-    // 不会继承之前的速度状态；之后静止期间不再重复发送停车。
+    // 进入遥控模式后，首次速度控制先停车再等待伺服，确保不会继承其它模式
+    // 已经建立的速度；离开遥控模式时清掉等待中的目标，避免反馈触发误下发。
     const bool remoteMode = (mode == 2);
-    m_handleInnerMoving = remoteMode;
-    m_handleMiddleMoving = remoteMode;
-    m_handleOutterMoving = remoteMode;
+    resetAllHandleSpeedStates(remoteMode);
 }
 
 
@@ -621,28 +627,25 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         return;
     }
 
-    // 加速度设为1000 (即 10.00 °/s²)
-    const float defaultAccel = 10.0f;  // 10.00 °/s² → 发送时为1000原始值
-
     if (frame.index == 0) {
         // ── 三轴联动 ──
         PositionModeCmd1Hex cmd1;
         cmd1.axis = 1;
-        cmd1.acceleration = defaultAccel;
+        cmd1.acceleration = MAX_ACCELERATION_HEX;
         cmd1.velocity = (frame.inner_endangle - frame.current_inner_angle) / frame.runtime;
         cmd1.anglePos = frame.inner_endangle;
         sendPositionCmd(cmd1);
 
         PositionModeCmd1Hex cmd2;
         cmd2.axis = 2;
-        cmd2.acceleration = defaultAccel;
+        cmd2.acceleration = MAX_ACCELERATION_HEX;
         cmd2.velocity = (frame.middle_endangle - frame.current_middle_angle) / frame.runtime;
         cmd2.anglePos = frame.middle_endangle;
         sendPositionCmd(cmd2);
 
         PositionModeCmd1Hex cmd3;
         cmd3.axis = 3;
-        cmd3.acceleration = defaultAccel;
+        cmd3.acceleration = MAX_ACCELERATION_HEX;
         cmd3.velocity = (frame.outter_endangle - frame.current_outter_angle) / frame.runtime;
         cmd3.anglePos = frame.outter_endangle;
         sendPositionCmd(cmd3);
@@ -650,7 +653,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 仅内框 ──
         PositionModeCmd1Hex cmd1;
         cmd1.axis = 1;
-        cmd1.acceleration = defaultAccel;
+        cmd1.acceleration = MAX_ACCELERATION_HEX;
         cmd1.velocity = (frame.inner_endangle - frame.current_inner_angle) / frame.runtime;
         cmd1.anglePos = frame.inner_endangle;
         sendPositionCmd(cmd1);
@@ -658,7 +661,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 仅中框 ──
         PositionModeCmd1Hex cmd2;
         cmd2.axis = 2;
-        cmd2.acceleration = defaultAccel;
+        cmd2.acceleration = MAX_ACCELERATION_HEX;
         cmd2.velocity = (frame.middle_endangle - frame.current_middle_angle) / frame.runtime;
         cmd2.anglePos = frame.middle_endangle;
         sendPositionCmd(cmd2);
@@ -666,7 +669,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 仅外框 ──
         PositionModeCmd1Hex cmd3;
         cmd3.axis = 3;
-        cmd3.acceleration = defaultAccel;
+        cmd3.acceleration = MAX_ACCELERATION_HEX;
         cmd3.velocity = (frame.outter_endangle - frame.current_outter_angle) / frame.runtime;
         cmd3.anglePos = frame.outter_endangle;
         sendPositionCmd(cmd3);
@@ -800,19 +803,175 @@ void SerialPortTurntableHex::sendSwingMode(int index, float amplitude, float fre
 
 // ════════════════════════ 遥控模式（手柄控制）═══════════════════════════
 
+void SerialPortTurntableHex::sendHandleSpeedCmd(int axis, float velocity)
+{
+    SpeedModeCmd1Hex cmd;
+    cmd.axis = axis;
+    cmd.acceleration = MAX_ACCELERATION_HEX;
+    cmd.velocity = velocity;
+    sendVecCmd(cmd);
+}
+
+
+void SerialPortTurntableHex::resetHandleSpeedState(int axis, bool hardwareMayBeMoving)
+{
+    if (axis < 1 || axis > 3)
+        return;
+
+    HandleSpeedAxisState &state = m_handleSpeedAxes[axis];
+    state.state = HandleSpeedState::Idle;
+    state.activeSpeed = 0.0f;
+    state.pendingSpeed = 0.0f;
+    state.hardwareMayBeMoving = hardwareMayBeMoving;
+    state.feedbackStatus = -1;
+    state.feedbackAlarm = -1;
+    state.sawNonServoAfterStop = false;
+    state.feedbackFramesSinceStop = 0;
+}
+
+
+void SerialPortTurntableHex::resetAllHandleSpeedStates(bool hardwareMayBeMoving)
+{
+    for (int axis = 1; axis <= 3; ++axis)
+        resetHandleSpeedState(axis, hardwareMayBeMoving);
+}
+
+
+void SerialPortTurntableHex::setHandleSpeedTarget(int axis, float target)
+{
+    if (axis < 1 || axis > 3)
+        return;
+
+    if (!std::isfinite(target))
+        target = 0.0f;
+    target = std::max(-MAX_SPEED_HEX, std::min(MAX_SPEED_HEX, target));
+
+    // 与协议编码精度对齐，避免浮点尾差被误判为目标变化。
+    target = static_cast<float>(speedToRaw(target)) / SPEED_UNIT;
+
+    HandleSpeedAxisState &state = m_handleSpeedAxes[axis];
+    const bool targetIsStop = speedToRaw(target) == 0;
+
+    switch (state.state) {
+    case HandleSpeedState::Idle:
+        if (targetIsStop) {
+            // 进入遥控模式时 hardwareMayBeMoving 会置位；此时仍需停车一次，
+            // 以清除其它模式可能遗留的速度，但不能在静止时周期性重发停车。
+            if (state.hardwareMayBeMoving) {
+                state.pendingSpeed = 0.0f;
+                state.hardwareMayBeMoving = false;
+                state.state = HandleSpeedState::WaitingForServo;
+                state.sawNonServoAfterStop = false;
+                state.feedbackFramesSinceStop = 0;
+                sendStopCmd(axis);
+            }
+            return;
+        }
+
+        if (state.hardwareMayBeMoving) {
+            // 当前速度不确定，先停车，再等待该轴回到伺服状态后设置新速度。
+            state.pendingSpeed = target;
+            state.hardwareMayBeMoving = false;
+            state.state = HandleSpeedState::WaitingForServo;
+            state.sawNonServoAfterStop = false;
+            state.feedbackFramesSinceStop = 0;
+            sendStopCmd(axis);
+        } else {
+            sendHandleSpeedCmd(axis, target);
+            state.activeSpeed = target;
+            state.hardwareMayBeMoving = true;
+            state.state = HandleSpeedState::Running;
+        }
+        break;
+
+    case HandleSpeedState::Running:
+        if (targetIsStop) {
+            state.pendingSpeed = 0.0f;
+            state.hardwareMayBeMoving = false;
+            state.state = HandleSpeedState::WaitingForServo;
+            state.sawNonServoAfterStop = false;
+            state.feedbackFramesSinceStop = 0;
+            sendStopCmd(axis);
+        } else if (std::abs(target - state.activeSpeed) >= HANDLE_SPEED_CHANGE_EPSILON) {
+            // 转台不允许在速率模式下直接改目标速度，必须先停车。
+            state.pendingSpeed = target;
+            state.hardwareMayBeMoving = false;
+            state.state = HandleSpeedState::WaitingForServo;
+            state.sawNonServoAfterStop = false;
+            state.feedbackFramesSinceStop = 0;
+            sendStopCmd(axis);
+        }
+        break;
+
+    case HandleSpeedState::WaitingForServo:
+        // 停车过程可能持续多个手柄周期，只更新最终目标，不重复发送停车。
+        state.pendingSpeed = target;
+        break;
+    }
+}
+
+
+void SerialPortTurntableHex::applyPendingHandleSpeed(int axis, int status, int alarm)
+{
+    if (axis < 1 || axis > 3)
+        return;
+
+    HandleSpeedAxisState &state = m_handleSpeedAxes[axis];
+    state.feedbackStatus = status;
+    state.feedbackAlarm = alarm;
+
+    if (state.state != HandleSpeedState::WaitingForServo || alarm != 0)
+        return;
+
+    ++state.feedbackFramesSinceStop;
+    if (status != 0x01) {
+        state.sawNonServoAfterStop = true;
+        return;
+    }
+
+    // 刚发停车后的第一帧可能仍是停车前的旧状态。优先等待明确的非伺服状态；
+    // 如果控制器不上报中间态，则至少再等一帧，避免旧反馈触发新速度。
+    if (!state.sawNonServoAfterStop && state.feedbackFramesSinceStop < 2)
+        return;
+
+    const bool targetIsStop = speedToRaw(state.pendingSpeed) == 0;
+    if (targetIsStop) {
+        state.activeSpeed = 0.0f;
+        state.pendingSpeed = 0.0f;
+        state.hardwareMayBeMoving = false;
+        state.state = HandleSpeedState::Idle;
+        return;
+    }
+
+    const float velocity = state.pendingSpeed;
+    sendHandleSpeedCmd(axis, velocity);
+    state.activeSpeed = velocity;
+    state.pendingSpeed = 0.0f;
+    state.hardwareMayBeMoving = true;
+    state.state = HandleSpeedState::Running;
+
+    qDebug() << "[HEX] 遥控速度动态切换: 轴" << axis
+             << "新速度" << velocity << "°/s";
+}
+
+
 void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX,
                                              float buttonL2, float buttonR2,
                                              bool buttonA, bool buttonB, int Acount, int Bcount)
 {
-    const float defaultAccel = 10.0f;  // 10.00 °/s² → 发送时为1000原始值  // 10.00 °/s²
-
     if (buttonL2 != 0.0f || buttonR2 != 0.0f) {
+        // 进入位置模式时不继承速率模式下的旧速度。这里最多发送一次停车；
+        // 后续周期状态已变为 WaitingForServo，不会重复发送。
+        setHandleSpeedTarget(1, 0.0f);
+        setHandleSpeedTarget(2, 0.0f);
+        setHandleSpeedTarget(3, 0.0f);
+
         // ── 位置模式 (扳机按下 → 步进/步退) ──
         if (buttonR2 > 0.9f && buttonL2 > 0.9f) {
             // 两扳机同时按下: 内框步进/步退
             PositionModeCmd1Hex cmd;
             cmd.axis = 1;
-            cmd.acceleration = defaultAccel;
+            cmd.acceleration = MAX_ACCELERATION_HEX;
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle + m_step_angle;
@@ -836,7 +995,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             // 左扳机: 外框
             PositionModeCmd1Hex cmd;
             cmd.axis = 3;
-            cmd.acceleration = defaultAccel;
+            cmd.acceleration = MAX_ACCELERATION_HEX;
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle + m_step_angle;
@@ -860,7 +1019,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             // 右扳机: 中框
             PositionModeCmd1Hex cmd;
             cmd.axis = 2;
-            cmd.acceleration = defaultAccel;
+            cmd.acceleration = MAX_ACCELERATION_HEX;
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle + m_step_angle;
@@ -884,65 +1043,28 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
     } else {
         // ── 速度模式 (无扳机 → 摇杆直接控制速度) ──
         // axisLeftX → 外框, axisLeftY → 中框, axisRightX → 内框
-        SpeedModeCmd1Hex innercmd;
-        innercmd.axis = 1;
-        innercmd.acceleration = defaultAccel;          //可以把默认的加速度改成希望的加速度
-        innercmd.velocity = axisRightX * MAX_SPEED_HEX * m_speed_multiplier;
+        const float innerTarget = axisRightX * MAX_SPEED_HEX * m_speed_multiplier;
+        const float middleTarget = axisLeftY * MAX_SPEED_HEX * m_speed_multiplier;
+        const float outterTarget = axisLeftX * MAX_SPEED_HEX * m_speed_multiplier;
 
-        SpeedModeCmd1Hex middlecmd;
-        middlecmd.axis = 2;
-        middlecmd.acceleration = defaultAccel;
-        middlecmd.velocity = axisLeftY * MAX_SPEED_HEX * m_speed_multiplier;
-
-        SpeedModeCmd1Hex outtercmd;
-        outtercmd.axis = 3;
-        outtercmd.acceleration = defaultAccel;
-        outtercmd.velocity = axisLeftX * MAX_SPEED_HEX * m_speed_multiplier;
-
-        // 摇杆归零时发送停车指令，退出速度模式；非零时受软件限位约束。
-        if(axisRightX == 0.0f){
-            if(m_handleInnerMoving){
-                sendStopCmd(1);
-                m_handleInnerMoving = false;
-            }
-        }else if(m_current_inner_angle < 199.995 && m_current_inner_angle >-199.995){
-            sendVecCmd(innercmd);
-            m_handleInnerMoving = true;
-        }else{
-            if(m_handleInnerMoving){
-                sendStopCmd(1);
-                m_handleInnerMoving = false;
-            }
+        if (m_current_inner_angle < 200.0f && m_current_inner_angle > -200.0f) {
+            setHandleSpeedTarget(1, innerTarget);
+        } else {
+            setHandleSpeedTarget(1, 0.0f);
             qDebug() << "内框接近临界角，停止内框速度控制";
         }
-        if(axisLeftY == 0.0f){
-            if(m_handleMiddleMoving){
-                sendStopCmd(2);
-                m_handleMiddleMoving = false;
-            }
-        }else if(m_current_middle_angle < 80 && m_current_middle_angle >-10){
-            sendVecCmd(middlecmd);
-            m_handleMiddleMoving = true;
-        }else{
-            if(m_handleMiddleMoving){
-                sendStopCmd(2);
-                m_handleMiddleMoving = false;
-            }
+
+        if (m_current_middle_angle < 80.0f && m_current_middle_angle > -10.0f) {
+            setHandleSpeedTarget(2, middleTarget);
+        } else {
+            setHandleSpeedTarget(2, 0.0f);
             qDebug() << "中框接近临界角，停止中框速度控制";
         }
-        if(axisLeftX == 0.0f){
-            if(m_handleOutterMoving){
-                sendStopCmd(3);
-                m_handleOutterMoving = false;
-            }
-        }else if(m_current_outter_angle < 99.995 && m_current_outter_angle >-99.995){
-            sendVecCmd(outtercmd);
-            m_handleOutterMoving = true;
-        }else{
-            if(m_handleOutterMoving){
-                sendStopCmd(3);
-                m_handleOutterMoving = false;
-            }
+
+        if (m_current_outter_angle < 100.0f && m_current_outter_angle > -100.0f) {
+            setHandleSpeedTarget(3, outterTarget);
+        } else {
+            setHandleSpeedTarget(3, 0.0f);
             qDebug() << "外框接近临界角，停止外框速度控制";
         }
     }

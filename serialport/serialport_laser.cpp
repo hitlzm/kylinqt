@@ -713,7 +713,8 @@ void SerialPortLaser::ExmodeChanged(int mode)
         {
             // 串口未打开时不启动外引导，也不写跟踪日志；只取消本路外引导源
             if (!isOpen()) {
-                emit exguideSerialNotOpen("激光导引头串口未打开");
+                emit exguideSerialNotOpen(
+                    QStringLiteral("激光导引头串口未打开，已取消激光导引头外引导源选择"));
                 if (m_exGuideTimer) {
                     m_exGuideTimer->stop();
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);

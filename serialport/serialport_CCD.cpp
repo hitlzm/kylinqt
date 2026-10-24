@@ -157,7 +157,8 @@ void SerialPortCCD::ExmodeChanged(int mode)
         {
             // CCD 外引导依赖真实视频流；未接入时不启动外引导并取消本路外引导源
             if (!m_ccdData || !m_ccdData->videoStreamConnected()) {
-                emit exguideSerialNotOpen("CCD视频流未接入");
+                emit exguideSerialNotOpen(
+                    QStringLiteral("CCD视频流未接入，已取消CCD相机外引导源选择"));
                 if (m_exGuideTimer) {
                     m_exGuideTimer->stop();
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);

@@ -416,6 +416,13 @@ protected:
     void sendCorrectionCmd(const TrackingCorrectionCmdHex &cmd); // 跟踪修正
     void sendTimeSetCmd(int seconds);                       // 时间设置
 
+    // ── 遥控速度动态切换 ──
+    void setHandleSpeedTarget(int axis, float target);
+    void applyPendingHandleSpeed(int axis, int status, int alarm);
+    void resetHandleSpeedState(int axis, bool hardwareMayBeMoving = false);
+    void resetAllHandleSpeedStates(bool hardwareMayBeMoving = false);
+    void sendHandleSpeedCmd(int axis, float velocity);
+
     // ── 协议辅助函数 ──
     void buildAndSend(uint8_t axis_cmd, const uint8_t params[14]);
     static uint16_t calcChecksum(const uint8_t* data, size_t len);
@@ -438,17 +445,32 @@ private:
     // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
     TurntableDataHex *m_turntableDataHex = nullptr;
     TurntableSendDataHex *m_turntableSendDataHex = nullptr;
-    bool m_isProgramMode;
+    bool m_isProgramMode = false;
 
-    float m_current_inner_angle;
-    float m_current_middle_angle;
-    float m_current_outter_angle;
+    float m_current_inner_angle = 0.0f;
+    float m_current_middle_angle = 0.0f;
+    float m_current_outter_angle = 0.0f;
 
-    // 遥控速度模式的轴状态：仅在“运动中 → 摇杆归零”的边沿发送一次停车，
-    // 避免静止期间周期性停车指令覆盖回零等一次性指令。
-    bool m_handleInnerMoving = false;
-    bool m_handleMiddleMoving = false;
-    bool m_handleOutterMoving = false;
+    // 转台从已有速度切换到新速度时必须先停车，并等待对应轴回到伺服状态。
+    enum class HandleSpeedState {
+        Idle,
+        Running,
+        WaitingForServo
+    };
+
+    struct HandleSpeedAxisState {
+        HandleSpeedState state = HandleSpeedState::Idle;
+        float activeSpeed = 0.0f;
+        float pendingSpeed = 0.0f;
+        bool hardwareMayBeMoving = false;
+        int feedbackStatus = -1;
+        int feedbackAlarm = -1;
+        bool sawNonServoAfterStop = false;
+        int feedbackFramesSinceStop = 0;
+    };
+
+    // 下标与轴号一致，使用 1/2/3；0 号元素不使用。
+    HandleSpeedAxisState m_handleSpeedAxes[4];
 
     float m_step_angle = 1.0f; // 步进角度，单位度（与遥控界面默认值一致）
     float m_speed_multiplier = 1.0f; // 速度倍率，单位倍
