@@ -155,7 +155,7 @@ Item {
         Text {
             anchors.top: parent.top; anchors.topMargin: 4
             anchors.left: parent.left; anchors.leftMargin: 10
-            text: "日志"; font.pixelSize: 18; color: '#000000'
+            text: "外引导跟踪信息"; font.pixelSize: 18; color: '#000000'
         }
 
         // 仅 1s 跟踪模式显示；修正量取转台当前三轴控制偏差
