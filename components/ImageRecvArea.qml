@@ -91,6 +91,27 @@ Rectangle {
         return isFinite(number) ? number.toFixed(4) : "--"
     }
 
+    // 界面只保留原来的四档分辨率，映射到当前串口类使用的命令索引。
+    function resolutionUiIndex(commandIndex) {
+        switch (Number(commandIndex)) {
+        case 0: return 0
+        case 1: return 1
+        case 4: return 2
+        case 5: return 3
+        default: return 0
+        }
+    }
+
+    function resolutionCommandIndex(uiIndex) {
+        switch (Number(uiIndex)) {
+        case 0: return 0
+        case 1: return 1
+        case 2: return 4
+        case 3: return 5
+        default: return 0
+        }
+    }
+
     // 三轴报警统一入队，避免多个模态弹窗同时打开
     function queueAxisAlarm(message) {
         if (axisAlarmShowing && axisAlarmMsg.message === message)
@@ -508,7 +529,7 @@ Rectangle {
         Column {
             anchors.fill: parent
             anchors.margins: 7
-            spacing: 5
+            spacing: 14
 
             // CCD 串口
             Row {
@@ -577,13 +598,6 @@ Rectangle {
                         }
                     }
                 }
-                Text {
-                    text: ccdData.portOpen ? "已连接" : "未连接"
-                    font.pixelSize: 13
-                    font.bold: true
-                    color: ccdData.portOpen ? "#1a73e8" : "#d93025"
-                    anchors.verticalCenter: parent.verticalCenter
-                }
             }
 
             // 变焦与聚焦。按下立即运动，长按持续运动，松开停止。
@@ -645,32 +659,17 @@ Rectangle {
                 }
 
                 Text {
-                    text: "聚焦:"
+                    text: "自动聚焦:"
                     font.pixelSize: 14
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                ButtonGroup { id: focusModeGroup }
-                CusRadioButton {
-                    width: 58
-                    height: 28
-                    text: "自动"
-                    font.pixelSize: 13
-                    ButtonGroup.group: focusModeGroup
+                CusSwitch {
+                    width: 38
+                    height: 26
                     checked: ccdData.focusMode === 0
                     onCheckedChanged: {
-                        if (checked) ccdData.setFocusMode(0)
-                    }
-                }
-                CusRadioButton {
-                    width: 58
-                    height: 28
-                    text: "手动"
-                    font.pixelSize: 13
-                    ButtonGroup.group: focusModeGroup
-                    checked: ccdData.focusMode === 1
-                    onCheckedChanged: {
-                        if (checked) ccdData.setFocusMode(1)
+                        ccdData.setFocusMode(checked ? 0 : 1)
                     }
                 }
                 CusButton_White {
@@ -723,7 +722,7 @@ Rectangle {
                 }
             }
 
-            // 图像增强
+            // 透雾与热浪去除
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 4
@@ -755,13 +754,13 @@ Rectangle {
                 }
 
                 Text {
-                    text: "热浪:"
+                    text: "热浪去除:"
                     font.pixelSize: 13
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
-                    width: 52
+                    width: 64
                     height: 26
                     model: ["0", "1", "2", "3", "4", "5",
                             "6", "7", "8", "9", "10"]
@@ -773,6 +772,12 @@ Rectangle {
                             ccdData.setHeatHazeLevel(currentIndex)
                     }
                 }
+            }
+
+            // 降噪开关与强度
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 5
 
                 Text {
                     text: "降噪:"
@@ -788,7 +793,7 @@ Rectangle {
                 }
                 CusSlider {
                     id: noiseSlider
-                    width: 98
+                    width: 235
                     height: 26
                     showNumber: false
                     from: 0
@@ -812,7 +817,7 @@ Rectangle {
             // 防抖与分辨率
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                spacing: 7
 
                 Text {
                     text: "防抖:"
@@ -826,32 +831,23 @@ Rectangle {
                     checked: ccdData.stabilizationEnabled
                     onCheckedChanged: ccdData.setStabilization(checked)
                 }
-                ButtonGroup { id: stabilizationGroup }
-                CusRadioButton {
-                    width: 44; height: 28; text: "低"; font.pixelSize: 13
-                    ButtonGroup.group: stabilizationGroup
-                    checked: ccdData.stabilizationLevel === 1
-                    enabled: ccdData.stabilizationEnabled
-                    onCheckedChanged: {
-                        if (checked) ccdData.setStabilizationLevel(1)
-                    }
+                Text {
+                    text: "强度:"
+                    font.pixelSize: 13
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
                 }
-                CusRadioButton {
-                    width: 44; height: 28; text: "中"; font.pixelSize: 13
-                    ButtonGroup.group: stabilizationGroup
-                    checked: ccdData.stabilizationLevel === 2
+                CusComboBox {
+                    width: 62
+                    height: 27
+                    model: ["低", "中", "高"]
+                    font.pixelSize: 12
+                    popupMinWidth: 80
+                    currentIndex: ccdData.stabilizationLevel - 1
                     enabled: ccdData.stabilizationEnabled
-                    onCheckedChanged: {
-                        if (checked) ccdData.setStabilizationLevel(2)
-                    }
-                }
-                CusRadioButton {
-                    width: 44; height: 28; text: "高"; font.pixelSize: 13
-                    ButtonGroup.group: stabilizationGroup
-                    checked: ccdData.stabilizationLevel === 3
-                    enabled: ccdData.stabilizationEnabled
-                    onCheckedChanged: {
-                        if (checked) ccdData.setStabilizationLevel(3)
+                    onCurrentIndexChanged: {
+                        if (enabled && currentIndex >= 0)
+                            ccdData.setStabilizationLevel(currentIndex + 1)
                     }
                 }
 
@@ -862,19 +858,15 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
-                    width: 116
+                    width: 100
                     height: 27
                     font.pixelSize: 12
                     popupMinWidth: 155
-                    model: ["1080p/30", "1080p/25", "720p/60", "720p/50",
-                            "720p/30", "720p/25", "1280×960/30", "1280×960/25",
-                            "1080p/50", "1080p/60", "2688×1520/25", "2688×1520/30",
-                            "2688×1520/50", "2688×1520/60", "3840×2160/25",
-                            "3840×2160/30", "3840×2160/50", "3840×2160/60"]
-                    currentIndex: ccdData.resolutionIndex
+                    model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
+                    currentIndex: root.resolutionUiIndex(ccdData.resolutionIndex)
                     onCurrentIndexChanged: {
                         if (enabled && currentIndex >= 0)
-                            ccdData.setResolution(currentIndex)
+                            ccdData.setResolution(root.resolutionCommandIndex(currentIndex))
                     }
                 }
             }
@@ -885,26 +877,17 @@ Rectangle {
                 spacing: 5
 
                 Text {
-                    text: "白平衡:"
+                    text: "自动白平衡:"
                     font.pixelSize: 14
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                ButtonGroup { id: whiteBalanceGroup }
-                CusRadioButton {
-                    width: 58; height: 28; text: "自动"; font.pixelSize: 13
-                    ButtonGroup.group: whiteBalanceGroup
+                CusSwitch {
+                    width: 38
+                    height: 26
                     checked: ccdData.whiteBalanceMode === 0
                     onCheckedChanged: {
-                        if (checked) ccdData.setWhiteBalanceMode(0)
-                    }
-                }
-                CusRadioButton {
-                    width: 58; height: 28; text: "手动"; font.pixelSize: 13
-                    ButtonGroup.group: whiteBalanceGroup
-                    checked: ccdData.whiteBalanceMode === 1
-                    onCheckedChanged: {
-                        if (checked) ccdData.setWhiteBalanceMode(1)
+                        ccdData.setWhiteBalanceMode(checked ? 0 : 1)
                     }
                 }
                 Text {
