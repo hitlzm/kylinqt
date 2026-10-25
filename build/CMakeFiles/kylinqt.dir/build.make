@@ -71,6 +71,7 @@ include CMakeFiles/kylinqt.dir/flags.make
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/qml.qrc
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: CMakeFiles/kylinqt_autogen.dir/AutoRcc_qml_EWIEGA46WW_Info.json
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/main.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/arrowLeft.png
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LaserArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ProgramMode.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/TemplateBindingPopup.qml
@@ -84,17 +85,22 @@ kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Modesele
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MySwitch.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/LoginPage.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageRecvArea.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/arrowRight.png
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageSendArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ImageArea.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyDoubleSpinBox.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MsgPopup2.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Indicator.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/arrowUp.jpg
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/DataLabel.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/SixDofMotionPopup.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/plus.png
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/TurnTablestatus.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/MyTextField.qml
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/ExGuide.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/minus.png
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/Myvideo5.qml
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QTproject/kylinqt/components/arrowDown.png
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe
 kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp: E:/QT5.12.8/5.12.8/mingw73_64/bin/rcc.exe
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=E:\QTproject\kylinqt\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Automatic RCC for qml.qrc"

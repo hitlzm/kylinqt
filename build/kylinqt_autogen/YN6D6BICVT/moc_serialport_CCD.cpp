@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_CCDData_t {
-    QByteArrayData data[41];
-    char stringdata0[507];
+    QByteArrayData data[91];
+    char stringdata0[1306];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -49,29 +49,79 @@ QT_MOC_LITERAL(14, 188, 16), // "reqBacklightopen"
 QT_MOC_LITERAL(15, 205, 17), // "reqBacklightclose"
 QT_MOC_LITERAL(16, 223, 19), // "reqResolutionchange"
 QT_MOC_LITERAL(17, 243, 5), // "index"
-QT_MOC_LITERAL(18, 249, 16), // "focusModeChanged"
-QT_MOC_LITERAL(19, 266, 18), // "backlightOnChanged"
-QT_MOC_LITERAL(20, 285, 22), // "resolutionIndexChanged"
-QT_MOC_LITERAL(21, 308, 11), // "setPortOpen"
-QT_MOC_LITERAL(22, 320, 4), // "open"
-QT_MOC_LITERAL(23, 325, 11), // "setPortList"
-QT_MOC_LITERAL(24, 337, 5), // "ports"
-QT_MOC_LITERAL(25, 343, 8), // "setError"
-QT_MOC_LITERAL(26, 352, 3), // "msg"
-QT_MOC_LITERAL(27, 356, 8), // "openPort"
-QT_MOC_LITERAL(28, 365, 9), // "closePort"
-QT_MOC_LITERAL(29, 375, 9), // "scanPorts"
-QT_MOC_LITERAL(30, 385, 12), // "setFocusMode"
-QT_MOC_LITERAL(31, 398, 4), // "mode"
-QT_MOC_LITERAL(32, 403, 12), // "setBacklight"
-QT_MOC_LITERAL(33, 416, 2), // "on"
-QT_MOC_LITERAL(34, 419, 13), // "setResolution"
-QT_MOC_LITERAL(35, 433, 8), // "portOpen"
-QT_MOC_LITERAL(36, 442, 14), // "availablePorts"
-QT_MOC_LITERAL(37, 457, 11), // "errorString"
-QT_MOC_LITERAL(38, 469, 9), // "focusMode"
-QT_MOC_LITERAL(39, 479, 11), // "backlightOn"
-QT_MOC_LITERAL(40, 491, 15) // "resolutionIndex"
+QT_MOC_LITERAL(18, 249, 11), // "reqZoomMove"
+QT_MOC_LITERAL(19, 261, 9), // "direction"
+QT_MOC_LITERAL(20, 271, 11), // "reqZoomStop"
+QT_MOC_LITERAL(21, 283, 12), // "reqFocusMode"
+QT_MOC_LITERAL(22, 296, 4), // "mode"
+QT_MOC_LITERAL(23, 301, 12), // "reqFocusMove"
+QT_MOC_LITERAL(24, 314, 12), // "reqFocusStop"
+QT_MOC_LITERAL(25, 327, 15), // "reqDefogSetting"
+QT_MOC_LITERAL(26, 343, 7), // "enabled"
+QT_MOC_LITERAL(27, 351, 5), // "level"
+QT_MOC_LITERAL(28, 357, 16), // "reqHeatHazeLevel"
+QT_MOC_LITERAL(29, 374, 24), // "reqNoiseReductionSetting"
+QT_MOC_LITERAL(30, 399, 23), // "reqStabilizationSetting"
+QT_MOC_LITERAL(31, 423, 19), // "reqWhiteBalanceMode"
+QT_MOC_LITERAL(32, 443, 19), // "reqWhiteBalanceGain"
+QT_MOC_LITERAL(33, 463, 3), // "red"
+QT_MOC_LITERAL(34, 467, 4), // "gain"
+QT_MOC_LITERAL(35, 472, 16), // "focusModeChanged"
+QT_MOC_LITERAL(36, 489, 19), // "defogEnabledChanged"
+QT_MOC_LITERAL(37, 509, 17), // "defogLevelChanged"
+QT_MOC_LITERAL(38, 527, 20), // "heatHazeLevelChanged"
+QT_MOC_LITERAL(39, 548, 28), // "noiseReductionEnabledChanged"
+QT_MOC_LITERAL(40, 577, 26), // "noiseReductionLevelChanged"
+QT_MOC_LITERAL(41, 604, 27), // "stabilizationEnabledChanged"
+QT_MOC_LITERAL(42, 632, 25), // "stabilizationLevelChanged"
+QT_MOC_LITERAL(43, 658, 22), // "resolutionIndexChanged"
+QT_MOC_LITERAL(44, 681, 23), // "whiteBalanceModeChanged"
+QT_MOC_LITERAL(45, 705, 14), // "redGainChanged"
+QT_MOC_LITERAL(46, 720, 15), // "blueGainChanged"
+QT_MOC_LITERAL(47, 736, 18), // "backlightOnChanged"
+QT_MOC_LITERAL(48, 755, 11), // "setPortOpen"
+QT_MOC_LITERAL(49, 767, 4), // "open"
+QT_MOC_LITERAL(50, 772, 11), // "setPortList"
+QT_MOC_LITERAL(51, 784, 5), // "ports"
+QT_MOC_LITERAL(52, 790, 8), // "setError"
+QT_MOC_LITERAL(53, 799, 3), // "msg"
+QT_MOC_LITERAL(54, 803, 8), // "openPort"
+QT_MOC_LITERAL(55, 812, 9), // "closePort"
+QT_MOC_LITERAL(56, 822, 9), // "scanPorts"
+QT_MOC_LITERAL(57, 832, 9), // "startZoom"
+QT_MOC_LITERAL(58, 842, 8), // "stopZoom"
+QT_MOC_LITERAL(59, 851, 12), // "setFocusMode"
+QT_MOC_LITERAL(60, 864, 10), // "startFocus"
+QT_MOC_LITERAL(61, 875, 9), // "stopFocus"
+QT_MOC_LITERAL(62, 885, 8), // "setDefog"
+QT_MOC_LITERAL(63, 894, 13), // "setDefogLevel"
+QT_MOC_LITERAL(64, 908, 16), // "setHeatHazeLevel"
+QT_MOC_LITERAL(65, 925, 17), // "setNoiseReduction"
+QT_MOC_LITERAL(66, 943, 22), // "setNoiseReductionLevel"
+QT_MOC_LITERAL(67, 966, 16), // "setStabilization"
+QT_MOC_LITERAL(68, 983, 21), // "setStabilizationLevel"
+QT_MOC_LITERAL(69, 1005, 13), // "setResolution"
+QT_MOC_LITERAL(70, 1019, 19), // "setWhiteBalanceMode"
+QT_MOC_LITERAL(71, 1039, 10), // "setRedGain"
+QT_MOC_LITERAL(72, 1050, 11), // "setBlueGain"
+QT_MOC_LITERAL(73, 1062, 12), // "setBacklight"
+QT_MOC_LITERAL(74, 1075, 2), // "on"
+QT_MOC_LITERAL(75, 1078, 8), // "portOpen"
+QT_MOC_LITERAL(76, 1087, 14), // "availablePorts"
+QT_MOC_LITERAL(77, 1102, 11), // "errorString"
+QT_MOC_LITERAL(78, 1114, 9), // "focusMode"
+QT_MOC_LITERAL(79, 1124, 12), // "defogEnabled"
+QT_MOC_LITERAL(80, 1137, 10), // "defogLevel"
+QT_MOC_LITERAL(81, 1148, 13), // "heatHazeLevel"
+QT_MOC_LITERAL(82, 1162, 21), // "noiseReductionEnabled"
+QT_MOC_LITERAL(83, 1184, 19), // "noiseReductionLevel"
+QT_MOC_LITERAL(84, 1204, 20), // "stabilizationEnabled"
+QT_MOC_LITERAL(85, 1225, 18), // "stabilizationLevel"
+QT_MOC_LITERAL(86, 1244, 15), // "resolutionIndex"
+QT_MOC_LITERAL(87, 1260, 16), // "whiteBalanceMode"
+QT_MOC_LITERAL(88, 1277, 7), // "redGain"
+QT_MOC_LITERAL(89, 1285, 8), // "blueGain"
+QT_MOC_LITERAL(90, 1294, 11) // "backlightOn"
 
     },
     "CCDData\0portOpenChanged\0\0availablePortsChanged\0"
@@ -80,14 +130,37 @@ QT_MOC_LITERAL(40, 491, 15) // "resolutionIndex"
     "requestScanPorts\0req30XFocus\0req1XFocus\0"
     "reqdigZoomopen\0reqdigZoomclose\0"
     "reqBacklightopen\0reqBacklightclose\0"
-    "reqResolutionchange\0index\0focusModeChanged\0"
-    "backlightOnChanged\0resolutionIndexChanged\0"
-    "setPortOpen\0open\0setPortList\0ports\0"
-    "setError\0msg\0openPort\0closePort\0"
-    "scanPorts\0setFocusMode\0mode\0setBacklight\0"
-    "on\0setResolution\0portOpen\0availablePorts\0"
-    "errorString\0focusMode\0backlightOn\0"
-    "resolutionIndex"
+    "reqResolutionchange\0index\0reqZoomMove\0"
+    "direction\0reqZoomStop\0reqFocusMode\0"
+    "mode\0reqFocusMove\0reqFocusStop\0"
+    "reqDefogSetting\0enabled\0level\0"
+    "reqHeatHazeLevel\0reqNoiseReductionSetting\0"
+    "reqStabilizationSetting\0reqWhiteBalanceMode\0"
+    "reqWhiteBalanceGain\0red\0gain\0"
+    "focusModeChanged\0defogEnabledChanged\0"
+    "defogLevelChanged\0heatHazeLevelChanged\0"
+    "noiseReductionEnabledChanged\0"
+    "noiseReductionLevelChanged\0"
+    "stabilizationEnabledChanged\0"
+    "stabilizationLevelChanged\0"
+    "resolutionIndexChanged\0whiteBalanceModeChanged\0"
+    "redGainChanged\0blueGainChanged\0"
+    "backlightOnChanged\0setPortOpen\0open\0"
+    "setPortList\0ports\0setError\0msg\0openPort\0"
+    "closePort\0scanPorts\0startZoom\0stopZoom\0"
+    "setFocusMode\0startFocus\0stopFocus\0"
+    "setDefog\0setDefogLevel\0setHeatHazeLevel\0"
+    "setNoiseReduction\0setNoiseReductionLevel\0"
+    "setStabilization\0setStabilizationLevel\0"
+    "setResolution\0setWhiteBalanceMode\0"
+    "setRedGain\0setBlueGain\0setBacklight\0"
+    "on\0portOpen\0availablePorts\0errorString\0"
+    "focusMode\0defogEnabled\0defogLevel\0"
+    "heatHazeLevel\0noiseReductionEnabled\0"
+    "noiseReductionLevel\0stabilizationEnabled\0"
+    "stabilizationLevel\0resolutionIndex\0"
+    "whiteBalanceMode\0redGain\0blueGain\0"
+    "backlightOn"
 };
 #undef QT_MOC_LITERAL
 
@@ -97,43 +170,78 @@ static const uint qt_meta_data_CCDData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      25,   14, // methods
-       6,  186, // properties
+      60,   14, // methods
+      16,  446, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      16,       // signalCount
+      37,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  139,    2, 0x06 /* Public */,
-       3,    0,  140,    2, 0x06 /* Public */,
-       4,    0,  141,    2, 0x06 /* Public */,
-       5,    2,  142,    2, 0x06 /* Public */,
-       8,    0,  147,    2, 0x06 /* Public */,
-       9,    0,  148,    2, 0x06 /* Public */,
-      10,    0,  149,    2, 0x06 /* Public */,
-      11,    0,  150,    2, 0x06 /* Public */,
-      12,    0,  151,    2, 0x06 /* Public */,
-      13,    0,  152,    2, 0x06 /* Public */,
-      14,    0,  153,    2, 0x06 /* Public */,
-      15,    0,  154,    2, 0x06 /* Public */,
-      16,    1,  155,    2, 0x06 /* Public */,
-      18,    0,  158,    2, 0x06 /* Public */,
-      19,    0,  159,    2, 0x06 /* Public */,
-      20,    0,  160,    2, 0x06 /* Public */,
+       1,    0,  314,    2, 0x06 /* Public */,
+       3,    0,  315,    2, 0x06 /* Public */,
+       4,    0,  316,    2, 0x06 /* Public */,
+       5,    2,  317,    2, 0x06 /* Public */,
+       8,    0,  322,    2, 0x06 /* Public */,
+       9,    0,  323,    2, 0x06 /* Public */,
+      10,    0,  324,    2, 0x06 /* Public */,
+      11,    0,  325,    2, 0x06 /* Public */,
+      12,    0,  326,    2, 0x06 /* Public */,
+      13,    0,  327,    2, 0x06 /* Public */,
+      14,    0,  328,    2, 0x06 /* Public */,
+      15,    0,  329,    2, 0x06 /* Public */,
+      16,    1,  330,    2, 0x06 /* Public */,
+      18,    1,  333,    2, 0x06 /* Public */,
+      20,    0,  336,    2, 0x06 /* Public */,
+      21,    1,  337,    2, 0x06 /* Public */,
+      23,    1,  340,    2, 0x06 /* Public */,
+      24,    0,  343,    2, 0x06 /* Public */,
+      25,    2,  344,    2, 0x06 /* Public */,
+      28,    1,  349,    2, 0x06 /* Public */,
+      29,    2,  352,    2, 0x06 /* Public */,
+      30,    2,  357,    2, 0x06 /* Public */,
+      31,    1,  362,    2, 0x06 /* Public */,
+      32,    2,  365,    2, 0x06 /* Public */,
+      35,    0,  370,    2, 0x06 /* Public */,
+      36,    0,  371,    2, 0x06 /* Public */,
+      37,    0,  372,    2, 0x06 /* Public */,
+      38,    0,  373,    2, 0x06 /* Public */,
+      39,    0,  374,    2, 0x06 /* Public */,
+      40,    0,  375,    2, 0x06 /* Public */,
+      41,    0,  376,    2, 0x06 /* Public */,
+      42,    0,  377,    2, 0x06 /* Public */,
+      43,    0,  378,    2, 0x06 /* Public */,
+      44,    0,  379,    2, 0x06 /* Public */,
+      45,    0,  380,    2, 0x06 /* Public */,
+      46,    0,  381,    2, 0x06 /* Public */,
+      47,    0,  382,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      21,    1,  161,    2, 0x0a /* Public */,
-      23,    1,  164,    2, 0x0a /* Public */,
-      25,    1,  167,    2, 0x0a /* Public */,
+      48,    1,  383,    2, 0x0a /* Public */,
+      50,    1,  386,    2, 0x0a /* Public */,
+      52,    1,  389,    2, 0x0a /* Public */,
 
  // methods: name, argc, parameters, tag, flags
-      27,    2,  170,    2, 0x02 /* Public */,
-      28,    0,  175,    2, 0x02 /* Public */,
-      29,    0,  176,    2, 0x02 /* Public */,
-      30,    1,  177,    2, 0x02 /* Public */,
-      32,    1,  180,    2, 0x02 /* Public */,
-      34,    1,  183,    2, 0x02 /* Public */,
+      54,    2,  392,    2, 0x02 /* Public */,
+      55,    0,  397,    2, 0x02 /* Public */,
+      56,    0,  398,    2, 0x02 /* Public */,
+      57,    1,  399,    2, 0x02 /* Public */,
+      58,    0,  402,    2, 0x02 /* Public */,
+      59,    1,  403,    2, 0x02 /* Public */,
+      60,    1,  406,    2, 0x02 /* Public */,
+      61,    0,  409,    2, 0x02 /* Public */,
+      62,    1,  410,    2, 0x02 /* Public */,
+      63,    1,  413,    2, 0x02 /* Public */,
+      64,    1,  416,    2, 0x02 /* Public */,
+      65,    1,  419,    2, 0x02 /* Public */,
+      66,    1,  422,    2, 0x02 /* Public */,
+      67,    1,  425,    2, 0x02 /* Public */,
+      68,    1,  428,    2, 0x02 /* Public */,
+      69,    1,  431,    2, 0x02 /* Public */,
+      70,    1,  434,    2, 0x02 /* Public */,
+      71,    1,  437,    2, 0x02 /* Public */,
+      72,    1,  440,    2, 0x02 /* Public */,
+      73,    1,  443,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -149,38 +257,93 @@ static const uint qt_meta_data_CCDData[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,   17,
+    QMetaType::Void, QMetaType::Int,   19,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Int,   19,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   26,   27,
+    QMetaType::Void, QMetaType::Int,   27,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   26,   27,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   26,   27,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   33,   34,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Bool,   22,
-    QMetaType::Void, QMetaType::QStringList,   24,
-    QMetaType::Void, QMetaType::QString,   26,
+    QMetaType::Void, QMetaType::Bool,   49,
+    QMetaType::Void, QMetaType::QStringList,   51,
+    QMetaType::Void, QMetaType::QString,   53,
 
  // methods: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::Int,    6,    7,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   31,
-    QMetaType::Void, QMetaType::Bool,   33,
+    QMetaType::Void, QMetaType::Int,   19,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Int,   19,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool,   26,
+    QMetaType::Void, QMetaType::Int,   27,
+    QMetaType::Void, QMetaType::Int,   27,
+    QMetaType::Void, QMetaType::Bool,   26,
+    QMetaType::Void, QMetaType::Int,   27,
+    QMetaType::Void, QMetaType::Bool,   26,
+    QMetaType::Void, QMetaType::Int,   27,
     QMetaType::Void, QMetaType::Int,   17,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Int,   34,
+    QMetaType::Void, QMetaType::Int,   34,
+    QMetaType::Void, QMetaType::Bool,   74,
 
  // properties: name, type, flags
-      35, QMetaType::Bool, 0x00495001,
-      36, QMetaType::QStringList, 0x00495001,
-      37, QMetaType::QString, 0x00495001,
-      38, QMetaType::Int, 0x00495001,
-      39, QMetaType::Bool, 0x00495001,
-      40, QMetaType::Int, 0x00495001,
+      75, QMetaType::Bool, 0x00495001,
+      76, QMetaType::QStringList, 0x00495001,
+      77, QMetaType::QString, 0x00495001,
+      78, QMetaType::Int, 0x00495001,
+      79, QMetaType::Bool, 0x00495001,
+      80, QMetaType::Int, 0x00495001,
+      81, QMetaType::Int, 0x00495001,
+      82, QMetaType::Bool, 0x00495001,
+      83, QMetaType::Int, 0x00495001,
+      84, QMetaType::Bool, 0x00495001,
+      85, QMetaType::Int, 0x00495001,
+      86, QMetaType::Int, 0x00495001,
+      87, QMetaType::Int, 0x00495001,
+      88, QMetaType::Int, 0x00495001,
+      89, QMetaType::Int, 0x00495001,
+      90, QMetaType::Bool, 0x00495001,
 
  // properties: notify_signal_id
        0,
        1,
        2,
-      13,
-      14,
-      15,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
 
        0        // eod
 };
@@ -204,18 +367,53 @@ void CCDData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 10: _t->reqBacklightopen(); break;
         case 11: _t->reqBacklightclose(); break;
         case 12: _t->reqResolutionchange((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 13: _t->focusModeChanged(); break;
-        case 14: _t->backlightOnChanged(); break;
-        case 15: _t->resolutionIndexChanged(); break;
-        case 16: _t->setPortOpen((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 17: _t->setPortList((*reinterpret_cast< const QStringList(*)>(_a[1]))); break;
-        case 18: _t->setError((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 19: _t->openPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 20: _t->closePort(); break;
-        case 21: _t->scanPorts(); break;
-        case 22: _t->setFocusMode((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 23: _t->setBacklight((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        case 24: _t->setResolution((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->reqZoomMove((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 14: _t->reqZoomStop(); break;
+        case 15: _t->reqFocusMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 16: _t->reqFocusMove((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 17: _t->reqFocusStop(); break;
+        case 18: _t->reqDefogSetting((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 19: _t->reqHeatHazeLevel((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 20: _t->reqNoiseReductionSetting((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 21: _t->reqStabilizationSetting((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 22: _t->reqWhiteBalanceMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 23: _t->reqWhiteBalanceGain((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 24: _t->focusModeChanged(); break;
+        case 25: _t->defogEnabledChanged(); break;
+        case 26: _t->defogLevelChanged(); break;
+        case 27: _t->heatHazeLevelChanged(); break;
+        case 28: _t->noiseReductionEnabledChanged(); break;
+        case 29: _t->noiseReductionLevelChanged(); break;
+        case 30: _t->stabilizationEnabledChanged(); break;
+        case 31: _t->stabilizationLevelChanged(); break;
+        case 32: _t->resolutionIndexChanged(); break;
+        case 33: _t->whiteBalanceModeChanged(); break;
+        case 34: _t->redGainChanged(); break;
+        case 35: _t->blueGainChanged(); break;
+        case 36: _t->backlightOnChanged(); break;
+        case 37: _t->setPortOpen((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 38: _t->setPortList((*reinterpret_cast< const QStringList(*)>(_a[1]))); break;
+        case 39: _t->setError((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 40: _t->openPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 41: _t->closePort(); break;
+        case 42: _t->scanPorts(); break;
+        case 43: _t->startZoom((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 44: _t->stopZoom(); break;
+        case 45: _t->setFocusMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 46: _t->startFocus((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 47: _t->stopFocus(); break;
+        case 48: _t->setDefog((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 49: _t->setDefogLevel((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 50: _t->setHeatHazeLevel((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 51: _t->setNoiseReduction((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 52: _t->setNoiseReductionLevel((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 53: _t->setStabilization((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 54: _t->setStabilizationLevel((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 55: _t->setResolution((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 56: _t->setWhiteBalanceMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 57: _t->setRedGain((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 58: _t->setBlueGain((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 59: _t->setBacklight((*reinterpret_cast< bool(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -312,23 +510,170 @@ void CCDData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
             }
         }
         {
-            using _t = void (CCDData::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::focusModeChanged)) {
+            using _t = void (CCDData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqZoomMove)) {
                 *result = 13;
                 return;
             }
         }
         {
             using _t = void (CCDData::*)();
-            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::backlightOnChanged)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqZoomStop)) {
                 *result = 14;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqFocusMode)) {
+                *result = 15;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqFocusMove)) {
+                *result = 16;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqFocusStop)) {
+                *result = 17;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(bool , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqDefogSetting)) {
+                *result = 18;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqHeatHazeLevel)) {
+                *result = 19;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(bool , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqNoiseReductionSetting)) {
+                *result = 20;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(bool , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqStabilizationSetting)) {
+                *result = 21;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqWhiteBalanceMode)) {
+                *result = 22;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)(bool , int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::reqWhiteBalanceGain)) {
+                *result = 23;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::focusModeChanged)) {
+                *result = 24;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::defogEnabledChanged)) {
+                *result = 25;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::defogLevelChanged)) {
+                *result = 26;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::heatHazeLevelChanged)) {
+                *result = 27;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::noiseReductionEnabledChanged)) {
+                *result = 28;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::noiseReductionLevelChanged)) {
+                *result = 29;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::stabilizationEnabledChanged)) {
+                *result = 30;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::stabilizationLevelChanged)) {
+                *result = 31;
                 return;
             }
         }
         {
             using _t = void (CCDData::*)();
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::resolutionIndexChanged)) {
-                *result = 15;
+                *result = 32;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::whiteBalanceModeChanged)) {
+                *result = 33;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::redGainChanged)) {
+                *result = 34;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::blueGainChanged)) {
+                *result = 35;
+                return;
+            }
+        }
+        {
+            using _t = void (CCDData::*)();
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&CCDData::backlightOnChanged)) {
+                *result = 36;
                 return;
             }
         }
@@ -343,8 +688,18 @@ void CCDData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 1: *reinterpret_cast< QStringList*>(_v) = _t->availablePorts(); break;
         case 2: *reinterpret_cast< QString*>(_v) = _t->errorString(); break;
         case 3: *reinterpret_cast< int*>(_v) = _t->focusMode(); break;
-        case 4: *reinterpret_cast< bool*>(_v) = _t->backlightOn(); break;
-        case 5: *reinterpret_cast< int*>(_v) = _t->resolutionIndex(); break;
+        case 4: *reinterpret_cast< bool*>(_v) = _t->defogEnabled(); break;
+        case 5: *reinterpret_cast< int*>(_v) = _t->defogLevel(); break;
+        case 6: *reinterpret_cast< int*>(_v) = _t->heatHazeLevel(); break;
+        case 7: *reinterpret_cast< bool*>(_v) = _t->noiseReductionEnabled(); break;
+        case 8: *reinterpret_cast< int*>(_v) = _t->noiseReductionLevel(); break;
+        case 9: *reinterpret_cast< bool*>(_v) = _t->stabilizationEnabled(); break;
+        case 10: *reinterpret_cast< int*>(_v) = _t->stabilizationLevel(); break;
+        case 11: *reinterpret_cast< int*>(_v) = _t->resolutionIndex(); break;
+        case 12: *reinterpret_cast< int*>(_v) = _t->whiteBalanceMode(); break;
+        case 13: *reinterpret_cast< int*>(_v) = _t->redGain(); break;
+        case 14: *reinterpret_cast< int*>(_v) = _t->blueGain(); break;
+        case 15: *reinterpret_cast< bool*>(_v) = _t->backlightOn(); break;
         default: break;
         }
     } else if (_c == QMetaObject::WriteProperty) {
@@ -382,29 +737,29 @@ int CCDData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 25)
+        if (_id < 60)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 25;
+        _id -= 60;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 25)
+        if (_id < 60)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 25;
+        _id -= 60;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::RegisterPropertyMetaType) {
         qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 16;
     } else if (_c == QMetaObject::QueryPropertyDesignable) {
-        _id -= 6;
+        _id -= 16;
     } else if (_c == QMetaObject::QueryPropertyScriptable) {
-        _id -= 6;
+        _id -= 16;
     } else if (_c == QMetaObject::QueryPropertyStored) {
-        _id -= 6;
+        _id -= 16;
     } else if (_c == QMetaObject::QueryPropertyEditable) {
-        _id -= 6;
+        _id -= 16;
     } else if (_c == QMetaObject::QueryPropertyUser) {
-        _id -= 6;
+        _id -= 16;
     }
 #endif // QT_NO_PROPERTIES
     return _id;
@@ -491,25 +846,160 @@ void CCDData::reqResolutionchange(int _t1)
 }
 
 // SIGNAL 13
-void CCDData::focusModeChanged()
+void CCDData::reqZoomMove(int _t1)
 {
-    QMetaObject::activate(this, &staticMetaObject, 13, nullptr);
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 13, _a);
 }
 
 // SIGNAL 14
-void CCDData::backlightOnChanged()
+void CCDData::reqZoomStop()
 {
     QMetaObject::activate(this, &staticMetaObject, 14, nullptr);
 }
 
 // SIGNAL 15
+void CCDData::reqFocusMode(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 15, _a);
+}
+
+// SIGNAL 16
+void CCDData::reqFocusMove(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 16, _a);
+}
+
+// SIGNAL 17
+void CCDData::reqFocusStop()
+{
+    QMetaObject::activate(this, &staticMetaObject, 17, nullptr);
+}
+
+// SIGNAL 18
+void CCDData::reqDefogSetting(bool _t1, int _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 18, _a);
+}
+
+// SIGNAL 19
+void CCDData::reqHeatHazeLevel(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 19, _a);
+}
+
+// SIGNAL 20
+void CCDData::reqNoiseReductionSetting(bool _t1, int _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 20, _a);
+}
+
+// SIGNAL 21
+void CCDData::reqStabilizationSetting(bool _t1, int _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 21, _a);
+}
+
+// SIGNAL 22
+void CCDData::reqWhiteBalanceMode(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 22, _a);
+}
+
+// SIGNAL 23
+void CCDData::reqWhiteBalanceGain(bool _t1, int _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 23, _a);
+}
+
+// SIGNAL 24
+void CCDData::focusModeChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 24, nullptr);
+}
+
+// SIGNAL 25
+void CCDData::defogEnabledChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 25, nullptr);
+}
+
+// SIGNAL 26
+void CCDData::defogLevelChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 26, nullptr);
+}
+
+// SIGNAL 27
+void CCDData::heatHazeLevelChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 27, nullptr);
+}
+
+// SIGNAL 28
+void CCDData::noiseReductionEnabledChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 28, nullptr);
+}
+
+// SIGNAL 29
+void CCDData::noiseReductionLevelChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 29, nullptr);
+}
+
+// SIGNAL 30
+void CCDData::stabilizationEnabledChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 30, nullptr);
+}
+
+// SIGNAL 31
+void CCDData::stabilizationLevelChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 31, nullptr);
+}
+
+// SIGNAL 32
 void CCDData::resolutionIndexChanged()
 {
-    QMetaObject::activate(this, &staticMetaObject, 15, nullptr);
+    QMetaObject::activate(this, &staticMetaObject, 32, nullptr);
+}
+
+// SIGNAL 33
+void CCDData::whiteBalanceModeChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 33, nullptr);
+}
+
+// SIGNAL 34
+void CCDData::redGainChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 34, nullptr);
+}
+
+// SIGNAL 35
+void CCDData::blueGainChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 35, nullptr);
+}
+
+// SIGNAL 36
+void CCDData::backlightOnChanged()
+{
+    QMetaObject::activate(this, &staticMetaObject, 36, nullptr);
 }
 struct qt_meta_stringdata_SerialPortCCD_t {
-    QByteArrayData data[22];
-    char stringdata0[253];
+    QByteArrayData data[39];
+    char stringdata0[487];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -539,7 +1029,24 @@ QT_MOC_LITERAL(17, 172, 16), // "senddigZoomclose"
 QT_MOC_LITERAL(18, 189, 17), // "sendBacklightopen"
 QT_MOC_LITERAL(19, 207, 18), // "sendBacklightclose"
 QT_MOC_LITERAL(20, 226, 20), // "sendResolutionchange"
-QT_MOC_LITERAL(21, 247, 5) // "index"
+QT_MOC_LITERAL(21, 247, 5), // "index"
+QT_MOC_LITERAL(22, 253, 12), // "sendZoomMove"
+QT_MOC_LITERAL(23, 266, 9), // "direction"
+QT_MOC_LITERAL(24, 276, 12), // "sendZoomStop"
+QT_MOC_LITERAL(25, 289, 13), // "sendFocusMode"
+QT_MOC_LITERAL(26, 303, 4), // "mode"
+QT_MOC_LITERAL(27, 308, 13), // "sendFocusMove"
+QT_MOC_LITERAL(28, 322, 13), // "sendFocusStop"
+QT_MOC_LITERAL(29, 336, 16), // "sendDefogSetting"
+QT_MOC_LITERAL(30, 353, 7), // "enabled"
+QT_MOC_LITERAL(31, 361, 5), // "level"
+QT_MOC_LITERAL(32, 367, 17), // "sendHeatHazeLevel"
+QT_MOC_LITERAL(33, 385, 25), // "sendNoiseReductionSetting"
+QT_MOC_LITERAL(34, 411, 24), // "sendStabilizationSetting"
+QT_MOC_LITERAL(35, 436, 20), // "sendWhiteBalanceMode"
+QT_MOC_LITERAL(36, 457, 20), // "sendWhiteBalanceGain"
+QT_MOC_LITERAL(37, 478, 3), // "red"
+QT_MOC_LITERAL(38, 482, 4) // "gain"
 
     },
     "SerialPortCCD\0portOpened\0\0success\0"
@@ -549,7 +1056,13 @@ QT_MOC_LITERAL(21, 247, 5) // "index"
     "send1XFocus\0senddigZoomopen\0"
     "senddigZoomclose\0sendBacklightopen\0"
     "sendBacklightclose\0sendResolutionchange\0"
-    "index"
+    "index\0sendZoomMove\0direction\0sendZoomStop\0"
+    "sendFocusMode\0mode\0sendFocusMove\0"
+    "sendFocusStop\0sendDefogSetting\0enabled\0"
+    "level\0sendHeatHazeLevel\0"
+    "sendNoiseReductionSetting\0"
+    "sendStabilizationSetting\0sendWhiteBalanceMode\0"
+    "sendWhiteBalanceGain\0red\0gain"
 };
 #undef QT_MOC_LITERAL
 
@@ -559,7 +1072,7 @@ static const uint qt_meta_data_SerialPortCCD[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      25,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -567,22 +1080,33 @@ static const uint qt_meta_data_SerialPortCCD[] = {
        4,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   84,    2, 0x06 /* Public */,
-       4,    0,   87,    2, 0x06 /* Public */,
-       5,    1,   88,    2, 0x06 /* Public */,
-       7,    1,   91,    2, 0x06 /* Public */,
+       1,    1,  139,    2, 0x06 /* Public */,
+       4,    0,  142,    2, 0x06 /* Public */,
+       5,    1,  143,    2, 0x06 /* Public */,
+       7,    1,  146,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       9,    2,   94,    2, 0x0a /* Public */,
-      12,    0,   99,    2, 0x0a /* Public */,
-      13,    0,  100,    2, 0x0a /* Public */,
-      14,    0,  101,    2, 0x0a /* Public */,
-      15,    0,  102,    2, 0x0a /* Public */,
-      16,    0,  103,    2, 0x0a /* Public */,
-      17,    0,  104,    2, 0x0a /* Public */,
-      18,    0,  105,    2, 0x0a /* Public */,
-      19,    0,  106,    2, 0x0a /* Public */,
-      20,    1,  107,    2, 0x0a /* Public */,
+       9,    2,  149,    2, 0x0a /* Public */,
+      12,    0,  154,    2, 0x0a /* Public */,
+      13,    0,  155,    2, 0x0a /* Public */,
+      14,    0,  156,    2, 0x0a /* Public */,
+      15,    0,  157,    2, 0x0a /* Public */,
+      16,    0,  158,    2, 0x0a /* Public */,
+      17,    0,  159,    2, 0x0a /* Public */,
+      18,    0,  160,    2, 0x0a /* Public */,
+      19,    0,  161,    2, 0x0a /* Public */,
+      20,    1,  162,    2, 0x0a /* Public */,
+      22,    1,  165,    2, 0x0a /* Public */,
+      24,    0,  168,    2, 0x0a /* Public */,
+      25,    1,  169,    2, 0x0a /* Public */,
+      27,    1,  172,    2, 0x0a /* Public */,
+      28,    0,  175,    2, 0x0a /* Public */,
+      29,    2,  176,    2, 0x0a /* Public */,
+      32,    1,  181,    2, 0x0a /* Public */,
+      33,    2,  184,    2, 0x0a /* Public */,
+      34,    2,  189,    2, 0x0a /* Public */,
+      35,    1,  194,    2, 0x0a /* Public */,
+      36,    2,  197,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool,    3,
@@ -601,6 +1125,17 @@ static const uint qt_meta_data_SerialPortCCD[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,   21,
+    QMetaType::Void, QMetaType::Int,   23,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,   26,
+    QMetaType::Void, QMetaType::Int,   23,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   30,   31,
+    QMetaType::Void, QMetaType::Int,   31,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   30,   31,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   30,   31,
+    QMetaType::Void, QMetaType::Int,   26,
+    QMetaType::Void, QMetaType::Bool, QMetaType::Int,   37,   38,
 
        0        // eod
 };
@@ -625,6 +1160,17 @@ void SerialPortCCD::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 11: _t->sendBacklightopen(); break;
         case 12: _t->sendBacklightclose(); break;
         case 13: _t->sendResolutionchange((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 14: _t->sendZoomMove((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 15: _t->sendZoomStop(); break;
+        case 16: _t->sendFocusMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 17: _t->sendFocusMove((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 18: _t->sendFocusStop(); break;
+        case 19: _t->sendDefogSetting((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 20: _t->sendHeatHazeLevel((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 21: _t->sendNoiseReductionSetting((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 22: _t->sendStabilizationSetting((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 23: _t->sendWhiteBalanceMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 24: _t->sendWhiteBalanceGain((*reinterpret_cast< bool(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -689,13 +1235,13 @@ int SerialPortCCD::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 25)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 25;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 25)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 14;
+        _id -= 25;
     }
     return _id;
 }

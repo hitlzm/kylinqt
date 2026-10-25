@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     SerialPortBD *bdPort = new SerialPortBD;
     //CCD串口对象留在主线程
     SerialPortCCD *ccdPort = new SerialPortCCD(&app);
+    ccdPort->setCcdData(ccdData);
     // 网络传输 Worker（移到 NetworkThread）
     TemplateBindingWorker *networkWorker = new TemplateBindingWorker(templateBindingData);
 
@@ -191,6 +192,24 @@ int main(int argc, char *argv[])
     QObject::connect(ccdData, &CCDData::requestOpenPort,  ccdPort, &SerialPortCCD::onOpenPort);
     QObject::connect(ccdData, &CCDData::requestClosePort, ccdPort, &SerialPortCCD::onClosePort);
     QObject::connect(ccdData, &CCDData::requestScanPorts, ccdPort, &SerialPortCCD::onScanPorts);
+    QObject::connect(ccdData, &CCDData::req30XFocus,        ccdPort, &SerialPortCCD::send30XFocus);
+    QObject::connect(ccdData, &CCDData::req1XFocus,         ccdPort, &SerialPortCCD::send1XFocus);
+    QObject::connect(ccdData, &CCDData::reqdigZoomopen,     ccdPort, &SerialPortCCD::senddigZoomopen);
+    QObject::connect(ccdData, &CCDData::reqdigZoomclose,    ccdPort, &SerialPortCCD::senddigZoomclose);
+    QObject::connect(ccdData, &CCDData::reqBacklightopen,   ccdPort, &SerialPortCCD::sendBacklightopen);
+    QObject::connect(ccdData, &CCDData::reqBacklightclose,  ccdPort, &SerialPortCCD::sendBacklightclose);
+    QObject::connect(ccdData, &CCDData::reqResolutionchange, ccdPort, &SerialPortCCD::sendResolutionchange);
+    QObject::connect(ccdData, &CCDData::reqZoomMove,        ccdPort, &SerialPortCCD::sendZoomMove);
+    QObject::connect(ccdData, &CCDData::reqZoomStop,        ccdPort, &SerialPortCCD::sendZoomStop);
+    QObject::connect(ccdData, &CCDData::reqFocusMode,       ccdPort, &SerialPortCCD::sendFocusMode);
+    QObject::connect(ccdData, &CCDData::reqFocusMove,       ccdPort, &SerialPortCCD::sendFocusMove);
+    QObject::connect(ccdData, &CCDData::reqFocusStop,       ccdPort, &SerialPortCCD::sendFocusStop);
+    QObject::connect(ccdData, &CCDData::reqDefogSetting,    ccdPort, &SerialPortCCD::sendDefogSetting);
+    QObject::connect(ccdData, &CCDData::reqHeatHazeLevel,   ccdPort, &SerialPortCCD::sendHeatHazeLevel);
+    QObject::connect(ccdData, &CCDData::reqNoiseReductionSetting, ccdPort, &SerialPortCCD::sendNoiseReductionSetting);
+    QObject::connect(ccdData, &CCDData::reqStabilizationSetting,  ccdPort, &SerialPortCCD::sendStabilizationSetting);
+    QObject::connect(ccdData, &CCDData::reqWhiteBalanceMode, ccdPort, &SerialPortCCD::sendWhiteBalanceMode);
+    QObject::connect(ccdData, &CCDData::reqWhiteBalanceGain, ccdPort, &SerialPortCCD::sendWhiteBalanceGain);
 
     // ── CCD: Worker → Data ──
     QObject::connect(ccdPort, &SerialPortCCD::portOpened,   ccdData, &CCDData::setPortOpen);

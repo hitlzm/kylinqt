@@ -25,5 +25,11 @@
         <file>components/TemplateBindingPopup.qml</file>
         <file>components/SixDofMotionPopup.qml</file>
         <file>components/CusTitleBar.qml</file>
+        <file>components/arrowUp.jpg</file>
+        <file>components/arrowDown.png</file>
+        <file>components/arrowLeft.png</file>
+        <file>components/arrowRight.png</file>
+        <file>components/plus.png</file>
+        <file>components/minus.png</file>
     </qresource>
 </RCC>
