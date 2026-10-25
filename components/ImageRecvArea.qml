@@ -10,9 +10,8 @@ Rectangle {
     color: "#e9f0f9"
 
     readonly property int pageMargin: 10
-    readonly property int leftPanelWidth: 650
+    readonly property int leftPanelWidth: 710
     readonly property int ccdPanelLeft: pageMargin + leftPanelWidth + pageMargin
-    readonly property bool ccdReady: ccdData.portOpen
 
     // 三轴共用报警弹窗
     MsgPopup2 { id: axisAlarmMsg }
@@ -161,84 +160,92 @@ Rectangle {
         x: root.pageMargin
         y: root.pageMargin
         width: root.leftPanelWidth
-        height: 122
-        topPadding: 22
+        height: 120
+        topPadding: 25
 
         title: "北斗信息"
-        font.pixelSize: 17
+        font.pixelSize: 18
         label: Label {
             text: parent.title
-            font.pixelSize: 17
+            font.pixelSize: 18
             font.bold: true
-            leftPadding: 10
-            topPadding: 5
+            leftPadding: 12
+            topPadding: 6
         }
 
         background: Rectangle {
             color: "#e1d8d8"
             border.color: "gray"
-            border.width: 3
+            border.width: 4
             radius: 8
         }
 
         Column {
             anchors.fill: parent
-            anchors.margins: 7
-            spacing: 5
+            anchors.margins: 12
+            spacing: 12
 
+            // 第一行：串口号 + 波特率 + 扫描串口 + 打开串口
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                spacing: 6
 
                 Text {
                     text: "串口号:"
-                    font.pixelSize: 14
+                    font.pixelSize: 15
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
                     id: portComboBox
-                    width: 120
-                    height: 27
+                    width: 130
+                    height: 28
                     model: imageData.availablePorts
-                    font.pixelSize: 13
-                    popupMinWidth: 180
+                    font.pixelSize: 14
+                    popupMinWidth: 200
                 }
                 Text {
                     text: "波特率:"
-                    font.pixelSize: 14
+                    font.pixelSize: 15
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
                     id: baudComboBox
-                    width: 76
-                    height: 27
+                    width: 110
+                    height: 28
                     model: ["9600"]
-                    font.pixelSize: 13
-                    popupMinWidth: 120
+                    font.pixelSize: 14
+                    popupMinWidth: 200
                 }
                 CusButton_Blue {
+                    id: scanButton
                     text: "扫描串口"
-                    font.pixelSize: 13
-                    width: 72
-                    height: 27
-                    onClicked: imageData.scanPorts()
+                    font.pixelSize: 15
+                    width: 85
+                    height: 28
+                    onClicked: {
+                        imageData.scanPorts()
+                    }
                 }
                 CusButton_Blue {
+                    id: openButton
                     text: bdData.portOpen ? "关闭串口" : "打开串口"
-                    font.pixelSize: 13
-                    width: 72
-                    height: 27
+                    font.pixelSize: 15
+                    width: 85
+                    height: 28
 
                     Timer {
                         id: bdDelayTimer
                         interval: 1
                         onTriggered: {
-                            bdmsg.message = bdData.portOpen
-                                    ? "北斗串口已打开！"
-                                    : "北斗串口打开失败！"
-                            bdmsg.open()
+                            if (bdData.portOpen) {
+                                bdmsg.message = "北斗串口已打开！"
+                                bdmsg.open()
+                            } else {
+                                bdmsg.message = "北斗串口打开失败！"
+                                bdmsg.open()
+                            }
                         }
                     }
 
@@ -254,11 +261,12 @@ Rectangle {
                 }
             }
 
+            // 第二行：北斗时间 + 经度 + 纬度
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 5
                 DataLabel {
-                    fontSize: 14; labelWidth: 65; valueWidth: 135; labelBold: true
+                    fontSize: 16; labelWidth: 80; valueWidth: 174; labelBold: true
                     label: "北斗时间:"
                     value: {
                         if (!bdData.m_isPosValid) return "--"
@@ -267,21 +275,23 @@ Rectangle {
                     }
                 }
                 DataLabel {
-                    fontSize: 14; labelWidth: 35; valueWidth: 115; labelBold: true
+                    fontSize: 16; labelWidth: 46; valueWidth: 118; labelBold: true
                     label: "经度:"
                     value: {
                         if (!bdData.m_isPosValid) return "--"
-                        return bdData.m_longitude.toFixed(6)
-                                + "°" + (bdData.m_iseast ? "E" : "W")
+                        var lon = bdData.m_longitude.toFixed(6)
+                        var dir = bdData.m_iseast ? "E" : "W"
+                        return lon + "°" + dir
                     }
                 }
                 DataLabel {
-                    fontSize: 14; labelWidth: 35; valueWidth: 110; labelBold: true
+                    fontSize: 16; labelWidth: 46; valueWidth: 112; labelBold: true
                     label: "纬度:"
                     value: {
                         if (!bdData.m_isPosValid) return "--"
-                        return bdData.m_latitude.toFixed(6)
-                                + "°" + (bdData.m_isnorth ? "N" : "S")
+                        var lat = bdData.m_latitude.toFixed(6)
+                        var dir = bdData.m_isnorth ? "N" : "S"
+                        return lat + "°" + dir
                     }
                 }
             }
@@ -299,46 +309,38 @@ Rectangle {
         anchors.topMargin: root.pageMargin
         anchors.bottomMargin: root.pageMargin
         width: root.leftPanelWidth
-        topPadding: 22
+        topPadding: 25
 
         title: "转台状态显示"
-        font.pixelSize: 17
+        font.pixelSize: 18
         label: Label {
             text: parent.title
-            font.pixelSize: 17
+            font.pixelSize: 18
             font.bold: true
-            leftPadding: 10
-            topPadding: 5
+            leftPadding: 12
+            topPadding: 6
         }
 
         background: Rectangle {
             color: "#e1d8d8"
             border.color: "gray"
-            border.width: 3
+            border.width: 4
             radius: 8
         }
 
         Column {
-            anchors.fill: parent
-            anchors.margins: 7
-            spacing: 5
+            anchors.centerIn: parent
+            spacing: 10
 
             Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 14
+                spacing: 20
 
-                DataLabel {
-                    fontSize: 14; labelWidth: 40; valueWidth: 88; labelBold: true
-                    label: "时间:"
-                    value: formatTurntableTime(turntableData.time)
-                }
-                DataLabel {
-                    fontSize: 14; labelWidth: 70; valueWidth: 78; labelBold: true
-                    label: "运行指令:"
-                    value: runCommandText
-                }
+                DataLabel { fontSize: 18; labelWidth: 55; valueWidth: 100; labelBold: true
+                    label: "时间:"; value: formatTurntableTime(turntableData.time) }
+                DataLabel { fontSize: 18; labelWidth: 100; valueWidth: 100; labelBold: true
+                    label: "运行指令:"; value: runCommandText }
                 Rectangle {
-                    width: 72
+                    width: 86
                     height: 24
                     radius: 4
                     anchors.verticalCenter: parent.verticalCenter
@@ -347,39 +349,40 @@ Rectangle {
                         anchors.centerIn: parent
                         text: turntableData.portOpen ? "转台已连接" : "转台未连接"
                         color: "white"
-                        font.pixelSize: 12
+                        font.pixelSize: 13
                         font.bold: true
                     }
                 }
             }
 
             Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                id: axisStatusRow
+                spacing: 14
 
                 // 内框（滚转轴）
                 Column {
-                    width: 203
-                    spacing: 1
+                    spacing: 3
                     Text {
+                        width: 215
                         text: "内框（滚转轴）"
-                        font.pixelSize: 14
+                        font.pixelSize: 18
                         font.bold: true
+                        horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 45; valueWidth: 153; labelBold: true
+                        fontSize: 16; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int innerstatus: turntableData.inner_statusnumber
                         onInnerstatusChanged: handleAxisAlarm("内框", innerstatus)
                         value: axisDisplayText(innerstatus)
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 58; valueWidth: 140; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: formatAngle(turntableData.inner_angle)
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 45; valueWidth: 153; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: formatAngle(turntableData.inner_ctlDeviation)
                     }
@@ -387,27 +390,28 @@ Rectangle {
 
                 // 中框（俯仰轴）
                 Column {
-                    width: 203
-                    spacing: 1
+                    spacing: 3
                     Text {
+                        width: 215
                         text: "中框（俯仰轴）"
-                        font.pixelSize: 14
+                        font.pixelSize: 18
                         font.bold: true
+                        horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 45; valueWidth: 153; labelBold: true
+                        fontSize: 16; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int middlestatus: turntableData.middle_statusnumber
                         onMiddlestatusChanged: handleAxisAlarm("中框", middlestatus)
                         value: axisDisplayText(middlestatus)
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 58; valueWidth: 140; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: formatAngle(turntableData.middle_angle)
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 45; valueWidth: 153; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: formatAngle(turntableData.middle_ctlDeviation)
                     }
@@ -415,27 +419,28 @@ Rectangle {
 
                 // 外框（方位轴）
                 Column {
-                    width: 203
-                    spacing: 1
+                    spacing: 3
                     Text {
+                        width: 215
                         text: "外框（方位轴）"
-                        font.pixelSize: 14
+                        font.pixelSize: 18
                         font.bold: true
+                        horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 45; valueWidth: 153; labelBold: true
+                        fontSize: 16; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int outterstatus: turntableData.outter_statusnumber
                         onOutterstatusChanged: handleAxisAlarm("外框", outterstatus)
                         value: axisDisplayText(outterstatus)
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 58; valueWidth: 140; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: formatAngle(turntableData.outter_angle)
                     }
                     DataLabel {
-                        fontSize: 13; labelWidth: 45; valueWidth: 153; labelBold: true
+                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: formatAngle(turntableData.outter_ctlDeviation)
                     }
@@ -572,7 +577,6 @@ Rectangle {
                     id: zoomInButton
                     width: 31
                     height: 31
-                    enabled: root.ccdReady
                     contentItem: Image {
                         source: "qrc:/components/plus.png"
                         width: 24; height: 24
@@ -596,7 +600,6 @@ Rectangle {
                     id: zoomOutButton
                     width: 31
                     height: 31
-                    enabled: root.ccdReady
                     contentItem: Image {
                         source: "qrc:/components/minus.png"
                         width: 24; height: 24
@@ -631,7 +634,6 @@ Rectangle {
                     font.pixelSize: 13
                     ButtonGroup.group: focusModeGroup
                     checked: ccdData.focusMode === 0
-                    enabled: root.ccdReady
                     onCheckedChanged: {
                         if (checked) ccdData.setFocusMode(0)
                     }
@@ -643,7 +645,6 @@ Rectangle {
                     font.pixelSize: 13
                     ButtonGroup.group: focusModeGroup
                     checked: ccdData.focusMode === 1
-                    enabled: root.ccdReady
                     onCheckedChanged: {
                         if (checked) ccdData.setFocusMode(1)
                     }
@@ -652,7 +653,7 @@ Rectangle {
                     id: focusPlusButton
                     width: 31
                     height: 31
-                    enabled: root.ccdReady && ccdData.focusMode === 1
+                    enabled: ccdData.focusMode === 1
                     contentItem: Image {
                         source: "qrc:/components/plus.png"
                         width: 24; height: 24
@@ -676,7 +677,7 @@ Rectangle {
                     id: focusMinusButton
                     width: 31
                     height: 31
-                    enabled: root.ccdReady && ccdData.focusMode === 1
+                    enabled: ccdData.focusMode === 1
                     contentItem: Image {
                         source: "qrc:/components/minus.png"
                         width: 24; height: 24
@@ -712,7 +713,6 @@ Rectangle {
                 CusSwitch {
                     width: 38
                     height: 26
-                    enabled: root.ccdReady
                     checked: ccdData.defogEnabled
                     onCheckedChanged: ccdData.setDefog(checked)
                 }
@@ -723,7 +723,7 @@ Rectangle {
                     font.pixelSize: 12
                     popupMinWidth: 80
                     currentIndex: ccdData.defogLevel - 1
-                    enabled: root.ccdReady && ccdData.defogEnabled
+                    enabled: ccdData.defogEnabled
                     onCurrentIndexChanged: {
                         if (enabled && currentIndex >= 0)
                             ccdData.setDefogLevel(currentIndex + 1)
@@ -744,7 +744,6 @@ Rectangle {
                     font.pixelSize: 12
                     popupMinWidth: 60
                     currentIndex: ccdData.heatHazeLevel
-                    enabled: root.ccdReady
                     onCurrentIndexChanged: {
                         if (enabled && currentIndex >= 0)
                             ccdData.setHeatHazeLevel(currentIndex)
@@ -760,7 +759,6 @@ Rectangle {
                 CusSwitch {
                     width: 38
                     height: 26
-                    enabled: root.ccdReady
                     checked: ccdData.noiseReductionEnabled
                     onCheckedChanged: ccdData.setNoiseReduction(checked)
                 }
@@ -773,7 +771,7 @@ Rectangle {
                     to: 100
                     stepSize: 1
                     value: ccdData.noiseReductionLevel
-                    enabled: root.ccdReady && ccdData.noiseReductionEnabled
+                    enabled: ccdData.noiseReductionEnabled
                     onMoved: ccdData.setNoiseReductionLevel(Math.round(value))
                 }
                 Text {
@@ -801,7 +799,6 @@ Rectangle {
                 CusSwitch {
                     width: 38
                     height: 26
-                    enabled: root.ccdReady
                     checked: ccdData.stabilizationEnabled
                     onCheckedChanged: ccdData.setStabilization(checked)
                 }
@@ -810,7 +807,7 @@ Rectangle {
                     width: 44; height: 28; text: "低"; font.pixelSize: 13
                     ButtonGroup.group: stabilizationGroup
                     checked: ccdData.stabilizationLevel === 1
-                    enabled: root.ccdReady && ccdData.stabilizationEnabled
+                    enabled: ccdData.stabilizationEnabled
                     onCheckedChanged: {
                         if (checked) ccdData.setStabilizationLevel(1)
                     }
@@ -819,7 +816,7 @@ Rectangle {
                     width: 44; height: 28; text: "中"; font.pixelSize: 13
                     ButtonGroup.group: stabilizationGroup
                     checked: ccdData.stabilizationLevel === 2
-                    enabled: root.ccdReady && ccdData.stabilizationEnabled
+                    enabled: ccdData.stabilizationEnabled
                     onCheckedChanged: {
                         if (checked) ccdData.setStabilizationLevel(2)
                     }
@@ -828,7 +825,7 @@ Rectangle {
                     width: 44; height: 28; text: "高"; font.pixelSize: 13
                     ButtonGroup.group: stabilizationGroup
                     checked: ccdData.stabilizationLevel === 3
-                    enabled: root.ccdReady && ccdData.stabilizationEnabled
+                    enabled: ccdData.stabilizationEnabled
                     onCheckedChanged: {
                         if (checked) ccdData.setStabilizationLevel(3)
                     }
@@ -851,7 +848,6 @@ Rectangle {
                             "2688×1520/50", "2688×1520/60", "3840×2160/25",
                             "3840×2160/30", "3840×2160/50", "3840×2160/60"]
                     currentIndex: ccdData.resolutionIndex
-                    enabled: root.ccdReady
                     onCurrentIndexChanged: {
                         if (enabled && currentIndex >= 0)
                             ccdData.setResolution(currentIndex)
@@ -875,7 +871,6 @@ Rectangle {
                     width: 58; height: 28; text: "自动"; font.pixelSize: 13
                     ButtonGroup.group: whiteBalanceGroup
                     checked: ccdData.whiteBalanceMode === 0
-                    enabled: root.ccdReady
                     onCheckedChanged: {
                         if (checked) ccdData.setWhiteBalanceMode(0)
                     }
@@ -884,7 +879,6 @@ Rectangle {
                     width: 58; height: 28; text: "手动"; font.pixelSize: 13
                     ButtonGroup.group: whiteBalanceGroup
                     checked: ccdData.whiteBalanceMode === 1
-                    enabled: root.ccdReady
                     onCheckedChanged: {
                         if (checked) ccdData.setWhiteBalanceMode(1)
                     }
@@ -903,7 +897,7 @@ Rectangle {
                     to: 255
                     stepSize: 1
                     value: ccdData.redGain
-                    enabled: root.ccdReady && ccdData.whiteBalanceMode === 1
+                    enabled: ccdData.whiteBalanceMode === 1
                     onMoved: ccdData.setRedGain(Math.round(value))
                 }
             }
@@ -927,7 +921,7 @@ Rectangle {
                     to: 255
                     stepSize: 1
                     value: ccdData.blueGain
-                    enabled: root.ccdReady && ccdData.whiteBalanceMode === 1
+                    enabled: ccdData.whiteBalanceMode === 1
                     onMoved: ccdData.setBlueGain(Math.round(value))
                 }
             }
