@@ -12,6 +12,15 @@
 #define Exguide_1s     7
 #define Maxsendcount   600  // 每10分钟进行一次时间同步
 
+namespace {
+constexpr int kMotionSpeed = 4;  // 变焦/调焦连续运动速度 0-7
+
+const quint8 kResolutionCodes[] = {
+    0x07, 0x08, 0x0A, 0x0C, 0x0F, 0x11, 0x10, 0x12, 0x14,
+    0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D
+};
+}
+
 SerialPortCCD::SerialPortCCD(QObject *parent)
     : SerialPort(parent)
     , m_ccdData(new CCDData(nullptr))        // 主线程 Data 对象，main.cpp 中替换为 ccdData
@@ -23,14 +32,14 @@ SerialPortCCD::SerialPortCCD(QObject *parent)
 
 void SerialPortCCD::send30XFocus()
 {
-    m_serialPort->write(cmd_30X);
+    writeCommand(cmd_30X);
     m_hFov = 2.66f;
     m_vFov = 1.51f;
     updateFovLimits();
 }
 void SerialPortCCD::send1XFocus()
 {
-    m_serialPort->write(cmd_1X);
+    writeCommand(cmd_1X);
     m_hFov = 55.27f;
     m_vFov = 32.26f;
     updateFovLimits();
@@ -53,49 +62,172 @@ void SerialPortCCD::updateFovLimits()
 }
 void SerialPortCCD::senddigZoomopen()
 {
-    qint64 bytesWritten = m_serialPort->write(cmd_digZoomopen);
+    writeCommand(cmd_digZoomopen);
 }
 void SerialPortCCD::senddigZoomclose()
 {
-    qint64 bytesWritten = m_serialPort->write(cmd_digZoomclose);
+    writeCommand(cmd_digZoomclose);
 }
 void SerialPortCCD::sendBacklightopen()
 {
-    qint64 bytesWritten = m_serialPort->write(cmd_Backlightopen);
+    writeCommand(cmd_Backlightopen);
 }
 void SerialPortCCD::sendBacklightclose()
 {
-    qint64 bytesWritten = m_serialPort->write(cmd_Backlightclose);
+    writeCommand(cmd_Backlightclose);
 }
 void SerialPortCCD::sendResolutionchange(int index)
 {
-    switch(index){
-        case 0: {
-            m_serialPort->write(cmd_resolution1080p30);
-            m_imageWidth  = 1920;
-            m_imageHeight = 1080;
-            break;
-        }
-        case 1: {
-            m_serialPort->write(cmd_resolution1080p25);
-            m_imageWidth  = 1920;
-            m_imageHeight = 1080;
-            break;
-        }
-        case 2: {
-            m_serialPort->write(cmd_resolution720p30);
-            m_imageWidth  = 1280;
-            m_imageHeight = 720;
-            break;
-        }
-        case 3: {
-            m_serialPort->write(cmd_resolution720p25);
-            m_imageWidth  = 1280;
-            m_imageHeight = 720;
-            break;
-        }
-        default: break;
+    const int count = static_cast<int>(sizeof(kResolutionCodes)
+                                       / sizeof(kResolutionCodes[0]));
+    if (index < 0 || index >= count)
+        return;
+
+    QByteArray command;
+    command.reserve(8);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x04))
+            .append(char(0x24)).append(char(0x73)).append(char(0x00))
+            .append(char(kResolutionCodes[index])).append(char(0xFF));
+    writeCommand(command);
+
+    switch (index) {
+    case 0: case 1: case 8: case 9:
+        m_imageWidth = 1920; m_imageHeight = 1080; break;
+    case 2: case 3: case 4: case 5:
+        m_imageWidth = 1280; m_imageHeight = 720; break;
+    case 6: case 7:
+        m_imageWidth = 1280; m_imageHeight = 960; break;
+    case 10: case 11: case 12: case 13:
+        m_imageWidth = 2688; m_imageHeight = 1520; break;
+    case 14: case 15: case 16: case 17:
+        m_imageWidth = 3840; m_imageHeight = 2160; break;
+    default: break;
     }
+}
+
+void SerialPortCCD::sendZoomMove(int direction)
+{
+    if (direction == 0) {
+        sendZoomStop();
+        return;
+    }
+
+    QByteArray command;
+    command.reserve(6);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x04))
+            .append(char(0x07))
+            .append(char((direction > 0 ? 0x20 : 0x30) | kMotionSpeed))
+            .append(char(0xFF));
+    writeCommand(command);
+}
+
+void SerialPortCCD::sendZoomStop()
+{
+    writeCommand(QByteArray::fromHex("8101040700FF"));
+}
+
+void SerialPortCCD::sendFocusMode(int mode)
+{
+    writeCommand(mode == 0
+                 ? QByteArray::fromHex("8101043802FF")
+                 : QByteArray::fromHex("8101043803FF"));
+}
+
+void SerialPortCCD::sendFocusMove(int direction)
+{
+    if (direction == 0) {
+        sendFocusStop();
+        return;
+    }
+
+    QByteArray command;
+    command.reserve(6);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x04))
+            .append(char(0x08))
+            .append(char((direction > 0 ? 0x20 : 0x30) | kMotionSpeed))
+            .append(char(0xFF));
+    writeCommand(command);
+}
+
+void SerialPortCCD::sendFocusStop()
+{
+    writeCommand(QByteArray::fromHex("8101040800FF"));
+}
+
+void SerialPortCCD::sendDefogSetting(bool enabled, int level)
+{
+    QByteArray command;
+    command.reserve(7);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x04))
+            .append(char(0x37));
+    if (enabled) {
+        command.append(char(0x02))
+                .append(char(qBound(1, level, 3)))
+                .append(char(0xFF));
+    } else {
+        command.append(char(0x03)).append(char(0x00)).append(char(0xFF));
+    }
+    writeCommand(command);
+}
+
+void SerialPortCCD::sendHeatHazeLevel(int level)
+{
+    QByteArray command;
+    command.reserve(7);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x09))
+            .append(char(0x83)).append(char(0x08))
+            .append(char(qBound(0, level, 10))).append(char(0xFF));
+    writeCommand(command);
+}
+
+void SerialPortCCD::sendNoiseReductionSetting(bool enabled, int level)
+{
+    QByteArray command;
+    command.reserve(11);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x09))
+            .append(char(0x83)).append(char(0x0B));
+    if (enabled) {
+        const int strength = qBound(0, level, 100);
+        command.append(char(0x01))
+                .append(char((strength >> 8) & 0xFF))
+                .append(char(strength & 0xFF))
+                .append(char(0x00)).append(char(0x00));
+    } else {
+        command.append(QByteArray(5, '\0'));
+    }
+    command.append(char(0xFF));
+    writeCommand(command);
+}
+
+void SerialPortCCD::sendStabilizationSetting(bool enabled, int level)
+{
+    QByteArray command;
+    command.reserve(7);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x09))
+            .append(char(0x83)).append(char(0x07))
+            .append(char(enabled ? qBound(1, level, 3) : 0))
+            .append(char(0xFF));
+    writeCommand(command);
+}
+
+void SerialPortCCD::sendWhiteBalanceMode(int mode)
+{
+    writeCommand(mode == 1
+                 ? QByteArray::fromHex("8101043505FF")
+                 : QByteArray::fromHex("8101043500FF"));
+}
+
+void SerialPortCCD::sendWhiteBalanceGain(bool red, int gain)
+{
+    const int value = qBound(0, gain, 255);
+    QByteArray command;
+    command.reserve(9);
+    command.append(char(0x81)).append(char(0x01)).append(char(0x04))
+            .append(char(red ? 0x43 : 0x44))
+            .append(char(0x00)).append(char(0x00))
+            .append(char((value >> 8) & 0xFF)).append(char(value & 0xFF))
+            .append(char(0xFF));
+    writeCommand(command);
 }
 
 void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
@@ -269,8 +401,26 @@ void SerialPortCCD::onOpenPort(const QString &name, int baud) {
     else
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
 }
-void SerialPortCCD::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortCCD::onClosePort()
+{
+    // 关闭串口前先结束连续运动，避免机芯停留在变焦/调焦运动状态。
+    if (isOpen()) {
+        sendZoomStop();
+        sendFocusStop();
+        if (m_serialPort)
+            m_serialPort->waitForBytesWritten(50);
+    }
+    SerialPort::close();
+    emit portClosed();
+}
 void SerialPortCCD::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
+
+void SerialPortCCD::writeCommand(const QByteArray &command)
+{
+    if (!m_serialPort || !m_serialPort->isOpen())
+        return;
+    m_serialPort->write(command);
+}
 
 CCDData::CCDData(QObject *parent)
     : QObject(parent)
@@ -287,12 +437,107 @@ void CCDData::setPortList(const QStringList &ports) { if (m_availablePorts != po
 void CCDData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
 
 void CCDData::setFocusMode(int mode) {
+    mode = qBound(0, mode, 1);
     if (m_focusMode != mode) {
         m_focusMode = mode;
         emit focusModeChanged();
-        if (mode == 0) emit req30XFocus();
-        else emit req1XFocus();
+        if (mode == 0)
+            emit reqFocusStop();
+        emit reqFocusMode(mode);
     }
+}
+
+void CCDData::startZoom(int direction)
+{
+    if (direction != 0)
+        emit reqZoomMove(direction > 0 ? 1 : -1);
+}
+
+void CCDData::stopZoom()
+{
+    emit reqZoomStop();
+}
+
+void CCDData::startFocus(int direction)
+{
+    if (m_focusMode != 1 || direction == 0)
+        return;
+    emit reqFocusMove(direction > 0 ? 1 : -1);
+}
+
+void CCDData::stopFocus()
+{
+    emit reqFocusStop();
+}
+
+void CCDData::setDefog(bool enabled)
+{
+    if (m_defogEnabled == enabled)
+        return;
+    m_defogEnabled = enabled;
+    emit defogEnabledChanged();
+    emit reqDefogSetting(m_defogEnabled, m_defogLevel);
+}
+
+void CCDData::setDefogLevel(int level)
+{
+    level = qBound(1, level, 3);
+    if (m_defogLevel == level)
+        return;
+    m_defogLevel = level;
+    emit defogLevelChanged();
+    if (m_defogEnabled)
+        emit reqDefogSetting(true, m_defogLevel);
+}
+
+void CCDData::setHeatHazeLevel(int level)
+{
+    level = qBound(0, level, 10);
+    if (m_heatHazeLevel == level)
+        return;
+    m_heatHazeLevel = level;
+    emit heatHazeLevelChanged();
+    emit reqHeatHazeLevel(m_heatHazeLevel);
+}
+
+void CCDData::setNoiseReduction(bool enabled)
+{
+    if (m_noiseReductionEnabled == enabled)
+        return;
+    m_noiseReductionEnabled = enabled;
+    emit noiseReductionEnabledChanged();
+    emit reqNoiseReductionSetting(enabled, m_noiseReductionLevel);
+}
+
+void CCDData::setNoiseReductionLevel(int level)
+{
+    level = qBound(0, level, 100);
+    if (m_noiseReductionLevel == level)
+        return;
+    m_noiseReductionLevel = level;
+    emit noiseReductionLevelChanged();
+    if (m_noiseReductionEnabled)
+        emit reqNoiseReductionSetting(true, level);
+}
+
+void CCDData::setStabilization(bool enabled)
+{
+    if (m_stabilizationEnabled == enabled)
+        return;
+    m_stabilizationEnabled = enabled;
+    emit stabilizationEnabledChanged();
+    emit reqStabilizationSetting(enabled, m_stabilizationLevel);
+}
+
+void CCDData::setStabilizationLevel(int level)
+{
+    level = qBound(1, level, 3);
+    if (m_stabilizationLevel == level)
+        return;
+    m_stabilizationLevel = level;
+    emit stabilizationLevelChanged();
+    if (m_stabilizationEnabled)
+        emit reqStabilizationSetting(true, level);
 }
 
 void CCDData::setBacklight(bool on) {
@@ -305,12 +550,44 @@ void CCDData::setBacklight(bool on) {
 }
 
 void CCDData::setResolution(int index) {
-    if (index < 0 || index > 3) return;
+    if (index < 0 || index > 17) return;
     if (m_resolutionIndex != index) {
         m_resolutionIndex = index;
         emit resolutionIndexChanged();
         emit reqResolutionchange(index);
     }
+}
+
+void CCDData::setWhiteBalanceMode(int mode)
+{
+    mode = qBound(0, mode, 1);
+    if (m_whiteBalanceMode == mode)
+        return;
+    m_whiteBalanceMode = mode;
+    emit whiteBalanceModeChanged();
+    emit reqWhiteBalanceMode(mode);
+}
+
+void CCDData::setRedGain(int gain)
+{
+    gain = qBound(0, gain, 255);
+    if (m_redGain == gain)
+        return;
+    m_redGain = gain;
+    emit redGainChanged();
+    if (m_whiteBalanceMode == 1)
+        emit reqWhiteBalanceGain(true, gain);
+}
+
+void CCDData::setBlueGain(int gain)
+{
+    gain = qBound(0, gain, 255);
+    if (m_blueGain == gain)
+        return;
+    m_blueGain = gain;
+    emit blueGainChanged();
+    if (m_whiteBalanceMode == 1)
+        emit reqWhiteBalanceGain(false, gain);
 }
 
 void CCDData::setVideoStreamConnected(bool connected)

@@ -310,6 +310,17 @@ int main(int argc, char *argv[])
     QObject::connect(ccdData, &CCDData::reqBacklightopen,   ccdPort, &SerialPortCCD::sendBacklightopen,   Qt::QueuedConnection);
     QObject::connect(ccdData, &CCDData::reqBacklightclose,  ccdPort, &SerialPortCCD::sendBacklightclose,  Qt::QueuedConnection);
     QObject::connect(ccdData, &CCDData::reqResolutionchange, ccdPort, &SerialPortCCD::sendResolutionchange, Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqZoomMove,        ccdPort, &SerialPortCCD::sendZoomMove,        Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqZoomStop,        ccdPort, &SerialPortCCD::sendZoomStop,        Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqFocusMode,       ccdPort, &SerialPortCCD::sendFocusMode,       Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqFocusMove,       ccdPort, &SerialPortCCD::sendFocusMove,       Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqFocusStop,       ccdPort, &SerialPortCCD::sendFocusStop,       Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqDefogSetting,    ccdPort, &SerialPortCCD::sendDefogSetting,    Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqHeatHazeLevel,   ccdPort, &SerialPortCCD::sendHeatHazeLevel,   Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqNoiseReductionSetting, ccdPort, &SerialPortCCD::sendNoiseReductionSetting, Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqStabilizationSetting,  ccdPort, &SerialPortCCD::sendStabilizationSetting,  Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqWhiteBalanceMode, ccdPort, &SerialPortCCD::sendWhiteBalanceMode, Qt::QueuedConnection);
+    QObject::connect(ccdData, &CCDData::reqWhiteBalanceGain, ccdPort, &SerialPortCCD::sendWhiteBalanceGain, Qt::QueuedConnection);
 
     // ── CCD: CCD 串口 → Data（主线程）──
     QObject::connect(ccdPort, &SerialPortCCD::portOpened,   ccdData, &CCDData::setPortOpen, Qt::QueuedConnection);
