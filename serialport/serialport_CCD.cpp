@@ -1,6 +1,8 @@
 #include "serialport_CCD.h"
 #include <QDebug>
+#include <QtMath>
 #include <QTimeZone>
+#include <cmath>
 #include "../log/LogManager.h"
 #include "../utils/seeker_coordinate_transform.h"
 // ─────────────────────────────────────────────
@@ -15,6 +17,18 @@
 namespace {
 constexpr int kMotionSpeed = 4;  // 变焦/调焦连续运动速度 0-7
 
+constexpr double kZoomWideFocalMm = 5.1;
+constexpr double kZoomTeleFocalMm = 153.0;
+constexpr double kZoomWideHFov = 55.27;
+constexpr double kZoomWideVFov = 32.26;
+constexpr double kZoomTeleHFov = 2.66;
+constexpr double kZoomTeleVFov = 1.51;
+
+// 用广角/远焦两组实测视场角拟合针孔模型。指数由两端标定反算，
+// 可保证倍率 1x/30x 时与说明书参数完全一致。
+constexpr double kHFovCalibration = 0.9160818305959834;
+constexpr double kVFovCalibration = 0.9080856044332373;
+
 const quint8 kResolutionCodes[] = {
     0x07, 0x08, 0x0A, 0x0C, 0x0F, 0x11, 0x10, 0x12, 0x14,
     0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D
@@ -27,22 +41,19 @@ SerialPortCCD::SerialPortCCD(QObject *parent)
 {
     // QSerialPort 由 dowork() 创建（CCD 串口固定运行在主线程，dowork() 在 main.cpp 中直接调用）
     onScanPorts();
+    updateFovLimits();
     // CCDData 请求信号 → SerialPortCCD 执行槽（连接在 main.cpp 中统一管理）
 }
 
 void SerialPortCCD::send30XFocus()
 {
     writeCommand(cmd_30X);
-    m_hFov = 2.66f;
-    m_vFov = 1.51f;
-    updateFovLimits();
+    updateOpticalZoom(30.0);
 }
 void SerialPortCCD::send1XFocus()
 {
     writeCommand(cmd_1X);
-    m_hFov = 55.27f;
-    m_vFov = 32.26f;
-    updateFovLimits();
+    updateOpticalZoom(1.0);
 }
 
 void SerialPortCCD::updateFovLimits()
@@ -60,13 +71,54 @@ void SerialPortCCD::updateFovLimits()
     m_abMgr.AzTracker().setInnovationGate(gateMin, gateMax, 4.0, 0.5, 3);
     m_abMgr.ElTracker().setInnovationGate(gateMin, gateMax, 4.0, 0.5, 3);
 }
+
+void SerialPortCCD::requestZoomRatio()
+{
+    writeCommand(QByteArray::fromHex("8109098314FF"));
+}
+
+void SerialPortCCD::updateOpticalZoom(double zoomRatio)
+{
+    const double zoom = qBound(1.0, zoomRatio, 30.0);
+    if (qAbs(m_opticalZoom - zoom) < 0.005)
+        return;
+
+    // 焦距与倍率近似成正比；指数项用广角/远焦两端标定修正镜头模型。
+    const double focalMm = kZoomWideFocalMm * zoom;
+    const double focalScale = kZoomWideFocalMm / focalMm;
+    const double hHalfRad = qDegreesToRadians(kZoomWideHFov / 2.0);
+    const double vHalfRad = qDegreesToRadians(kZoomWideVFov / 2.0);
+    const double hFov = qRadiansToDegrees(
+                2.0 * std::atan(std::tan(hHalfRad)
+                                * std::pow(focalScale, kHFovCalibration)));
+    const double vFov = qRadiansToDegrees(
+                2.0 * std::atan(std::tan(vHalfRad)
+                                * std::pow(focalScale, kVFovCalibration)));
+
+    // 两端标定在浮点运算后可能有极小偏差，直接使用保证边界值准确。
+    if (zoom <= 1.0001) {
+        m_hFov = static_cast<float>(kZoomWideHFov);
+        m_vFov = static_cast<float>(kZoomWideVFov);
+    } else if (zoom >= 29.9999) {
+        m_hFov = static_cast<float>(kZoomTeleHFov);
+        m_vFov = static_cast<float>(kZoomTeleVFov);
+    } else {
+        m_hFov = static_cast<float>(hFov);
+        m_vFov = static_cast<float>(vFov);
+    }
+    m_opticalZoom = zoom;
+    updateFovLimits();
+}
+
 void SerialPortCCD::senddigZoomopen()
 {
     writeCommand(cmd_digZoomopen);
+    requestZoomRatio();
 }
 void SerialPortCCD::senddigZoomclose()
 {
     writeCommand(cmd_digZoomclose);
+    requestZoomRatio();
 }
 void SerialPortCCD::sendBacklightopen()
 {
@@ -119,11 +171,13 @@ void SerialPortCCD::sendZoomMove(int direction)
             .append(char((direction > 0 ? 0x20 : 0x30) | kMotionSpeed))
             .append(char(0xFF));
     writeCommand(command);
+    requestZoomRatio();
 }
 
 void SerialPortCCD::sendZoomStop()
 {
     writeCommand(QByteArray::fromHex("8101040700FF"));
+    requestZoomRatio();
 }
 
 void SerialPortCCD::sendFocusMode(int mode)
@@ -239,9 +293,16 @@ void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
     if (centerX < 0 || centerY < 0)
         return;
 
-    // 像素偏移 → 角度：偏移量 / 图像宽度 × 视场角，带正负方向
-    m_azimuth = (centerX - m_imageWidth  / 2.0) / m_imageWidth  * m_hFov;
-    m_pitch   = (centerY - m_imageHeight / 2.0) / m_imageHeight * m_vFov;
+    // 当前 FOV 下的针孔投影：归一化像素先乘 tan(FOV/2)，再取 atan。
+    // 直接按像素比例乘 FOV 会在线性近似下产生误差，变焦到窄视场后尤其明显。
+    const double normalizedX = (centerX - m_imageWidth / 2.0)
+            / (m_imageWidth / 2.0);
+    const double normalizedY = (centerY - m_imageHeight / 2.0)
+            / (m_imageHeight / 2.0);
+    m_azimuth = qRadiansToDegrees(
+                std::atan(normalizedX * std::tan(qDegreesToRadians(m_hFov / 2.0))));
+    m_pitch = qRadiansToDegrees(
+                std::atan(normalizedY * std::tan(qDegreesToRadians(m_vFov / 2.0))));
 
     //考虑到CCD安装有一定倾斜角，要进行CCD到转台内框基坐标系的变换,CCD转角固定为22.5度
     if (m_rotation_angle != 0) {
@@ -394,12 +455,47 @@ void SerialPortCCD::onVideoStreamConnectedChanged()
     }
 }
 
+void SerialPortCCD::parseData(const QByteArray &rawData)
+{
+    m_zoomReplyBuffer.append(rawData);
+
+    // 应答可能与其他命令的 ACK 粘连，按 FF 分帧后只处理倍率查询应答。
+    while (true) {
+        const int endIndex = m_zoomReplyBuffer.indexOf(char(0xFF));
+        if (endIndex < 0) {
+            if (m_zoomReplyBuffer.size() > 128)
+                m_zoomReplyBuffer.clear();
+            return;
+        }
+
+        const QByteArray frame = m_zoomReplyBuffer.left(endIndex + 1);
+        m_zoomReplyBuffer.remove(0, endIndex + 1);
+
+        if (frame.size() < 7)
+            continue;
+
+        const quint8 address = static_cast<quint8>(frame.at(0));
+        const quint8 reply = static_cast<quint8>(frame.at(1));
+        if ((address & 0x0F) != 0x00 || reply != 0x50)
+            continue;
+
+        const int encoded = ((static_cast<quint8>(frame.at(2)) & 0x0F) << 12)
+                | ((static_cast<quint8>(frame.at(3)) & 0x0F) << 8)
+                | ((static_cast<quint8>(frame.at(4)) & 0x0F) << 4)
+                | (static_cast<quint8>(frame.at(5)) & 0x0F);
+        if (encoded > 0)
+            updateOpticalZoom(encoded / 10.0);
+    }
+}
+
 // 串口操作槽函数
 void SerialPortCCD::onOpenPort(const QString &name, int baud) {
-    if (SerialPort::open(name, baud))
+    if (SerialPort::open(name, baud)) {
         emit portOpened(true);
-    else
+        requestZoomRatio();
+    } else {
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
+    }
 }
 void SerialPortCCD::onClosePort()
 {

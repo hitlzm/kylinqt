@@ -228,12 +228,14 @@ public slots:
     void recvTargetCenter(int centerX, int centerY);  // 接收目标中心像素坐标,并进行俯仰角与方位角的计算，喂入卡尔曼滤波器
 
 protected:
-    void parseData(const QByteArray &rawData) override{};
+    void parseData(const QByteArray &rawData) override;
     void onReadyRead() override{};
 private:
     // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
     CCDData *m_ccdData = nullptr;
     void updateFovLimits();  // 焦距切换时同步更新滤波器限幅
+    void requestZoomRatio();
+    void updateOpticalZoom(double zoomRatio);
     void writeCommand(const QByteArray &command);
 
     const QByteArray cmd_30X = QByteArray::fromHex("81010983140001020CFF");
@@ -272,6 +274,8 @@ private:
     int   m_imageHeight = 1080;
     float m_hFov = 55.27f;   // 横向视场角（默认广角）
     float m_vFov = 32.26f;   // 纵向视场角（默认广角）
+    double m_opticalZoom = 1.0;       // 光学倍率，1.0-30.0
+    QByteArray m_zoomReplyBuffer;     // 倍率查询应答缓存
 
     float m_rotation_angle = 22.5f;        // CCD安装旋转角度（绕光轴旋转，单位：度）
 };

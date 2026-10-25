@@ -11,7 +11,7 @@ Rectangle {
 
     readonly property int pageMargin: 10
     readonly property int leftPanelWidth: 710
-    readonly property int ccdPanelLeft: pageMargin + leftPanelWidth + pageMargin
+    readonly property int ccdPanelLeft: pageMargin + leftPanelWidth + 14
 
     // 三轴共用报警弹窗
     MsgPopup2 { id: axisAlarmMsg }
@@ -528,13 +528,13 @@ Rectangle {
 
         Column {
             anchors.fill: parent
-            anchors.margins: 7
+            anchors.margins: 10
             spacing: 14
 
             // CCD 串口
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 4
+                spacing: 6
                 Text {
                     text: "串口:"
                     font.pixelSize: 13
@@ -557,7 +557,7 @@ Rectangle {
                 }
                 CusComboBox {
                     id: ccdBaudComboBox
-                    width: 66
+                    width: 82
                     height: 26
                     model: ["9600"]
                     font.pixelSize: 12
@@ -565,9 +565,9 @@ Rectangle {
                     popupMinWidth: 100
                 }
                 CusButton_Blue {
-                    text: "扫描"
+                    text: "扫描串口"
                     font.pixelSize: 12
-                    width: 58
+                    width: 74
                     height: 26
                     onClicked: ccdData.scanPorts()
                 }
@@ -603,7 +603,7 @@ Rectangle {
             // 变焦与聚焦。按下立即运动，长按持续运动，松开停止。
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                spacing: 7
 
                 Text {
                     text: "变焦:"
@@ -725,7 +725,7 @@ Rectangle {
             // 透雾与热浪去除
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 4
+                spacing: 7
 
                 Text {
                     text: "透雾:"
@@ -754,7 +754,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "热浪去除:"
+                    text: "热浪去除等级:"
                     font.pixelSize: 13
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
@@ -777,7 +777,7 @@ Rectangle {
             // 降噪开关与强度
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                spacing: 7
 
                 Text {
                     text: "降噪:"
@@ -817,7 +817,7 @@ Rectangle {
             // 防抖与分辨率
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 7
+                spacing: 8
 
                 Text {
                     text: "防抖:"
@@ -871,65 +871,77 @@ Rectangle {
                 }
             }
 
-            // 白平衡模式与 R 增益
+            // 左侧两行显示自动白平衡，右侧两行分别调节 R/B 增益
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                spacing: 14
 
-                Text {
-                    text: "自动白平衡:"
-                    font.pixelSize: 14
-                    font.bold: true
+                Column {
+                    width: 90
+                    spacing: 4
                     anchors.verticalCenter: parent.verticalCenter
-                }
-                CusSwitch {
-                    width: 38
-                    height: 26
-                    checked: ccdData.whiteBalanceMode === 0
-                    onCheckedChanged: {
-                        ccdData.setWhiteBalanceMode(checked ? 0 : 1)
+
+                    Text {
+                        text: "自动白平衡:"
+                        font.pixelSize: 14
+                        font.bold: true
+                    }
+                    CusSwitch {
+                        width: 38
+                        height: 26
+                        checked: ccdData.whiteBalanceMode === 0
+                        onCheckedChanged: {
+                            ccdData.setWhiteBalanceMode(checked ? 0 : 1)
+                        }
                     }
                 }
-                Text {
-                    text: "R增益:"
-                    font.pixelSize: 13
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                CusSlider {
-                    id: redGainSlider
-                    width: 140
-                    height: 28
-                    from: 0
-                    to: 255
-                    stepSize: 1
-                    value: ccdData.redGain
-                    enabled: ccdData.whiteBalanceMode === 1
-                    onMoved: ccdData.setRedGain(Math.round(value))
-                }
-            }
 
-            // B 增益
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 5
+                Column {
+                    spacing: 4
 
-                Text {
-                    text: "B增益:"
-                    font.pixelSize: 13
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                CusSlider {
-                    id: blueGainSlider
-                    width: 250
-                    height: 28
-                    from: 0
-                    to: 255
-                    stepSize: 1
-                    value: ccdData.blueGain
-                    enabled: ccdData.whiteBalanceMode === 1
-                    onMoved: ccdData.setBlueGain(Math.round(value))
+                    Row {
+                        spacing: 7
+                        Text {
+                            width: 48
+                            text: "R增益:"
+                            font.pixelSize: 13
+                            font.bold: true
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        CusSlider {
+                            id: redGainSlider
+                            width: 255
+                            height: 28
+                            from: 0
+                            to: 255
+                            stepSize: 1
+                            value: ccdData.redGain
+                            enabled: ccdData.whiteBalanceMode === 1
+                            onMoved: ccdData.setRedGain(Math.round(value))
+                        }
+                    }
+
+                    Row {
+                        spacing: 7
+                        Text {
+                            width: 48
+                            text: "B增益:"
+                            font.pixelSize: 13
+                            font.bold: true
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        CusSlider {
+                            id: blueGainSlider
+                            width: 255
+                            height: 28
+                            from: 0
+                            to: 255
+                            stepSize: 1
+                            value: ccdData.blueGain
+                            enabled: ccdData.whiteBalanceMode === 1
+                            onMoved: ccdData.setBlueGain(Math.round(value))
+                        }
+                    }
                 }
             }
         }
