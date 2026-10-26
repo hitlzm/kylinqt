@@ -722,34 +722,27 @@ Rectangle {
                 }
             }
 
-            // 透雾与热浪去除
+            // 分辨率与热浪去除
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 7
 
                 Text {
-                    text: "透雾:"
-                    font.pixelSize: 13
+                    text: "分辨率:"
+                    font.pixelSize: 14
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                CusSwitch {
-                    width: 38
-                    height: 26
-                    checked: ccdData.defogEnabled
-                    onCheckedChanged: ccdData.setDefog(checked)
-                }
                 CusComboBox {
-                    width: 58
-                    height: 26
-                    model: ["低", "中", "高"]
+                    width: 100
+                    height: 27
                     font.pixelSize: 12
-                    popupMinWidth: 80
-                    currentIndex: ccdData.defogLevel - 1
-                    enabled: ccdData.defogEnabled
+                    popupMinWidth: 155
+                    model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
+                    currentIndex: root.resolutionUiIndex(ccdData.resolutionIndex)
                     onCurrentIndexChanged: {
                         if (enabled && currentIndex >= 0)
-                            ccdData.setDefogLevel(currentIndex + 1)
+                            ccdData.setResolution(root.resolutionCommandIndex(currentIndex))
                     }
                 }
 
@@ -814,7 +807,7 @@ Rectangle {
                 }
             }
 
-            // 防抖与分辨率
+            // 防抖与透雾
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 8
@@ -852,21 +845,34 @@ Rectangle {
                 }
 
                 Text {
-                    text: "分辨率:"
-                    font.pixelSize: 14
+                    text: "透雾:"
+                    font.pixelSize: 13
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CusSwitch {
+                    width: 38
+                    height: 26
+                    checked: ccdData.defogEnabled
+                    onCheckedChanged: ccdData.setDefog(checked)
+                }
+                Text {
+                    text: "强度："
+                    font.pixelSize: 13
                     font.bold: true
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusComboBox {
-                    width: 100
-                    height: 27
+                    width: 58
+                    height: 26
+                    model: ["低", "中", "高"]
                     font.pixelSize: 12
-                    popupMinWidth: 155
-                    model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
-                    currentIndex: root.resolutionUiIndex(ccdData.resolutionIndex)
+                    popupMinWidth: 80
+                    currentIndex: ccdData.defogLevel - 1
+                    enabled: ccdData.defogEnabled
                     onCurrentIndexChanged: {
                         if (enabled && currentIndex >= 0)
-                            ccdData.setResolution(root.resolutionCommandIndex(currentIndex))
+                            ccdData.setDefogLevel(currentIndex + 1)
                     }
                 }
             }

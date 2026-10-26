@@ -37,7 +37,7 @@ Rectangle {
         }
 
         CusButton_Blue {
-            text: enableorelease == 0 ? "使能" : "释放"
+            text: enableorelease == 0 ? "使能/锁定" : "释放/解锁"
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60
