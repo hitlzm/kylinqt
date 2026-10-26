@@ -17,6 +17,13 @@ ApplicationWindow {
     height: Screen.desktopAvailableHeight
     title: qsTr("kylin-qt")
 
+    // 启动后真正进入窗口管理器的最大化状态。
+    // 只设置桌面可用区域尺寸仍属于普通窗口，银河麒麟在最小化/恢复时
+    // 无法可靠地恢复为最大化状态。
+    Component.onCompleted: Qt.callLater(function() {
+        root.showMaximized()
+    })
+
     // ═══ 无边框 + 自绘标题栏 ═══
     // 去掉系统标题栏后，最左侧的应用图标、原生最小化/最大化/关闭按钮都不再绘制，
     // 全部改由下面的 CusTitleBar 提供（标题居中、无图标、底色与主界面一致）。
@@ -66,15 +73,50 @@ ApplicationWindow {
                     TabBar {
                         id: bar
                         width: parent.width
+                        hoverEnabled: true
 
                         TabButton {
+                            id: imageTab
                             text: qsTr("图像导引头")
-                            font.pixelSize: CusConfig.fontPixel + 6
+                            font.pixelSize: 20
+
+                            background: Rectangle {
+                                color: imageTab.checked
+                                       ? "#000000"
+                                       : imageTab.hovered
+                                         ? "#9e9e9e"
+                                         : "#ffffff"
+                            }
+
+                            contentItem: Text {
+                                text: imageTab.text
+                                font: imageTab.font
+                                color: imageTab.checked ? "#ffffff" : "#000000"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
                         }
 
                         TabButton {
+                            id: laserTab
                             text: qsTr("激光导引头")
-                            font.pixelSize: CusConfig.fontPixel + 6
+                            font.pixelSize: 20
+
+                            background: Rectangle {
+                                color: laserTab.checked
+                                       ? "#000000"
+                                       : laserTab.hovered
+                                         ? "#9e9e9e"
+                                         : "#ffffff"
+                            }
+
+                            contentItem: Text {
+                                text: laserTab.text
+                                font: laserTab.font
+                                color: laserTab.checked ? "#ffffff" : "#000000"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
                         }
                     }
                     // ===== 页面区域 =====

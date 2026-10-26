@@ -394,7 +394,7 @@ int main(int argc, char *argv[])
                      &m_modeController, &ModeController::onExguideCcdSourceLost,
                      Qt::QueuedConnection);
 
-    // 图像头串口打开期间：每500ms检查帧编号，未变化时弹窗提示通信故障
+    // 图像头串口打开期间：每500ms检查帧编号，连续2s未变化时弹窗提示通信故障
     QObject::connect(imagePort, &SerialPortImage::imageCommunicationFault,
                      imageData, &ImageData::popupMessage, Qt::QueuedConnection);
 

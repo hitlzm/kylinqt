@@ -44,11 +44,36 @@ Rectangle {
     /// 最大化前的窗口几何，用于还原
     property rect normalGeometry: Qt.rect(0, 0, 0, 0)
 
+    /// 最小化前是否为最大化状态。
+    /// 银河麒麟对无边框窗口从最小化恢复时，可能将窗口恢复成普通尺寸，
+    /// 因此需要在窗口重新激活/显示后主动恢复最大化状态。
+    property bool restoreMaximizedAfterMinimize: false
+
     readonly property bool maximized: targetWindow !== null
         && (targetWindow.visibility === Window.Maximized
             || targetWindow.visibility === Window.FullScreen)
 
     // ── 窗口控制 ───────────────────────────────────────────────
+    function minimizeWindow() {
+        if (!targetWindow)
+            return
+        restoreMaximizedAfterMinimize = maximized
+        targetWindow.showMinimized()
+    }
+
+    function finishMinimizeRestore() {
+        if (!targetWindow || !restoreMaximizedAfterMinimize)
+            return
+        // 窗口尚未真正从最小化状态恢复时继续等待。
+        if (targetWindow.visibility === Window.Minimized
+                || targetWindow.visibility === Window.Hidden)
+            return
+        restoreMaximizedAfterMinimize = false
+        // 如果窗口管理器恢复成了普通窗口，再主动切回最大化。
+        if (targetWindow.visibility !== Window.Maximized)
+            targetWindow.showMaximized()
+    }
+
     function toggleMaximized() {
         if (!targetWindow)
             return
@@ -80,6 +105,24 @@ Rectangle {
         targetWindow.height = h
         targetWindow.x = Math.round(globalX - ratio * w)
         targetWindow.y = Math.round(globalY - localY)
+    }
+
+    Connections {
+        target: root.targetWindow
+        ignoreUnknownSignals: true
+
+        onActiveChanged: {
+            if (target.active)
+                Qt.callLater(function() {
+                    root.finishMinimizeRestore()
+                })
+        }
+
+        onVisibilityChanged: {
+            Qt.callLater(function() {
+                root.finishMinimizeRestore()
+            })
+        }
     }
 
     // ── 标题：锚在整条标题栏正中，左侧不放图标 ────────────────
@@ -159,7 +202,7 @@ Rectangle {
                 id: minArea
                 anchors.fill: parent
                 hoverEnabled: true
-                onClicked: if (root.targetWindow) root.targetWindow.showMinimized()
+                onClicked: root.minimizeWindow()
             }
         }
 

@@ -17,6 +17,16 @@ Rectangle {
     MessagePopup {
         id: msg
     }
+
+    Connections {
+        target: turntableData
+        onCmdHintChanged: {
+            // 只有转台实际回告复位指令时才同步界面状态；无报警时转台不会响应复位。
+            if (Number(turntableData.cmdHint) === 0x1F)
+                enableorelease = 0
+        }
+    }
+
     // 顶部栏：标题 + 按钮行
     RowLayout {
         id: ctrlrow
@@ -38,6 +48,7 @@ Rectangle {
 
         CusButton_Blue {
             text: enableorelease == 0 ? "使能/锁定" : "释放/解锁"
+            selected: enableorelease === 1
             font.pixelSize: 18
             Layout.fillWidth: true
             height: 60

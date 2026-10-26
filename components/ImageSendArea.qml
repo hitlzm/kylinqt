@@ -1008,21 +1008,23 @@ Rectangle {
                 anchors.rightMargin: 8
                 height: controlStatusBox.height - frameInfoTitle.height - 24
                 spacing: 4
-                model: 3
+                model: 4
 
                 delegate: DataLabel {
                     fontSize: 18
                     labelWidth: 150
-                    valueWidth: 60
+                    valueWidth: 70
                     label: {
                         if (index === 0) return "接收帧流水号:"
                         if (index === 1) return "发送帧流水号:"
-                        return "发送帧有效标志:"
+                        if (index === 2) return "发送帧有效标志:"
+                        return "返回时间戳微秒:"
                     }
                     value: {
                         if (index === 0) return imageData.bFrameSequence
                         if (index === 1) return imageData.aFrameSequenceReply
-                        return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                        if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
+                        return ("00" + imageData.usTime).slice(-3) + " us"
                     }
                     valueColor: {
                         if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
@@ -1331,8 +1333,8 @@ Rectangle {
                     value: {
                         if (index === 0) return imageData.pitchFrameAngle.toFixed(2) + "°"
                         if (index === 1) return imageData.yawFrameAngle.toFixed(2) + "°"
-                        if (index === 2) return imageData.azimuthMasterCmd
-                        return imageData.pitchMasterCmd
+                        if (index === 2) return imageData.azimuthMasterCmd.toFixed(4)
+                        return imageData.pitchMasterCmd.toFixed(4)
                     }
                 }
             }

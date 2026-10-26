@@ -509,16 +509,20 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     static const QByteArray kTurntableHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
             "采样率(Hz),序号,转台毫秒时间,指令提示,"
-            "内框报警,内框状态,内框角度(°),内框控制偏差(°),"
-            "中框报警,中框状态,中框角度(°),中框控制偏差(°),"
-            "外框报警,外框状态,外框角度(°),外框控制偏差(°),"
+            "内框报警,内框状态,内框角度(°),内框理想轨迹角度(°),内框控制偏差(°),"
+            "中框报警,中框状态,中框角度(°),中框理想轨迹角度(°),中框控制偏差(°),"
+            "外框报警,外框状态,外框角度(°),外框理想轨迹角度(°),外框控制偏差(°),"
             "秒脉冲\n");
     ensureSourceFile(m_turntable, QStringLiteral("turntable"), kTurntableHeader, "转台");
     if (m_turntable.openFailed)
         return;
 
-    // 一行一帧。角度/控制偏差按工程单位（0.0001°）保留 4 位小数；
+    // 一行一帧。角度/控制偏差按工程单位（0.0001°）保留 4 位小数，
+    // 理想轨迹角度由实测角度加上控制偏差得到；
     // 报警、状态与指令提示存中文（不存代号），序号用于事后核对转台的固定周期。
+    const double innerIdealAngle = frame.m_inner_angle + frame.m_inner_ctlDeviation;
+    const double middleIdealAngle = frame.m_middle_angle + frame.m_middle_ctlDeviation;
+    const double outterIdealAngle = frame.m_outter_angle + frame.m_outter_ctlDeviation;
     QString line;
     line.reserve(160);
     line += QString::number(kTurntableSampleRateHz);
@@ -529,14 +533,17 @@ void DataRecorder::onTurntableFrame(const StatusFeedbackHex &frame)
     line += ','; line += turntableAxisAlarmText(frame.m_inner_alarm);
     line += ','; line += turntableAxisStatusText(frame.m_inner_status);
     line += ','; line += QString::number(frame.m_inner_angle, 'f', 4);
+    line += ','; line += QString::number(innerIdealAngle, 'f', 4);
     line += ','; line += QString::number(frame.m_inner_ctlDeviation, 'f', 4);
     line += ','; line += turntableAxisAlarmText(frame.m_middle_alarm);
     line += ','; line += turntableAxisStatusText(frame.m_middle_status);
     line += ','; line += QString::number(frame.m_middle_angle, 'f', 4);
+    line += ','; line += QString::number(middleIdealAngle, 'f', 4);
     line += ','; line += QString::number(frame.m_middle_ctlDeviation, 'f', 4);
     line += ','; line += turntableAxisAlarmText(frame.m_outter_alarm);
     line += ','; line += turntableAxisStatusText(frame.m_outter_status);
     line += ','; line += QString::number(frame.m_outter_angle, 'f', 4);
+    line += ','; line += QString::number(outterIdealAngle, 'f', 4);
     line += ','; line += QString::number(frame.m_outter_ctlDeviation, 'f', 4);
     line += ','; line += (frame.m_hasSecPulse ? QStringLiteral("有") : QStringLiteral("无"));
     line += '\n';

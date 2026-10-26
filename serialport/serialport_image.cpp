@@ -16,7 +16,8 @@
 #define Exguide_1s 7
 #define Maxsendcount 600 //每10分钟进行一次时间同步
 #define Exguide_FrameLostMs 1000 //外引导时帧编号超过该时长(ms)未更新，即认为通信中断
-#define Image_FrameWatchMs 1000 //图像头串口打开期间，帧编号检查周期
+#define Image_FramePollMs 500    //图像头串口打开期间，帧编号检查周期
+#define Image_FrameLostMs 2000   //图像头串口打开期间，帧编号未变化的判定时长
 
 // ─────────────────────────────────────────────
 // 时间戳工具
@@ -601,7 +602,7 @@ SerialPortImage::SerialPortImage(QObject *parent)
 {
     init_crc16_table();
     m_frameWatchTimer = new QTimer(this);
-    m_frameWatchTimer->setInterval(Image_FrameWatchMs);
+    m_frameWatchTimer->setInterval(Image_FramePollMs);
     m_frameWatchTimer->setTimerType(Qt::CoarseTimer);
     connect(m_frameWatchTimer, &QTimer::timeout,
             this, &SerialPortImage::checkImageFrameAlive);
@@ -843,7 +844,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
                         LogManager::instance()->logImageTracking(az_pkt.angle1, el_pkt.angle1);
-                        if(++m_sendCount_1s >= Maxsendcount) {  //10分钟重新同步
+                        if(++m_sendCount_1s >= Maxsendcount) {  //大概每10分钟重新进行时间同步
                             m_sendCount_1s = 0;
                         }
                     });
@@ -907,13 +908,15 @@ void SerialPortImage::ExmodeChanged(int mode)
 }
 
 // ── 图像头串口通信看门狗（帧编号）──
-// 串口成功打开后每 500ms 检查一次帧编号；帧号恢复变化后清除已提示状态，
+// 串口成功打开后每 500ms 检查一次帧编号，连续 2s 未变化则报警；
+// 帧号恢复变化后清除已提示状态，
 // 这样同一次打开期间发生多次通信中断时，每次都能重新弹窗。
 void SerialPortImage::startFrameWatch()
 {
     m_lastWatchedFrameSeq = m_imageData ? m_imageData->bFrameSequence() : -1;
     m_frameFaultNotified = false;
-    m_frameWatchTimer->start(Image_FrameWatchMs);
+    m_frameWatchClock.start();
+    m_frameWatchTimer->start(Image_FramePollMs);
 }
 
 void SerialPortImage::stopFrameWatch()
@@ -933,14 +936,19 @@ void SerialPortImage::checkImageFrameAlive()
     const int seq = m_imageData ? m_imageData->bFrameSequence() : -1;
     if (seq != m_lastWatchedFrameSeq) {
         m_lastWatchedFrameSeq = seq;
+        m_frameWatchClock.restart();
         m_frameFaultNotified = false;
         return;
     }
 
+    // 帧号未变化时按实际经过时间判断，避免把“检查周期”误当成“未变化时长”。
+    if (m_frameWatchClock.elapsed() < Image_FrameLostMs)
+        return;
+
     if (!m_frameFaultNotified) {
         m_frameFaultNotified = true;
         emit imageCommunicationFault(
-            QStringLiteral("图像头通信故障：帧编号连续500ms未变化"));
+            QStringLiteral("图像头通信故障：帧编号连续2s未变化"));
     }
 }
 

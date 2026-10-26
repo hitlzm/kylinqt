@@ -309,12 +309,21 @@ Rectangle {
                         spacing: 40
                         anchors.centerIn: parent
 
-                        Column {
-                            spacing: 6
-                            DataLabel { label: "激光周期:"; value: (laserData.laserPeriod * 2).toFixed(0) + " us" }
-                            DataLabel { label: "增益状态:"; value: "0x" + laserData.gainStatus.toString(16).toUpperCase() }
-                            DataLabel { label: "软件版本1:"; value: "V" + (laserData.softwareVersion1 / 100).toFixed(2) }
-                            DataLabel { label: "软件版本2:"; value: "V" + (laserData.softwareVersion2 / 100).toFixed(2) }
+                        Row {
+                            spacing: 24
+
+                            Column {
+                                spacing: 6
+                                DataLabel { label: "激光周期:"; value: (laserData.laserPeriod * 2).toFixed(0) + " us" }
+                                DataLabel { label: "增益状态:"; value: "0x" + laserData.gainStatus.toString(16).toUpperCase() }
+                                DataLabel { label: "返回时间戳微秒:"; value: ("00" + laserData.usTime).slice(-3) + " us" }
+                            }
+
+                            Column {
+                                spacing: 6
+                                DataLabel { label: "软件版本1:"; value: "V" + (laserData.softwareVersion1 / 100).toFixed(2) }
+                                DataLabel { label: "软件版本2:"; value: "V" + (laserData.softwareVersion2 / 100).toFixed(2) }
+                            }
                         }
                     
                     }
