@@ -167,6 +167,9 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendData::reqzeroTurntable,   turntablePort, &SerialPortTurntable::zeroTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendData::reqresetTurntable,   turntablePort, &SerialPortTurntable::resetTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendData::reqcloseTurntable,   turntablePort, &SerialPortTurntable::closeTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::requestSetAxisEnabled, turntablePort, &SerialPortTurntable::setAxisEnabled, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::requestStopAxis, turntablePort, &SerialPortTurntable::stopAxis, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendData::requestZeroAxis, turntablePort, &SerialPortTurntable::zeroAxis, Qt::QueuedConnection);
 
     QObject::connect(turntablePort, &SerialPortTurntable::requpdateframe,   turntableData, &TurntableData::updateframe, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableData::myinner_angleChanged,  turntableSendData, &TurntableSendData::recvinner_angle, Qt::QueuedConnection);

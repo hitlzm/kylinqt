@@ -156,6 +156,33 @@ void SerialPortTurntable::zeroTurntable()
     sendCommands({"1z", "2z", "3z"});
 };
 
+void SerialPortTurntable::setAxisEnabled(int axis, bool enabled)
+{
+    if (axis < 1 || axis > 3) {
+        qWarning() << "无效的转台轴号：" << axis;
+        return;
+    }
+    sendCommands({QString("%1mo=%2").arg(axis).arg(enabled ? 1 : 0)});
+}
+
+void SerialPortTurntable::stopAxis(int axis)
+{
+    if (axis < 1 || axis > 3) {
+        qWarning() << "无效的转台轴号：" << axis;
+        return;
+    }
+    sendCommands({QString("%1st=0").arg(axis)});
+}
+
+void SerialPortTurntable::zeroAxis(int axis)
+{
+    if (axis < 1 || axis > 3) {
+        qWarning() << "无效的转台轴号：" << axis;
+        return;
+    }
+    sendCommands({QString("%1z").arg(axis)});
+}
+
 QString SerialPortTurntable::formatNumberWithSignAndDecimals(float value, int intDigits, int fracDigits) {
         // 检查非正常值（NaN、无穷大）
         if (std::isnan(value) || std::isinf(value)) {
@@ -559,6 +586,33 @@ void TurntableSendData :: buildFrame(int m_index)
     }
     // 发送指令到串口
     emit requestSendProgramMode(m_frame);
+}
+
+void TurntableSendData::setAxisEnabled(int axis, bool enabled)
+{
+    if (axis < 1 || axis > 3) {
+        qWarning() << "无效的转台轴号：" << axis;
+        return;
+    }
+    emit requestSetAxisEnabled(axis, enabled);
+}
+
+void TurntableSendData::stopAxis(int axis)
+{
+    if (axis < 1 || axis > 3) {
+        qWarning() << "无效的转台轴号：" << axis;
+        return;
+    }
+    emit requestStopAxis(axis);
+}
+
+void TurntableSendData::zeroAxis(int axis)
+{
+    if (axis < 1 || axis > 3) {
+        qWarning() << "无效的转台轴号：" << axis;
+        return;
+    }
+    emit requestZeroAxis(axis);
 }
 
 TurntableData :: TurntableData(QObject *parent)

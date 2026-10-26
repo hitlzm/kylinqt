@@ -172,6 +172,9 @@ public:
     ~TurntableSendData() override{};
 
     Q_INVOKABLE void buildFrame(int m_index);
+    Q_INVOKABLE void setAxisEnabled(int axis, bool enabled);
+    Q_INVOKABLE void stopAxis(int axis);
+    Q_INVOKABLE void zeroAxis(int axis);
 public slots:
     void recvinner_angle(float angle){m_current_inner_angle = angle;}
     void recvmiddle_angle(float angle){m_current_middle_angle = angle;}
@@ -198,6 +201,9 @@ signals:
     void reqcloseTurntable();
     void reqzeroTurntable();
     void reqresetTurntable();
+    void requestSetAxisEnabled(int axis, bool enabled);
+    void requestStopAxis(int axis);
+    void requestZeroAxis(int axis);
 
 private:
     //这里存放各个轴的角度数据及运动时间
@@ -239,6 +245,9 @@ public slots:
     void closeTurntable();
     void resetTurntable();
     void zeroTurntable();
+    void setAxisEnabled(int axis, bool enabled);
+    void stopAxis(int axis);
+    void zeroAxis(int axis);
 
     void sendProgramMode(programSend_frame frame); 
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX, float buttonL2, float buttonR2, bool buttonA, bool buttonB, int Acount, int Bcount);   //接收的参数为手柄传来的各轴信号

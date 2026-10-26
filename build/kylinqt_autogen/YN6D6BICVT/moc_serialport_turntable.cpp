@@ -681,8 +681,8 @@ void TurntableData::requestScanPorts()
     QMetaObject::activate(this, &staticMetaObject, 19, nullptr);
 }
 struct qt_meta_stringdata_TurntableSendData_t {
-    QByteArrayData data[34];
-    char stringdata0[575];
+    QByteArrayData data[42];
+    char stringdata0[675];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -712,19 +712,27 @@ QT_MOC_LITERAL(17, 322, 16), // "reqopenTurntable"
 QT_MOC_LITERAL(18, 339, 17), // "reqcloseTurntable"
 QT_MOC_LITERAL(19, 357, 16), // "reqzeroTurntable"
 QT_MOC_LITERAL(20, 374, 17), // "reqresetTurntable"
-QT_MOC_LITERAL(21, 392, 15), // "recvinner_angle"
-QT_MOC_LITERAL(22, 408, 5), // "angle"
-QT_MOC_LITERAL(23, 414, 16), // "recvmiddle_angle"
-QT_MOC_LITERAL(24, 431, 16), // "recvoutter_angle"
-QT_MOC_LITERAL(25, 448, 10), // "buildFrame"
-QT_MOC_LITERAL(26, 459, 7), // "m_index"
-QT_MOC_LITERAL(27, 467, 7), // "runtime"
-QT_MOC_LITERAL(28, 475, 16), // "inner_startangle"
-QT_MOC_LITERAL(29, 492, 14), // "inner_endangle"
-QT_MOC_LITERAL(30, 507, 17), // "middle_startangle"
-QT_MOC_LITERAL(31, 525, 15), // "middle_endangle"
-QT_MOC_LITERAL(32, 541, 17), // "outter_startangle"
-QT_MOC_LITERAL(33, 559, 15) // "outter_endangle"
+QT_MOC_LITERAL(21, 392, 21), // "requestSetAxisEnabled"
+QT_MOC_LITERAL(22, 414, 4), // "axis"
+QT_MOC_LITERAL(23, 419, 7), // "enabled"
+QT_MOC_LITERAL(24, 427, 15), // "requestStopAxis"
+QT_MOC_LITERAL(25, 443, 15), // "requestZeroAxis"
+QT_MOC_LITERAL(26, 459, 15), // "recvinner_angle"
+QT_MOC_LITERAL(27, 475, 5), // "angle"
+QT_MOC_LITERAL(28, 481, 16), // "recvmiddle_angle"
+QT_MOC_LITERAL(29, 498, 16), // "recvoutter_angle"
+QT_MOC_LITERAL(30, 515, 10), // "buildFrame"
+QT_MOC_LITERAL(31, 526, 7), // "m_index"
+QT_MOC_LITERAL(32, 534, 14), // "setAxisEnabled"
+QT_MOC_LITERAL(33, 549, 8), // "stopAxis"
+QT_MOC_LITERAL(34, 558, 8), // "zeroAxis"
+QT_MOC_LITERAL(35, 567, 7), // "runtime"
+QT_MOC_LITERAL(36, 575, 16), // "inner_startangle"
+QT_MOC_LITERAL(37, 592, 14), // "inner_endangle"
+QT_MOC_LITERAL(38, 607, 17), // "middle_startangle"
+QT_MOC_LITERAL(39, 625, 15), // "middle_endangle"
+QT_MOC_LITERAL(40, 641, 17), // "outter_startangle"
+QT_MOC_LITERAL(41, 659, 15) // "outter_endangle"
 
     },
     "TurntableSendData\0requestOpenTurntable\0"
@@ -737,8 +745,11 @@ QT_MOC_LITERAL(33, 559, 15) // "outter_endangle"
     "outter_endangleChanged\0indexChanged\0"
     "reqopenTurntable\0reqcloseTurntable\0"
     "reqzeroTurntable\0reqresetTurntable\0"
+    "requestSetAxisEnabled\0axis\0enabled\0"
+    "requestStopAxis\0requestZeroAxis\0"
     "recvinner_angle\0angle\0recvmiddle_angle\0"
     "recvoutter_angle\0buildFrame\0m_index\0"
+    "setAxisEnabled\0stopAxis\0zeroAxis\0"
     "runtime\0inner_startangle\0inner_endangle\0"
     "middle_startangle\0middle_endangle\0"
     "outter_startangle\0outter_endangle"
@@ -751,39 +762,45 @@ static const uint qt_meta_data_TurntableSendData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      21,   14, // methods
-       7,  150, // properties
+      27,   14, // methods
+       7,  202, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      17,       // signalCount
+      20,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  119,    2, 0x06 /* Public */,
-       3,    0,  120,    2, 0x06 /* Public */,
-       4,    0,  121,    2, 0x06 /* Public */,
-       5,    0,  122,    2, 0x06 /* Public */,
-       6,    1,  123,    2, 0x06 /* Public */,
-       9,    0,  126,    2, 0x06 /* Public */,
-      10,    0,  127,    2, 0x06 /* Public */,
-      11,    0,  128,    2, 0x06 /* Public */,
-      12,    0,  129,    2, 0x06 /* Public */,
-      13,    0,  130,    2, 0x06 /* Public */,
-      14,    0,  131,    2, 0x06 /* Public */,
-      15,    0,  132,    2, 0x06 /* Public */,
-      16,    0,  133,    2, 0x06 /* Public */,
-      17,    0,  134,    2, 0x06 /* Public */,
-      18,    0,  135,    2, 0x06 /* Public */,
-      19,    0,  136,    2, 0x06 /* Public */,
-      20,    0,  137,    2, 0x06 /* Public */,
+       1,    0,  149,    2, 0x06 /* Public */,
+       3,    0,  150,    2, 0x06 /* Public */,
+       4,    0,  151,    2, 0x06 /* Public */,
+       5,    0,  152,    2, 0x06 /* Public */,
+       6,    1,  153,    2, 0x06 /* Public */,
+       9,    0,  156,    2, 0x06 /* Public */,
+      10,    0,  157,    2, 0x06 /* Public */,
+      11,    0,  158,    2, 0x06 /* Public */,
+      12,    0,  159,    2, 0x06 /* Public */,
+      13,    0,  160,    2, 0x06 /* Public */,
+      14,    0,  161,    2, 0x06 /* Public */,
+      15,    0,  162,    2, 0x06 /* Public */,
+      16,    0,  163,    2, 0x06 /* Public */,
+      17,    0,  164,    2, 0x06 /* Public */,
+      18,    0,  165,    2, 0x06 /* Public */,
+      19,    0,  166,    2, 0x06 /* Public */,
+      20,    0,  167,    2, 0x06 /* Public */,
+      21,    2,  168,    2, 0x06 /* Public */,
+      24,    1,  173,    2, 0x06 /* Public */,
+      25,    1,  176,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      21,    1,  138,    2, 0x0a /* Public */,
-      23,    1,  141,    2, 0x0a /* Public */,
-      24,    1,  144,    2, 0x0a /* Public */,
+      26,    1,  179,    2, 0x0a /* Public */,
+      28,    1,  182,    2, 0x0a /* Public */,
+      29,    1,  185,    2, 0x0a /* Public */,
 
  // methods: name, argc, parameters, tag, flags
-      25,    1,  147,    2, 0x02 /* Public */,
+      30,    1,  188,    2, 0x02 /* Public */,
+      32,    2,  191,    2, 0x02 /* Public */,
+      33,    1,  196,    2, 0x02 /* Public */,
+      34,    1,  199,    2, 0x02 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -803,23 +820,29 @@ static const uint qt_meta_data_TurntableSendData[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::Bool,   22,   23,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Int,   22,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Float,   22,
-    QMetaType::Void, QMetaType::Float,   22,
-    QMetaType::Void, QMetaType::Float,   22,
+    QMetaType::Void, QMetaType::Float,   27,
+    QMetaType::Void, QMetaType::Float,   27,
+    QMetaType::Void, QMetaType::Float,   27,
 
  // methods: parameters
-    QMetaType::Void, QMetaType::Int,   26,
+    QMetaType::Void, QMetaType::Int,   31,
+    QMetaType::Void, QMetaType::Int, QMetaType::Bool,   22,   23,
+    QMetaType::Void, QMetaType::Int,   22,
+    QMetaType::Void, QMetaType::Int,   22,
 
  // properties: name, type, flags
-      27, QMetaType::Int, 0x00495003,
-      28, QMetaType::Float, 0x00495003,
-      29, QMetaType::Float, 0x00495003,
-      30, QMetaType::Float, 0x00495003,
-      31, QMetaType::Float, 0x00495003,
-      32, QMetaType::Float, 0x00495003,
-      33, QMetaType::Float, 0x00495003,
+      35, QMetaType::Int, 0x00495003,
+      36, QMetaType::Float, 0x00495003,
+      37, QMetaType::Float, 0x00495003,
+      38, QMetaType::Float, 0x00495003,
+      39, QMetaType::Float, 0x00495003,
+      40, QMetaType::Float, 0x00495003,
+      41, QMetaType::Float, 0x00495003,
 
  // properties: notify_signal_id
        5,
@@ -856,10 +879,16 @@ void TurntableSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 14: _t->reqcloseTurntable(); break;
         case 15: _t->reqzeroTurntable(); break;
         case 16: _t->reqresetTurntable(); break;
-        case 17: _t->recvinner_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 18: _t->recvmiddle_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 19: _t->recvoutter_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 20: _t->buildFrame((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 17: _t->requestSetAxisEnabled((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 18: _t->requestStopAxis((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 19: _t->requestZeroAxis((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 20: _t->recvinner_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 21: _t->recvmiddle_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 22: _t->recvoutter_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 23: _t->buildFrame((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 24: _t->setAxisEnabled((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 25: _t->stopAxis((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 26: _t->zeroAxis((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -983,6 +1012,27 @@ void TurntableSendData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
                 return;
             }
         }
+        {
+            using _t = void (TurntableSendData::*)(int , bool );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestSetAxisEnabled)) {
+                *result = 17;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestStopAxis)) {
+                *result = 18;
+                return;
+            }
+        }
+        {
+            using _t = void (TurntableSendData::*)(int );
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&TurntableSendData::requestZeroAxis)) {
+                *result = 19;
+                return;
+            }
+        }
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty) {
@@ -1082,13 +1132,13 @@ int TurntableSendData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 21)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 21;
+        _id -= 27;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 21)
+        if (_id < 27)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 21;
+        _id -= 27;
     }
 #ifndef QT_NO_PROPERTIES
     else if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
@@ -1212,9 +1262,30 @@ void TurntableSendData::reqresetTurntable()
 {
     QMetaObject::activate(this, &staticMetaObject, 16, nullptr);
 }
+
+// SIGNAL 17
+void TurntableSendData::requestSetAxisEnabled(int _t1, bool _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 17, _a);
+}
+
+// SIGNAL 18
+void TurntableSendData::requestStopAxis(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 18, _a);
+}
+
+// SIGNAL 19
+void TurntableSendData::requestZeroAxis(int _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 19, _a);
+}
 struct qt_meta_stringdata_SerialPortTurntable_t {
-    QByteArrayData data[46];
-    char stringdata0[512];
+    QByteArrayData data[51];
+    char stringdata0[558];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -1239,36 +1310,41 @@ QT_MOC_LITERAL(12, 123, 13), // "openTurntable"
 QT_MOC_LITERAL(13, 137, 14), // "closeTurntable"
 QT_MOC_LITERAL(14, 152, 14), // "resetTurntable"
 QT_MOC_LITERAL(15, 167, 13), // "zeroTurntable"
-QT_MOC_LITERAL(16, 181, 15), // "sendProgramMode"
-QT_MOC_LITERAL(17, 197, 17), // "programSend_frame"
-QT_MOC_LITERAL(18, 215, 5), // "frame"
-QT_MOC_LITERAL(19, 221, 14), // "sendHandleMode"
-QT_MOC_LITERAL(20, 236, 9), // "axisLeftX"
-QT_MOC_LITERAL(21, 246, 9), // "axisLeftY"
-QT_MOC_LITERAL(22, 256, 10), // "axisRightX"
-QT_MOC_LITERAL(23, 267, 8), // "buttonL2"
-QT_MOC_LITERAL(24, 276, 8), // "buttonR2"
-QT_MOC_LITERAL(25, 285, 7), // "buttonA"
-QT_MOC_LITERAL(26, 293, 7), // "buttonB"
-QT_MOC_LITERAL(27, 301, 6), // "Acount"
-QT_MOC_LITERAL(28, 308, 6), // "Bcount"
-QT_MOC_LITERAL(29, 315, 13), // "sendTrackMode"
-QT_MOC_LITERAL(30, 329, 15), // "sendExGuideData"
-QT_MOC_LITERAL(31, 345, 6), // "frame1"
-QT_MOC_LITERAL(32, 352, 6), // "frame2"
-QT_MOC_LITERAL(33, 359, 12), // "sendTimesync"
-QT_MOC_LITERAL(34, 372, 18), // "ProgramModeChanged"
-QT_MOC_LITERAL(35, 391, 4), // "mode"
-QT_MOC_LITERAL(36, 396, 6), // "dowork"
-QT_MOC_LITERAL(37, 403, 15), // "recvinner_angle"
-QT_MOC_LITERAL(38, 419, 5), // "angle"
-QT_MOC_LITERAL(39, 425, 16), // "recvmiddle_angle"
-QT_MOC_LITERAL(40, 442, 16), // "recvoutter_angle"
-QT_MOC_LITERAL(41, 459, 10), // "onOpenPort"
-QT_MOC_LITERAL(42, 470, 8), // "portName"
-QT_MOC_LITERAL(43, 479, 8), // "baudRate"
-QT_MOC_LITERAL(44, 488, 11), // "onClosePort"
-QT_MOC_LITERAL(45, 500, 11) // "onScanPorts"
+QT_MOC_LITERAL(16, 181, 14), // "setAxisEnabled"
+QT_MOC_LITERAL(17, 196, 4), // "axis"
+QT_MOC_LITERAL(18, 201, 7), // "enabled"
+QT_MOC_LITERAL(19, 209, 8), // "stopAxis"
+QT_MOC_LITERAL(20, 218, 8), // "zeroAxis"
+QT_MOC_LITERAL(21, 227, 15), // "sendProgramMode"
+QT_MOC_LITERAL(22, 243, 17), // "programSend_frame"
+QT_MOC_LITERAL(23, 261, 5), // "frame"
+QT_MOC_LITERAL(24, 267, 14), // "sendHandleMode"
+QT_MOC_LITERAL(25, 282, 9), // "axisLeftX"
+QT_MOC_LITERAL(26, 292, 9), // "axisLeftY"
+QT_MOC_LITERAL(27, 302, 10), // "axisRightX"
+QT_MOC_LITERAL(28, 313, 8), // "buttonL2"
+QT_MOC_LITERAL(29, 322, 8), // "buttonR2"
+QT_MOC_LITERAL(30, 331, 7), // "buttonA"
+QT_MOC_LITERAL(31, 339, 7), // "buttonB"
+QT_MOC_LITERAL(32, 347, 6), // "Acount"
+QT_MOC_LITERAL(33, 354, 6), // "Bcount"
+QT_MOC_LITERAL(34, 361, 13), // "sendTrackMode"
+QT_MOC_LITERAL(35, 375, 15), // "sendExGuideData"
+QT_MOC_LITERAL(36, 391, 6), // "frame1"
+QT_MOC_LITERAL(37, 398, 6), // "frame2"
+QT_MOC_LITERAL(38, 405, 12), // "sendTimesync"
+QT_MOC_LITERAL(39, 418, 18), // "ProgramModeChanged"
+QT_MOC_LITERAL(40, 437, 4), // "mode"
+QT_MOC_LITERAL(41, 442, 6), // "dowork"
+QT_MOC_LITERAL(42, 449, 15), // "recvinner_angle"
+QT_MOC_LITERAL(43, 465, 5), // "angle"
+QT_MOC_LITERAL(44, 471, 16), // "recvmiddle_angle"
+QT_MOC_LITERAL(45, 488, 16), // "recvoutter_angle"
+QT_MOC_LITERAL(46, 505, 10), // "onOpenPort"
+QT_MOC_LITERAL(47, 516, 8), // "portName"
+QT_MOC_LITERAL(48, 525, 8), // "baudRate"
+QT_MOC_LITERAL(49, 534, 11), // "onClosePort"
+QT_MOC_LITERAL(50, 546, 11) // "onScanPorts"
 
     },
     "SerialPortTurntable\0requpdateframe\0\0"
@@ -1276,7 +1352,8 @@ QT_MOC_LITERAL(45, 500, 11) // "onScanPorts"
     "success\0portClosed\0portError\0msg\0"
     "portsChanged\0ports\0openTurntable\0"
     "closeTurntable\0resetTurntable\0"
-    "zeroTurntable\0sendProgramMode\0"
+    "zeroTurntable\0setAxisEnabled\0axis\0"
+    "enabled\0stopAxis\0zeroAxis\0sendProgramMode\0"
     "programSend_frame\0frame\0sendHandleMode\0"
     "axisLeftX\0axisLeftY\0axisRightX\0buttonL2\0"
     "buttonR2\0buttonA\0buttonB\0Acount\0Bcount\0"
@@ -1295,7 +1372,7 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      21,   14, // methods
+      24,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -1303,29 +1380,32 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
        5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  119,    2, 0x06 /* Public */,
-       5,    1,  122,    2, 0x06 /* Public */,
-       7,    0,  125,    2, 0x06 /* Public */,
-       8,    1,  126,    2, 0x06 /* Public */,
-      10,    1,  129,    2, 0x06 /* Public */,
+       1,    1,  134,    2, 0x06 /* Public */,
+       5,    1,  137,    2, 0x06 /* Public */,
+       7,    0,  140,    2, 0x06 /* Public */,
+       8,    1,  141,    2, 0x06 /* Public */,
+      10,    1,  144,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      12,    0,  132,    2, 0x0a /* Public */,
-      13,    0,  133,    2, 0x0a /* Public */,
-      14,    0,  134,    2, 0x0a /* Public */,
-      15,    0,  135,    2, 0x0a /* Public */,
-      16,    1,  136,    2, 0x0a /* Public */,
-      19,    9,  139,    2, 0x0a /* Public */,
-      29,    2,  158,    2, 0x0a /* Public */,
-      33,    0,  163,    2, 0x0a /* Public */,
-      34,    1,  164,    2, 0x0a /* Public */,
-      36,    0,  167,    2, 0x0a /* Public */,
-      37,    1,  168,    2, 0x0a /* Public */,
-      39,    1,  171,    2, 0x0a /* Public */,
-      40,    1,  174,    2, 0x0a /* Public */,
-      41,    2,  177,    2, 0x0a /* Public */,
-      44,    0,  182,    2, 0x0a /* Public */,
-      45,    0,  183,    2, 0x0a /* Public */,
+      12,    0,  147,    2, 0x0a /* Public */,
+      13,    0,  148,    2, 0x0a /* Public */,
+      14,    0,  149,    2, 0x0a /* Public */,
+      15,    0,  150,    2, 0x0a /* Public */,
+      16,    2,  151,    2, 0x0a /* Public */,
+      19,    1,  156,    2, 0x0a /* Public */,
+      20,    1,  159,    2, 0x0a /* Public */,
+      21,    1,  162,    2, 0x0a /* Public */,
+      24,    9,  165,    2, 0x0a /* Public */,
+      34,    2,  184,    2, 0x0a /* Public */,
+      38,    0,  189,    2, 0x0a /* Public */,
+      39,    1,  190,    2, 0x0a /* Public */,
+      41,    0,  193,    2, 0x0a /* Public */,
+      42,    1,  194,    2, 0x0a /* Public */,
+      44,    1,  197,    2, 0x0a /* Public */,
+      45,    1,  200,    2, 0x0a /* Public */,
+      46,    2,  203,    2, 0x0a /* Public */,
+      49,    0,  208,    2, 0x0a /* Public */,
+      50,    0,  209,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -1339,16 +1419,19 @@ static const uint qt_meta_data_SerialPortTurntable[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 17,   18,
-    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::Int,   20,   21,   22,   23,   24,   25,   26,   27,   28,
-    QMetaType::Void, 0x80000000 | 30, 0x80000000 | 30,   31,   32,
+    QMetaType::Void, QMetaType::Int, QMetaType::Bool,   17,   18,
+    QMetaType::Void, QMetaType::Int,   17,
+    QMetaType::Void, QMetaType::Int,   17,
+    QMetaType::Void, 0x80000000 | 22,   23,
+    QMetaType::Void, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Float, QMetaType::Bool, QMetaType::Bool, QMetaType::Int, QMetaType::Int,   25,   26,   27,   28,   29,   30,   31,   32,   33,
+    QMetaType::Void, 0x80000000 | 35, 0x80000000 | 35,   36,   37,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   35,
+    QMetaType::Void, QMetaType::Int,   40,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Float,   38,
-    QMetaType::Void, QMetaType::Float,   38,
-    QMetaType::Void, QMetaType::Float,   38,
-    QMetaType::Void, QMetaType::QString, QMetaType::Int,   42,   43,
+    QMetaType::Void, QMetaType::Float,   43,
+    QMetaType::Void, QMetaType::Float,   43,
+    QMetaType::Void, QMetaType::Float,   43,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,   47,   48,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -1370,18 +1453,21 @@ void SerialPortTurntable::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         case 6: _t->closeTurntable(); break;
         case 7: _t->resetTurntable(); break;
         case 8: _t->zeroTurntable(); break;
-        case 9: _t->sendProgramMode((*reinterpret_cast< programSend_frame(*)>(_a[1]))); break;
-        case 10: _t->sendHandleMode((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5])),(*reinterpret_cast< bool(*)>(_a[6])),(*reinterpret_cast< bool(*)>(_a[7])),(*reinterpret_cast< int(*)>(_a[8])),(*reinterpret_cast< int(*)>(_a[9]))); break;
-        case 11: _t->sendTrackMode((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
-        case 12: _t->sendTimesync(); break;
-        case 13: _t->ProgramModeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 14: _t->dowork(); break;
-        case 15: _t->recvinner_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 16: _t->recvmiddle_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 17: _t->recvoutter_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
-        case 18: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 19: _t->onClosePort(); break;
-        case 20: _t->onScanPorts(); break;
+        case 9: _t->setAxisEnabled((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< bool(*)>(_a[2]))); break;
+        case 10: _t->stopAxis((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 11: _t->zeroAxis((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->sendProgramMode((*reinterpret_cast< programSend_frame(*)>(_a[1]))); break;
+        case 13: _t->sendHandleMode((*reinterpret_cast< float(*)>(_a[1])),(*reinterpret_cast< float(*)>(_a[2])),(*reinterpret_cast< float(*)>(_a[3])),(*reinterpret_cast< float(*)>(_a[4])),(*reinterpret_cast< float(*)>(_a[5])),(*reinterpret_cast< bool(*)>(_a[6])),(*reinterpret_cast< bool(*)>(_a[7])),(*reinterpret_cast< int(*)>(_a[8])),(*reinterpret_cast< int(*)>(_a[9]))); break;
+        case 14: _t->sendTrackMode((*reinterpret_cast< const sendExGuideData(*)>(_a[1])),(*reinterpret_cast< const sendExGuideData(*)>(_a[2]))); break;
+        case 15: _t->sendTimesync(); break;
+        case 16: _t->ProgramModeChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 17: _t->dowork(); break;
+        case 18: _t->recvinner_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 19: _t->recvmiddle_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 20: _t->recvoutter_angle((*reinterpret_cast< float(*)>(_a[1]))); break;
+        case 21: _t->onOpenPort((*reinterpret_cast< const QString(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 22: _t->onClosePort(); break;
+        case 23: _t->onScanPorts(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -1453,13 +1539,13 @@ int SerialPortTurntable::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 21)
+        if (_id < 24)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 21;
+        _id -= 24;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 21)
+        if (_id < 24)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 21;
+        _id -= 24;
     }
     return _id;
 }

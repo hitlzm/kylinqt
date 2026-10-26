@@ -136,29 +136,18 @@ Window {
                 anchors.left:dyt.right
                 anchors.leftMargin: 5
             }
-            Modeselect {
-                id: modeselect
-                height:50
-                anchors.top: myvideo.bottom
-                anchors.left: dyt.right
-                anchors.leftMargin: 40
-                anchors.topMargin: 5
-                anchors.right: myvideo.right
-            }
-
             TurnTablestatus {
                 id: turntablestatus
-                anchors.top: modeselect.bottom
+                anchors.top: myvideo.bottom
                 anchors.topMargin: 5
                 anchors.left: dyt.right
                 anchors.leftMargin: 5
                 anchors.right: myvideo.right
                 // 高度与左侧 ImageRecvArea 下边沿对齐
-                // myvideo(430) + margin(5) + modeselect(50) + margin(5) = 490
+                // 模式选择已移入转台面板，整个区域从 myvideo 下边沿开始
                 // 左侧内容下边沿 = bar.height + ImageSendArea(610) + ImageRecvArea(310) = bar.height + 920
-                // turntablestatus 高度 = bar.height + 920 - 490 = bar.height + 430
-                myheight: bar.height + 610 + 310 - 430 - 5 - 50 - 5
-                stacklayoutindex: modeselect.myindex
+                // turntablestatus 高度 = bar.height + 920 - 435 = bar.height + 485
+                myheight: bar.height + 610 + 310 - 430 - 5
             }
         }
     }
