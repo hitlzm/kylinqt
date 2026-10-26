@@ -11,7 +11,7 @@ Rectangle {
     width: mywidth
     height: myheight
     color: '#e9f0f9'
-    property int stacklayoutindex: 0
+    property int stacklayoutindex: modeSelect.myindex
     property int enableorelease: 0
     //消息提示框
     MessagePopup {
@@ -93,6 +93,16 @@ Rectangle {
         }
     }
 
+    Modeselect {
+        id: modeSelect
+        height: 50
+        anchors.top: serialctrlrow.bottom
+        anchors.topMargin: 5
+        anchors.left: parent.left
+        anchors.leftMargin: 40
+        anchors.right: parent.right
+    }
+
     //加入串口扫描与串口连接
     RowLayout {
         id: serialctrlrow
@@ -101,7 +111,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.top: ctrlrow.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 5
         spacing: 20
 
         // 串口选择 - 绑定到 C++ imageSerial 对象
@@ -179,7 +189,7 @@ Rectangle {
         id: stack
         currentIndex: stacklayoutindex
         width: root.width - 20
-        anchors.top: serialctrlrow.bottom
+        anchors.top: modeSelect.bottom
         anchors.topMargin: 10
         anchors.left: root.left
         anchors.leftMargin: 10
