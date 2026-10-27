@@ -11,10 +11,9 @@
 // ─────────────────────────────────────────────
 #define ExguideMode 0
 #define ExguideSrcImg 3
-#define Exguide_5ms 6
+#define Exguide_20ms 6
 
 #define Exguide_1s 7
-#define Maxsendcount 600 //每10分钟进行一次时间同步
 #define Exguide_FrameLostMs 1000 //外引导时帧编号超过该时长(ms)未更新，即认为通信中断
 #define Image_FramePollMs 500    //图像头串口打开期间，帧编号检查周期
 #define Image_FrameLostMs 2000   //图像头串口打开期间，帧编号未变化的判定时长
@@ -63,9 +62,35 @@ void ImageData::scanPorts()                                     { emit requestSc
 // void ImageData::sendData(const QByteArray &data)                { emit requestSendData(data); }
 
 // ── 工作线程回推 ──
-void ImageData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
+void ImageData::setPortOpen(bool open)
+{
+    if (m_portOpen != open) {
+        m_portOpen = open;
+        emit portOpenChanged();
+    }
+    if (!open) {
+        m_ackCheckActive = false;
+        m_ackCheckFramesRemaining = 0;
+        if (m_aFrameValidFlag != 0) {
+            m_aFrameValidFlag = 0;
+            emit aFrameValidFlagChanged();
+        }
+    }
+}
 void ImageData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
 void ImageData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+
+void ImageData::beginAckCheck()
+{
+    m_ackCheckActive = true;
+    m_ackCheckFramesRemaining = AckCheckFrameCount;
+
+    // 每次发送都清除上一次结果，避免在尚未收到本次回告时仍显示“有效”。
+    if (m_aFrameValidFlag != 0) {
+        m_aFrameValidFlag = 0;
+        emit aFrameValidFlagChanged();
+    }
+}
 
 int ImageData::frameLength() const { return m_frameLength; }
 int ImageData::bFrameSequence() const { return m_bFrameSequence.load(std::memory_order_relaxed); }
@@ -146,21 +171,17 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         m_aFrameSequenceReply = pFrame->a_frame_sequence_reply;
         emit aFrameSequenceReplyChanged();
     }
-    // 每次发送数据后才判断A帧是否有效，设置一个是否判断发送帧有效的标志，在标志位有效时，连续检查20帧数据，对数据取并集输出
-    if (m_aFrameValidFlag != pFrame->a_frame_valid_flag) {
-        if(m_check)
-        {   
-            //每次判断是否有效前，如果当前发送帧有效标志位为0xAA，则先置零发送帧有效位。每次发送数据时，将m_check_count—>20,m_check->true
-            if(m_check_count == 20 && m_aFrameValidFlag){ m_aFrameValidFlag = 0;}
-            if(m_check_count-- > 0)   //连续检查20帧数据，判断是否有效
-            {
-                m_aFrameValidFlag = m_aFrameValidFlag || pFrame->a_frame_valid_flag;
-            }
-            else{
-                m_check = false;
-                emit aFrameValidFlagChanged();
-            }
+    // 点击发送后连续观察 20 个有效 B 帧，对 A 帧有效回告取并集。
+    // 这里不能以“标志发生跳变”为触发条件：设备连续回 0x00 时也必须消费帧计数，
+    // 否则检查窗口可能永远不结束。
+    if (m_ackCheckActive && m_ackCheckFramesRemaining > 0) {
+        if (pFrame->a_frame_valid_flag == 0xAA && m_aFrameValidFlag != 0xAA) {
+            m_aFrameValidFlag = 0xAA;
+            emit aFrameValidFlagChanged();
         }
+        --m_ackCheckFramesRemaining;
+        if (m_ackCheckFramesRemaining == 0)
+            m_ackCheckActive = false;
     }
     if (m_seekerCtrlReply != pFrame->seeker_ctrl_reply) {
         m_seekerCtrlReply = pFrame->seeker_ctrl_reply;
@@ -640,7 +661,7 @@ void SerialPortImage::onClosePort()  {
         disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
     }
     m_lastexguidesetting = -1;
-    m_sendCount_1s = 0;
+    m_send20msTimeSyncSent = false;
     m_abNeedReset = true;
     SerialPort::close();
     emit portClosed();
@@ -704,7 +725,7 @@ void SerialPortImage::onSendData(image_send_frame frame) {
         data[222] = static_cast<char>(crc & 0xFF);        // 低字节
         data[223] = static_cast<char>((crc >> 8) & 0xFF); // 高字节
 
-        qDebug() << "SerialPortImage::onSendData:" << data.toHex();
+        // qDebug() << "SerialPortImage::onSendData:" << data.toHex();
         // 发送延迟探针打点：本次请求的第一次 write（补发拍由探针内部忽略）。
         // 注意上面那行 qDebug 的开销会被计入延迟，要拿干净数字请关掉逐帧打印。
         SendLat::markSend(SendLat::Image);
@@ -765,8 +786,8 @@ void SerialPortImage::ExmodeChanged(int mode)
 {   
     //1:外引导  2：程控模式 3：遥控模式  //还需要判断外引导源  //判断跟踪模式
     //判断使用哪个导引头的数据，来决定是否定期向转台串口线程同步数据
-    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每1秒或5ms发送一次跟踪数据信息
-    //先发送时间同步指令信号，再发送Kalman预测的跟踪角度数据
+    //判断index与外引导模式数据选择提供位，如果被选中，就启动一个定时器，每1秒或20ms发送一次跟踪数据信息
+    //1s模式发送Kalman预测角度；20ms模式直接发送当前解算角度。
     if(mode < 3)
     exindex = mode;  //模式索引赋值
     if(mode > 2 && mode < 6)
@@ -776,7 +797,7 @@ void SerialPortImage::ExmodeChanged(int mode)
 
     if (exindex == ExguideMode) //判断是否为外引导模式
     {
-        // 图像导引头被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
+        // 图像导引头被选为外引导源：启动定时器，每1秒或20ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcImg )
         {
             // 串口未打开时不启动外引导，也不写跟踪日志；只取消本路外引导源
@@ -786,7 +807,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
                 }
                 m_lastexguidesetting = -1;
-                m_sendCount_1s = 0;
+                m_send20msTimeSyncSent = false;
                 exsrcindex = -1;
                 emit exguideLinkLost(
                     QStringLiteral("图像导引头串口未打开，已取消图像导引头外引导源选择"));
@@ -801,8 +822,8 @@ void SerialPortImage::ExmodeChanged(int mode)
                 {
                     m_exGuideTimer->stop();
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
-                    //清空发送计数
-                    m_sendCount_1s = 0;
+                    //清除上一模式的周期状态
+                    m_send20msTimeSyncSent = false;
                 }
                 // 延迟创建定时器
                 if (!m_exGuideTimer) {
@@ -811,7 +832,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                 }
                 // 跟踪周期变化后，下一帧数据到来时用当时的测量重新初始化滤波器
                 m_abNeedReset = true;
-                // 判断跟踪模式（5ms模式或者1秒跟踪模式）
+                // 判断跟踪模式（20ms模式或者1秒跟踪模式）
                 if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
@@ -819,7 +840,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                             m_exGuideTimer->stop();
                             disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
                             m_lastexguidesetting = -1;
-                            m_sendCount_1s = 0;
+                            m_send20msTimeSyncSent = false;
                             exsrcindex = -1;
                             emit exguideLinkLost(
                                 QStringLiteral("图像导引头串口已断开，已取消图像导引头外引导源选择"));
@@ -833,53 +854,64 @@ void SerialPortImage::ExmodeChanged(int mode)
                             abortExGuideByLinkLost();
                             return;
                         }
-                        // 每发送完固定次数后，重新发送时间同步信号并重新计时
-                        if(m_sendCount_1s == 0)
-                        {
-                            emit reqTimesync(0);
-                        }
-                        // 生成预测数据包：4点外推（0.25s, 0.5s, 0.75s, 1.0s），time = 发包计数
-                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(true,  m_sendCount_1s + 1);  // 方位轴
-                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s +1);  // 俯仰轴
+                        // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
+                        const auto slot = m_periodicTrackSchedule.currentSlot();
+                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(
+                                    true, slot.targetSecond,
+                                    slot.firstPredictionDelaySec);  // 方位轴
+                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(
+                                    false, slot.targetSecond,
+                                    slot.firstPredictionDelaySec);  // 俯仰轴
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
                         LogManager::instance()->logImageTracking(az_pkt.angle1, el_pkt.angle1);
-                        if(++m_sendCount_1s >= Maxsendcount) {  //大概每10分钟重新进行时间同步
-                            m_sendCount_1s = 0;
-                        }
+                        m_exGuideTimer->start(static_cast<int>(
+                            m_periodicTrackSchedule.delayUntilNextSendMs(
+                                slot.rawTargetSecond)));
                     });
                     // 开始外引导：以当前帧编号为基准启动看门狗
                     armExGuideFrameWatch();
-                    m_exGuideTimer->start(1000); // 每1s触发一次
+                    m_exGuideTimer->setSingleShot(true);
+                    m_periodicTrackSchedule.restart();
+                    emit reqTimesync(0);
+                    m_exGuideTimer->start(static_cast<int>(
+                        m_periodicTrackSchedule.currentSlot().delayUntilSendMs));
                     m_lastexguidesetting = Exguide_1s;
                 }
-                else if(exguidesetting == Exguide_5ms)
+                else if(exguidesetting == Exguide_20ms)
                 {
+                    m_exGuideTimer->setSingleShot(false);
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         if (!isOpen()) {
                             m_exGuideTimer->stop();
                             disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
                             m_lastexguidesetting = -1;
-                            m_sendCount_1s = 0;
+                            m_send20msTimeSyncSent = false;
                             exsrcindex = -1;
                             emit exguideLinkLost(
                                 QStringLiteral("图像导引头串口已断开，已取消图像导引头外引导源选择"));
                             return;
                         }
-                        // 5ms 模式同样用帧编号判断通信是否正常：
+                        // 20ms 模式同样用帧编号判断通信是否正常：
                         // 帧编号未更新则不再发送外推角度，退出外引导并弹窗提示
                         if (!isImageFrameUpdated()) {
                             abortExGuideByLinkLost();
                             return;
                         }
-                        // 5ms模式只发送方位角与俯仰角即可
-                        emit reqExsend_5ms(m_azimuth,m_pitch);
+                        // 20ms模式直接发送当前方位角与俯仰角，不使用Kalman外推。
+                        emit reqExsend_20ms(m_azimuth, m_pitch);
                         LogManager::instance()->logImageTracking(m_azimuth, m_pitch);    
                     });
                     // 开始外引导：以当前帧编号为基准启动看门狗
                     armExGuideFrameWatch();
-                    m_exGuideTimer->start(5); // 每5ms触发一次
-                    m_lastexguidesetting = Exguide_5ms;
+                    // 进入20ms模式立即做一次秒时间设置；等首个20ms定时器触发时
+                    // 状态帧已刷新，首帧可以直接按转台时基的 next20 发送。
+                    if (!m_send20msTimeSyncSent) {
+                        emit reqTimesync(0);
+                        m_send20msTimeSyncSent = true;
+                    }
+                    m_exGuideTimer->start(20); // 每20ms触发一次
+                    m_lastexguidesetting = Exguide_20ms;
                 }
             } 
         }
@@ -887,21 +919,26 @@ void SerialPortImage::ExmodeChanged(int mode)
         {
             if (m_exGuideTimer) {
                 m_exGuideTimer->stop(); //切换到其他外引导源时，暂停图像导引头外引导定时器，停止继续发送
+                disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
             }
+            m_lastexguidesetting = -1;
+            m_send20msTimeSyncSent = false;
             // 本路已不是外引导源：下次被选中时重新初始化滤波器
             m_abNeedReset = true;
         }
     }
     else
     {
-        // 非外引导模式：停止定时器
+        // 非外引导模式：停止并清除本次外引导绑定，
+        // 再次进入外引导时必须重新选择外引导源和跟踪周期。
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
+            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
         }
-        // 外引导源/跟踪周期的选择与界面单选保持一致，这里不再清零；
-        // 只把“本次绑定”作废，这样重新选中外引导模式时会重新绑定并重启定时器
-        // （否则退出一次外引导后，必须重新点选外引导源和跟踪周期才能再次外引导）
+        exsrcindex = -1;
+        exguidesetting = -1;
         m_lastexguidesetting = -1;
+        m_send20msTimeSyncSent = false;
         // 退出外引导模式：下次进入时重新初始化滤波器
         m_abNeedReset = true;
     }
@@ -990,7 +1027,7 @@ void SerialPortImage::abortExGuideByLinkLost()
         m_exGuideTimer->stop();
         disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
     }
-    m_sendCount_1s = 0;
+    m_send20msTimeSyncSent = false;
     m_abNeedReset = true;          // 重新选择图像源时用当帧测量重建滤波器
     m_lastexguidesetting = -1;     // 本次绑定作废，重新选中图像源时会重新绑定并重启定时器
     m_lastExGuideFrameSeq = -1;    // 看门狗复位

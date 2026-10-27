@@ -33,10 +33,12 @@ Item {
         if (source === 4) guideLaser.checked = true
         else if (source === 3) guideImage.checked = true
         else if (source === 5) guideCCD.checked = true
+        else guideSourceGroup.checkState = Qt.Unchecked
 
         var period = modeController.exguidePeriod
         if (period === 7) period250ms.checked = true
-        else if (period === 6) period5ms.checked = true
+        else if (period === 6) period20ms.checked = true
+        else guidePeriodGroup.checkState = Qt.Unchecked
     }
 
     Connections {
@@ -126,9 +128,9 @@ Item {
             }
         }
         CusRadioButton {
-            id: period5ms
+            id: period20ms
             width: 120
-            text: "5ms"
+            text: "20ms"
             font.pixelSize: 16
             ButtonGroup.group: guidePeriodGroup
             onCheckedChanged: {
@@ -137,7 +139,11 @@ Item {
         }
     }
 
-    Component.onCompleted: root.syncSelection()
+    Component.onCompleted: {
+        // 每次进入外引导页都从空日志开始，避免上次会话的滞留条目。
+        logManager.clearLog()
+        root.syncSelection()
+    }
 
     Rectangle {
         id: logArea

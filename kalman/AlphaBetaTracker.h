@@ -363,8 +363,11 @@ public:
     // 每次采样周期调用：接收实测角度并执行 Predict + Correct
     void FeedData(qint64 t, double az_meas, double el_meas);
 
-    // 生成单轴1s跟踪数据包：4个预测角度，间隔0.25s；packetTime 直接写入 time
-    sendExGuideData GenAxisPacket(bool is_az, qint64 packetTime = 0);
+    // 生成单轴1s跟踪数据包：4个预测角度，间隔0.25s；packetTime直接写入time。
+    // firstPointDelaySec是从当前滤波状态到第1个角度的预测时长，用于提前发包补偿。
+    sendExGuideData GenAxisPacket(bool is_az,
+                                  qint64 packetTime = 0,
+                                  double firstPointDelaySec = 0.25);
 
     // 参数访问（允许外部读写跟踪器参数）
     AlphaBetaTracker& AzTracker() { return az_tracker; }

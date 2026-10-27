@@ -728,18 +728,21 @@ void ABTrackManager::FeedData(qint64 t, double az_meas, double el_meas)
     el_tracker.update(true, el_meas, t);
 }
 
-sendExGuideData ABTrackManager::GenAxisPacket(bool is_az, qint64 packetTime)
+sendExGuideData ABTrackManager::GenAxisPacket(bool is_az,
+                                              qint64 packetTime,
+                                              double firstPointDelaySec)
 {
     sendExGuideData pkt;
     pkt.time = static_cast<uint32_t>(packetTime);
 
     AlphaBetaTracker& tracker = is_az ? az_tracker : el_tracker;
 
-    // 4个点：t+0.25, t+0.5, t+0.75, t+1.0 秒预测
-    pkt.angle1 = tracker.predict(0.25);
-    pkt.angle2 = tracker.predict(0.50);
-    pkt.angle3 = tracker.predict(0.75);
-    pkt.angle4 = tracker.predict(1.00);
+    // 4个点间隔0.25s。默认从当前状态预测0.25~1.0s；
+    // 提前发包时由firstPointDelaySec把整包预测窗向后平移。
+    pkt.angle1 = tracker.predict(firstPointDelaySec);
+    pkt.angle2 = tracker.predict(firstPointDelaySec + 0.25);
+    pkt.angle3 = tracker.predict(firstPointDelaySec + 0.50);
+    pkt.angle4 = tracker.predict(firstPointDelaySec + 0.75);
 
     return pkt;
 }

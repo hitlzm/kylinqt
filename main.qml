@@ -21,7 +21,7 @@ ApplicationWindow {
     // 只设置桌面可用区域尺寸仍属于普通窗口，银河麒麟在最小化/恢复时
     // 无法可靠地恢复为最大化状态。
     Component.onCompleted: Qt.callLater(function() {
-        root.showMaximized()
+        titleBar.requestMaximized()
     })
 
     // ═══ 无边框 + 自绘标题栏 ═══
@@ -156,9 +156,9 @@ ApplicationWindow {
                 anchors.right: myvideo.right
                 // 高度与左侧 ImageRecvArea 下边沿对齐
                 // 模式选择已移入转台面板，整个区域从 myvideo 下边沿开始
-                // 左侧内容下边沿 = bar.height + ImageSendArea(610) + ImageRecvArea(310) = bar.height + 920
-                // turntablestatus 高度 = bar.height + 920 - 435 = bar.height + 485
-                myheight: bar.height + 610 + 310 - 430 - 5
+                // 左侧内容下边沿 = bar.height + ImageSendArea(610) + ImageRecvArea(330) = bar.height + 940
+                // turntablestatus 高度 = bar.height + 940 - myvideo(430) - 顶部间隔(5)
+                myheight: bar.height + 610 + 330 - 430 - 5
             }
         }
     }

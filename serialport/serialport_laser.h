@@ -4,14 +4,16 @@
 #include "serialport.h"
 #include <QByteArray>
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include "./circularbuffer.h"
 #include "kalman/AlphaBetaTracker.h"
+#include "exguide_timesync.h"
 
 struct laser_send_frame;
 struct laser_recv_frame;
 
-//使用5ms跟踪模式时直接以固定间隔发送角度数据给转台
+//使用20ms跟踪模式时直接以固定间隔发送角度数据给转台
 struct laserExGuideData
 {
     double pitch;  //俯仰角
@@ -361,7 +363,7 @@ signals:
     //两类导引头的实现相同
     void reqTimesync(int seconds = 0);
     void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
-    void reqExsend_5ms(double angle1 ,double angle2 );
+    void reqExsend_20ms(double angle1 ,double angle2 );
 
 public slots:
     // ── 接收主线程 Data 发来的请求（QueuedConnection）──
@@ -397,7 +399,8 @@ private:
     int exsrcindex = -1;            // 外引导源标志
     int exguidesetting = -1;        // 跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
-    int m_sendCount_1s = 0;
+    bool m_send20msTimeSyncSent = false; // 本次20ms跟踪是否已发送时间清零
+    PeriodicExGuideSchedule m_periodicTrackSchedule;
 
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
 

@@ -10,12 +10,11 @@
 // ─────────────────────────────────────────────
 #define ExguideMode    0
 #define ExguideSrcCCD  5
-#define Exguide_5ms    6
+#define Exguide_20ms   6
 #define Exguide_1s     7
-#define Maxsendcount   600  // 每10分钟进行一次时间同步
 
 namespace {
-constexpr int kMotionSpeed = 4;  // 变焦/调焦连续运动速度 0-7
+constexpr int kMotionSpeed = 2;  // 变焦/调焦连续运动速度 0-7
 
 constexpr double kZoomWideFocalMm = 5.1;
 constexpr double kZoomTeleFocalMm = 153.0;
@@ -345,7 +344,7 @@ void SerialPortCCD::ExmodeChanged(int mode)
 
     if (exindex == ExguideMode) //判断是否为外引导模式
     {
-        // CCD相机被选为外引导源：启动定时器，每1秒或5ms发送一次跟踪数据
+        // CCD相机被选为外引导源：启动定时器，每1秒或20ms发送一次跟踪数据
         if(exsrcindex == ExguideSrcCCD)
         {
             // CCD 外引导依赖真实视频流；未接入时不启动外引导并取消本路外引导源
@@ -357,7 +356,7 @@ void SerialPortCCD::ExmodeChanged(int mode)
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
                 }
                 m_lastexguidesetting = -1;
-                m_sendCount_1s = 0;
+                m_send20msTimeSyncSent = false;
                 exsrcindex = -1;
                 emit exguideSourceUnavailable();
                 return;
@@ -371,7 +370,7 @@ void SerialPortCCD::ExmodeChanged(int mode)
                 {
                     m_exGuideTimer->stop();
                     disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
-                    m_sendCount_1s = 0;
+                    m_send20msTimeSyncSent = false;
                 }
                 // 延迟创建定时器
                 if (!m_exGuideTimer) {
@@ -380,41 +379,52 @@ void SerialPortCCD::ExmodeChanged(int mode)
                 }
                 // 跟踪周期变化后，下一帧数据到来时用当时的测量重新初始化滤波器
                 m_abNeedReset = true;
-                // 判断跟踪模式（5ms模式或者1秒跟踪模式）
+                // 判断跟踪模式（20ms模式或者1秒跟踪模式）
                 if(exguidesetting == Exguide_1s)
                 {
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
-                        // 每发送完固定次数后，重新发送时间同步信号并重新计时
-                        if(m_sendCount_1s == 0)
-                        {
-                            emit reqTimesync();
-                        }
-                        // 生成预测数据包：4点外推（0.25s, 0.5s, 0.75s, 1.0s），time = 发包计数
-                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(true,  m_sendCount_1s);  // 方位轴
-                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(false, m_sendCount_1s);  // 俯仰轴
+                        // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
+                        const auto slot = m_periodicTrackSchedule.currentSlot();
+                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(
+                                    true, slot.targetSecond,
+                                    slot.firstPredictionDelaySec);  // 方位轴
+                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(
+                                    false, slot.targetSecond,
+                                    slot.firstPredictionDelaySec);  // 俯仰轴
                         // 发送预测角度给转台
                         emit reqExsend_1s(az_pkt, el_pkt);
                         // 串口未打开时不输出外引导跟踪日志
                         if (isOpen())
                             LogManager::instance()->logCCDTracking(az_pkt.angle1, el_pkt.angle1);
-                        if(++m_sendCount_1s >= Maxsendcount) {  // 10分钟重同步
-                            m_sendCount_1s = 0;
-                        }
+                        m_exGuideTimer->start(static_cast<int>(
+                            m_periodicTrackSchedule.delayUntilNextSendMs(
+                                slot.rawTargetSecond)));
                     });
-                    m_exGuideTimer->start(1000); // 每1s触发一次
+                    m_exGuideTimer->setSingleShot(true);
+                    m_periodicTrackSchedule.restart();
+                    emit reqTimesync(0);
+                    m_exGuideTimer->start(static_cast<int>(
+                        m_periodicTrackSchedule.currentSlot().delayUntilSendMs));
                     m_lastexguidesetting = Exguide_1s;
                 }
-                else if(exguidesetting == Exguide_5ms)
+                else if(exguidesetting == Exguide_20ms)
                 {
+                    m_exGuideTimer->setSingleShot(false);
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
-                        // 5ms模式直接发送当前计算角度
-                        emit reqExsend_5ms(m_azimuth, m_pitch);
+                        // 20ms模式直接发送当前计算角度，不使用Kalman外推。
+                        emit reqExsend_20ms(m_azimuth, m_pitch);
                         // 串口未打开时不输出外引导跟踪日志
                         if (isOpen())
                             LogManager::instance()->logCCDTracking(m_azimuth, m_pitch);
                     });
-                    m_exGuideTimer->start(15); // 每5ms触发一次 ，考虑到数据更新没那么快，切换为15ms模式
-                    m_lastexguidesetting = Exguide_5ms;
+                    // 进入20ms模式立即做一次秒时间设置；等首个20ms定时器触发时
+                    // 状态帧已刷新，首帧可以直接按转台时基的 next20 发送。
+                    if (!m_send20msTimeSyncSent) {
+                        emit reqTimesync(0);
+                        m_send20msTimeSyncSent = true;
+                    }
+                    m_exGuideTimer->start(20); // 每20ms触发一次
+                    m_lastexguidesetting = Exguide_20ms;
                 }
             }
         }
@@ -422,7 +432,10 @@ void SerialPortCCD::ExmodeChanged(int mode)
         {
             if (m_exGuideTimer) {
                 m_exGuideTimer->stop(); //切换到其他外引导源时，暂停CCD外引导定时器
+                disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
             }
+            m_lastexguidesetting = -1;
+            m_send20msTimeSyncSent = false;
             // 本路已不是外引导源：下次被选中时重新初始化滤波器
             m_abNeedReset = true;
         }
@@ -431,8 +444,10 @@ void SerialPortCCD::ExmodeChanged(int mode)
     {   
         exsrcindex = -1; //非外引导模式下，外引导源索引置0
         exguidesetting = -1; //非外引导模式下，外引导发送时间间隔索引置0
+        m_send20msTimeSyncSent = false;
         if (m_exGuideTimer) {
             m_exGuideTimer->stop();
+            disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
         }
         // 退出外引导模式：下次进入时重新初始化滤波器
         m_abNeedReset = true;
@@ -448,7 +463,7 @@ void SerialPortCCD::onVideoStreamConnectedChanged()
             disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
         }
         m_lastexguidesetting = -1;
-        m_sendCount_1s = 0;
+        m_send20msTimeSyncSent = false;
         exsrcindex = -1;
         m_abNeedReset = true;
         emit exguideSourceUnavailable();

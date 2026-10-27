@@ -8,11 +8,12 @@
 #include <QElapsedTimer>
 #include <QTimer>
 #include "kalman/AlphaBetaTracker.h"
+#include "exguide_timesync.h"
 
 //默认视频拉流地址：rtsp://192.168.1.100:554/stream
 
 struct image_send_frame;
-//使用5ms模式进行外引导
+// 使用20ms模式进行外引导
 struct imageExGuideData
 {
     double pitch;  //俯仰角
@@ -153,6 +154,9 @@ public:
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
     Q_INVOKABLE void closePort();
     Q_INVOKABLE void scanPorts();
+    // 启动一次“发送帧有效”检查：从下一帧 B 帧开始累计 20 帧，
+    // 任一帧的 a_frame_valid_flag 为 0xAA 即判定本次发送有效。
+    Q_INVOKABLE void beginAckCheck();
     // Q_INVOKABLE void sendData(const QByteArray &data);
 
 signals:
@@ -328,9 +332,11 @@ private:
     bool m_portOpen = false;
     QStringList m_availablePorts;
     QString m_errorString;
-    //加入是否判断发送帧有效的标志位与计数位，只有发送数据时，才将标志位置1并检查数据是否发送成功
-    bool m_check = false;
-    int m_check_count = 20;
+    // A 帧有效回告检查窗口。beginAckCheck() 清零旧结果并重新开始计数，
+    // updateFromFrame() 每收到一个通过帧头和 CRC 校验的 B 帧就消费一帧。
+    static const int AckCheckFrameCount = 20;
+    bool m_ackCheckActive = false;
+    int m_ackCheckFramesRemaining = 0;
 };
 
 class ImageSendData : public QObject
@@ -505,7 +511,7 @@ signals:
     void exguideLinkLost(const QString &msg);
     void reqTimesync(int seconds);
     void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
-    void reqExsend_5ms(double angle1 ,double angle2 );
+    void reqExsend_20ms(double angle1 ,double angle2 );
 
     void reqSendDeviationPixel(int num ,int x , int y);
 public slots:
@@ -555,8 +561,8 @@ private:
     int exsrcindex = -1;      //外引导源标志
     int exguidesetting = -1;  //跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  //记录上一次的时间间隔
-    // int m_sendCount_5ms = 0;
-    int m_sendCount_1s = 0;
+    bool m_send20msTimeSyncSent = false; // 本次20ms跟踪是否已发送时间清零
+    PeriodicExGuideSchedule m_periodicTrackSchedule;
     QTime m_startTime = {};
     QDateTime m_dateTime = {};
     int m_startvalue =0 ;
@@ -569,8 +575,8 @@ private:
     // 图像导引头约每 20ms 回传一帧，帧编号每收到一帧就变一次，可当作链路心跳：
     // 帧编号还在变说明导引头仍在回传实时角度；一旦停止变化，说明反馈已中断，
     // 此时若继续外引导，送给转台的就是滤波器外推出来的陈旧角度，必须停下来。
-    // 注意 5ms 外引导定时器的周期小于图像帧周期(20ms)，同一帧内会被调用多次，
-    // 所以判断依据不是“与上一拍相比是否变化”，而是“帧编号已多久没变化”。
+    // 20ms 外引导定时器与图像帧周期一致；判断依据仍采用“帧编号已多久没变化”，
+    // 避免定时器偶尔超前于新帧到达。
     int m_lastExGuideFrameSeq = -1;   // 上一次观察到的帧编号
     QElapsedTimer m_exGuideFrameClock; // 帧编号最近一次发生变化的时间点
     void armExGuideFrameWatch();      // 外引导启动时用当前帧编号作基准，开始计时

@@ -13,6 +13,18 @@ Rectangle {
     color: '#e9f0f9'
     property int stacklayoutindex: modeSelect.myindex
     property int enableorelease: 0
+
+    // 与上方视频流输入行之间的水平分隔线
+    Rectangle {
+        id: videoSeparator
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 1
+        color: "black"
+        z: 100
+    }
+
     //消息提示框
     MessagePopup {
         id: msg
@@ -27,6 +39,11 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: modeController
+        onExguideSessionEnded: logManager.clearLog()
+    }
+
     // 顶部栏：标题 + 按钮行
     RowLayout {
         id: ctrlrow
@@ -35,7 +52,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: 20
         spacing: 20
 
         Text {
@@ -111,7 +128,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.top: ctrlrow.bottom
-        anchors.topMargin: 5
+        anchors.topMargin: 12
         spacing: 20
 
         // 串口选择 - 绑定到 C++ imageSerial 对象

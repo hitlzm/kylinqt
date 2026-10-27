@@ -89,6 +89,7 @@ if(ANDROID)
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable_HEX.cpp
+      kalman/AlphaBetaTracker.cpp
       video/vlcplayer.cpp
     )
 else()
@@ -101,6 +102,7 @@ else()
       serialport/serialport_turntable_HEX.cpp
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
+      kalman/AlphaBetaTracker.cpp
       # 倾角仪串口已停用（改为人工观看数显屏）：文件保留，仅不再被 main.cpp 使用
       #serialport/serialport_tiltmeter.cpp
       vlcvideo/VlcVideoItem.cpp
@@ -118,7 +120,6 @@ else()
       log/LogManager.cpp
       #serialport/circularbuffer.h
       #kalman/seekKalman.cpp
-      #kalman/AlphaBetaTracker.cpp
       #utils/videolatencyprobe.cpp
       #utils/videolatencyprobe.h
       #utils/sendlatencyprobe.cpp

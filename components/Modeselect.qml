@@ -6,7 +6,7 @@ import "./"
 
 Item{
     id: root
-    property int myindex: -1
+    property int myindex: 1
 
     GroupBox {
         background: Rectangle {

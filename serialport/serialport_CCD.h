@@ -4,7 +4,9 @@
 #include "serialport.h"
 #include "kalman/AlphaBetaTracker.h"
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QTimer>
+#include "exguide_timesync.h"
 
 // ── CCD 接收数据类（主线程，QML 直接读取）────────────────────────────
 class CCDData : public QObject
@@ -195,7 +197,7 @@ signals:
     // 外引导模式请求信号（连接转台串口线程）
     void reqTimesync(int seconds = 0);
     void reqExsend_1s(sendExGuideData frame1, sendExGuideData frame2);
-    void reqExsend_5ms(double angle1, double angle2);
+    void reqExsend_20ms(double angle1, double angle2);
 
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
@@ -265,7 +267,8 @@ private:
     int exsrcindex = -1;            // 外引导源标志
     int exguidesetting = -1;        // 跟踪模式时间间隔选择
     int m_lastexguidesetting = -1;  // 记录上一次的时间间隔
-    int m_sendCount_1s = 0;
+    bool m_send20msTimeSyncSent = false; // 本次20ms跟踪是否已发送时间清零
+    PeriodicExGuideSchedule m_periodicTrackSchedule;
     QTimer* m_exGuideTimer = nullptr;   // 外引导模式定时器
 
     // 图像分辨率与视场角（视场角随广角/远焦切换更新）

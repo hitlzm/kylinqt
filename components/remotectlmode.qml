@@ -197,7 +197,7 @@ ColumnLayout {
         MyDoubleSpinBox {
             id: stepAngleSpinBox
             label: "步进角度 (°):"
-            value: 1.0
+            value: turntableData.remoteStepAngle
             from: 0.1
             to: 5
             stepSize: 0.1
@@ -205,14 +205,14 @@ ColumnLayout {
             fontSize: 20
             onValueModified: {
                 console.log("用户手动将值改为:", value)
-                // 发射信号，通知步进角度变化
-                turntableData.stepAngleChanged(value)
+                // 保存设置，并由 C++ 通知工作线程更新步进角度
+                turntableData.remoteStepAngle = value
             }
         }
         MyDoubleSpinBox {
             id: speedMultiplierSpinBox
             label: "速度倍率:"
-            value: 1.0
+            value: turntableData.remoteSpeedMultiplier
             from: 0
             to: 1
             stepSize: 0.05
@@ -220,8 +220,8 @@ ColumnLayout {
             fontSize: 20
             onValueModified: {
                 console.log("用户手动将值改为:", value)
-                // 发射信号，通知速度倍率变化
-                turntableData.speedMultiplierChanged(value)
+                // 保存设置，并由 C++ 通知工作线程更新速度倍率
+                turntableData.remoteSpeedMultiplier = value
             }
         }
     }

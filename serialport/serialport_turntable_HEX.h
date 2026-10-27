@@ -20,6 +20,7 @@ brief: 转台串口类（HEX十六进制协议版本）
 */
 
 #include "serialport.h"
+#include <QElapsedTimer>
 
 // ═════════════════════ 指令代号定义（byte2的低6位）═════════════════════
 #define CMD_ENABLE      0x01    // 使能/释放电机
@@ -28,7 +29,9 @@ brief: 转台串口类（HEX十六进制协议版本）
 #define CMD_POSITION    0x04    // 位置模式
 #define CMD_SPEED       0x05    // 速率模式
 #define CMD_SWING       0x06    // 摇摆模式
+#define CMD_TRACK_3S    0x09    // 3秒跟踪模式
 #define CMD_TRACK_250   0x0A    // 250ms跟踪模式
+#define CMD_TRACK_20MS  0x0B    // 20ms跟踪模式
 #define CMD_TRACK_5MS   0x0C    // 5ms跟踪模式
 #define CMD_TIME_SET    0x10    // 秒时间设置
 #define CMD_CORRECTION  0x11    // 跟踪修正
@@ -97,7 +100,7 @@ typedef struct SpeedModeCmd1Hex {
     float   velocity;       // 速度 (°/s)
 } SpeedModeCmd1Hex;
 
-// 跟踪模式1命令（应用层, 250ms周期 = 1秒4个点）
+// 3 秒/250ms 跟踪命令（应用层；每组4个角度点，由指令代号区分周期）
 typedef struct {
     int     axis;           // 轴号
     int     trackTime;      // 秒时间 (0-14399)
@@ -107,15 +110,16 @@ typedef struct {
     float   angle4;         // 第1.00秒角度
 } TrackingSendCmd1Hex;
 
-// 跟踪模式2命令（应用层, 5ms周期 = 200Hz）
+// 20ms跟踪命令（联合指令，一帧同时携带三轴角度）
 typedef struct {
+    int     timeMs;         // 目标毫秒时间 (0-14399999，必须为偶数)
     float   angle1;         // 内框角度 (度)
     float   angle2;         // 中框角度 (度)
     float   angle3;         // 外框角度 (度)
-} TrackingSendCmd2Hex;
+} TrackingSendCmd20msHex;
 
 // 跟踪修正命令（应用层）
-// byte2 高2位: 1/2 = 内/外框；低6位固定为 CMD_CORRECTION (0x11)
+// 联合指令：byte2 高2位填 1/2/3 均可；低6位固定为 CMD_CORRECTION (0x11)
 // byte3-11: 内框、中框、外框修正角 (各3字节, 有符号, 0.0001°, 大端)
 typedef struct {
     int     target;         // 1=内框, 2=中框，3=外框
@@ -184,6 +188,8 @@ class TurntableDataHex : public QObject
     Q_PROPERTY(bool portOpen READ portOpen NOTIFY portOpenChanged)
     Q_PROPERTY(QStringList availablePorts READ availablePorts NOTIFY availablePortsChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(float remoteStepAngle READ remoteStepAngle WRITE setRemoteStepAngle NOTIFY remoteStepAngleChanged)
+    Q_PROPERTY(float remoteSpeedMultiplier READ remoteSpeedMultiplier WRITE setRemoteSpeedMultiplier NOTIFY remoteSpeedMultiplierChanged)
 
 public:
     explicit TurntableDataHex(QObject *parent = nullptr);
@@ -192,10 +198,14 @@ public:
     bool portOpen() const { return m_portOpen; }
     QStringList availablePorts() const { return m_availablePorts; }
     QString errorString() const { return m_errorString; }
+    float remoteStepAngle() const { return m_remoteStepAngle; }
+    float remoteSpeedMultiplier() const { return m_remoteSpeedMultiplier; }
 
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
     Q_INVOKABLE void closePort();
     Q_INVOKABLE void scanPorts();
+    void setRemoteStepAngle(float stepAngle);
+    void setRemoteSpeedMultiplier(float speedMultiplier);
 
 signals:
     void timeChanged();
@@ -221,6 +231,8 @@ signals:
     void portOpenChanged();
     void availablePortsChanged();
     void errorStringChanged();
+    void remoteStepAngleChanged();
+    void remoteSpeedMultiplierChanged();
 
     void requestOpenPort(const QString &portName, int baudRate);
     void requestClosePort();
@@ -256,6 +268,9 @@ private:
     bool m_portOpen = false;
     QStringList m_availablePorts;
     QString m_errorString;
+    // 遥控页面会随模式切换被销毁重建，设置值保存在主线程对象中以便恢复显示
+    float m_remoteStepAngle = 1.0f;
+    float m_remoteSpeedMultiplier = 1.0f;
 };
 
 
@@ -363,7 +378,7 @@ public slots:
 
     // ── 外引导模式 ──
     void sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2);   //外引导模式下，转台内框无需转动
-    void sendTrackMode_5ms(double yawangle, double pitchangle);
+    void sendTrackMode_20ms(double yawangle, double pitchangle);
 
     // ── 跟踪修正 ──
     void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
@@ -412,7 +427,7 @@ protected:
     void sendVecCmd(const SpeedModeCmd1Hex &cmd);           // 速度模式
     void sendSwingCmd(int axis, float freq, float amplitude); // 摇摆模式,可以单轴摇摆，也可以配置三轴摇摆
     void sendTrackCmd_1s(const TrackingSendCmd1Hex &cmd);     // 250ms跟踪(1s周期)
-    void sendTrackCmd_5ms(const TrackingSendCmd2Hex &cmd);  // 5ms跟踪
+    void sendTrackCmd_20ms(const TrackingSendCmd20msHex &cmd);  // 20ms跟踪
     void sendCorrectionCmd(const TrackingCorrectionCmdHex &cmd); // 跟踪修正
     void sendTimeSetCmd(int seconds);                       // 时间设置
 
@@ -442,6 +457,10 @@ protected:
     static float rawToSpeed(int32_t raw);
 
 private:
+    // 用最近一帧状态时间加上该帧到达后的经过时间，估算当前转台时间。
+    // 返回 -1 表示还没有状态帧，或反馈已超时。
+    qint64 estimatedTurntableTimeMs() const;
+
     // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
     TurntableDataHex *m_turntableDataHex = nullptr;
     TurntableSendDataHex *m_turntableSendDataHex = nullptr;
@@ -450,6 +469,14 @@ private:
     float m_current_inner_angle = 0.0f;
     float m_current_middle_angle = 0.0f;
     float m_current_outter_angle = 0.0f;
+
+    // 状态反馈中的转台毫秒时间（0-14399999，4小时循环）。
+    // 跟踪目标时刻以此为准，避免本地时钟与转台时基不一致。
+    qint64 m_latestTurntableTimeMs = -1;
+    QElapsedTimer m_statusAgeClock;
+    bool m_turntableTimeValid = false;
+    bool m_waitingStatusLogged = false;
+    qint64 m_last20msTargetMs = -1;
 
     // 转台从已有速度切换到新速度时必须先停车，并等待对应轴回到伺服状态。
     enum class HandleSpeedState {

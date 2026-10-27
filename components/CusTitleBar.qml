@@ -49,15 +49,32 @@ Rectangle {
     /// 因此需要在窗口重新激活/显示后主动恢复最大化状态。
     property bool restoreMaximizedAfterMinimize: false
 
+    /// 窗口逻辑上的目标状态。不能只依赖 visibility 判断：
+    /// 部分 UKUI 版本会接受 showMaximized()，却仍短暂或持续报告 Windowed。
+    property bool maximizeIntent: true
+    property int maximizeRetryRemaining: 0
+
     readonly property bool maximized: targetWindow !== null
         && (targetWindow.visibility === Window.Maximized
             || targetWindow.visibility === Window.FullScreen)
 
     // ── 窗口控制 ───────────────────────────────────────────────
+    function requestMaximized(attempts) {
+        if (!targetWindow)
+            return
+        maximizeIntent = true
+        maximizeRetryRemaining = attempts === undefined ? 4 : attempts
+        targetWindow.showMaximized()
+        maximizeRetryTimer.restart()
+    }
+
     function minimizeWindow() {
         if (!targetWindow)
             return
-        restoreMaximizedAfterMinimize = maximized
+        // 使用逻辑目标状态，而不是仅依赖窗口管理器回报的 visibility。
+        restoreMaximizedAfterMinimize = maximizeIntent || maximized
+        maximizeRetryTimer.stop()
+        maximizeRetryRemaining = 0
         targetWindow.showMinimized()
     }
 
@@ -70,14 +87,17 @@ Rectangle {
             return
         restoreMaximizedAfterMinimize = false
         // 如果窗口管理器恢复成了普通窗口，再主动切回最大化。
-        if (targetWindow.visibility !== Window.Maximized)
-            targetWindow.showMaximized()
+        if (maximizeIntent && targetWindow.visibility !== Window.Maximized)
+            requestMaximized(4)
     }
 
     function toggleMaximized() {
         if (!targetWindow)
             return
         if (maximized) {
+            maximizeIntent = false
+            maximizeRetryRemaining = 0
+            maximizeRetryTimer.stop()
             targetWindow.showNormal()
             if (normalGeometry.width > 0) {
                 targetWindow.x = normalGeometry.x
@@ -88,7 +108,7 @@ Rectangle {
         } else {
             normalGeometry = Qt.rect(targetWindow.x, targetWindow.y,
                                      targetWindow.width, targetWindow.height)
-            targetWindow.showMaximized()
+            requestMaximized(3)
         }
     }
 
@@ -100,6 +120,9 @@ Rectangle {
         var w = normalGeometry.width > 0 ? normalGeometry.width : targetWindow.width * 0.7
         var h = normalGeometry.height > 0 ? normalGeometry.height : targetWindow.height * 0.7
         var ratio = width > 0 ? localX / width : 0.5
+        maximizeIntent = false
+        maximizeRetryRemaining = 0
+        maximizeRetryTimer.stop()
         targetWindow.showNormal()
         targetWindow.width = w
         targetWindow.height = h
@@ -122,6 +145,30 @@ Rectangle {
             Qt.callLater(function() {
                 root.finishMinimizeRestore()
             })
+        }
+    }
+
+    // UKUI 在从任务栏恢复无边框窗口时，可能晚于 visibilityChanged 应用
+    // 保存的普通窗口几何。这里延迟重试最大化，防止第一次请求被覆盖。
+    Timer {
+        id: maximizeRetryTimer
+        interval: 120
+        repeat: false
+
+        onTriggered: {
+            if (!root.targetWindow || root.maximizeRetryRemaining <= 0)
+                return
+
+            if (root.targetWindow.visibility === Window.Maximized
+                    || root.targetWindow.visibility === Window.FullScreen) {
+                root.maximizeRetryRemaining = 0
+                return
+            }
+
+            root.maximizeRetryRemaining--
+            root.targetWindow.showMaximized()
+            if (root.maximizeRetryRemaining > 0)
+                restart()
         }
     }
 

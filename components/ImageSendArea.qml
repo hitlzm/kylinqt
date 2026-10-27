@@ -296,8 +296,7 @@ Rectangle {
             enabled: imageData.portOpen && pitchInputValid && yawInputValid
             onClicked: {
                 imageSendData.buildFrame()
-                imageData.m_check = true;
-                imageData.m_check_count = 20;
+                imageData.beginAckCheck()
                 //imageSendData.m_seekerCtrlWord = 0x00  
                 console.log("图像导引头数据已发送")
             }
@@ -311,8 +310,7 @@ Rectangle {
             onClicked: {
                 imageSendData.m_captureRefImgCmd = 0xaa //拍摄参考图指令，发三拍后恢复默认值
                 imageSendData.buildFrame()
-                imageData.m_check = true;
-                imageData.m_check_count = 20;
+                imageData.beginAckCheck()
                 console.log("图像导引头数据已发送")
                 imageSendData.m_captureRefImgCmd = 0x00 //发三拍后恢复默认值
             }
@@ -453,8 +451,7 @@ Rectangle {
             onPressed: {
                 imageSendData.m_searchPitchRate = adjustSpinBox.value
                 imageSendData.buildFrame()      // 立即发一次
-                imageData.m_check = true;
-                imageData.m_check_count = 20;
+                imageData.beginAckCheck()
             }
             // 长按期间持续发送
             Timer {
@@ -492,8 +489,7 @@ Rectangle {
             onPressed: {
                 imageSendData.m_searchPitchRate = adjustSpinBox.value * -1
                 imageSendData.buildFrame()      // 立即发一次
-                imageData.m_check = true;
-                imageData.m_check_count = 20;
+                imageData.beginAckCheck()
             }
             // 长按期间持续发送
             Timer {
@@ -531,8 +527,7 @@ Rectangle {
             onPressed: {
                 imageSendData.m_searchYawRate = adjustSpinBox.value
                 imageSendData.buildFrame()      // 立即发一次
-                imageData.m_check = true;
-                imageData.m_check_count = 20;
+                imageData.beginAckCheck()
             }
             // 长按期间持续发送
             Timer {
@@ -569,8 +564,7 @@ Rectangle {
             onPressed: {
                 imageSendData.m_searchYawRate = adjustSpinBox.value * -1
                 imageSendData.buildFrame()      // 立即发一次
-                imageData.m_check = true;
-                imageData.m_check_count = 20;
+                imageData.beginAckCheck()
             }
             // 长按期间持续发送，也可以不使用定时器持续发送，只要保证按钮松开时把速度置零即可
             Timer {
@@ -622,8 +616,7 @@ Rectangle {
                 onPressed: {
                     imageSendData.m_gateSize = 0xaa
                     imageSendData.buildFrame()      // 立即发一次
-                    imageData.m_check = true;
-                    imageData.m_check_count = 20;
+                    imageData.beginAckCheck()
                 }
                 //按下按钮时持续发送
                 Timer {
@@ -662,8 +655,7 @@ Rectangle {
                 onPressed: {
                     imageSendData.m_gateSize = 0x55
                     imageSendData.buildFrame()      // 立即发一次
-                    imageData.m_check = true;
-                    imageData.m_check_count = 20;
+                    imageData.beginAckCheck()
                 }
                 Timer {
                 id: minusRepeatTimer
@@ -707,7 +699,9 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             text: "时间同步"
             onClicked: {
-                    //时间同步
+                imageSendData.sendTimeSyncFrame()
+                imageData.beginAckCheck()
+                console.log("图像导引头时间同步指令已发送")
             }
         }
     

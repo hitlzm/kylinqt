@@ -451,7 +451,9 @@ static QString turntableAxisStatusText(int status)
     case 0x05: return QStringLiteral("速率稳定");
     case 0x06: return QStringLiteral("摇摆执行中");
     case 0x07: return QStringLiteral("摇摆稳定");
+    case 0x09: return QStringLiteral("3秒跟踪模式");
     case 0x0A: return QStringLiteral("250ms跟踪模式");
+    case 0x0B: return QStringLiteral("20ms跟踪模式");
     case 0x0C: return QStringLiteral("5ms跟踪模式");
     case 0x0F: return QStringLiteral("停车执行中");
     default:   return QStringLiteral("未知(0x%1)")
@@ -490,7 +492,9 @@ static QString turntableCmdHintText(int code)
     case 0x04: return QStringLiteral("位置");
     case 0x05: return QStringLiteral("速率");
     case 0x06: return QStringLiteral("摇摆");
+    case 0x09: return QStringLiteral("3秒跟踪");
     case 0x0A: return QStringLiteral("250ms跟踪");
+    case 0x0B: return QStringLiteral("20ms跟踪");
     case 0x0C: return QStringLiteral("5ms跟踪");
     case 0x10: return QStringLiteral("时间设置");
     case 0x11: return QStringLiteral("跟踪修正");

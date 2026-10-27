@@ -569,7 +569,8 @@ Rectangle {
             height: 35
             text: "时间同步"
             onClicked: {
-                    //时间同步
+                laserSendData.sendTimeSyncFrame()
+                console.log("激光导引头时间同步指令已发送")
             }
         }
                

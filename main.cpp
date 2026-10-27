@@ -425,9 +425,9 @@ int main(int argc, char *argv[])
     QObject::connect(laserPort, &SerialPortLaser::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
 
-    QObject::connect(imagePort, &SerialPortImage::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
-    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_5ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_5ms, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::reqExsend_20ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_20ms, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::reqExsend_20ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_20ms, Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_20ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_20ms, Qt::QueuedConnection);
 
     // ═══ 3) 创建线程并迁移 Worker ═══
     QThread *Laserthread = new QThread;

@@ -8,7 +8,7 @@ import "./"
 
 Rectangle {
     id: root
-    width: 700; height: 450
+    width: 700; height: 430
     color: "#e9f0f9"
 
     property bool _connected: false

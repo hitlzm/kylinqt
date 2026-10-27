@@ -42,13 +42,20 @@ public:
 
 public slots:
     void setCurrentMode(int mode) {
-        if (m_currentMode != mode) {
-            const bool wasRequested = ccdInferenceRequested();
-            m_currentMode = mode;
-            emit currentModeChanged();
-            emit modeChanged(mode);
-            notifyInferenceRequestIfChanged(wasRequested);
+        if (m_currentMode == mode)
+            return;
+
+        const bool wasRequested = ccdInferenceRequested();
+        const bool leavingExguide = (m_currentMode == 0 && mode != 0);
+        if (leavingExguide) {
+            clearExguideSelection();
+            emit exguideSessionEnded();
         }
+
+        m_currentMode = mode;
+        emit currentModeChanged();
+        emit modeChanged(mode);
+        notifyInferenceRequestIfChanged(wasRequested);
     }
 
     void setExguideSource(int source) {
@@ -66,7 +73,7 @@ public slots:
     }
 
     void setExguidePeriod(int setting) {
-        // 6: 5ms，7: 1s；-1 表示尚未选择跟踪周期。
+        // 6: 20ms，7: 1s；-1 表示尚未选择跟踪周期。
         if (setting != -1 && setting != 6 && setting != 7)
             return;
         if (m_exguidePeriod == setting)
@@ -106,6 +113,7 @@ signals:
     void exguidePeriodChanged();
     void exguideSettingChanged(int setting); //通知外引导发送时间间隔变化 6,7
     void exguideSourceLost(int source);  //外引导源不可用，通知界面只取消对应源
+    void exguideSessionEnded();          //退出外引导模式，外部据此清理跟踪显示
     void ccdInferenceRequestChanged(bool enabled);
 private slots:
     
@@ -124,6 +132,21 @@ private:
         m_exguideSource = 0;
         emit exguideSourceChanged();
         notifyInferenceRequestIfChanged(wasRequested);
+    }
+
+    // 退出外引导后必须重新选择来源和跟踪周期；这里只更新主线程状态，
+    // 串口工作线程会在随后收到 modeChanged 时停止并清除各自的外引导绑定。
+    void clearExguideSelection() {
+        const bool sourceChanged = (m_exguideSource != 0);
+        const bool periodChanged = (m_exguidePeriod != -1);
+
+        m_exguideSource = 0;
+        m_exguidePeriod = -1;
+
+        if (sourceChanged)
+            emit exguideSourceChanged();
+        if (periodChanged)
+            emit exguidePeriodChanged();
     }
 
     int m_currentMode = -1;
