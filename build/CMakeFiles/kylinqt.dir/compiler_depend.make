@@ -617,6 +617,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QTproject/kylinqt/serialport/serialport_image.h \
   E:/QTproject/kylinqt/serialport/serialport_laser.h \
   E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.h \
+  E:/QTproject/kylinqt/utils/tracking_target_smoother.h \
   E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.h \
   E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.h \
   E:/opencv-4.2.0/DNN/install/include/opencv2/core.hpp \
@@ -1037,6 +1038,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QTproject/kylinqt/serialport/circularbuffer.h \
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.h \
+  E:/QTproject/kylinqt/utils/tracking_target_smoother.h \
   E:/opencv-4.2.0/DNN/install/include/opencv2/core.hpp \
   E:/opencv-4.2.0/DNN/install/include/opencv2/core/base.hpp \
   E:/opencv-4.2.0/DNN/install/include/opencv2/core/bufferpool.hpp \
@@ -3920,6 +3922,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: E:/QTproject
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
   E:/QTproject/kylinqt/utils/seeker_coordinate_transform.h \
   E:/QTproject/kylinqt/utils/sendlatencyprobe.h \
+  E:/QTproject/kylinqt/utils/tracking_target_smoother.h \
   E:/onnxruntime/cmake/external/eigen/Eigen/Cholesky \
   E:/onnxruntime/cmake/external/eigen/Eigen/Core \
   E:/onnxruntime/cmake/external/eigen/Eigen/Dense \
@@ -5489,6 +5492,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qversiontagging.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/limits.h:
 
+E:/QTproject/kylinqt/utils/tracking_target_smoother.h:
+
 E:/onnxruntime/cmake/external/eigen/Eigen/src/SVD/JacobiSVD.h:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed/syslimits.h:
@@ -6519,9 +6524,9 @@ E:/opencv-4.2.0/DNN/install/include/opencv2/flann/hierarchical_clustering_index.
 
 E:/opencv-4.2.0/DNN/install/include/opencv2/flann/kdtree_index.h:
 
-E:/opencv-4.2.0/DNN/install/include/opencv2/flann/kdtree_single_index.h:
-
 E:/opencv-4.2.0/DNN/install/include/opencv2/flann/nn_index.h:
+
+E:/opencv-4.2.0/DNN/install/include/opencv2/flann/kdtree_single_index.h:
 
 E:/opencv-4.2.0/DNN/install/include/opencv2/flann/logger.h:
 

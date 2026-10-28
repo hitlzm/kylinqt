@@ -1325,8 +1325,8 @@ Rectangle {
                         return "俯仰主令:"
                     }
                     value: {
-                        if (index === 0) return imageData.pitchFrameAngle.toFixed(2) + "°"
-                        if (index === 1) return imageData.yawFrameAngle.toFixed(2) + "°"
+                        if (index === 0) return imageData.pitchFrameAngle.toFixed(3) + "°"
+                        if (index === 1) return imageData.yawFrameAngle.toFixed(3) + "°"
                         if (index === 2) return imageData.azimuthMasterCmd.toFixed(4)
                         return imageData.pitchMasterCmd.toFixed(4)
                     }

@@ -452,7 +452,7 @@ protected:
     void sendEnableCmd(int axis, bool enable);          // 使能/释放电机
     void sendStopCmd(int axis);                         // 停车
     void sendZeroCmd(int axis);                         // 回零
-    void sendResetCmd();                                // 复位 (联合指令)
+    void sendResetCmd();                                // 复位（依次发送三个轴）
     void sendPositionCmd(const PositionModeCmd1Hex &cmd);   // 位置模式
     void sendVecCmd(const SpeedModeCmd1Hex &cmd);           // 速度模式
     void sendSwingCmd(int axis, float freq, float amplitude); // 摇摆模式,可以单轴摇摆，也可以配置三轴摇摆

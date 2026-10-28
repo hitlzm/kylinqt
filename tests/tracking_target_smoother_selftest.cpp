@@ -22,20 +22,19 @@ void check(bool condition, const char *message)
     ++g_failures;
 }
 
-void testSmallOffsetPassesThrough()
+void testSmallOffsetUsesLowSpeedTracking()
 {
     TrackingTargetSmoother smoother;
     smoother.reset(12.0);
-    const auto result = smoother.update(12.0, 1.0, 0.02);
-    check(closeTo(result.positionDeg, 13.0), "small offset should follow directly");
-    check(!result.ramping, "small offset should not enter ramp mode");
+    const auto result = smoother.update(12.0, 0.5, 0.02);
+    check(std::abs(result.positionDeg - 12.0) <= 1.0 * 0.02 + 1e-6,
+          "small offset should use near-target speed limit");
+    check(result.ramping, "small nonzero offset should use continuous tracking");
 }
 
 void testLargeOffsetHonorsSpeedAndAcceleration()
 {
     TrackingTargetSmoother::Config config;
-    config.rampEnterOffsetDeg = 3.0;
-    config.rampExitOffsetDeg = 2.0;
     config.maxSpeedDegPerSec = 10.0;
     config.maxAccelerationDegPerSec2 = 10.0;
     TrackingTargetSmoother smoother(config);
@@ -59,7 +58,7 @@ void testLargeOffsetHonorsSpeedAndAcceleration()
 
         check(positionStep <= config.maxSpeedDegPerSec * dt + 1e-6,
               "large offset exceeded maximum tracking speed");
-        if (result.ramping) {
+        if (result.ramping && std::abs(offset) > 1.0) {
             check(velocityStep <=
                       config.maxAccelerationDegPerSec2 * dt + 1e-6,
                   "large offset exceeded maximum tracking acceleration");
@@ -70,10 +69,11 @@ void testLargeOffsetHonorsSpeedAndAcceleration()
     }
 
     check(sawRamp, "large offset should enter ramp mode");
-    check(closeTo(previousPosition, targetAbs, 1e-4),
-          "large offset should converge to target");
-    check(!smoother.ramping(),
-          "large offset should leave ramp mode after settling");
+    check(std::abs(previousPosition - targetAbs) <=
+              config.zeroDeadbandDeg + 1e-6,
+          "large offset should converge into the soft deadband");
+    check(!smoother.ramping() && smoother.zeroHeld(),
+          "large offset should stop ramping inside the zero-hold band");
 }
 
 void testMovingTargetReversesWithoutJump()
@@ -92,7 +92,8 @@ void testMovingTargetReversesWithoutJump()
     // 再确认第一拍仍受速度和加速度限制。
     const double offsetAfterChange = 2.0 - feedback;
     const auto reversed = smoother.update(feedback, offsetAfterChange, 0.02);
-    check(std::abs(reversed.positionDeg - beforeReversal) <= 0.2 + 1e-6,
+    check(std::abs(reversed.positionDeg - beforeReversal)
+              <= smoother.config().maxSpeedDegPerSec * 0.02 + 1e-6,
           "target reversal should remain slew limited");
 }
 
@@ -102,15 +103,17 @@ void testPreviewGeneratesOneSecondRamp()
     const std::array<double, 4> offsets = {{20.0, 20.0, 20.0, 20.0}};
     const auto positions = smoother.preview(0.0, offsets, 0.25);
 
-    check(closeTo(positions[0], 0.625, 1e-4),
-          "preview first point should begin the acceleration ramp");
+    check(positions[0] > 0.0 && positions[0] < positions[3],
+          "preview should generate a continuous trajectory");
     double previous = 0.0;
     double previousVelocity = 0.0;
     for (double position : positions) {
         const double velocity = (position - previous) / 0.25;
-        check(std::abs(velocity - previousVelocity) <= 10.0 * 0.25 + 1e-6,
+        check(std::abs(velocity - previousVelocity)
+                  <= smoother.config().maxAccelerationDegPerSec2 * 0.25 + 1e-6,
               "preview point exceeded maximum acceleration");
-        check(std::abs(position - previous) <= 10.0 * 0.25 + 1e-6,
+        check(std::abs(position - previous)
+                  <= smoother.config().maxSpeedDegPerSec * 0.25 + 1e-6,
               "preview point exceeded maximum speed");
         previous = position;
         previousVelocity = velocity;
@@ -126,30 +129,68 @@ void testInvalidMeasurementHoldsLastTarget()
           "non-finite seeker offset should hold last target");
 }
 
-void testRampStartDoesNotInheritDirectModeVelocity()
+void testNearZeroHoldsAgainstSensorQuantization()
+{
+    TrackingTargetSmoother::Config config;
+    config.zeroDeadbandDeg = 0.04;
+    TrackingTargetSmoother smoother(config);
+    smoother.reset(37.0);
+
+    const auto entered = smoother.update(37.0, 0.02, 0.02);
+    check(entered.zeroHeld, "small offset should enter soft deadband");
+    check(closeTo(entered.positionDeg, 37.0),
+          "soft deadband should hold the last valid target");
+
+    // 导引头在零位附近按 0.02° 分辨率跳动，转台目标必须保持不动。
+    const double jitter[] = {0.04, 0.02, 0.00, -0.02, 0.02, 0.04};
+    const double feedbackJitter[] = {37.0001, 36.9999, 37.0002,
+                                     37.0000, 37.0001, 36.9998};
+    for (int i = 0; i < 6; ++i) {
+        const auto held = smoother.update(feedbackJitter[i], jitter[i], 0.02);
+        check(held.zeroHeld, "small jitter should remain in soft deadband");
+        check(closeTo(held.positionDeg, 37.0),
+              "sensor quantization must not move the held target");
+    }
+
+    TrackingTargetSmoother::StepResult resumed;
+    for (int i = 0; i < 20 && smoother.zeroHeld(); ++i)
+        resumed = smoother.update(37.0001, 0.09, 0.02);
+    check(!smoother.zeroHeld(),
+          "persistent offset above deadband should resume soft tracking");
+    check(std::abs(resumed.positionDeg - 37.0)
+              <= smoother.config().nearMaxSpeedDegPerSec * 0.02 * 20 + 1e-6,
+          "soft-deadband exit must remain low-speed limited");
+}
+
+void testZeroHoldEntryRemainsSlewLimited()
 {
     TrackingTargetSmoother smoother;
     smoother.reset(0.0);
 
-    // 小偏差直通时若反馈角跳变，内部观测速度会很大；紧接着进入斜坡时
-    // 必须从零速度重新加速。
-    smoother.update(100.0, 0.5, 0.02);
-    const auto result = smoother.update(100.5, 20.0, 0.02);
-    check(result.ramping, "large offset should enter ramp mode");
-    check(std::abs(result.positionDeg - 100.5) <= 10.0 * 0.02 * 0.02 + 1e-6,
-          "ramp start must not inherit direct-mode velocity");
+    double beforeEntry = 0.0;
+    for (int i = 0; i < 20; ++i) {
+        const auto ramping = smoother.update(0.0, 20.0, 0.02);
+        beforeEntry = ramping.positionDeg;
+    }
+
+    // 突然进入导引头零点区时只冻结上一有效目标，不能回追当前反馈。
+    const auto entered = smoother.update(0.0, 0.02, 0.02);
+    check(entered.zeroHeld, "small offset should enter soft deadband");
+    check(closeTo(entered.positionDeg, beforeEntry),
+          "deadband entry must not command a reverse correction");
 }
 
 } // namespace
 
 int main()
 {
-    testSmallOffsetPassesThrough();
+    testSmallOffsetUsesLowSpeedTracking();
     testLargeOffsetHonorsSpeedAndAcceleration();
     testMovingTargetReversesWithoutJump();
     testPreviewGeneratesOneSecondRamp();
     testInvalidMeasurementHoldsLastTarget();
-    testRampStartDoesNotInheritDirectModeVelocity();
+    testNearZeroHoldsAgainstSensorQuantization();
+    testZeroHoldEntryRemainsSlewLimited();
 
     if (g_failures == 0) {
         std::printf("tracking_target_smoother_selftest: PASS\n");

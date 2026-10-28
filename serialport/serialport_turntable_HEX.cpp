@@ -335,12 +335,14 @@ void SerialPortTurntableHex::sendZeroCmd(int axis)
 
 void SerialPortTurntableHex::sendResetCmd()
 {
-    // 复位 (CMD_RESET = 0x1F) — 联合指令, 轴号可为1/2/3
+    // 复位 (CMD_RESET = 0x1F)：依次向三个轴各发送一条复位指令
     uint8_t params[14];
     std::memset(params, 0, 14);
 
-    uint8_t axis_cmd = ENCODE_AXIS_CMD(1, CMD_RESET);  // 联合指令, 轴号任意
-    buildAndSend(axis_cmd, params);
+    for (int axis = 1; axis <= 3; ++axis) {
+        uint8_t axis_cmd = ENCODE_AXIS_CMD(axis, CMD_RESET);
+        buildAndSend(axis_cmd, params);
+    }
 }
 
 
