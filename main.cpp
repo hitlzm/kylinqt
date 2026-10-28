@@ -393,12 +393,6 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
-    QObject::connect(&m_modeController, &ModeController::exguideSettingChanged,
-                     turntablePort, &SerialPortTurntableHex::resetTrackingSmoother,
-                     Qt::QueuedConnection);
-    QObject::connect(&m_modeController, &ModeController::exguideSrcChanged,
-                     turntablePort, &SerialPortTurntableHex::resetTrackingSmoother,
-                     Qt::QueuedConnection);
 
     // 外引导源不可用（串口未打开/CCD视频未接入）时，弹窗提示
     QObject::connect(laserPort, &SerialPortLaser::exguideSerialNotOpen, laserData, &LaserData::popupMessage, Qt::QueuedConnection);

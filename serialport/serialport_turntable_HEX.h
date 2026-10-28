@@ -20,7 +20,6 @@ brief: 转台串口类（HEX十六进制协议版本）
 */
 
 #include "serialport.h"
-#include "../utils/tracking_target_smoother.h"
 #include <QElapsedTimer>
 
 // ═════════════════════ 指令代号定义（byte2的低6位）═════════════════════
@@ -420,8 +419,6 @@ public slots:
 
     // ── 模式切换 ──
     void ProgramModeChanged(int mode);
-    // 外引导源/周期切换时清除上一轮斜坡状态，首拍从当前反馈角重新起坡。
-    void resetTrackingSmoother();
 
     // ── 初始化 ──
     void dowork() {
@@ -514,12 +511,6 @@ private:
     bool m_turntableTimeValid = false;
     bool m_waitingStatusLogged = false;
     qint64 m_last20msTargetMs = -1;
-
-    // 大偏差时把绝对角度阶跃整形为受速度、加速度约束的斜坡。
-    // 20 ms 模式使用跨帧状态；1 秒模式的四个点由 preview() 一次生成。
-    TrackingTargetSmoother m_outerTrackingSmoother;
-    TrackingTargetSmoother m_middleTrackingSmoother;
-    QElapsedTimer m_20msTrackingClock;
 
     // 转台从已有速度切换到新速度时必须先停车，并等待对应轴回到伺服状态。
     enum class HandleSpeedState {
