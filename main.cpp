@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<image_send_frame>("image_send_frame");
     qRegisterMetaType<image_recv_frame>("image_recv_frame");
     qRegisterMetaType<programSend_frameHex>("programSend_frameHex");
+    qRegisterMetaType<ProgramAxisCommandHex>("ProgramAxisCommandHex");
     qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
     qRegisterMetaType<TrackingCorrectionCmdHex>("TrackingCorrectionCmdHex");
     qRegisterMetaType<RMCData>("RMCData");
@@ -237,14 +238,26 @@ int main(int argc, char *argv[])
 
     //Turntable 信号与槽连接
     QObject::connect(turntableSendData, &TurntableSendDataHex::requestSendProgramMode,   turntablePort, &SerialPortTurntableHex::sendProgramMode, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::requestProgramAxisCommand,
+                     turntablePort, &SerialPortTurntableHex::sendProgramAxisCommand,
+                     Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqopenTurntable,   turntablePort, &SerialPortTurntableHex::openTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqreleaseTurntable,   turntablePort, &SerialPortTurntableHex::releaseTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqzeroTurntable,   turntablePort, &SerialPortTurntableHex::zeroTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqresetTurntable,   turntablePort, &SerialPortTurntableHex::resetTurntable, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqcloseTurntable,   turntablePort, &SerialPortTurntableHex::closeTurntable, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqAxisEnable,
+                     turntablePort, &SerialPortTurntableHex::enableAxis, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqAxisStop,
+                     turntablePort, &SerialPortTurntableHex::stopAxis, Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqAxisZero,
+                     turntablePort, &SerialPortTurntableHex::zeroAxis, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::sinMove,  turntablePort, &SerialPortTurntableHex::sendSwingMode, Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqTrackingCorrection,
                      turntablePort, &SerialPortTurntableHex::sendTrackingCorrection,
+                     Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,
+                     turntablePort, &SerialPortTurntableHex::zeroInnerAngleOffset,
                      Qt::QueuedConnection);
 
     // ── 转台：人工发送延迟探针打点（T1）──────────────────────────────
@@ -380,6 +393,12 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, laserPort, &SerialPortLaser::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::exguideSettingChanged,
+                     turntablePort, &SerialPortTurntableHex::resetTrackingSmoother,
+                     Qt::QueuedConnection);
+    QObject::connect(&m_modeController, &ModeController::exguideSrcChanged,
+                     turntablePort, &SerialPortTurntableHex::resetTrackingSmoother,
+                     Qt::QueuedConnection);
 
     // 外引导源不可用（串口未打开/CCD视频未接入）时，弹窗提示
     QObject::connect(laserPort, &SerialPortLaser::exguideSerialNotOpen, laserData, &LaserData::popupMessage, Qt::QueuedConnection);

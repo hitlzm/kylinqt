@@ -20,6 +20,7 @@ brief: 转台串口类（HEX十六进制协议版本）
 */
 
 #include "serialport.h"
+#include "../utils/tracking_target_smoother.h"
 #include <QElapsedTimer>
 
 // ═════════════════════ 指令代号定义（byte2的低6位）═════════════════════
@@ -84,6 +85,16 @@ typedef struct programSend_frameHex {
     float   current_outter_angle;
     float   outter_endangle;
 } programSend_frameHex;
+
+// 程控模式单轴指令。mode: 0=位置模式, 1=速率模式。
+// 位置模式使用 position/velocity/acceleration；速率模式使用 velocity/acceleration。
+typedef struct ProgramAxisCommandHex {
+    int     axis;           // 轴号 1=内框, 2=中框, 3=外框
+    int     mode;           // 0=位置模式, 1=速率模式
+    float   position;       // 目标位置 (度)
+    float   velocity;       // 位置模式限速，或速率模式目标速度 (度/秒)
+    float   acceleration;   // 加速度 (度/秒²)
+} ProgramAxisCommandHex;
 
 // 位置模式命令（应用层）
 typedef struct PositionModeCmd1Hex {
@@ -292,12 +303,19 @@ public:
     ~TurntableSendDataHex() override {};
 
     Q_INVOKABLE void buildFrame(int m_index);
+    Q_INVOKABLE void sendProgramCommand(int axis, int mode, float position,
+                                        float velocity, float acceleration);
+    Q_INVOKABLE void setAxisEnabled(int axis, bool enabled);
+    Q_INVOKABLE void stopAxis(int axis);
+    Q_INVOKABLE void zeroAxis(int axis);
     //Q_INVOKABLE void sinMove(int m_index, float amplitude, float frequency);
     // 跟踪修正入口：以当前三个轴的控制偏差直接生成一帧修正指令。
     Q_INVOKABLE void requestTrackingCorrection(float innerDeviation,
                                                float middleDeviation,
                                                float outerDeviation,
                                                int target = 1);
+    // 将内框偏置角校正为 -当前内框角度，使当前画面零位对应内框零度。
+    Q_INVOKABLE void requestInnerAngleZeroCorrection();
 
 public slots:
     void recvinner_angle(float angle)  { m_current_inner_angle = angle; }
@@ -306,6 +324,7 @@ public slots:
 
 signals:
     void requestSendProgramMode(programSend_frameHex frame);
+    void requestProgramAxisCommand(ProgramAxisCommandHex command);
     void runtimeChanged();
     void inner_startangleChanged();
     void inner_endangleChanged();
@@ -320,9 +339,13 @@ signals:
     void reqcloseTurntable();
     void reqzeroTurntable();
     void reqresetTurntable();
+    void reqAxisEnable(int axis, bool enabled);
+    void reqAxisStop(int axis);
+    void reqAxisZero(int axis);
 
     void sinMove(int m_index, float amplitude, float frequency);//桥接信号，驱动三轴进行正弦运动
     void reqTrackingCorrection(TrackingCorrectionCmdHex cmd);
+    void reqInnerAngleZeroCorrection();
 
 private:
     int m_runtime = 1;
@@ -370,6 +393,10 @@ public slots:
 
     // ── 程控模式 ──
     void sendProgramMode(programSend_frameHex frame);
+    void sendProgramAxisCommand(ProgramAxisCommandHex command);
+    void enableAxis(int axis, bool enabled);
+    void stopAxis(int axis);
+    void zeroAxis(int axis);
 
     // ── 遥控模式（手柄）──
     void sendHandleMode(float axisLeftX, float axisLeftY, float axisRightX,
@@ -382,6 +409,7 @@ public slots:
 
     // ── 跟踪修正 ──
     void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
+    void zeroInnerAngleOffset();
 
     // ── 摇摆模式 ──
     void sendSwingMode(int index, float amplitude, float freq);
@@ -392,6 +420,8 @@ public slots:
 
     // ── 模式切换 ──
     void ProgramModeChanged(int mode);
+    // 外引导源/周期切换时清除上一轮斜坡状态，首拍从当前反馈角重新起坡。
+    void resetTrackingSmoother();
 
     // ── 初始化 ──
     void dowork() {
@@ -465,10 +495,17 @@ private:
     TurntableDataHex *m_turntableDataHex = nullptr;
     TurntableSendDataHex *m_turntableSendDataHex = nullptr;
     bool m_isProgramMode = false;
+    // 0=外引导，1=程控，2=遥控。-1 表示尚未收到模式通知。
+    int m_operationMode = -1;
+    // 只有外引导模式允许执行跟踪指令。关闭后可直接丢弃跨线程队列中
+    // 尚未处理的旧 0x0A/0x0B，避免停车之后又被旧跟踪帧重新驱动。
+    bool m_trackingAllowed = false;
 
     float m_current_inner_angle = 0.0f;
     float m_current_middle_angle = 0.0f;
     float m_current_outter_angle = 0.0f;
+    // 按下“零位校正”后设为 -当前内框角度；不再使用固定 75° 默认值。
+    float m_inner_angle_offset_deg = 0.0f;
 
     // 状态反馈中的转台毫秒时间（0-14399999，4小时循环）。
     // 跟踪目标时刻以此为准，避免本地时钟与转台时基不一致。
@@ -477,6 +514,12 @@ private:
     bool m_turntableTimeValid = false;
     bool m_waitingStatusLogged = false;
     qint64 m_last20msTargetMs = -1;
+
+    // 大偏差时把绝对角度阶跃整形为受速度、加速度约束的斜坡。
+    // 20 ms 模式使用跨帧状态；1 秒模式的四个点由 preview() 一次生成。
+    TrackingTargetSmoother m_outerTrackingSmoother;
+    TrackingTargetSmoother m_middleTrackingSmoother;
+    QElapsedTimer m_20msTrackingClock;
 
     // 转台从已有速度切换到新速度时必须先停车，并等待对应轴回到伺服状态。
     enum class HandleSpeedState {

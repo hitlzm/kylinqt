@@ -137,6 +137,15 @@ Item {
                 if (checked) modeController.setExguidePeriod(6)
             }
         }
+        CusButton_Blue {
+            id: innerAngleZeroButton
+            width: 100
+            height: 28
+            text: "零位校正"
+            font.pixelSize: 14
+            anchors.verticalCenter: parent.verticalCenter
+            onClicked: turntableSendData.requestInnerAngleZeroCorrection()
+        }
     }
 
     Component.onCompleted: {

@@ -220,6 +220,17 @@ Rectangle {
                 asynchronous: true
                 source: modelData
                 active: stack.currentIndex === index
+
+                property bool globalAxesEnabled: root.enableorelease === 1
+
+                onGlobalAxesEnabledChanged: {
+                    if (index === 1 && item)
+                        item.globalAxesEnabled = globalAxesEnabled
+                }
+                onLoaded: {
+                    if (index === 1 && item)
+                        item.globalAxesEnabled = globalAxesEnabled
+                }
             }
         }
     }

@@ -10,7 +10,6 @@
 #define MAX_SPEED_HEX 14.0f           //转台的最大速度可以再加大一些
 #define MAX_ACCELERATION_HEX 10.0f
 #define HANDLE_SPEED_CHANGE_EPSILON 0.1f  // 低于此变化的摇杆噪声不触发停车重设
-#define INNER_ANGLE_OFFSET_DEG 75.0f      // 图像头/激光头画面零位对应的内框固定偏置
 
 // ════════════════════════ 数值编解码实现 ════════════════════════
 
@@ -494,6 +493,10 @@ void SerialPortTurntableHex::sendTrackCmd_1s(const TrackingSendCmd1Hex &cmd)
     uint16_t secTime = static_cast<uint16_t>(
         std::max(0, std::min(14399, cmd.trackTime)));
     encode2BytesUint(params + 0, secTime);
+    // qDebug().nospace() << "[HEX][TEST] 0x0A axis=" << cmd.axis
+    //                    << " sec=" << secTime
+    //                    << " angles=" << cmd.angle1 << "," << cmd.angle2
+    //                    << "," << cmd.angle3 << "," << cmd.angle4;
 
     // 四个角度值 (每个对应一个时间点: 0.25s, 0.50s, 0.75s, 1.00s)
     encode3BytesSigned(params + 2,  cmd.angle1, ANGLE_UNIT);
@@ -537,6 +540,15 @@ void SerialPortTurntableHex::sendTrackCmd_20ms(const TrackingSendCmd20msHex &cmd
 void SerialPortTurntableHex::sendTrackingCorrection(TrackingCorrectionCmdHex cmd)
 {
     sendCorrectionCmd(cmd);
+}
+
+void SerialPortTurntableHex::zeroInnerAngleOffset()
+{
+    // 当前画面零位对应的内框偏置，使“当前内框角 + 偏置角”等于零。
+    m_inner_angle_offset_deg = -m_current_inner_angle;
+    qDebug() << "[HEX] 内框零位已校正，当前内框角:"
+             << m_current_inner_angle
+             << "°，偏置角:" << m_inner_angle_offset_deg << "°";
 }
 
 
@@ -616,12 +628,36 @@ void SerialPortTurntableHex::sendTimesync(int seconds)
 
 void SerialPortTurntableHex::ProgramModeChanged(int mode)
 {
+    const bool leavingExguide = (m_operationMode == 0 && mode != 0);
+
+    m_operationMode = mode;
     m_isProgramMode = (mode == 1);
+    m_trackingAllowed = (mode == 0);
 
     // 进入遥控模式后，首次速度控制先停车再等待伺服，确保不会继承其它模式
     // 已经建立的速度；离开遥控模式时清掉等待中的目标，避免反馈触发误下发。
     const bool remoteMode = (mode == 2);
     resetAllHandleSpeedStates(remoteMode);
+    resetTrackingSmoother();
+
+    if (leavingExguide) {
+        // 外引导 1s 模式可能已经下发了最长约 1.2s 的未来轨迹。
+        // 切出外引导时必须显式停车，不能只停止导引头的发送定时器。
+        // m_trackingAllowed 已在上面关闭，因此排队中的旧跟踪帧即使随后到达
+        // 也会被 sendTrackMode_* 丢弃，最终留在设备上的命令是停车。
+        m_last20msTargetMs = -1;
+        sendStopCmd(1);
+        sendStopCmd(2);
+        sendStopCmd(3);
+        qDebug() << "[HEX] 已切出外引导模式，发送三轴停车指令";
+    }
+}
+
+void SerialPortTurntableHex::resetTrackingSmoother()
+{
+    m_outerTrackingSmoother.reset(m_current_outter_angle);
+    m_middleTrackingSmoother.reset(m_current_middle_angle);
+    m_20msTrackingClock.invalidate();
 }
 
 
@@ -690,6 +726,63 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
     }
 }
 
+void SerialPortTurntableHex::sendProgramAxisCommand(ProgramAxisCommandHex command)
+{
+    if (!m_isProgramMode) {
+        qDebug() << "[HEX] 未进入程控模式，无法发送程控轴指令";
+        SendLat::discardClick(SendLat::Turntable);
+        return;
+    }
+
+    if (command.axis < 1 || command.axis > 3 || command.mode < 0 || command.mode > 1) {
+        qDebug() << "[HEX] 程控模式: 无效轴号或模式" << command.axis << command.mode;
+        SendLat::discardClick(SendLat::Turntable);
+        return;
+    }
+
+    if (command.mode == 0) {
+        PositionModeCmd1Hex cmd;
+        cmd.axis = command.axis;
+        cmd.anglePos = command.position;
+        cmd.velocity = command.velocity;
+        cmd.acceleration = command.acceleration;
+        sendPositionCmd(cmd);
+    } else {
+        SpeedModeCmd1Hex cmd;
+        cmd.axis = command.axis;
+        cmd.velocity = command.velocity;
+        cmd.acceleration = command.acceleration;
+        sendVecCmd(cmd);
+    }
+}
+
+void SerialPortTurntableHex::enableAxis(int axis, bool enabled)
+{
+    if (axis < 1 || axis > 3)
+        return;
+
+    resetHandleSpeedState(axis);
+    sendEnableCmd(axis, enabled);
+}
+
+void SerialPortTurntableHex::stopAxis(int axis)
+{
+    if (axis < 1 || axis > 3)
+        return;
+
+    resetHandleSpeedState(axis);
+    sendStopCmd(axis);
+}
+
+void SerialPortTurntableHex::zeroAxis(int axis)
+{
+    if (axis < 1 || axis > 3)
+        return;
+
+    resetHandleSpeedState(axis);
+    sendZeroCmd(axis);
+}
+
 
 // ════════════════════════ 外引导模式 ════════════════════════
 
@@ -714,6 +807,9 @@ qint64 SerialPortTurntableHex::estimatedTurntableTimeMs() const
 
 void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2)
 {
+    if (!m_trackingAllowed)
+        return;
+
     // 250ms跟踪模式: 上位机每隔1秒发送一组跟踪数据
     // frame1 对应外框(轴3, 方位角), frame2 对应中框(轴2, 俯仰角)
     // 内框保持当前角度不变
@@ -733,8 +829,9 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
 
     //可以判断一下角度是否超过转台运动范围并给出提示，俯仰范围：-10~70，方位范围 -100~100 ，滚转范围 -200~200
 
-    // 图像头/激光头画面零位与转台内框零位存在固定偏置，坐标变换使用补偿后的内框角。
-    const float innerAngleForTransform = m_current_inner_angle + INNER_ANGLE_OFFSET_DEG;
+    // 图像头/激光头画面零位与转台内框零位存在偏置，坐标变换使用补偿后的内框角。
+    // 转台内框正角为顺时针；deRoll 接口按其反向约定使用角度，因此这里取负号。
+    const float innerAngleForTransform = -(m_current_inner_angle + m_inner_angle_offset_deg);
 
     //对方位角与俯仰角结构体进行更新
     auto ang = seeker::deRollAboutBoresightDeg(frame1.angle1, frame2.angle1, innerAngleForTransform);
@@ -750,14 +847,35 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     frame1.angle4 = ang.az;
     frame2.angle4 = ang.el;
 
+    // 每个 250 ms 点都以当前转台反馈为起点生成受速度/加速度约束的轨迹。
+    // 外框正方向与导引头方位角符号相反，中框与俯仰角同向。
+    const std::array<double, 4> outerOffsets = {{
+        -static_cast<double>(frame1.angle1),
+        -static_cast<double>(frame1.angle2),
+        -static_cast<double>(frame1.angle3),
+        -static_cast<double>(frame1.angle4)
+    }};
+    const std::array<double, 4> middleOffsets = {{
+        static_cast<double>(frame2.angle1),
+        static_cast<double>(frame2.angle2),
+        static_cast<double>(frame2.angle3),
+        static_cast<double>(frame2.angle4)
+    }};
+    const std::array<double, 4> outerPositions =
+            m_outerTrackingSmoother.preview(
+                m_current_outter_angle, outerOffsets, 0.25);
+    const std::array<double, 4> middlePositions =
+            m_middleTrackingSmoother.preview(
+                m_current_middle_angle, middleOffsets, 0.25);
+
     // ── 外框跟踪 (轴3) ──
     TrackingSendCmd1Hex cmdOuter;
     cmdOuter.axis = 3;  // 外框
     cmdOuter.trackTime = static_cast<int>(nextSecond);
-    cmdOuter.angle1 = frame1.angle1 + m_current_outter_angle;
-    cmdOuter.angle2 = frame1.angle2 + m_current_outter_angle;
-    cmdOuter.angle3 = frame1.angle3 + m_current_outter_angle;
-    cmdOuter.angle4 = frame1.angle4 + m_current_outter_angle;
+    cmdOuter.angle1 = static_cast<float>(outerPositions[0]);
+    cmdOuter.angle2 = static_cast<float>(outerPositions[1]);
+    cmdOuter.angle3 = static_cast<float>(outerPositions[2]);
+    cmdOuter.angle4 = static_cast<float>(outerPositions[3]);
     if (cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100 || cmdOuter.angle2 < -100 || cmdOuter.angle2 > 100 ||
         cmdOuter.angle3 < -100 || cmdOuter.angle3 > 100 || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100) {
         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
@@ -770,10 +888,10 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     TrackingSendCmd1Hex cmdMiddle;
     cmdMiddle.axis = 2;  // 中框
     cmdMiddle.trackTime = static_cast<int>(nextSecond);
-    cmdMiddle.angle1 = frame2.angle1 + m_current_middle_angle;
-    cmdMiddle.angle2 = frame2.angle2 + m_current_middle_angle;
-    cmdMiddle.angle3 = frame2.angle3 + m_current_middle_angle;
-    cmdMiddle.angle4 = frame2.angle4 + m_current_middle_angle;
+    cmdMiddle.angle1 = static_cast<float>(middlePositions[0]);
+    cmdMiddle.angle2 = static_cast<float>(middlePositions[1]);
+    cmdMiddle.angle3 = static_cast<float>(middlePositions[2]);
+    cmdMiddle.angle4 = static_cast<float>(middlePositions[3]);
     if (cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70 || cmdMiddle.angle2 < -10 || cmdMiddle.angle2 > 70 ||
         cmdMiddle.angle3 < -10 || cmdMiddle.angle3 > 70 || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
@@ -781,21 +899,27 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
         sendTrackCmd_1s(cmdMiddle);
     }
 
-    // 外引导模式下转台内框无需转动，因此不发送轴1的250ms跟踪指令。
-    // 内框仍通过状态反馈读取，用于导引头角度反滚转和20ms联合帧的保持角。
-    // TrackingSendCmd1Hex cmdInner;
-    // cmdInner.axis = 1;
-    // cmdInner.trackTime = frame1.time;
-    // cmdInner.angle1 = m_current_inner_angle;
-    // cmdInner.angle2 = m_current_inner_angle;
-    // cmdInner.angle3 = m_current_inner_angle;
-    // cmdInner.angle4 = m_current_inner_angle;
-    // sendTrackCmd_1s(cmdInner);
+    // [TEST] 同时向内框发送0x0A，验证250ms模式是否要求三轴共同进入。
+    // 内框四个插值点保持当前反馈角度。
+    TrackingSendCmd1Hex cmdInner;
+    cmdInner.axis = 1;
+    cmdInner.trackTime = static_cast<int>(nextSecond);
+    cmdInner.angle1 = cmdInner.angle2 =
+    cmdInner.angle3 = cmdInner.angle4 = m_current_inner_angle;
+    if (cmdInner.angle1 < -200 || cmdInner.angle1 > 200 || cmdInner.angle2 < -200 || cmdInner.angle2 > 200 ||
+        cmdInner.angle3 < -200 || cmdInner.angle3 > 200 || cmdInner.angle4 < -200 || cmdInner.angle4 > 200) {
+        qDebug() << "内框跟踪角度超出范围";
+    } else {
+        sendTrackCmd_1s(cmdInner);
+    }
 }
 
 
 void SerialPortTurntableHex::sendTrackMode_20ms(double yawangle, double pitchangle)
 {
+    if (!m_trackingAllowed)
+        return;
+
     // 20ms目标时刻取转台状态帧时间，并对齐到下一个20ms边界。
     const qint64 turntableNowMs = estimatedTurntableTimeMs();
     if (turntableNowMs < 0) {
@@ -807,34 +931,51 @@ void SerialPortTurntableHex::sendTrackMode_20ms(double yawangle, double pitchang
     }
 
     // 对俯仰角和方位角进行变换；画面零位偏置只用于坐标变换，不改变内框保持角。
-    const float innerAngleForTransform = m_current_inner_angle + INNER_ANGLE_OFFSET_DEG;
+    // 转台内框正角为顺时针；deRoll 接口按其反向约定使用角度，因此这里取负号。
+    const float innerAngleForTransform = -(m_current_inner_angle + m_inner_angle_offset_deg);
     auto ang = seeker::deRollAboutBoresightDeg(yawangle, pitchangle, innerAngleForTransform);
     yawangle = ang.az;
     pitchangle = ang.el;
 
+    // 同一 20 ms 目标时刻只生成一次斜坡，定时器抖动不会多推进限速状态。
+    constexpr qint64 kTrackLoopMs = 14400000; // 4小时循环
+    constexpr qint64 kTrackStepMs = 20;
+    qint64 targetMs = ((turntableNowMs / kTrackStepMs) + 1) * kTrackStepMs;
+    if (targetMs >= kTrackLoopMs)
+        targetMs = 0;
+    if (targetMs == m_last20msTargetMs)
+        return;
+
+    double dtSec = 0.02;
+    if (!m_20msTrackingClock.isValid()) {
+        resetTrackingSmoother();
+        m_outerTrackingSmoother.reset(m_current_outter_angle);
+        m_middleTrackingSmoother.reset(m_current_middle_angle);
+        m_20msTrackingClock.start();
+    } else {
+        dtSec = static_cast<double>(m_20msTrackingClock.restart()) / 1000.0;
+        // 避免串口线程短时卡顿后一次推进过大。
+        dtSec = std::max(0.005, std::min(0.100, dtSec));
+    }
+
+    // 外框正方向与导引头方位角符号相反，中框与俯仰角同向。
+    const TrackingTargetSmoother::StepResult outerStep =
+            m_outerTrackingSmoother.update(
+                m_current_outter_angle, -yawangle, dtSec);
+    const TrackingTargetSmoother::StepResult middleStep =
+            m_middleTrackingSmoother.update(
+                m_current_middle_angle, pitchangle, dtSec);
+
     // 20ms跟踪模式 (联合指令, 一帧包含三轴数据)
     TrackingSendCmd20msHex m_cmd;
     m_cmd.angle1 = m_current_inner_angle;                    // 内框保持
-    m_cmd.angle2 = m_current_middle_angle + pitchangle;      // 中框 + 俯仰角
-    m_cmd.angle3 = m_current_outter_angle + yawangle;        // 外框 + 方位角
+    m_cmd.angle2 = static_cast<float>(middleStep.positionDeg); // 中框目标
+    m_cmd.angle3 = static_cast<float>(outerStep.positionDeg);  // 外框目标
     if (m_cmd.angle2 < -10 || m_cmd.angle2 > 70) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
     } else if (m_cmd.angle3 < -100 || m_cmd.angle3 > 100) {
         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
     } else {
-        constexpr qint64 kTrackLoopMs = 14400000; // 4小时循环
-        constexpr qint64 kTrackStepMs = 20;
-
-        // 取转台当前时间之后的第一个20ms边界；首帧也从这里开始，
-        // 不再固定从100ms起步。
-        qint64 targetMs = ((turntableNowMs / kTrackStepMs) + 1) * kTrackStepMs;
-        if (targetMs >= kTrackLoopMs)
-            targetMs = 0;
-
-        // 同一个20ms周期只发一帧，避免定时器抖动造成重复时间点。
-        if (targetMs == m_last20msTargetMs)
-            return;
-
         m_cmd.timeMs = static_cast<int>(targetMs);
         m_last20msTargetMs = targetMs;
         sendTrackCmd_20ms(m_cmd);
@@ -1196,6 +1337,33 @@ void TurntableSendDataHex::buildFrame(int m_index)
     emit requestSendProgramMode(m_frame);
 }
 
+void TurntableSendDataHex::sendProgramCommand(int axis, int mode, float position,
+                                              float velocity, float acceleration)
+{
+    ProgramAxisCommandHex command;
+    command.axis = axis;
+    command.mode = mode;
+    command.position = position;
+    command.velocity = velocity;
+    command.acceleration = acceleration;
+    emit requestProgramAxisCommand(command);
+}
+
+void TurntableSendDataHex::setAxisEnabled(int axis, bool enabled)
+{
+    emit reqAxisEnable(axis, enabled);
+}
+
+void TurntableSendDataHex::stopAxis(int axis)
+{
+    emit reqAxisStop(axis);
+}
+
+void TurntableSendDataHex::zeroAxis(int axis)
+{
+    emit reqAxisZero(axis);
+}
+
 
 void TurntableSendDataHex::requestTrackingCorrection(float innerDeviation,
                                                      float middleDeviation,
@@ -1208,6 +1376,11 @@ void TurntableSendDataHex::requestTrackingCorrection(float innerDeviation,
     cmd.middleDeviation = middleDeviation;
     cmd.outerDeviation = outerDeviation;
     emit reqTrackingCorrection(cmd);
+}
+
+void TurntableSendDataHex::requestInnerAngleZeroCorrection()
+{
+    emit reqInnerAngleZeroCorrection();
 }
 
 

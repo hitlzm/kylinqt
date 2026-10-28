@@ -1413,7 +1413,7 @@ Rectangle {
                             case 0x44:
                                 return "记忆状态"
                             default:
-                                return "未知状态"
+                                return "--"
                             }
                         }
                         if (index === 1) {
@@ -1427,7 +1427,7 @@ Rectangle {
                             case 0x03:
                                 return "匹配状态"
                             default:
-                                return "未知状态"
+                                return "--"
                             }
                         }
                         if (index === 2)

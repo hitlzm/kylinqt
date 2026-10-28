@@ -30,10 +30,14 @@ Rectangle {
 
     // 探测器状态（第三部分 bits1~0）非正常时弹窗：1=丢光 2=不同步 3=能量饱和
     property int detectorState: (laserData.detectorStatus & 0x03)
+    property int detectorLossCount: 0
     onDetectorStateChanged: {
         if (detectorState === 0) return
         var txt = ""
-        if (detectorState === 1) txt = "探测器丢光"
+        if (detectorState === 1) {
+            detectorLossCount++
+            txt = "探测器丢光（累计 " + detectorLossCount + " 次）"
+        }
         else if (detectorState === 2) txt = "探测器不同步"
         else if (detectorState === 3) txt = "探测器能量饱和"
         detectorMsg.showToast(txt, 1500)
@@ -321,6 +325,7 @@ Rectangle {
 
                             Column {
                                 spacing: 6
+                                DataLabel { label: "丢光次数:"; value: root.detectorLossCount + " 次" }
                                 DataLabel { label: "软件版本1:"; value: "V" + (laserData.softwareVersion1 / 100).toFixed(2) }
                                 DataLabel { label: "软件版本2:"; value: "V" + (laserData.softwareVersion2 / 100).toFixed(2) }
                             }

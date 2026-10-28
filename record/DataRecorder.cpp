@@ -13,6 +13,12 @@ static constexpr int kImageSampleRateHz = 50;       // 20 ms
 static constexpr int kLaserSampleRateHz = 100;      // 10 ms
 static constexpr int kTurntableSampleRateHz = 200;  // 5 ms
 
+// 保存帧内返回时间戳的微秒部分，固定保留三位（0~999）。
+static QString receivedMicrosecondsText(int usTime)
+{
+    return QStringLiteral("%1").arg(usTime, 3, 10, QLatin1Char('0'));
+}
+
 DataRecorder::DataRecorder(QObject *parent)
     : QObject(parent)
 {
@@ -344,7 +350,8 @@ void DataRecorder::onImageFrame()
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kImageHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "采样率(Hz),时间,B帧流水号,当前工作通道,俯仰视线角速度(°/s),偏航视线角速度(°/s),"
+            "采样率(Hz),时间,返回时间戳微秒,B帧流水号,当前工作通道,"
+            "俯仰视线角速度(°/s),偏航视线角速度(°/s),"
             "光学工作状态,俯仰框架角(°),偏航框架角(°),"
             "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
             "红外帧编号,电视帧编号\n");
@@ -362,6 +369,7 @@ void DataRecorder::onImageFrame()
     line += QString::number(kImageSampleRateHz);
     line += ',';
     line += timeText;
+    line += ','; line += receivedMicrosecondsText(m_imageData->usTime());
     line += ','; line += QString::number(m_imageData->bFrameSequence());
     line += ','; line += imageWorkChannelText(m_imageData->currentWorkChannel());
     line += ','; line += QString::number(m_imageData->pitchLosAngVel(), 'f', 4);
@@ -401,7 +409,7 @@ void DataRecorder::onLaserFrame()
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kLaserHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "采样率(Hz),时间,光轴方位角(°),光轴俯仰角(°),"
+            "采样率(Hz),时间,返回时间戳微秒,光轴方位角(°),光轴俯仰角(°),"
             "方位陀螺输出角速度(°/s),俯仰陀螺输出角速度(°/s),"
             "方位视线角速度(°/s),俯仰视线角速度(°/s),"
             "方位偏差角(°),俯仰偏差角(°),激光周期(ms),增益状态,"
@@ -420,6 +428,7 @@ void DataRecorder::onLaserFrame()
     line += QString::number(kLaserSampleRateHz);
     line += ',';
     line += timeText;
+    line += ','; line += receivedMicrosecondsText(m_laserData->usTime());
     line += ','; line += QString::number(m_laserData->opticalAzimuth(), 'f', 4);
     line += ','; line += QString::number(m_laserData->opticalPitch(), 'f', 4);
     line += ','; line += QString::number(m_laserData->gyroAzimuthRate(), 'f', 4);

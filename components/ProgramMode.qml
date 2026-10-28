@@ -8,8 +8,14 @@ Item{
     id:root
     anchors.fill: parent
 
-    // 转台正弦运动允许的最大峰值加速度（°/s²）
-    readonly property real maxSineAcceleration: 10.0
+    // 程控模式允许的最大速度与加速度
+    readonly property real maxTrackingSpeed: 14.0
+    readonly property real maxAcceleration: 10.0
+    readonly property var axisAngleLimits: [
+        { min: -200.0, max: 200.0 },
+        { min: -10.0, max: 70.0 },
+        { min: -100.0, max: 100.0 }
+    ]
 
     property var controlNames: [
         "内框（滚转轴）",
@@ -18,15 +24,16 @@ Item{
     ]
 
     property var axisEnabledStates: [false, false, false]
-    property var axisLinkedStates: [true, true, true]
+    property var axisLinkedStates: [false, false, false]
+    property bool globalAxesEnabled: false
 
     //正弦摆动的幅值与频率range,frequency
     property real range: 0.0
     property real frequency: 0.0
 
-    // 加速度限位提示
+    // 程控参数校验提示
     MessagePopup {
-        id: sineAccelerationMsg
+        id: validationMsg
     }
 
     // 数字提取函数
@@ -61,11 +68,23 @@ Item{
         return axisEnabledStates[axisIndex] === true
     }
 
+    function setAllAxisEnabled(enabled) {
+        if (axisEnabledStates[0] === enabled
+                && axisEnabledStates[1] === enabled
+                && axisEnabledStates[2] === enabled)
+            return
+
+        axisEnabledStates = [enabled, enabled, enabled]
+    }
+
+    onGlobalAxesEnabledChanged: setAllAxisEnabled(globalAxesEnabled)
+    Component.onCompleted: setAllAxisEnabled(globalAxesEnabled)
+
     function toggleAxisControl(axisIndex) {
         var states = axisEnabledStates.slice()
         states[axisIndex] = !states[axisIndex]
         axisEnabledStates = states
-        // TODO: 后续接入本分支的使能/释放控制逻辑
+        turntableSendData.setAxisEnabled(axisIndex + 1, states[axisIndex])
     }
 
     function axisLinked(axisIndex) {
@@ -76,7 +95,134 @@ Item{
         var states = axisLinkedStates.slice()
         states[axisIndex] = linked
         axisLinkedStates = states
-        // TODO: 后续接入联动控制逻辑
+    }
+
+    function linkedAxesFor(axisIndex) {
+        if (!axisLinked(axisIndex))
+            return [axisIndex]
+
+        var axes = []
+        for (var i = 0; i < axisLinkedStates.length; ++i) {
+            if (axisLinked(i))
+                axes.push(i)
+        }
+        return axes
+    }
+
+    function isLinkLeader(axisIndex) {
+        if (!axisLinked(axisIndex))
+            return true
+
+        for (var i = 0; i < axisIndex; ++i) {
+            if (axisLinked(i))
+                return false
+        }
+        return true
+    }
+
+    function showValidationError(messages) {
+        validationMsg.message = "输入参数超出允许范围：\n"
+                + messages.join("\n")
+                + "\n请修改后重新发送。"
+        validationMsg.open()
+    }
+
+    function axisFieldError(axisIndex, fieldName) {
+        var row = axisRowRepeater.itemAt(axisIndex)
+        if (!row)
+            return ""
+
+        var axisName = controlNames[axisIndex]
+        var limits = axisAngleLimits[axisIndex]
+
+        if (fieldName === "target"
+                && programModeComboBox.currentIndex === 0
+                && (row.targetValue < limits.min || row.targetValue > limits.max)) {
+            return axisName + "目标位置 "
+                    + row.targetValue.toFixed(4) + "° 超出允许范围 "
+                    + limits.min.toFixed(0) + "～"
+                    + limits.max.toFixed(0) + "°"
+        }
+
+        if (fieldName === "speed"
+                && (row.speedValue < -maxTrackingSpeed
+                    || row.speedValue > maxTrackingSpeed)) {
+            return axisName + "速度 "
+                    + row.speedValue.toFixed(4) + " °/s 超出允许范围 -"
+                    + maxTrackingSpeed.toFixed(0) + "～"
+                    + maxTrackingSpeed.toFixed(0) + " °/s"
+        }
+
+        if (fieldName === "acceleration"
+                && (row.accelerationValue < 0
+                    || row.accelerationValue > maxAcceleration)) {
+            return axisName + "加速度 "
+                    + row.accelerationValue.toFixed(4) + " °/s² 超出允许范围 0～"
+                    + maxAcceleration.toFixed(0) + " °/s²"
+        }
+
+        return ""
+    }
+
+    function validateAxisField(axisIndex, fieldName) {
+        var row = axisRowRepeater.itemAt(axisIndex)
+        if (!row)
+            return false
+
+        var validProperty = fieldName + "InputValid"
+        var error = axisFieldError(axisIndex, fieldName)
+        if (error === "") {
+            row[validProperty] = true
+            return true
+        }
+
+        // 与 ImageSendArea 的角度输入框一致：同一错误只在首次出现时提示，
+        // 修正为合法值后才复位，避免每次切换输入框都重复弹窗。
+        if (row[validProperty])
+            showValidationError([error])
+        row[validProperty] = false
+        return false
+    }
+
+    function validateAxisGroup(axisIndexes) {
+        var errors = []
+
+        for (var i = 0; i < axisIndexes.length; ++i) {
+            var axisIndex = axisIndexes[i]
+            var fields = programModeComboBox.currentIndex === 0
+                    ? ["target", "speed", "acceleration"]
+                    : ["speed", "acceleration"]
+            for (var fieldIndex = 0; fieldIndex < fields.length; ++fieldIndex) {
+                var error = axisFieldError(axisIndex, fields[fieldIndex])
+                if (error !== "")
+                    errors.push(error)
+            }
+        }
+
+        if (errors.length > 0) {
+            showValidationError(errors)
+            return false
+        }
+        return true
+    }
+
+    function sendAxisOrLink(axisIndex) {
+        var axes = linkedAxesFor(axisIndex)
+        if (!validateAxisGroup(axes))
+            return
+
+        for (var i = 0; i < axes.length; ++i) {
+            var row = axisRowRepeater.itemAt(axes[i])
+            if (!row)
+                continue
+
+            turntableSendData.sendProgramCommand(
+                        axes[i] + 1,
+                        programModeComboBox.currentIndex,
+                        row.targetValue,
+                        row.speedValue,
+                        row.accelerationValue)
+        }
     }
 
     RowLayout {
@@ -196,6 +342,13 @@ Item{
             id: axisRowRepeater
             model: root.controlNames
             delegate: Rectangle {
+                readonly property real targetValue: root.parseInputNumber(targetInput.text)
+                readonly property real speedValue: root.parseInputNumber(speedInput.text)
+                readonly property real accelerationValue: root.parseInputNumber(accelerationInput.text)
+                property bool targetInputValid: true
+                property bool speedInputValid: true
+                property bool accelerationInputValid: true
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.minimumHeight: 74
@@ -234,13 +387,7 @@ Item{
                             onEditingFinished: {
                                 var value = parseInputNumber(text)
                                 text = value.toFixed(4)
-                                if (index === 0) {
-                                    turntableSendData.inner_endangle = value
-                                } else if (index === 1) {
-                                    turntableSendData.middle_endangle = value
-                                } else if (index === 2) {
-                                    turntableSendData.outter_endangle = value
-                                }
+                                root.validateAxisField(index, "target")
                             }
                         }
                         CusTextField {
@@ -252,6 +399,7 @@ Item{
                             placeholderText: "0.0000"
                             onEditingFinished: {
                                 text = parseInputNumber(text).toFixed(4)
+                                root.validateAxisField(index, "speed")
                             }
                         }
                         CusTextField {
@@ -263,6 +411,7 @@ Item{
                             placeholderText: "0.0000"
                             onEditingFinished: {
                                 text = parseInputNumber(text).toFixed(4)
+                                root.validateAxisField(index, "acceleration")
                             }
                         }
                         CusCheckBox {
@@ -277,7 +426,8 @@ Item{
                             Layout.preferredHeight: 38
                             font.pixelSize: 14
                             text: "发送数据"
-                            onClicked: turntableSendData.buildFrame(index + 1)
+                            enabled: root.isLinkLeader(index)
+                            onClicked: root.sendAxisOrLink(index)
                         }
 
                         CusButton_Blue {
@@ -286,21 +436,24 @@ Item{
                             Layout.preferredHeight: 38
                             font.pixelSize: 14
                             text: "正弦运动"
+                            enabled: root.isLinkLeader(index)
                             onClicked: {
                                 // 以点击瞬间输入框中的值为准，避免尚未触发 editingFinished 时使用旧值
                                 range = parseInputNumber(sinInput.text)
                                 frequency = parseInputNumber(frequencyInput.text)
 
                                 var acceleration = sinePeakAcceleration(range, frequency)
-                                if (acceleration > maxSineAcceleration) {
-                                    sineAccelerationMsg.message =
+                                if (acceleration > maxAcceleration) {
+                                    validationMsg.message =
                                         "输入数据应满足（2πf）² × A 得到的加速度小于10 °/s²。\n"
                                         + "当前计算值为 " + acceleration.toFixed(3) + " °/s²。"
-                                    sineAccelerationMsg.open()
+                                    validationMsg.open()
                                     return
                                 }
 
-                                turntableSendData.sinMove(index + 1, range, frequency)
+                                var axes = root.linkedAxesFor(index)
+                                for (var i = 0; i < axes.length; ++i)
+                                    turntableSendData.sinMove(axes[i] + 1, range, frequency)
                                 //为了保存正弦运动的数据，先定义为正弦运动时默认保存数据（转台这一路）
                                 dataRecorder.startTurntableSave()
                             }
@@ -333,14 +486,17 @@ Item{
                             Layout.preferredHeight: 36
                             font.pixelSize: 14
                             text: "停车"
-                            // TODO: 后续接入对应行/轴的停车控制
+                            onClicked: {
+                                turntableSendData.stopAxis(index + 1)
+                                dataRecorder.stopTurntableSave()
+                            }
                         }
                         CusButton_Blue {
                             Layout.preferredWidth: 82
                             Layout.preferredHeight: 36
                             font.pixelSize: 14
                             text: "回零"
-                            // TODO: 后续接入对应行/轴的回零控制
+                            onClicked: turntableSendData.zeroAxis(index + 1)
                         }
                         Item { Layout.fillWidth: true }
                     }
