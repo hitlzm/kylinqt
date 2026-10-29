@@ -185,7 +185,7 @@ Item {
 
             Text {
                 width: parent.width
-                text: "请先确认导引头视频画面为正，再利用内框角度值进行修正"
+                text: "请先确认导引头视频画面为正，再进行外引导零位修正"
                 font.pixelSize: 20
                 font.bold: true
                 color: "#333333"
@@ -198,20 +198,20 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 18
 
-                CusButton_White {
-                    width: 110
-                    height: 38
-                    text: "取消"
-                    font.pixelSize: 16
-                    onClicked: innerAngleZeroPopup.close()
-                }
-
                 CusButton_Blue {
                     width: 110
                     height: 38
                     text: "确认"
                     font.pixelSize: 16
                     onClicked: root.confirmInnerAngleZeroCorrection()
+                }
+
+                CusButton_White {
+                    width: 110
+                    height: 38
+                    text: "取消"
+                    font.pixelSize: 16
+                    onClicked: innerAngleZeroPopup.close()
                 }
             }
         }

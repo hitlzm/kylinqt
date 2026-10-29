@@ -1022,11 +1022,15 @@ bool SerialPortImage::isImageFrameUpdated()
 // 通信中断处理：停止本路外引导，保留外引导模式并请求弹窗提示
 void SerialPortImage::abortExGuideByLinkLost()
 {
-    // 先停掉定时器并解绑，保证中断期间不会再把外推角度发给转台
+    // 先停掉定时器并解绑，保证中断期间不会再把外推角度发给转台。
     if (m_exGuideTimer) {
         m_exGuideTimer->stop();
         disconnect(m_exGuideTimer, &QTimer::timeout, nullptr, nullptr);
     }
+
+    // 外引导数据源已经停止，立即请求转台三轴停车，避免继续执行已下发的轨迹。
+    emit reqStopExGuideAxes();
+
     m_send20msTimeSyncSent = false;
     m_abNeedReset = true;          // 重新选择图像源时用当帧测量重建滤波器
     m_lastexguidesetting = -1;     // 本次绑定作废，重新选中图像源时会重新绑定并重启定时器

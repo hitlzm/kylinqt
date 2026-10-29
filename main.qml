@@ -169,6 +169,18 @@ ApplicationWindow {
         id: serialWarnMsg
     }
 
+    MessagePopup {
+        id: exguideZeroWarnMsg
+    }
+
+    Connections {
+        target: modeController
+        onExguideRequiresZeroCorrection: {
+            exguideZeroWarnMsg.message = "请注意先进行零位修正，再使用外引导模式"
+            exguideZeroWarnMsg.open()
+        }
+    }
+
     Connections {
         target: laserData
         onPopupMessage: { serialWarnMsg.message = msg; serialWarnMsg.open() }

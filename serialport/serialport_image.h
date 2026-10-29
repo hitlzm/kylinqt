@@ -507,8 +507,9 @@ signals:
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
     // 外引导过程中导引头帧编号(bFrameSequence)不再更新，即通信中断：
-    // 工作线程只负责发信号，由主线程弹窗提示并取消图像导引头外引导源选择
+    // 停止本路外引导后请求转台三轴停车，并通知主线程弹窗、取消本路外引导源
     void exguideLinkLost(const QString &msg);
+    void reqStopExGuideAxes();
     void reqTimesync(int seconds);
     void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
     void reqExsend_20ms(double angle1 ,double angle2 );

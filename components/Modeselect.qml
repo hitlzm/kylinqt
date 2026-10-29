@@ -7,6 +7,57 @@ import "./"
 Item{
     id: root
     property int myindex: 1
+    property bool syncingModeSelection: false
+    property bool pendingExguideSelection: false
+
+    function syncModeSelection() {
+        syncingModeSelection = true
+        radio1.checked = modeController.currentMode === 0
+        radio2.checked = modeController.currentMode === 1
+        radio3.checked = modeController.currentMode === 2
+        syncingModeSelection = false
+
+        if (modeController.currentMode >= 0 && modeController.currentMode <= 2)
+            myindex = modeController.currentMode
+    }
+
+    function selectMode(mode) {
+        if (mode !== 0)
+            pendingExguideSelection = false
+
+        // 允许先打开外引导配置页完成零位修正，但后端仍保持原模式。
+        if (mode === 0 && !modeController.innerAngleZeroCorrected) {
+            pendingExguideSelection = true
+            myindex = 0
+            modeController.setCurrentMode(0)
+            return
+        }
+
+        if (modeController.setCurrentMode(mode)) {
+            pendingExguideSelection = false
+            myindex = mode
+        } else {
+            syncModeSelection()
+        }
+    }
+
+    Connections {
+        target: modeController
+        onCurrentModeChanged: {
+            if (modeController.currentMode !== 0)
+                root.pendingExguideSelection = false
+            root.syncModeSelection()
+        }
+        onInnerAngleZeroCorrectedChanged: {
+            if (root.pendingExguideSelection
+                    && modeController.currentMode !== 0) {
+                root.pendingExguideSelection = false
+                root.selectMode(0)
+            }
+        }
+    }
+
+    Component.onCompleted: root.syncModeSelection()
 
     GroupBox {
         background: Rectangle {
@@ -34,10 +85,8 @@ Item{
         checked: false
         ButtonGroup.group: modeGroup
         onCheckedChanged: {
-            if (checked) {
-                root.myindex = 0
-                modeController.setCurrentMode(0)
-            }
+            if (checked && !root.syncingModeSelection)
+                root.selectMode(0)
         }
     }
     CusRadioButton {
@@ -48,10 +97,8 @@ Item{
         checked: false
         ButtonGroup.group: modeGroup
         onCheckedChanged: {
-            if (checked) {
-                root.myindex = 1
-                modeController.setCurrentMode(1)
-            }
+            if (checked && !root.syncingModeSelection)
+                root.selectMode(1)
         }
     }
     CusRadioButton {
@@ -62,10 +109,8 @@ Item{
         checked: false
         ButtonGroup.group: modeGroup
         onCheckedChanged: {
-            if (checked) {
-                root.myindex = 2
-                modeController.setCurrentMode(2)
-            }
+            if (checked && !root.syncingModeSelection)
+                root.selectMode(2)
         }
     }
 }

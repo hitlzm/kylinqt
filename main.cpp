@@ -259,6 +259,10 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,
                      turntablePort, &SerialPortTurntableHex::zeroInnerAngleOffset,
                      Qt::QueuedConnection);
+    // 零位修正请求发出后立即记录会话状态，作为进入外引导模式的统一门禁。
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,
+                     &m_modeController, &ModeController::markInnerAngleZeroCorrected,
+                     Qt::DirectConnection);
 
     // ── 转台：人工发送延迟探针打点（T1）──────────────────────────────
     // 只测程控"发送数据"这一个入口（TurntableSendDataHex::buildFrame → 本信号）。
@@ -422,6 +426,10 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::exguideLinkLost, imageData, &ImageData::popupMessage, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::exguideLinkLost,
                      &m_modeController, &ModeController::onExguideLinkLost, Qt::QueuedConnection);
+    // 图像头外引导链路中断并停止本路定时器后，转台三轴立即停车。
+    QObject::connect(imagePort, &SerialPortImage::reqStopExGuideAxes,
+                     turntablePort, &SerialPortTurntableHex::closeTurntable,
+                     Qt::QueuedConnection);
 
     //手柄信号连接
     QObject::connect(_myhandle, &Myhandle::handleModeSignal, turntablePort, &SerialPortTurntableHex::sendHandleMode, Qt::QueuedConnection);

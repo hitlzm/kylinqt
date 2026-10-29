@@ -18,6 +18,8 @@ class ModeController : public QObject
     Q_PROPERTY(int currentMode READ currentMode NOTIFY currentModeChanged)
     Q_PROPERTY(int exguideSource READ exguideSource NOTIFY exguideSourceChanged)
     Q_PROPERTY(int exguidePeriod READ exguidePeriod NOTIFY exguidePeriodChanged)
+    Q_PROPERTY(bool innerAngleZeroCorrected READ innerAngleZeroCorrected
+               NOTIFY innerAngleZeroCorrectedChanged)
     Q_PROPERTY(bool ccdInferenceRequested READ ccdInferenceRequested
                NOTIFY ccdInferenceRequestChanged)
 public:
@@ -32,6 +34,7 @@ public:
     int currentMode() const { return m_currentMode; }
     int exguideSource() const { return m_exguideSource; }
     int exguidePeriod() const { return m_exguidePeriod; }
+    bool innerAngleZeroCorrected() const { return m_innerAngleZeroCorrected; }
 
     // CCD 视觉推理只在外引导模式、CCD 外引导源和跟踪周期都已选定后才允许。
     bool ccdInferenceRequested() const {
@@ -41,9 +44,15 @@ public:
     }
 
 public slots:
-    void setCurrentMode(int mode) {
+    // 返回模式切换是否成功。外引导必须先完成一次内框零位修正。
+    bool setCurrentMode(int mode) {
+        if (mode == 0 && !m_innerAngleZeroCorrected) {
+            emit exguideRequiresZeroCorrection();
+            return false;
+        }
+
         if (m_currentMode == mode)
-            return;
+            return true;
 
         const bool wasRequested = ccdInferenceRequested();
         const bool leavingExguide = (m_currentMode == 0 && mode != 0);
@@ -56,6 +65,16 @@ public slots:
         emit currentModeChanged();
         emit modeChanged(mode);
         notifyInferenceRequestIfChanged(wasRequested);
+        return true;
+    }
+
+    // 内框零位修正值在当前应用会话内一经设定即保持有效。
+    void markInnerAngleZeroCorrected() {
+        if (m_innerAngleZeroCorrected)
+            return;
+
+        m_innerAngleZeroCorrected = true;
+        emit innerAngleZeroCorrectedChanged();
     }
 
     void setExguideSource(int source) {
@@ -114,6 +133,8 @@ signals:
     void exguideSettingChanged(int setting); //通知外引导发送时间间隔变化 6,7
     void exguideSourceLost(int source);  //外引导源不可用，通知界面只取消对应源
     void exguideSessionEnded();          //退出外引导模式，外部据此清理跟踪显示
+    void exguideRequiresZeroCorrection(); //未完成零位修正时拒绝进入外引导模式
+    void innerAngleZeroCorrectedChanged();
     void ccdInferenceRequestChanged(bool enabled);
 private slots:
     
@@ -152,6 +173,7 @@ private:
     int m_currentMode = -1;
     int m_exguideSource = -1;
     int m_exguidePeriod = -1;
+    bool m_innerAngleZeroCorrected = false;
 };
 
 #endif // MODECONTROLLER_H
