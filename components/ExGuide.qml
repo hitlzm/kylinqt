@@ -17,6 +17,12 @@ Item {
                     turntableData.outter_ctlDeviation)
     }
 
+    // 用户确认视频画面已调整为正后，才计算并填入内框偏置修正角。
+    function confirmInnerAngleZeroCorrection() {
+        turntableSendData.requestInnerAngleZeroCorrection()
+        innerAngleZeroPopup.close()
+    }
+
     // 外引导源不可用：C++ 侧已停止对应外引导，
     // 界面只取消对应源选择，保留外引导模式和跟踪周期设置。
     function clearSource(source) {
@@ -141,10 +147,73 @@ Item {
             id: innerAngleZeroButton
             width: 100
             height: 28
-            text: "零位校正"
+            text: "零位修正"
             font.pixelSize: 14
             anchors.verticalCenter: parent.verticalCenter
-            onClicked: turntableSendData.requestInnerAngleZeroCorrection()
+            onClicked: innerAngleZeroPopup.open()
+        }
+    }
+
+    // 零位修正会以点击确认时的内框角度计算偏置，因此打开弹窗本身不修改任何数值。
+    Popup {
+        id: innerAngleZeroPopup
+        parent: Overlay.overlay
+        width: Math.min(560, parent ? parent.width - 40 : 560)
+        height: 190
+        x: Math.round((parent.width - width) / 2)
+        y: Math.round((parent.height - height) / 2)
+
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+
+        Overlay.modal: Rectangle {
+            color: "#70000000"
+        }
+
+        background: Rectangle {
+            radius: 10
+            color: "white"
+            border.color: "#D0D0D0"
+            border.width: 1
+        }
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 24
+            spacing: 22
+
+            Text {
+                width: parent.width
+                text: "请先确认导引头视频画面为正，再利用内框角度值进行修正"
+                font.pixelSize: 20
+                font.bold: true
+                color: "#333333"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+            }
+
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 18
+
+                CusButton_White {
+                    width: 110
+                    height: 38
+                    text: "取消"
+                    font.pixelSize: 16
+                    onClicked: innerAngleZeroPopup.close()
+                }
+
+                CusButton_Blue {
+                    width: 110
+                    height: 38
+                    text: "确认"
+                    font.pixelSize: 16
+                    onClicked: root.confirmInnerAngleZeroCorrection()
+                }
+            }
         }
     }
 

@@ -832,8 +832,8 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     //可以判断一下角度是否超过转台运动范围并给出提示，俯仰范围：-10~70，方位范围 -100~100 ，滚转范围 -200~200
 
     // 图像头/激光头画面零位与转台内框零位存在偏置，坐标变换使用补偿后的内框角。
-    // 转台内框正角为顺时针；deRoll 接口按其反向约定使用角度，因此这里取负号。
-    const float innerAngleForTransform = -(m_current_inner_angle + m_inner_angle_offset_deg);
+    // 内框正角对应逆时针旋转补偿，因此直接将补偿后的内框角传给 deRoll 接口。
+    const float innerAngleForTransform = m_current_inner_angle + m_inner_angle_offset_deg;
 
     //对方位角与俯仰角结构体进行更新
     auto ang = seeker::deRollAboutBoresightDeg(frame1.angle1, frame2.angle1, innerAngleForTransform);
@@ -933,8 +933,8 @@ void SerialPortTurntableHex::sendTrackMode_20ms(double yawangle, double pitchang
     }
 
     // 对俯仰角和方位角进行变换；画面零位偏置只用于坐标变换，不改变内框保持角。
-    // 转台内框正角为顺时针；deRoll 接口按其反向约定使用角度，因此这里取负号。
-    const float innerAngleForTransform = -(m_current_inner_angle + m_inner_angle_offset_deg);
+    // 内框正角对应逆时针旋转补偿，因此直接将补偿后的内框角传给 deRoll 接口。
+    const float innerAngleForTransform = m_current_inner_angle + m_inner_angle_offset_deg;
     auto ang = seeker::deRollAboutBoresightDeg(yawangle, pitchangle, innerAngleForTransform);
     yawangle = ang.az;
     pitchangle = ang.el;

@@ -132,20 +132,20 @@ void testInvalidMeasurementHoldsLastTarget()
 void testNearZeroHoldsAgainstSensorQuantization()
 {
     TrackingTargetSmoother::Config config;
-    config.zeroDeadbandDeg = 0.04;
+    config.zeroDeadbandDeg = 0.004;
     TrackingTargetSmoother smoother(config);
     smoother.reset(37.0);
 
-    const auto entered = smoother.update(37.0, 0.02, 0.02);
+    const auto entered = smoother.update(37.0, 0.004, 0.02);
     check(entered.zeroHeld, "small offset should enter soft deadband");
     check(closeTo(entered.positionDeg, 37.0),
           "soft deadband should hold the last valid target");
 
-    // 导引头在零位附近按 0.02° 分辨率跳动，转台目标必须保持不动。
-    const double jitter[] = {0.04, 0.02, 0.00, -0.02, 0.02, 0.04};
+    // 导引头在零位附近按 0.002° 分辨率跳动，转台目标必须保持不动。
+    const double jitter[] = {0.004, 0.002, 0.0, -0.002, -0.004};
     const double feedbackJitter[] = {37.0001, 36.9999, 37.0002,
                                      37.0000, 37.0001, 36.9998};
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 5; ++i) {
         const auto held = smoother.update(feedbackJitter[i], jitter[i], 0.02);
         check(held.zeroHeld, "small jitter should remain in soft deadband");
         check(closeTo(held.positionDeg, 37.0),
@@ -154,9 +154,9 @@ void testNearZeroHoldsAgainstSensorQuantization()
 
     TrackingTargetSmoother::StepResult resumed;
     for (int i = 0; i < 20 && smoother.zeroHeld(); ++i)
-        resumed = smoother.update(37.0001, 0.09, 0.02);
+        resumed = smoother.update(37.0001, 0.014, 0.02);
     check(!smoother.zeroHeld(),
-          "persistent offset above deadband should resume soft tracking");
+          "persistent 0.014 deg offset should resume soft tracking");
     check(std::abs(resumed.positionDeg - 37.0)
               <= smoother.config().nearMaxSpeedDegPerSec * 0.02 * 20 + 1e-6,
           "soft-deadband exit must remain low-speed limited");
@@ -174,7 +174,7 @@ void testZeroHoldEntryRemainsSlewLimited()
     }
 
     // 突然进入导引头零点区时只冻结上一有效目标，不能回追当前反馈。
-    const auto entered = smoother.update(0.0, 0.02, 0.02);
+    const auto entered = smoother.update(0.0, 0.004, 0.02);
     check(entered.zeroHeld, "small offset should enter soft deadband");
     check(closeTo(entered.positionDeg, beforeEntry),
           "deadband entry must not command a reverse correction");

@@ -13,25 +13,26 @@
 //
 // 导引头角分辨率通常明显低于转台。零点附近先扣除软死区，再以低速连续跟进；
 // 偏差超过近目标半径后，速度和加速度上限连续过渡到远目标跟踪能力。这样既
-// 不响应 0.02° 的量化跳动，也不会形成较大的死区振荡。
+// 保留 0.002° 导引头分辨率下的近零响应，也不会形成较大的死区振荡。
 class TrackingTargetSmoother
 {
 public:
     struct Config {
-        double zeroDeadbandDeg = 0.02;
-        double zeroDeadbandReleaseDeg = 0.10;
+        double zeroDeadbandDeg = 0.004;
+        double zeroDeadbandReleaseDeg = 0.006;
         double nearTrackRadiusDeg = 1.0;
         double nearMaxSpeedDegPerSec = 1.5;
-        double nearMaxAccelerationDegPerSec2 = 4.0;
+        double nearMaxAccelerationDegPerSec2 = 3.0;
         double farTrackRadiusDeg = 3.0;
-        double offsetFilterTimeConstantSec = 0.08;
+        double offsetFilterTimeConstantSec = 0.04;
         double offsetFilterFastTimeConstantSec = 0.02;
-        double offsetFilterFastSlewThresholdDeg = 0.10;
+        double offsetFilterFastSlewThresholdDeg = 0.03;
         double offsetFilterFastResetDeltaDeg = 0.5;
+        double offsetFilterSignResetMinDeg = 0.006;
         bool offsetFilterResetOnSignChange = true;
         double maxSpeedDegPerSec = 12.0;
         double maxAccelerationDegPerSec2 = 10.0;
-        double settleDeadbandDeg = 0.01;
+        double settleDeadbandDeg = 0.002;
     };
 
     struct StepResult {
@@ -56,11 +57,11 @@ public:
         m_config = config;
         if (!std::isfinite(m_config.zeroDeadbandDeg)
                 || m_config.zeroDeadbandDeg < 0.0) {
-            m_config.zeroDeadbandDeg = 0.04;
+            m_config.zeroDeadbandDeg = 0.004;
         }
         if (!std::isfinite(m_config.zeroDeadbandReleaseDeg)
                 || m_config.zeroDeadbandReleaseDeg < 0.0) {
-            m_config.zeroDeadbandReleaseDeg = 0.08;
+            m_config.zeroDeadbandReleaseDeg = 0.006;
         }
         m_config.zeroDeadbandReleaseDeg = std::max(
                     m_config.zeroDeadbandDeg,
@@ -91,14 +92,14 @@ public:
                     m_config.maxSpeedDegPerSec);
         if (!std::isfinite(m_config.nearMaxAccelerationDegPerSec2)
                 || m_config.nearMaxAccelerationDegPerSec2 <= 0.0) {
-            m_config.nearMaxAccelerationDegPerSec2 = 4.0;
+            m_config.nearMaxAccelerationDegPerSec2 = 3.0;
         }
         m_config.nearMaxAccelerationDegPerSec2 = std::min(
                     m_config.nearMaxAccelerationDegPerSec2,
                     m_config.maxAccelerationDegPerSec2);
         if (!std::isfinite(m_config.offsetFilterTimeConstantSec)
                 || m_config.offsetFilterTimeConstantSec < 0.0) {
-            m_config.offsetFilterTimeConstantSec = 0.08;
+            m_config.offsetFilterTimeConstantSec = 0.04;
         }
         if (!std::isfinite(m_config.offsetFilterFastTimeConstantSec)
                 || m_config.offsetFilterFastTimeConstantSec < 0.0) {
@@ -106,14 +107,18 @@ public:
         }
         if (!std::isfinite(m_config.offsetFilterFastSlewThresholdDeg)
                 || m_config.offsetFilterFastSlewThresholdDeg < 0.0) {
-            m_config.offsetFilterFastSlewThresholdDeg = 0.10;
+            m_config.offsetFilterFastSlewThresholdDeg = 0.03;
         }
         if (!std::isfinite(m_config.offsetFilterFastResetDeltaDeg)
                 || m_config.offsetFilterFastResetDeltaDeg < 0.0) {
             m_config.offsetFilterFastResetDeltaDeg = 0.5;
         }
+        if (!std::isfinite(m_config.offsetFilterSignResetMinDeg)
+                || m_config.offsetFilterSignResetMinDeg < 0.0) {
+            m_config.offsetFilterSignResetMinDeg = 0.006;
+        }
         if (!std::isfinite(m_config.settleDeadbandDeg) || m_config.settleDeadbandDeg < 0.0)
-            m_config.settleDeadbandDeg = 0.01;
+            m_config.settleDeadbandDeg = 0.002;
     }
 
     const Config &config() const
@@ -180,9 +185,10 @@ public:
                        && requestedOffsetDeg * m_filteredOffsetDeg < 0.0
                        && std::max(std::abs(requestedOffsetDeg),
                                    std::abs(m_filteredOffsetDeg))
-                           > m_config.zeroDeadbandDeg) {
+                           > m_config.offsetFilterSignResetMinDeg) {
                 // 目标越过视轴时立即释放旧的符号，避免滤波滞后继续把转台
-                // 推过目标。死区内的零位噪声反号不触发该分支。
+                // 推过目标。只有超过独立门限的符号变化才触发，防止零点附近
+                // 的 ±0.002° 量化噪声反复绕过滤波器。
                 m_filteredOffsetDeg = requestedOffsetDeg;
             } else {
                 const double innovation =

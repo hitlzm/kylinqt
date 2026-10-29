@@ -10,7 +10,7 @@ namespace {
 
 constexpr double kPi = 3.14159265358979323846;
 constexpr double kDt = 0.02;
-constexpr double kSensorLsb = 0.02;
+constexpr double kSensorLsb = 0.002;
 constexpr double kServoTauSec = 0.08;
 
 struct Metrics {
@@ -31,26 +31,30 @@ double quantize(double value)
 
 double measurementNoise(std::mt19937 &rng)
 {
-    std::uniform_real_distribution<double> distribution(-0.02, 0.02);
+    std::uniform_real_distribution<double> distribution(-0.002, 0.002);
     return distribution(rng);
 }
 
 Metrics simulate(double nearSpeedDegPerSec,
                  int segment,
                  bool directBaseline = false,
-                 double nearAccelerationDegPerSec2 = 4.0,
-                 double inputFilterTauSec = 0.08,
+                 double nearAccelerationDegPerSec2 = 3.0,
+                 double inputFilterTauSec = 0.04,
                  bool useMedian3 = false,
-                 double zeroDeadbandDeg = 0.04,
-                 double maxAccelerationDegPerSec2 = 6.0)
+                 double zeroDeadbandDeg = 0.004,
+                 double maxAccelerationDegPerSec2 = 10.0,
+                 double zeroDeadbandReleaseDeg = 0.006,
+                 double filterFastSlewThresholdDeg = 0.03)
 {
     TrackingTargetSmoother::Config config;
     config.zeroDeadbandDeg = zeroDeadbandDeg;
+    config.zeroDeadbandReleaseDeg = zeroDeadbandReleaseDeg;
     config.nearTrackRadiusDeg = 1.0;
     config.nearMaxSpeedDegPerSec = nearSpeedDegPerSec;
     config.nearMaxAccelerationDegPerSec2 = nearAccelerationDegPerSec2;
     config.farTrackRadiusDeg = 3.0;
     config.offsetFilterTimeConstantSec = inputFilterTauSec;
+    config.offsetFilterFastSlewThresholdDeg = filterFastSlewThresholdDeg;
     config.maxSpeedDegPerSec = 12.0;
     config.maxAccelerationDegPerSec2 = maxAccelerationDegPerSec2;
     config.settleDeadbandDeg = 0.01;
@@ -202,7 +206,7 @@ void printMetrics(const char *name, const Metrics &metrics)
 
 int main()
 {
-    std::printf("Tracking simulation: sensor=0.02 deg, noise=+-0.02 deg, "
+    std::printf("Tracking simulation: sensor=0.002 deg, noise=+-0.002 deg, "
                 "dt=20 ms, servo tau=%.2f s\n", kServoTauSec);
 
     const Metrics baseline = simulate(1.5, 0, true, 4.0, 0.0);
@@ -236,7 +240,7 @@ int main()
         const Metrics metrics =
                 simulate(1.5, 2, false, nearAcceleration);
         printMetrics(name, metrics);
-        if (std::abs(nearAcceleration - 4.0) < 1e-9)
+        if (std::abs(nearAcceleration - 3.0) < 1e-9)
             tuned = metrics;
     }
 
@@ -258,7 +262,7 @@ int main()
         printMetrics(name, metrics);
     }
 
-    for (double deadband : {0.04, 0.06, 0.08, 0.10}) {
+    for (double deadband : {0.02, 0.04, 0.06, 0.08, 0.10}) {
         char name[64];
         std::snprintf(name, sizeof(name), "10 deg deadband %.2fdeg",
                       deadband);
@@ -278,6 +282,110 @@ int main()
                       maxAcceleration);
         printMetrics(name, simulate(1.5, 2, false, 4.0, 0.08,
                                     false, 0.04, maxAcceleration));
+    }
+
+    struct DeadbandCase {
+        double enter;
+        double release;
+        double filterTau;
+    };
+    const DeadbandCase deadbandCases[] = {
+        {0.04, 0.10, 0.08},
+        {0.01, 0.04, 0.08},
+        {0.01, 0.04, 0.12},
+        {0.01, 0.06, 0.12},
+        {0.01, 0.08, 0.12},
+        {0.01, 0.10, 0.12},
+        {0.02, 0.06, 0.12}
+    };
+    for (const DeadbandCase &item : deadbandCases) {
+        char name[64];
+        std::snprintf(name, sizeof(name),
+                      "case %.2f/%.2f/tau%.2f static",
+                      item.enter, item.release, item.filterTau);
+        printMetrics(name, simulate(1.5, 0, false, 4.0,
+                                    item.filterTau, false, item.enter,
+                                    6.0, item.release));
+
+        std::snprintf(name, sizeof(name),
+                      "case %.2f/%.2f/tau%.2f sine",
+                      item.enter, item.release, item.filterTau);
+        printMetrics(name, simulate(1.5, 2, false, 4.0,
+                                    item.filterTau, false, item.enter,
+                                    6.0, item.release));
+    }
+
+    struct ApproachCase {
+        const char *name;
+        double filterTau;
+        double fastThreshold;
+        double release;
+        double maxAcceleration;
+    };
+    const ApproachCase approachCases[] = {
+        {"approach current", 0.10, 0.15, 0.010, 10.0},
+        {"approach fast02", 0.10, 0.02, 0.010, 10.0},
+        {"approach fast03", 0.10, 0.03, 0.010, 10.0},
+        {"approach fastNear10", 0.10, 0.05, 0.010, 10.0},
+        {"approach tau04", 0.04, 0.03, 0.006, 10.0},
+        {"approach tau06_10", 0.06, 0.05, 0.010, 10.0},
+        {"approach tau06_rel06", 0.06, 0.05, 0.006, 10.0},
+        {"approach tau06_fast03", 0.06, 0.03, 0.010, 10.0},
+        {"approach maxAcc6", 0.10, 0.15, 0.010, 6.0},
+        {"approach fastNear", 0.10, 0.05, 0.010, 6.0},
+        {"approach tau06", 0.06, 0.05, 0.010, 6.0},
+        {"approach release06", 0.10, 0.05, 0.006, 6.0}
+    };
+    for (const ApproachCase &item : approachCases) {
+        printMetrics(item.name,
+                     simulate(1.5, 1, false, 3.0, item.filterTau,
+                              false, 0.004, item.maxAcceleration,
+                              item.release, item.fastThreshold));
+        std::printf("  sine check: ");
+        printMetrics(item.name,
+                     simulate(1.5, 2, false, 3.0, item.filterTau,
+                              false, 0.004, item.maxAcceleration,
+                              item.release, item.fastThreshold));
+    }
+
+    struct JitterCase {
+        const char *name;
+        double nearSpeed;
+        double nearAcceleration;
+        double filterTau;
+        double fastThreshold;
+        double enter;
+        double release;
+    };
+    const JitterCase jitterCases[] = {
+        {"jitter current", 1.5, 3.0, 0.06, 0.05, 0.004, 0.006},
+        {"jitter hold06", 1.5, 3.0, 0.06, 0.05, 0.006, 0.012},
+        {"jitter hold08", 1.5, 3.0, 0.06, 0.05, 0.008, 0.014},
+        {"jitter accel2", 1.5, 2.0, 0.06, 0.05, 0.004, 0.006},
+        {"jitter slow12", 1.2, 2.5, 0.06, 0.05, 0.004, 0.006},
+        {"jitter slowHold", 1.2, 2.5, 0.06, 0.05, 0.006, 0.012},
+        {"jitter soft1", 1.0, 2.0, 0.08, 0.10, 0.006, 0.012},
+        {"jitter soft2", 1.2, 2.5, 0.08, 0.08, 0.006, 0.012},
+        {"jitter soft3", 1.0, 2.0, 0.08, 0.08, 0.004, 0.010},
+        {"jitter soft4", 1.0, 2.0, 0.10, 0.15, 0.006, 0.012}
+    };
+    for (const JitterCase &item : jitterCases) {
+        char name[64];
+        std::snprintf(name, sizeof(name), "%s static", item.name);
+        printMetrics(name, simulate(item.nearSpeed, 0, false,
+                                    item.nearAcceleration, item.filterTau,
+                                    false, item.enter, 10.0, item.release,
+                                    item.fastThreshold));
+        std::snprintf(name, sizeof(name), "%s approach", item.name);
+        printMetrics(name, simulate(item.nearSpeed, 1, false,
+                                    item.nearAcceleration, item.filterTau,
+                                    false, item.enter, 10.0, item.release,
+                                    item.fastThreshold));
+        std::snprintf(name, sizeof(name), "%s sine", item.name);
+        printMetrics(name, simulate(item.nearSpeed, 2, false,
+                                    item.nearAcceleration, item.filterTau,
+                                    false, item.enter, 10.0, item.release,
+                                    item.fastThreshold));
     }
 
     const bool passed =
