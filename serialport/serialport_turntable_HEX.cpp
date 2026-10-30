@@ -15,11 +15,14 @@
 
 namespace {
 
-// 1 秒模式预测窗较长。绝对目标接近转台当前角时，AB 中残留的小角速度
-// 不应继续展开成四个目标点，否则目标停止后仍可能产生左右超调。
-sendExGuideData predictAbsoluteTargetDamped(
+constexpr double kAbsoluteTargetSpeedLimitDegPerSec = 2.0;
+constexpr double kOneSecondPointIntervalSec = 0.25;
+constexpr qint64 kTrackLoopSeconds = 14400;
+
+// 1 秒模式预测窗较长。按目标自身速度控制预测前馈：静止时抑制 AB 残余
+// 速度，运动时保留完整提前量，避免把正常跟踪误当成“接近停止”。
+sendExGuideData predictAbsoluteTargetMotionAware(
         AlphaBetaTracker &tracker,
-        double feedbackDeg,
         uint32_t packetTime,
         double firstDelaySec)
 {
@@ -27,15 +30,17 @@ sendExGuideData predictAbsoluteTargetDamped(
     packet.time = packetTime;
 
     const double center = tracker.angle();
-    const double relativeDistance = std::abs(center - feedbackDeg);
     const double blend =
-            target_prediction::nearTargetVelocityBlend(relativeDistance);
+            target_prediction::targetVelocityBlend(tracker.velocity());
     const double velocity = tracker.velocity() * blend;
 
     packet.angle1 = center + velocity * firstDelaySec;
-    packet.angle2 = center + velocity * (firstDelaySec + 0.25);
-    packet.angle3 = center + velocity * (firstDelaySec + 0.50);
-    packet.angle4 = center + velocity * (firstDelaySec + 0.75);
+    packet.angle2 = center + velocity * (
+                firstDelaySec + kOneSecondPointIntervalSec);
+    packet.angle3 = center + velocity * (
+                firstDelaySec + 2.0 * kOneSecondPointIntervalSec);
+    packet.angle4 = center + velocity * (
+                firstDelaySec + 3.0 * kOneSecondPointIntervalSec);
     return packet;
 }
 
@@ -312,12 +317,12 @@ SerialPortTurntableHex::SerialPortTurntableHex(QObject *parent)
     TrackingTargetSmoother::Config oneSecondConfig;
     oneSecondConfig.zeroDeadbandDeg = 0.008;
     oneSecondConfig.zeroDeadbandReleaseDeg = 0.016;
-    oneSecondConfig.fineTrackRadiusDeg = 0.12;
-    oneSecondConfig.fineMaxSpeedDegPerSec = 0.08;
-    oneSecondConfig.fineMaxAccelerationDegPerSec2 = 0.16;
+    oneSecondConfig.fineTrackRadiusDeg = 0.10;
+    oneSecondConfig.fineMaxSpeedDegPerSec = 0.25;
+    oneSecondConfig.fineMaxAccelerationDegPerSec2 = 0.50;
     oneSecondConfig.nearTrackRadiusDeg = 1.0;
-    oneSecondConfig.nearMaxSpeedDegPerSec = 0.8;
-    oneSecondConfig.nearMaxAccelerationDegPerSec2 = 1.5;
+    oneSecondConfig.nearMaxSpeedDegPerSec = 1.5;
+    oneSecondConfig.nearMaxAccelerationDegPerSec2 = 2.0;
     oneSecondConfig.farTrackRadiusDeg = 3.0;
     oneSecondConfig.maxSpeedDegPerSec = 4.0;
     oneSecondConfig.maxAccelerationDegPerSec2 = 2.0;
@@ -714,6 +719,7 @@ void SerialPortTurntableHex::resetTrackingSmoother()
     m_middleTrackingSmoother.reset(m_current_middle_angle);
     m_outer1sTrackingSmoother.reset(m_current_outter_angle);
     m_middle1sTrackingSmoother.reset(m_current_middle_angle);
+    m_oneSecondTrajectoryMemory = OneSecondTrajectoryMemory();
     m_20msTrackingClock.invalidate();
     m_last20msTargetMs = -1;
 }
@@ -891,14 +897,16 @@ void SerialPortTurntableHex::resetAbsoluteTargetTracker()
     m_absoluteTargetTracker.AzTracker().setClampRange(-100.0, 100.0);
     m_absoluteTargetTracker.AzTracker().setAlpha(0.15);
     m_absoluteTargetTracker.AzTracker().setBeta(0.01);
-    m_absoluteTargetTracker.AzTracker().setSpeedLimit(0.8);
+    m_absoluteTargetTracker.AzTracker().setSpeedLimit(
+                kAbsoluteTargetSpeedLimitDegPerSec);
     m_absoluteTargetTracker.AzTracker().setInnovationGate(
                 0.50, 1.00, 4.0, 0.5, 5);
     m_absoluteTargetTracker.ElTracker().setAngleMode(AngleMode::Clamp);
     m_absoluteTargetTracker.ElTracker().setClampRange(-10.0, 70.0);
     m_absoluteTargetTracker.ElTracker().setAlpha(0.15);
     m_absoluteTargetTracker.ElTracker().setBeta(0.01);
-    m_absoluteTargetTracker.ElTracker().setSpeedLimit(0.8);
+    m_absoluteTargetTracker.ElTracker().setSpeedLimit(
+                kAbsoluteTargetSpeedLimitDegPerSec);
     m_absoluteTargetTracker.ElTracker().setInnovationGate(
                 0.50, 1.00, 4.0, 0.5, 5);
 
@@ -979,13 +987,11 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     const qint64 nextSecond = (turntableNowMs / 1000 + 1) % 14400;
     const double firstDelay = std::max(0.0, firstPredictionDelaySec);
 
-    const sendExGuideData outerPredicted = predictAbsoluteTargetDamped(
+    const sendExGuideData outerPredicted = predictAbsoluteTargetMotionAware(
                 m_absoluteTargetTracker.AzTracker(),
-                m_current_outter_angle,
                 static_cast<uint32_t>(nextSecond), firstDelay);
-    const sendExGuideData middlePredicted = predictAbsoluteTargetDamped(
+    const sendExGuideData middlePredicted = predictAbsoluteTargetMotionAware(
                 m_absoluteTargetTracker.ElTracker(),
-                m_current_middle_angle,
                 static_cast<uint32_t>(nextSecond), firstDelay);
 
     // preview() 接收相对当前反馈的偏移，并输出绝对目标位置。
@@ -1001,12 +1007,30 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
         middlePredicted.angle3 - m_current_middle_angle,
         middlePredicted.angle4 - m_current_middle_angle
     }};
+    double outerInitialVelocity = 0.0;
+    double middleInitialVelocity = 0.0;
+    const OneSecondTrajectoryMemory &previousTrajectory =
+            m_oneSecondTrajectoryMemory;
+    if (previousTrajectory.valid) {
+        const qint64 secondGap =
+                (nextSecond - previousTrajectory.targetSecond
+                 + kTrackLoopSeconds) % kTrackLoopSeconds;
+        if (secondGap == 1) {
+            outerInitialVelocity =
+                    previousTrajectory.outerEndVelocityDegPerSec;
+            middleInitialVelocity =
+                    previousTrajectory.middleEndVelocityDegPerSec;
+        }
+    }
+
     const std::array<double, 4> outerPositions =
             m_outer1sTrackingSmoother.preview(
-                m_current_outter_angle, outerOffsets, 0.25);
+                m_current_outter_angle, outerOffsets,
+                kOneSecondPointIntervalSec, outerInitialVelocity);
     const std::array<double, 4> middlePositions =
             m_middle1sTrackingSmoother.preview(
-                m_current_middle_angle, middleOffsets, 0.25);
+                m_current_middle_angle, middleOffsets,
+                kOneSecondPointIntervalSec, middleInitialVelocity);
 
     TrackingSendCmd1Hex cmdOuter;
     cmdOuter.axis = 3;
@@ -1015,10 +1039,12 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     cmdOuter.angle2 = static_cast<float>(outerPositions[1]);
     cmdOuter.angle3 = static_cast<float>(outerPositions[2]);
     cmdOuter.angle4 = static_cast<float>(outerPositions[3]);
-    if (cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100
+    const bool outerPacketSent =
+            !(cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100
             || cmdOuter.angle2 < -100 || cmdOuter.angle2 > 100
             || cmdOuter.angle3 < -100 || cmdOuter.angle3 > 100
-            || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100) {
+            || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100);
+    if (!outerPacketSent) {
         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
     } else {
         sendTrackCmd_1s(cmdOuter);
@@ -1031,13 +1057,30 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     cmdMiddle.angle2 = static_cast<float>(middlePositions[1]);
     cmdMiddle.angle3 = static_cast<float>(middlePositions[2]);
     cmdMiddle.angle4 = static_cast<float>(middlePositions[3]);
-    if (cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70
+    const bool middlePacketSent =
+            !(cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70
             || cmdMiddle.angle2 < -10 || cmdMiddle.angle2 > 70
             || cmdMiddle.angle3 < -10 || cmdMiddle.angle3 > 70
-            || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70) {
+            || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70);
+    if (!middlePacketSent) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
     } else {
         sendTrackCmd_1s(cmdMiddle);
+    }
+
+    // 只有本拍两个随动轴都实际下发时才记录包间速度。任一轴因限位被拒绝
+    // 都清除记忆，下一包重新从当前速度能力起坡，避免继承未发送的轨迹。
+    if (outerPacketSent && middlePacketSent) {
+        m_oneSecondTrajectoryMemory.valid = true;
+        m_oneSecondTrajectoryMemory.targetSecond = nextSecond;
+        m_oneSecondTrajectoryMemory.outerEndVelocityDegPerSec =
+                (outerPositions[3] - outerPositions[2])
+                / kOneSecondPointIntervalSec;
+        m_oneSecondTrajectoryMemory.middleEndVelocityDegPerSec =
+                (middlePositions[3] - middlePositions[2])
+                / kOneSecondPointIntervalSec;
+    } else {
+        m_oneSecondTrajectoryMemory = OneSecondTrajectoryMemory();
     }
 
     TrackingSendCmd1Hex cmdInner;

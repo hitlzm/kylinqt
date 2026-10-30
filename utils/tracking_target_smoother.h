@@ -330,11 +330,13 @@ public:
     }
 
     // 1 秒协议一次写四个 250 ms 点。这里从当前反馈重新生成一条轨迹，
-    // 不推进常驻的 20 ms 状态；下一包收到反馈后再重新生成，形成闭环修正。
+    // 不推进常驻的 20 ms 状态。initialVelocityDegPerSec 用来继承上一包的
+    // 规划速度，避免每秒都从静止重新加速，造成转台插值时出现周期性抖动。
     template <std::size_t N>
     std::array<double, N> preview(double feedbackDeg,
                                   const std::array<double, N> &requestedOffsetsDeg,
-                                  double intervalSec) const
+                                  double intervalSec,
+                                  double initialVelocityDegPerSec = 0.0) const
     {
         std::array<double, N> positions;
         positions.fill(feedbackDeg);
@@ -345,6 +347,12 @@ public:
 
         TrackingTargetSmoother trial(m_config);
         trial.reset(feedbackDeg);
+        if (std::isfinite(initialVelocityDegPerSec)) {
+            trial.m_velocityDegPerSec = std::max(
+                        -m_config.maxSpeedDegPerSec,
+                        std::min(m_config.maxSpeedDegPerSec,
+                                 initialVelocityDegPerSec));
+        }
         for (std::size_t i = 0; i < N; ++i) {
             if (!std::isfinite(requestedOffsetsDeg[i])) {
                 positions[i] = trial.m_positionDeg;

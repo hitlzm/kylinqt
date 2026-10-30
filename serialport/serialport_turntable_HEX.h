@@ -23,6 +23,7 @@ brief: 转台串口类（HEX十六进制协议版本）
 #include "../utils/tracking_target_smoother.h"
 #include "../kalman/AlphaBetaTracker.h"
 #include <QElapsedTimer>
+#include <array>
 
 // ═════════════════════ 指令代号定义（byte2的低6位）═════════════════════
 #define CMD_ENABLE      0x01    // 使能/释放电机
@@ -532,6 +533,15 @@ private:
     // 20 ms 模式继续使用上面的逐拍闭环参数。
     TrackingTargetSmoother m_outer1sTrackingSmoother;
     TrackingTargetSmoother m_middle1sTrackingSmoother;
+    // 记录上一包最后一个 250 ms 区间的规划速度。下一包继承该速度，
+    // 保证转台插值时速度方向连续，而不是每秒从零重新加速。
+    struct OneSecondTrajectoryMemory {
+        bool valid = false;
+        qint64 targetSecond = -1;
+        double outerEndVelocityDegPerSec = 0.0;
+        double middleEndVelocityDegPerSec = 0.0;
+    };
+    OneSecondTrajectoryMemory m_oneSecondTrajectoryMemory;
     QElapsedTimer m_20msTrackingClock;
 
     // 1 秒模式绝对目标预测。AB 的输入是“转台反馈 + 相对误差”，
