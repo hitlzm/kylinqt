@@ -280,11 +280,8 @@ int main(int argc, char *argv[])
     QObject::connect(turntablePort, &SerialPortTurntableHex::requpdateframe,
                      dataRecorder, &DataRecorder::onTurntableFrame, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntableSendData, &TurntableSendDataHex::recvinner_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableDataHex::myinner_angleChanged,  turntablePort, &SerialPortTurntableHex::recvinner_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntableSendData, &TurntableSendDataHex::recvmiddle_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableDataHex::mymiddle_angleChanged,  turntablePort, &SerialPortTurntableHex::recvmiddle_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntableSendData, &TurntableSendDataHex::recvoutter_angle, Qt::QueuedConnection);
-    QObject::connect(turntableData, &TurntableDataHex::myoutter_angleChanged,  turntablePort, &SerialPortTurntableHex::recvoutter_angle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::stepAngleChanged,  turntablePort, &SerialPortTurntableHex::setStepAngle, Qt::QueuedConnection);
     QObject::connect(turntableData, &TurntableDataHex::speedMultiplierChanged,  turntablePort, &SerialPortTurntableHex::setSpeedMultiplier, Qt::QueuedConnection);
 

@@ -1,4 +1,5 @@
 #include "../utils/tracking_target_smoother.h"
+#include "../utils/target_prediction_profile.h"
 
 #include <cmath>
 #include <cstdio>
@@ -30,6 +31,20 @@ void testSmallOffsetUsesLowSpeedTracking()
     check(std::abs(result.positionDeg - 12.0) <= 1.0 * 0.02 + 1e-6,
           "small offset should use near-target speed limit");
     check(result.ramping, "small nonzero offset should use continuous tracking");
+}
+
+void testFineTrackingZoneUsesLowestSpeed()
+{
+    TrackingTargetSmoother::Config config;
+    config.fineTrackRadiusDeg = 0.10;
+    config.fineMaxSpeedDegPerSec = 0.25;
+    config.fineMaxAccelerationDegPerSec2 = 0.50;
+    TrackingTargetSmoother smoother(config);
+    smoother.reset(3.0);
+    const auto result = smoother.update(3.0, 0.05, 0.02);
+    check(std::abs(result.positionDeg - 3.0)
+              <= smoother.config().fineMaxSpeedDegPerSec * 0.02 + 1e-6,
+          "fine tracking zone should use the lowest speed limit");
 }
 
 void testLargeOffsetHonorsSpeedAndAcceleration()
@@ -129,6 +144,21 @@ void testInvalidMeasurementHoldsLastTarget()
           "non-finite seeker offset should hold last target");
 }
 
+void testPiecewisePredictionDamping()
+{
+    check(target_prediction::nearTargetVelocityBlend(0.05) == 0.0,
+          "prediction must be disabled very close to the target");
+    check(target_prediction::nearTargetVelocityBlend(0.50) < 0.05,
+          "prediction must remain below five percent inside 0.5 deg");
+    check(target_prediction::nearTargetVelocityBlend(1.0) <= 0.100001,
+          "prediction must remain near ten percent at 1 deg");
+    check(target_prediction::nearTargetVelocityBlend(2.0) > 0.45
+              && target_prediction::nearTargetVelocityBlend(2.0) < 0.550001,
+          "prediction should transition smoothly around 2 deg");
+    check(target_prediction::nearTargetVelocityBlend(3.0) == 1.0,
+          "full prediction should resume at 3 deg");
+}
+
 void testNearZeroHoldsAgainstSensorQuantization()
 {
     TrackingTargetSmoother::Config config;
@@ -185,10 +215,12 @@ void testZeroHoldEntryRemainsSlewLimited()
 int main()
 {
     testSmallOffsetUsesLowSpeedTracking();
+    testFineTrackingZoneUsesLowestSpeed();
     testLargeOffsetHonorsSpeedAndAcceleration();
     testMovingTargetReversesWithoutJump();
     testPreviewGeneratesOneSecondRamp();
     testInvalidMeasurementHoldsLastTarget();
+    testPiecewisePredictionDamping();
     testNearZeroHoldsAgainstSensorQuantization();
     testZeroHoldEntryRemainsSlewLimited();
 

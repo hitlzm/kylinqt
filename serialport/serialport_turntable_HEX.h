@@ -528,6 +528,10 @@ private:
     // 20 ms 模式使用跨帧状态；1 秒模式的四个点由 preview() 一次生成。
     TrackingTargetSmoother m_outerTrackingSmoother;
     TrackingTargetSmoother m_middleTrackingSmoother;
+    // 250 ms(0x0A) 模式一次下发四个未来点，采用单独的低速稳定参数；
+    // 20 ms 模式继续使用上面的逐拍闭环参数。
+    TrackingTargetSmoother m_outer1sTrackingSmoother;
+    TrackingTargetSmoother m_middle1sTrackingSmoother;
     QElapsedTimer m_20msTrackingClock;
 
     // 1 秒模式绝对目标预测。AB 的输入是“转台反馈 + 相对误差”，

@@ -20,6 +20,9 @@ public:
     struct Config {
         double zeroDeadbandDeg = 0.004;
         double zeroDeadbandReleaseDeg = 0.006;
+        double fineTrackRadiusDeg = 0.10;
+        double fineMaxSpeedDegPerSec = 1.5;
+        double fineMaxAccelerationDegPerSec2 = 3.0;
         double nearTrackRadiusDeg = 1.0;
         double nearMaxSpeedDegPerSec = 1.5;
         double nearMaxAccelerationDegPerSec2 = 3.0;
@@ -78,6 +81,14 @@ public:
         }
         m_config.nearTrackRadiusDeg = std::max(
                     m_config.nearTrackRadiusDeg, m_config.zeroDeadbandDeg);
+        if (!std::isfinite(m_config.fineTrackRadiusDeg)
+                || m_config.fineTrackRadiusDeg <= 0.0) {
+            m_config.fineTrackRadiusDeg = 0.10;
+        }
+        m_config.fineTrackRadiusDeg = std::max(
+                    m_config.zeroDeadbandDeg,
+                    std::min(m_config.fineTrackRadiusDeg,
+                             m_config.nearTrackRadiusDeg));
         if (!std::isfinite(m_config.farTrackRadiusDeg)
                 || m_config.farTrackRadiusDeg <= m_config.nearTrackRadiusDeg) {
             m_config.farTrackRadiusDeg =
@@ -97,6 +108,20 @@ public:
         m_config.nearMaxAccelerationDegPerSec2 = std::min(
                     m_config.nearMaxAccelerationDegPerSec2,
                     m_config.maxAccelerationDegPerSec2);
+        if (!std::isfinite(m_config.fineMaxSpeedDegPerSec)
+                || m_config.fineMaxSpeedDegPerSec <= 0.0) {
+            m_config.fineMaxSpeedDegPerSec = 1.5;
+        }
+        m_config.fineMaxSpeedDegPerSec = std::min(
+                    m_config.fineMaxSpeedDegPerSec,
+                    m_config.nearMaxSpeedDegPerSec);
+        if (!std::isfinite(m_config.fineMaxAccelerationDegPerSec2)
+                || m_config.fineMaxAccelerationDegPerSec2 <= 0.0) {
+            m_config.fineMaxAccelerationDegPerSec2 = 3.0;
+        }
+        m_config.fineMaxAccelerationDegPerSec2 = std::min(
+                    m_config.fineMaxAccelerationDegPerSec2,
+                    m_config.nearMaxAccelerationDegPerSec2);
         if (!std::isfinite(m_config.offsetFilterTimeConstantSec)
                 || m_config.offsetFilterTimeConstantSec < 0.0) {
             m_config.offsetFilterTimeConstantSec = 0.04;
@@ -237,18 +262,32 @@ public:
         double accelerationLimit = m_config.maxAccelerationDegPerSec2;
         if (absOffset < m_config.farTrackRadiusDeg) {
             double blend = 0.0;
-            if (absOffset > m_config.nearTrackRadiusDeg) {
+            if (absOffset <= m_config.fineTrackRadiusDeg) {
+                speedLimit = m_config.fineMaxSpeedDegPerSec;
+                accelerationLimit = m_config.fineMaxAccelerationDegPerSec2;
+            } else if (absOffset <= m_config.nearTrackRadiusDeg) {
+                blend = (absOffset - m_config.fineTrackRadiusDeg)
+                        / (m_config.nearTrackRadiusDeg
+                           - m_config.fineTrackRadiusDeg);
+                blend = std::max(0.0, std::min(1.0, blend));
+                speedLimit = m_config.fineMaxSpeedDegPerSec
+                        + blend * (m_config.nearMaxSpeedDegPerSec
+                                   - m_config.fineMaxSpeedDegPerSec);
+                accelerationLimit = m_config.fineMaxAccelerationDegPerSec2
+                        + blend * (m_config.nearMaxAccelerationDegPerSec2
+                                   - m_config.fineMaxAccelerationDegPerSec2);
+            } else {
                 blend = (absOffset - m_config.nearTrackRadiusDeg)
                         / (m_config.farTrackRadiusDeg
                            - m_config.nearTrackRadiusDeg);
                 blend = std::max(0.0, std::min(1.0, blend));
+                speedLimit = m_config.nearMaxSpeedDegPerSec
+                        + blend * (m_config.maxSpeedDegPerSec
+                                   - m_config.nearMaxSpeedDegPerSec);
+                accelerationLimit = m_config.nearMaxAccelerationDegPerSec2
+                        + blend * (m_config.maxAccelerationDegPerSec2
+                                   - m_config.nearMaxAccelerationDegPerSec2);
             }
-            speedLimit = m_config.nearMaxSpeedDegPerSec
-                    + blend * (m_config.maxSpeedDegPerSec
-                               - m_config.nearMaxSpeedDegPerSec);
-            accelerationLimit = m_config.nearMaxAccelerationDegPerSec2
-                    + blend * (m_config.maxAccelerationDegPerSec2
-                               - m_config.nearMaxAccelerationDegPerSec2);
         }
         const double maxVelocityStep = accelerationLimit * dtSec;
 

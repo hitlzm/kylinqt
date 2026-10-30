@@ -7,10 +7,39 @@
 #include <QTime>
 #include <QDateTime>
 #include "../utils/seeker_coordinate_transform.h"
+#include "../utils/target_prediction_profile.h"
 #include "../utils/sendlatencyprobe.h"
 #define MAX_SPEED_HEX 14.0f           //转台的最大速度可以再加大一些
 #define MAX_ACCELERATION_HEX 10.0f
 #define HANDLE_SPEED_CHANGE_EPSILON 0.1f  // 低于此变化的摇杆噪声不触发停车重设
+
+namespace {
+
+// 1 秒模式预测窗较长。绝对目标接近转台当前角时，AB 中残留的小角速度
+// 不应继续展开成四个目标点，否则目标停止后仍可能产生左右超调。
+sendExGuideData predictAbsoluteTargetDamped(
+        AlphaBetaTracker &tracker,
+        double feedbackDeg,
+        uint32_t packetTime,
+        double firstDelaySec)
+{
+    sendExGuideData packet;
+    packet.time = packetTime;
+
+    const double center = tracker.angle();
+    const double relativeDistance = std::abs(center - feedbackDeg);
+    const double blend =
+            target_prediction::nearTargetVelocityBlend(relativeDistance);
+    const double velocity = tracker.velocity() * blend;
+
+    packet.angle1 = center + velocity * firstDelaySec;
+    packet.angle2 = center + velocity * (firstDelaySec + 0.25);
+    packet.angle3 = center + velocity * (firstDelaySec + 0.50);
+    packet.angle4 = center + velocity * (firstDelaySec + 0.75);
+    return packet;
+}
+
+} // namespace
 
 // ════════════════════════ 数值编解码实现 ════════════════════════
 
@@ -259,6 +288,12 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
     feedback.m_hasSecPulse = (buf[26] & 0x80) ? 1 : 0;
     feedback.m_cmdHint     = buf[26] & 0x3F;     // 低6位
 
+    // 绝对目标合成在同一工作线程内进行，必须立即使用本状态帧角度，
+    // 不能等待主线程回传后再通过 queued 信号更新，否则会引入额外相位滞后。
+    m_current_inner_angle = feedback.m_inner_angle;
+    m_current_middle_angle = feedback.m_middle_angle;
+    m_current_outter_angle = feedback.m_outter_angle;
+
     // 停车完成后对应轴会回到伺服状态(0x01)。在这里处理反馈，可以在收到
     // 状态帧的第一时间下发等待中的新速度，而不必再等下一个 20ms 手柄周期。
     applyPendingHandleSpeed(1, feedback.m_inner_status, feedback.m_inner_alarm);
@@ -274,6 +309,21 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
 SerialPortTurntableHex::SerialPortTurntableHex(QObject *parent)
     : SerialPort(parent)
 {
+    TrackingTargetSmoother::Config oneSecondConfig;
+    oneSecondConfig.zeroDeadbandDeg = 0.008;
+    oneSecondConfig.zeroDeadbandReleaseDeg = 0.016;
+    oneSecondConfig.fineTrackRadiusDeg = 0.12;
+    oneSecondConfig.fineMaxSpeedDegPerSec = 0.08;
+    oneSecondConfig.fineMaxAccelerationDegPerSec2 = 0.16;
+    oneSecondConfig.nearTrackRadiusDeg = 1.0;
+    oneSecondConfig.nearMaxSpeedDegPerSec = 0.8;
+    oneSecondConfig.nearMaxAccelerationDegPerSec2 = 1.5;
+    oneSecondConfig.farTrackRadiusDeg = 3.0;
+    oneSecondConfig.maxSpeedDegPerSec = 4.0;
+    oneSecondConfig.maxAccelerationDegPerSec2 = 2.0;
+    oneSecondConfig.settleDeadbandDeg = 0.002;
+    m_outer1sTrackingSmoother.setConfig(oneSecondConfig);
+    m_middle1sTrackingSmoother.setConfig(oneSecondConfig);
 }
 
 SerialPortTurntableHex::~SerialPortTurntableHex()
@@ -662,6 +712,8 @@ void SerialPortTurntableHex::resetTrackingSmoother()
 {
     m_outerTrackingSmoother.reset(m_current_outter_angle);
     m_middleTrackingSmoother.reset(m_current_middle_angle);
+    m_outer1sTrackingSmoother.reset(m_current_outter_angle);
+    m_middle1sTrackingSmoother.reset(m_current_middle_angle);
     m_20msTrackingClock.invalidate();
     m_last20msTargetMs = -1;
 }
@@ -837,10 +889,18 @@ void SerialPortTurntableHex::resetAbsoluteTargetTracker()
     // 滤波器当前跟踪的是绝对目标角，必须使用转台机械范围，而不是导引头视场。
     m_absoluteTargetTracker.AzTracker().setAngleMode(AngleMode::Clamp);
     m_absoluteTargetTracker.AzTracker().setClampRange(-100.0, 100.0);
-    m_absoluteTargetTracker.AzTracker().setSpeedLimit(MAX_SPEED_HEX);
+    m_absoluteTargetTracker.AzTracker().setAlpha(0.15);
+    m_absoluteTargetTracker.AzTracker().setBeta(0.01);
+    m_absoluteTargetTracker.AzTracker().setSpeedLimit(0.8);
+    m_absoluteTargetTracker.AzTracker().setInnovationGate(
+                0.50, 1.00, 4.0, 0.5, 5);
     m_absoluteTargetTracker.ElTracker().setAngleMode(AngleMode::Clamp);
     m_absoluteTargetTracker.ElTracker().setClampRange(-10.0, 70.0);
-    m_absoluteTargetTracker.ElTracker().setSpeedLimit(MAX_SPEED_HEX);
+    m_absoluteTargetTracker.ElTracker().setAlpha(0.15);
+    m_absoluteTargetTracker.ElTracker().setBeta(0.01);
+    m_absoluteTargetTracker.ElTracker().setSpeedLimit(0.8);
+    m_absoluteTargetTracker.ElTracker().setInnovationGate(
+                0.50, 1.00, 4.0, 0.5, 5);
 
     m_absoluteTargetReady = false;
     m_lastExGuideSampleMs = -1;
@@ -852,6 +912,8 @@ void SerialPortTurntableHex::resetAbsoluteTargetTracker()
 void SerialPortTurntableHex::recvExGuideMeasurement(exGuideMeasurement sample)
 {
     if (!m_trackingAllowed || m_exGuidePeriod != 7)
+        return;
+    if (!m_turntableTimeValid)
         return;
     if (m_exGuideSource <= 0 || sample.sourceId != m_exGuideSource)
         return;
@@ -917,12 +979,14 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     const qint64 nextSecond = (turntableNowMs / 1000 + 1) % 14400;
     const double firstDelay = std::max(0.0, firstPredictionDelaySec);
 
-    const sendExGuideData outerPredicted =
-            m_absoluteTargetTracker.GenAxisPacket(
-                true, static_cast<qint64>(nextSecond), firstDelay);
-    const sendExGuideData middlePredicted =
-            m_absoluteTargetTracker.GenAxisPacket(
-                false, static_cast<qint64>(nextSecond), firstDelay);
+    const sendExGuideData outerPredicted = predictAbsoluteTargetDamped(
+                m_absoluteTargetTracker.AzTracker(),
+                m_current_outter_angle,
+                static_cast<uint32_t>(nextSecond), firstDelay);
+    const sendExGuideData middlePredicted = predictAbsoluteTargetDamped(
+                m_absoluteTargetTracker.ElTracker(),
+                m_current_middle_angle,
+                static_cast<uint32_t>(nextSecond), firstDelay);
 
     // preview() 接收相对当前反馈的偏移，并输出绝对目标位置。
     const std::array<double, 4> outerOffsets = {{
@@ -938,10 +1002,10 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
         middlePredicted.angle4 - m_current_middle_angle
     }};
     const std::array<double, 4> outerPositions =
-            m_outerTrackingSmoother.preview(
+            m_outer1sTrackingSmoother.preview(
                 m_current_outter_angle, outerOffsets, 0.25);
     const std::array<double, 4> middlePositions =
-            m_middleTrackingSmoother.preview(
+            m_middle1sTrackingSmoother.preview(
                 m_current_middle_angle, middleOffsets, 0.25);
 
     TrackingSendCmd1Hex cmdOuter;

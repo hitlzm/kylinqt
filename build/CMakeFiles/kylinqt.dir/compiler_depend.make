@@ -252,6 +252,8 @@ CMakeFiles/kylinqt.dir/auth/AuthManager.cpp.obj: E:/QTproject/kylinqt/auth/AuthM
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
   E:/QTproject/kylinqt/auth/AuthManager.h
 
+CMakeFiles/kylinqt.dir/kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp.obj: kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp
+
 CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen/mocs_compilation.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QByteArray \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
@@ -4603,6 +4605,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: E:/QTproject
   E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/utils/seeker_coordinate_transform.h \
   E:/QTproject/kylinqt/utils/sendlatencyprobe.h \
+  E:/QTproject/kylinqt/utils/target_prediction_profile.h \
   E:/QTproject/kylinqt/utils/tracking_target_smoother.h \
   E:/onnxruntime/cmake/external/eigen/Eigen/Cholesky \
   E:/onnxruntime/cmake/external/eigen/Eigen/Core \
@@ -6293,9 +6296,9 @@ kylinqt_autogen/YN6D6BICVT/moc_serialport_turntable_HEX.cpp:
 
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/memoryfwd.h:
 
-E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/move.h:
-
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/apisetcconv.h:
+
+E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/bits/move.h:
 
 E:/opencv-4.2.0/DNN/install/include/opencv2/core/traits.hpp:
 
@@ -6779,6 +6782,14 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickframebufferobject.h:
 
+E:/QTproject/kylinqt/serialport/serialport_laser.cpp:
+
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h:
+
+E:/onnxruntime/cmake/external/eigen/Eigen/src/plugins/IndexedViewMethods.h:
+
+kylinqt_autogen/EWIEGA46WW/qrc_qml.cpp:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QElapsedTimer:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtNetwork/qhostaddress.h:
@@ -6870,10 +6881,6 @@ E:/opencv-4.2.0/DNN/install/include/opencv2/stitching/warpers.hpp:
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpixelformat.h:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qpolygon.h:
-
-E:/QTproject/kylinqt/serialport/serialport_laser.cpp:
-
-E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qregion.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/rpcnsi.h:
 
@@ -7455,6 +7462,8 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/winsvc.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/winuser.h:
 
+E:/QTproject/kylinqt/utils/target_prediction_profile.h:
+
 E:/opencv-4.2.0/DNN/install/include/opencv2/dnn/layer.hpp:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wnnc.h:
@@ -7804,8 +7813,6 @@ E:/onnxruntime/cmake/external/eigen/Eigen/src/misc/RealSvd2x2.h:
 E:/onnxruntime/cmake/external/eigen/Eigen/src/plugins/BlockMethods.h:
 
 E:/onnxruntime/cmake/external/eigen/Eigen/src/plugins/CommonCwiseUnaryOps.h:
-
-E:/onnxruntime/cmake/external/eigen/Eigen/src/plugins/IndexedViewMethods.h:
 
 E:/onnxruntime/cmake/external/eigen/Eigen/src/plugins/MatrixCwiseUnaryOps.h:
 
