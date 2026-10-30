@@ -21,6 +21,7 @@ brief: 转台串口类（HEX十六进制协议版本）
 
 #include "serialport.h"
 #include "../utils/tracking_target_smoother.h"
+#include "../kalman/AlphaBetaTracker.h"
 #include <QElapsedTimer>
 
 // ═════════════════════ 指令代号定义（byte2的低6位）═════════════════════
@@ -404,8 +405,15 @@ public slots:
                         bool buttonA, bool buttonB, int Acount, int Bcount);
 
     // ── 外引导模式 ──
-    void sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2);   //外引导模式下，转台内框无需转动
+    // source: 3=图像, 4=激光, 5=CCD。相对角由转台线程结合当前反馈组成
+    // 绝对目标角后，再交给绝对目标 Alpha-Beta 跟踪器。
+    void recvExGuideMeasurement(exGuideMeasurement sample);
+    void sendAbsoluteTrackMode_1s(int sourceId, double firstPredictionDelaySec);
+    // 保留旧入口供历史代码调用；新的 1 秒链路不再使用外部相对角预测包。
+    void sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2);
     void sendTrackMode_20ms(double yawangle, double pitchangle);
+    void ExGuideSourceChanged(int source);
+    void ExGuidePeriodChanged(int setting);
 
     // ── 跟踪修正 ──
     void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
@@ -422,6 +430,7 @@ public slots:
     void ProgramModeChanged(int mode);
     // 外引导源/周期切换时清除上一轮斜坡状态，首拍从当前反馈角重新起坡。
     void resetTrackingSmoother();
+    void resetAbsoluteTargetTracker();
 
     // ── 初始化 ──
     void dowork() {
@@ -520,6 +529,16 @@ private:
     TrackingTargetSmoother m_outerTrackingSmoother;
     TrackingTargetSmoother m_middleTrackingSmoother;
     QElapsedTimer m_20msTrackingClock;
+
+    // 1 秒模式绝对目标预测。AB 的输入是“转台反馈 + 相对误差”，
+    // 因此目标静止时转台自身运动不会形成虚假目标速度。
+    ABTrackManager m_absoluteTargetTracker{SeekerType::Image};
+    bool m_absoluteTargetReady = false;
+    int m_exGuideSource = -1;
+    int m_exGuidePeriod = -1;
+    qint64 m_lastExGuideSampleMs = -1;
+    double m_lastRelativeAzimuthDeg = 0.0;
+    double m_lastRelativeElevationDeg = 0.0;
 
     // 转台从已有速度切换到新速度时必须先停车，并等待对应轴回到伺服状态。
     enum class HandleSpeedState {

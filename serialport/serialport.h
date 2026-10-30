@@ -66,4 +66,16 @@ struct sendExGuideData
     uint32_t time;
 };
 
+// 外引导逐帧测量。azimuth/elevation 是导引头自身坐标系下的相对偏差角；
+// 转台线程负责结合对应反馈角和内框滚转角生成绝对目标角。
+struct exGuideMeasurement
+{
+    int      sourceId;       // 3=图像, 4=激光, 5=CCD
+    double   azimuth;
+    double   elevation;
+    qint64   timestampMs;
+};
+
+Q_DECLARE_METATYPE(exGuideMeasurement)
+
 #endif // SERIALPORT_H

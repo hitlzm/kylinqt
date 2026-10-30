@@ -310,21 +310,14 @@ void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
         m_pitch = ang.el;
     }
 
-    // 外引导模式下，将计算出的角度喂入 Alpha-Beta 滤波器
-    if (exindex == ExguideMode) {
-        qint64 now = QDateTime::currentMSecsSinceEpoch();
-
-        if (m_abNeedReset)
-        {
-            // 进入外引导后首次收到本路数据：用本帧测量重建滤波器，
-            // 避免沿用上一次使用时的陈旧角速度（否则第 1 包会被旧速度推到视场边缘）。
-            // 复位后同一时间戳喂入的那一帧会被滤波器的时间戳守卫按“重复帧”丢弃，
-            // 状态已由 Init 建立，不影响后续帧。
-            m_abMgr.Init(m_azimuth, m_pitch, now);
-            m_abNeedReset = false;
-        }
-
-        m_abMgr.FeedData(now, m_azimuth, m_pitch);
+    // 1 秒模式只上报逐帧相对测量，绝对目标合成和预测由转台线程负责。
+    if (exindex == ExguideMode && exguidesetting == Exguide_1s) {
+        exGuideMeasurement sample;
+        sample.sourceId = 5;
+        sample.azimuth = m_azimuth;
+        sample.elevation = m_pitch;
+        sample.timestampMs = QDateTime::currentMSecsSinceEpoch();
+        emit exGuideMeasurementReady(sample);
     }
 }
 
@@ -385,17 +378,11 @@ void SerialPortCCD::ExmodeChanged(int mode)
                     connect(m_exGuideTimer, &QTimer::timeout, this, [this]() {
                         // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
                         const auto slot = m_periodicTrackSchedule.currentSlot();
-                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(
-                                    true, slot.targetSecond,
-                                    slot.firstPredictionDelaySec);  // 方位轴
-                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(
-                                    false, slot.targetSecond,
-                                    slot.firstPredictionDelaySec);  // 俯仰轴
-                        // 发送预测角度给转台
-                        emit reqExsend_1s(az_pkt, el_pkt);
+                        // 测量已逐帧发送；这里只触发转台生成绝对目标预测包。
+                        emit exGuide1sTick(5, slot.firstPredictionDelaySec);
                         // 串口未打开时不输出外引导跟踪日志
                         if (isOpen())
-                            LogManager::instance()->logCCDTracking(az_pkt.angle1, el_pkt.angle1);
+                            LogManager::instance()->logCCDTracking(m_azimuth, m_pitch);
                         m_exGuideTimer->start(static_cast<int>(
                             m_periodicTrackSchedule.delayUntilNextSendMs(
                                 slot.rawTargetSecond)));

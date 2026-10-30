@@ -426,12 +426,12 @@ Rectangle {
                     DataLabel {
                         fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
-                        value: formatAngle(turntableData.inner_angle)
+                        value: formatAngle(turntableData.inner_angle) + "°"
                     }
                     DataLabel {
                         fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
-                        value: formatAngle(turntableData.inner_ctlDeviation)
+                        value: formatAngle(turntableData.inner_ctlDeviation) + "°"
                     }
                 }
 
@@ -456,12 +456,12 @@ Rectangle {
                     DataLabel {
                         fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
-                        value: formatAngle(turntableData.middle_angle)
+                        value: formatAngle(turntableData.middle_angle) + "°"
                     }
                     DataLabel {
                         fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
-                        value: formatAngle(turntableData.middle_ctlDeviation)
+                        value: formatAngle(turntableData.middle_ctlDeviation) + "°"
                     }
                 }
 
@@ -486,12 +486,12 @@ Rectangle {
                     DataLabel {
                         fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
-                        value: formatAngle(turntableData.outter_angle)
+                        value: formatAngle(turntableData.outter_angle) + "°"
                     }
                     DataLabel {
                         fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
-                        value: formatAngle(turntableData.outter_ctlDeviation)
+                        value: formatAngle(turntableData.outter_ctlDeviation) + "°"
                     }
                 }
             }

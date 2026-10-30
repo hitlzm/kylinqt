@@ -511,6 +511,9 @@ signals:
     void exguideLinkLost(const QString &msg);
     void reqStopExGuideAxes();
     void reqTimesync(int seconds);
+    // 1 秒模式逐帧相对测量；绝对目标合成和预测在转台线程完成。
+    void exGuideMeasurementReady(exGuideMeasurement sample);
+    void exGuide1sTick(int sourceId, double firstPredictionDelaySec);
     void reqExsend_1s(sendExGuideData frame1 , sendExGuideData frame2 );
     void reqExsend_20ms(double angle1 ,double angle2 );
 

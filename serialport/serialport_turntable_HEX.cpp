@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstring>
 #include <QTime>
+#include <QDateTime>
 #include "../utils/seeker_coordinate_transform.h"
 #include "../utils/sendlatencyprobe.h"
 #define MAX_SPEED_HEX 14.0f           //转台的最大速度可以再加大一些
@@ -641,6 +642,8 @@ void SerialPortTurntableHex::ProgramModeChanged(int mode)
     const bool remoteMode = (mode == 2);
     resetAllHandleSpeedStates(remoteMode);
     resetTrackingSmoother();
+    if (mode == 0)
+        resetAbsoluteTargetTracker();
 
     if (leavingExguide) {
         // 外引导 1s 模式可能已经下发了最长约 1.2s 的未来轨迹。
@@ -660,6 +663,7 @@ void SerialPortTurntableHex::resetTrackingSmoother()
     m_outerTrackingSmoother.reset(m_current_outter_angle);
     m_middleTrackingSmoother.reset(m_current_middle_angle);
     m_20msTrackingClock.invalidate();
+    m_last20msTargetMs = -1;
 }
 
 
@@ -805,6 +809,179 @@ qint64 SerialPortTurntableHex::estimatedTurntableTimeMs() const
     // 转台时间按 4 小时循环，估算值也要落回 0-14399999。
     constexpr qint64 kTrackLoopMs = 14400000;
     return (m_latestTurntableTimeMs + ageMs + kStatusFrameLatencyMs) % kTrackLoopMs;
+}
+
+void SerialPortTurntableHex::ExGuideSourceChanged(int source)
+{
+    m_exGuideSource = source;
+    resetAbsoluteTargetTracker();
+    resetTrackingSmoother();
+}
+
+void SerialPortTurntableHex::ExGuidePeriodChanged(int setting)
+{
+    m_exGuidePeriod = setting;
+    resetAbsoluteTargetTracker();
+    resetTrackingSmoother();
+}
+
+void SerialPortTurntableHex::resetAbsoluteTargetTracker()
+{
+    SeekerType type = SeekerType::Image;
+    if (m_exGuideSource == 4)
+        type = SeekerType::Laser;
+    else if (m_exGuideSource == 5)
+        type = SeekerType::CCD_Wide;
+
+    m_absoluteTargetTracker = ABTrackManager(type);
+    // 滤波器当前跟踪的是绝对目标角，必须使用转台机械范围，而不是导引头视场。
+    m_absoluteTargetTracker.AzTracker().setAngleMode(AngleMode::Clamp);
+    m_absoluteTargetTracker.AzTracker().setClampRange(-100.0, 100.0);
+    m_absoluteTargetTracker.AzTracker().setSpeedLimit(MAX_SPEED_HEX);
+    m_absoluteTargetTracker.ElTracker().setAngleMode(AngleMode::Clamp);
+    m_absoluteTargetTracker.ElTracker().setClampRange(-10.0, 70.0);
+    m_absoluteTargetTracker.ElTracker().setSpeedLimit(MAX_SPEED_HEX);
+
+    m_absoluteTargetReady = false;
+    m_lastExGuideSampleMs = -1;
+    m_lastRelativeAzimuthDeg = 0.0;
+    m_lastRelativeElevationDeg = 0.0;
+    m_waitingStatusLogged = false;
+}
+
+void SerialPortTurntableHex::recvExGuideMeasurement(exGuideMeasurement sample)
+{
+    if (!m_trackingAllowed || m_exGuidePeriod != 7)
+        return;
+    if (m_exGuideSource <= 0 || sample.sourceId != m_exGuideSource)
+        return;
+    if (!std::isfinite(sample.azimuth) || !std::isfinite(sample.elevation))
+        return;
+
+    const float innerAngleForTransform =
+            m_current_inner_angle + m_inner_angle_offset_deg;
+    const auto ang = seeker::deRollAboutBoresightDeg(
+                sample.azimuth, sample.elevation, innerAngleForTransform);
+
+    const double absoluteOuterDeg =
+            static_cast<double>(m_current_outter_angle) - ang.az;
+    const double absoluteMiddleDeg =
+            static_cast<double>(m_current_middle_angle) + ang.el;
+    const qint64 timestampMs = sample.timestampMs > 0
+            ? sample.timestampMs : QDateTime::currentMSecsSinceEpoch();
+
+    if (!m_absoluteTargetReady
+            || (m_lastExGuideSampleMs >= 0
+                && timestampMs - m_lastExGuideSampleMs > 500)) {
+        m_absoluteTargetTracker.Init(
+                    absoluteOuterDeg, absoluteMiddleDeg, timestampMs);
+        m_absoluteTargetReady = true;
+    } else {
+        m_absoluteTargetTracker.FeedData(
+                    timestampMs, absoluteOuterDeg, absoluteMiddleDeg);
+    }
+
+    m_lastExGuideSampleMs = timestampMs;
+    m_lastRelativeAzimuthDeg = ang.az;
+    m_lastRelativeElevationDeg = ang.el;
+    m_waitingStatusLogged = false;
+}
+
+void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
+        int sourceId, double firstPredictionDelaySec)
+{
+    if (!m_trackingAllowed || m_exGuidePeriod != 7)
+        return;
+    if (sourceId != m_exGuideSource)
+        return;
+    if (!m_absoluteTargetReady || m_lastExGuideSampleMs < 0) {
+        if (!m_waitingStatusLogged) {
+            qDebug() << "[HEX] 1s跟踪: 尚无绝对目标测量，暂不发送";
+            m_waitingStatusLogged = true;
+        }
+        return;
+    }
+    if (QDateTime::currentMSecsSinceEpoch() - m_lastExGuideSampleMs > 500) {
+        qDebug() << "[HEX] 1s跟踪: 外引导测量超时，暂不发送";
+        return;
+    }
+
+    const qint64 turntableNowMs = estimatedTurntableTimeMs();
+    if (turntableNowMs < 0) {
+        if (!m_waitingStatusLogged) {
+            qDebug() << "[HEX] 1s跟踪: 转台状态帧不可用，暂不发送";
+            m_waitingStatusLogged = true;
+        }
+        return;
+    }
+    const qint64 nextSecond = (turntableNowMs / 1000 + 1) % 14400;
+    const double firstDelay = std::max(0.0, firstPredictionDelaySec);
+
+    const sendExGuideData outerPredicted =
+            m_absoluteTargetTracker.GenAxisPacket(
+                true, static_cast<qint64>(nextSecond), firstDelay);
+    const sendExGuideData middlePredicted =
+            m_absoluteTargetTracker.GenAxisPacket(
+                false, static_cast<qint64>(nextSecond), firstDelay);
+
+    // preview() 接收相对当前反馈的偏移，并输出绝对目标位置。
+    const std::array<double, 4> outerOffsets = {{
+        outerPredicted.angle1 - m_current_outter_angle,
+        outerPredicted.angle2 - m_current_outter_angle,
+        outerPredicted.angle3 - m_current_outter_angle,
+        outerPredicted.angle4 - m_current_outter_angle
+    }};
+    const std::array<double, 4> middleOffsets = {{
+        middlePredicted.angle1 - m_current_middle_angle,
+        middlePredicted.angle2 - m_current_middle_angle,
+        middlePredicted.angle3 - m_current_middle_angle,
+        middlePredicted.angle4 - m_current_middle_angle
+    }};
+    const std::array<double, 4> outerPositions =
+            m_outerTrackingSmoother.preview(
+                m_current_outter_angle, outerOffsets, 0.25);
+    const std::array<double, 4> middlePositions =
+            m_middleTrackingSmoother.preview(
+                m_current_middle_angle, middleOffsets, 0.25);
+
+    TrackingSendCmd1Hex cmdOuter;
+    cmdOuter.axis = 3;
+    cmdOuter.trackTime = static_cast<int>(nextSecond);
+    cmdOuter.angle1 = static_cast<float>(outerPositions[0]);
+    cmdOuter.angle2 = static_cast<float>(outerPositions[1]);
+    cmdOuter.angle3 = static_cast<float>(outerPositions[2]);
+    cmdOuter.angle4 = static_cast<float>(outerPositions[3]);
+    if (cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100
+            || cmdOuter.angle2 < -100 || cmdOuter.angle2 > 100
+            || cmdOuter.angle3 < -100 || cmdOuter.angle3 > 100
+            || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100) {
+        qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
+    } else {
+        sendTrackCmd_1s(cmdOuter);
+    }
+
+    TrackingSendCmd1Hex cmdMiddle;
+    cmdMiddle.axis = 2;
+    cmdMiddle.trackTime = static_cast<int>(nextSecond);
+    cmdMiddle.angle1 = static_cast<float>(middlePositions[0]);
+    cmdMiddle.angle2 = static_cast<float>(middlePositions[1]);
+    cmdMiddle.angle3 = static_cast<float>(middlePositions[2]);
+    cmdMiddle.angle4 = static_cast<float>(middlePositions[3]);
+    if (cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70
+            || cmdMiddle.angle2 < -10 || cmdMiddle.angle2 > 70
+            || cmdMiddle.angle3 < -10 || cmdMiddle.angle3 > 70
+            || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70) {
+        qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
+    } else {
+        sendTrackCmd_1s(cmdMiddle);
+    }
+
+    TrackingSendCmd1Hex cmdInner;
+    cmdInner.axis = 1;
+    cmdInner.trackTime = static_cast<int>(nextSecond);
+    cmdInner.angle1 = cmdInner.angle2 =
+    cmdInner.angle3 = cmdInner.angle4 = m_current_inner_angle;
+    sendTrackCmd_1s(cmdInner);
 }
 
 void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuideData frame2)

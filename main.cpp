@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<TrackingCorrectionCmdHex>("TrackingCorrectionCmdHex");
     qRegisterMetaType<RMCData>("RMCData");
     qRegisterMetaType<sendExGuideData>("sendExGuideData");
+    qRegisterMetaType<exGuideMeasurement>("exGuideMeasurement");
     // qRegisterMetaType<TiltFrame>("TiltFrame");   // 倾角仪串口停用
 
     // ═══ 主线程对象：QML 直接访问 ═══
@@ -398,10 +399,10 @@ int main(int argc, char *argv[])
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, imagePort, &SerialPortImage::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged, ccdPort, &SerialPortCCD::ExmodeChanged, Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSettingChanged,
-                     turntablePort, &SerialPortTurntableHex::resetTrackingSmoother,
+                     turntablePort, &SerialPortTurntableHex::ExGuidePeriodChanged,
                      Qt::QueuedConnection);
     QObject::connect(&m_modeController, &ModeController::exguideSrcChanged,
-                     turntablePort, &SerialPortTurntableHex::resetTrackingSmoother,
+                     turntablePort, &SerialPortTurntableHex::ExGuideSourceChanged,
                      Qt::QueuedConnection);
 
     // 外引导源不可用（串口未打开/CCD视频未接入）时，弹窗提示
@@ -448,9 +449,24 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::reqTimesync, turntablePort, &SerialPortTurntableHex::sendTimesync, Qt::QueuedConnection);
-    QObject::connect(imagePort, &SerialPortImage::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
-    QObject::connect(laserPort, &SerialPortLaser::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
-    QObject::connect(ccdPort, &SerialPortCCD::reqExsend_1s, turntablePort, &SerialPortTurntableHex::sendTrackMode_1s, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::exGuideMeasurementReady,
+                     turntablePort, &SerialPortTurntableHex::recvExGuideMeasurement,
+                     Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::exGuideMeasurementReady,
+                     turntablePort, &SerialPortTurntableHex::recvExGuideMeasurement,
+                     Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::exGuideMeasurementReady,
+                     turntablePort, &SerialPortTurntableHex::recvExGuideMeasurement,
+                     Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::exGuide1sTick,
+                     turntablePort, &SerialPortTurntableHex::sendAbsoluteTrackMode_1s,
+                     Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::exGuide1sTick,
+                     turntablePort, &SerialPortTurntableHex::sendAbsoluteTrackMode_1s,
+                     Qt::QueuedConnection);
+    QObject::connect(ccdPort, &SerialPortCCD::exGuide1sTick,
+                     turntablePort, &SerialPortTurntableHex::sendAbsoluteTrackMode_1s,
+                     Qt::QueuedConnection);
 
     QObject::connect(imagePort, &SerialPortImage::reqExsend_20ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_20ms, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::reqExsend_20ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_20ms, Qt::QueuedConnection);

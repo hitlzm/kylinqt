@@ -196,6 +196,8 @@ signals:
 
     // 外引导模式请求信号（连接转台串口线程）
     void reqTimesync(int seconds = 0);
+    void exGuideMeasurementReady(exGuideMeasurement sample);
+    void exGuide1sTick(int sourceId, double firstPredictionDelaySec);
     void reqExsend_1s(sendExGuideData frame1, sendExGuideData frame2);
     void reqExsend_20ms(double angle1, double angle2);
 

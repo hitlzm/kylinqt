@@ -675,20 +675,14 @@ void SerialPortLaser::parseData(const QByteArray &rawData)
     emit laserFrameReceived(frame);
     emit laserRawFrameReceived(rawData);
     
-    //判断激光导引头是否被选中为外引导源，是的话更新数据（1s跟踪模式）
-    if(exindex == ExguideMode)
-    {
-        if (m_abNeedReset)
-        {
-            // 进入外引导后首次收到本路数据：清零虚拟时钟，并用本帧测量重建滤波器，
-            // 避免沿用上一次使用时的陈旧角速度（否则第 1 包会被旧速度推到视场边缘）
-            m_filterTime = 0;
-            m_abMgr.Init(m_azimuth, m_pitch, m_filterTime);
-            m_abNeedReset = false;
-        }
-
-        m_filterTime += 10;  // 激光数据周期10ms
-        m_abMgr.FeedData(m_filterTime, m_azimuth, m_pitch);
+    // 1 秒模式只上报逐帧相对测量，绝对目标合成和预测由转台线程负责。
+    if (exindex == ExguideMode && exguidesetting == Exguide_1s) {
+        exGuideMeasurement sample;
+        sample.sourceId = 4;
+        sample.azimuth = m_azimuth;
+        sample.elevation = m_pitch;
+        sample.timestampMs = QDateTime::currentMSecsSinceEpoch();
+        emit exGuideMeasurementReady(sample);
     }
 }
 
@@ -757,15 +751,9 @@ void SerialPortLaser::ExmodeChanged(int mode)
                         }
                         // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
                         const auto slot = m_periodicTrackSchedule.currentSlot();
-                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(
-                                    true, slot.targetSecond,
-                                    slot.firstPredictionDelaySec);  // 方位轴
-                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(
-                                    false, slot.targetSecond,
-                                    slot.firstPredictionDelaySec);  // 俯仰轴
-                        // 发送预测角度给转台
-                        emit reqExsend_1s(az_pkt, el_pkt);
-                        LogManager::instance()->logLaserTracking(az_pkt.angle1, el_pkt.angle1);
+                        // 测量已逐帧发送；这里只触发转台生成绝对目标预测包。
+                        emit exGuide1sTick(4, slot.firstPredictionDelaySec);
+                        LogManager::instance()->logLaserTracking(m_azimuth, m_pitch);
                         m_exGuideTimer->start(static_cast<int>(
                             m_periodicTrackSchedule.delayUntilNextSendMs(
                                 slot.rawTargetSecond)));

@@ -856,15 +856,10 @@ void SerialPortImage::ExmodeChanged(int mode)
                         }
                         // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
                         const auto slot = m_periodicTrackSchedule.currentSlot();
-                        sendExGuideData az_pkt = m_abMgr.GenAxisPacket(
-                                    true, slot.targetSecond,
-                                    slot.firstPredictionDelaySec);  // 方位轴
-                        sendExGuideData el_pkt = m_abMgr.GenAxisPacket(
-                                    false, slot.targetSecond,
-                                    slot.firstPredictionDelaySec);  // 俯仰轴
-                        // 发送预测角度给转台
-                        emit reqExsend_1s(az_pkt, el_pkt);
-                        LogManager::instance()->logImageTracking(az_pkt.angle1, el_pkt.angle1);
+                        // 测量样本已经逐帧发送；这里只触发转台生成下一组
+                        // 基于绝对目标角的 1 秒预测轨迹。
+                        emit exGuide1sTick(3, slot.firstPredictionDelaySec);
+                        LogManager::instance()->logImageTracking(m_azimuth, m_pitch);
                         m_exGuideTimer->start(static_cast<int>(
                             m_periodicTrackSchedule.delayUntilNextSendMs(
                                 slot.rawTargetSecond)));
@@ -1088,21 +1083,15 @@ void SerialPortImage::parseData(const QByteArray &rawData)
     m_pitch = pFrame->pitch_frame_angle * 0.002;
     emit imageFrameReceived(rawData);
 
-    //判断图像导引头是否被选中为外引导源，是的话更新数据（1s跟踪模式）
-    if(exindex == 0)
-    {
-        if (m_abNeedReset)
-        {
-            // 进入外引导后首次收到本路数据：清零虚拟时钟，并用本帧测量重建滤波器。
-            // 否则会沿用上一次使用时的角速度——滤波器角速度只由残差驱动，
-            // 目标已停住时残差≈0，旧速度会一直保留并把第 1 包推到视场边缘。
-            m_filterTime = 0;
-            m_abMgr.Init(m_azimuth, m_pitch, m_filterTime);
-            m_abNeedReset = false;
-        }
-
-        m_filterTime += 20;
-        m_abMgr.FeedData(m_filterTime, m_azimuth, m_pitch);
+    // 1 秒模式只上报逐帧相对测量。绝对目标合成和 AB 预测由转台线程完成，
+    // 避免把转台自身运动误识别成目标角速度。
+    if (exindex == ExguideMode && exguidesetting == Exguide_1s) {
+        exGuideMeasurement sample;
+        sample.sourceId = 3;
+        sample.azimuth = m_azimuth;
+        sample.elevation = m_pitch;
+        sample.timestampMs = QDateTime::currentMSecsSinceEpoch();
+        emit exGuideMeasurementReady(sample);
     }
 }
 
