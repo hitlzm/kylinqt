@@ -752,7 +752,7 @@ void SerialPortLaser::ExmodeChanged(int mode)
                         // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
                         const auto slot = m_periodicTrackSchedule.currentSlot();
                         // 测量已逐帧发送；这里只触发转台生成绝对目标预测包。
-                        emit exGuide1sTick(4, slot.firstPredictionDelaySec);
+                        emit exGuide1sTick(4);
                         LogManager::instance()->logLaserTracking(m_azimuth, m_pitch);
                         m_exGuideTimer->start(static_cast<int>(
                             m_periodicTrackSchedule.delayUntilNextSendMs(

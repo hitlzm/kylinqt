@@ -456,13 +456,13 @@ int main(int argc, char *argv[])
                      turntablePort, &SerialPortTurntableHex::recvExGuideMeasurement,
                      Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::exGuide1sTick,
-                     turntablePort, &SerialPortTurntableHex::sendAbsoluteTrackMode_1s,
+                     turntablePort, &SerialPortTurntableHex::sendLatestTargetMode_1s,
                      Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::exGuide1sTick,
-                     turntablePort, &SerialPortTurntableHex::sendAbsoluteTrackMode_1s,
+                     turntablePort, &SerialPortTurntableHex::sendLatestTargetMode_1s,
                      Qt::QueuedConnection);
     QObject::connect(ccdPort, &SerialPortCCD::exGuide1sTick,
-                     turntablePort, &SerialPortTurntableHex::sendAbsoluteTrackMode_1s,
+                     turntablePort, &SerialPortTurntableHex::sendLatestTargetMode_1s,
                      Qt::QueuedConnection);
 
     QObject::connect(imagePort, &SerialPortImage::reqExsend_20ms, turntablePort, &SerialPortTurntableHex::sendTrackMode_20ms, Qt::QueuedConnection);

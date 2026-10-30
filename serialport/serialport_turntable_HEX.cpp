@@ -7,39 +7,10 @@
 #include <QTime>
 #include <QDateTime>
 #include "../utils/seeker_coordinate_transform.h"
-#include "../utils/target_prediction_profile.h"
 #include "../utils/sendlatencyprobe.h"
 #define MAX_SPEED_HEX 14.0f           //转台的最大速度可以再加大一些
 #define MAX_ACCELERATION_HEX 10.0f
 #define HANDLE_SPEED_CHANGE_EPSILON 0.1f  // 低于此变化的摇杆噪声不触发停车重设
-
-namespace {
-
-// 1 秒模式预测窗较长。绝对目标接近转台当前角时，AB 中残留的小角速度
-// 不应继续展开成四个目标点，否则目标停止后仍可能产生左右超调。
-sendExGuideData predictAbsoluteTargetDamped(
-        AlphaBetaTracker &tracker,
-        double feedbackDeg,
-        uint32_t packetTime,
-        double firstDelaySec)
-{
-    sendExGuideData packet;
-    packet.time = packetTime;
-
-    const double center = tracker.angle();
-    const double relativeDistance = std::abs(center - feedbackDeg);
-    const double blend =
-            target_prediction::nearTargetVelocityBlend(relativeDistance);
-    const double velocity = tracker.velocity() * blend;
-
-    packet.angle1 = center + velocity * firstDelaySec;
-    packet.angle2 = center + velocity * (firstDelaySec + 0.25);
-    packet.angle3 = center + velocity * (firstDelaySec + 0.50);
-    packet.angle4 = center + velocity * (firstDelaySec + 0.75);
-    return packet;
-}
-
-} // namespace
 
 // ════════════════════════ 数值编解码实现 ════════════════════════
 
@@ -321,6 +292,11 @@ SerialPortTurntableHex::SerialPortTurntableHex(QObject *parent)
     oneSecondConfig.farTrackRadiusDeg = 3.0;
     oneSecondConfig.maxSpeedDegPerSec = 4.0;
     oneSecondConfig.maxAccelerationDegPerSec2 = 2.0;
+    oneSecondConfig.offsetFilterTimeConstantSec = 0.18;
+    oneSecondConfig.offsetFilterFastTimeConstantSec = 0.08;
+    oneSecondConfig.offsetFilterFastSlewThresholdDeg = 0.50;
+    oneSecondConfig.offsetFilterFastResetDeltaDeg = 1.50;
+    oneSecondConfig.offsetFilterSignResetMinDeg = 0.050;
     oneSecondConfig.settleDeadbandDeg = 0.002;
     m_outer1sTrackingSmoother.setConfig(oneSecondConfig);
     m_middle1sTrackingSmoother.setConfig(oneSecondConfig);
@@ -693,7 +669,7 @@ void SerialPortTurntableHex::ProgramModeChanged(int mode)
     resetAllHandleSpeedStates(remoteMode);
     resetTrackingSmoother();
     if (mode == 0)
-        resetAbsoluteTargetTracker();
+        resetOneSecondTargetState();
 
     if (leavingExguide) {
         // 外引导 1s 模式可能已经下发了最长约 1.2s 的未来轨迹。
@@ -866,46 +842,27 @@ qint64 SerialPortTurntableHex::estimatedTurntableTimeMs() const
 void SerialPortTurntableHex::ExGuideSourceChanged(int source)
 {
     m_exGuideSource = source;
-    resetAbsoluteTargetTracker();
+    resetOneSecondTargetState();
     resetTrackingSmoother();
 }
 
 void SerialPortTurntableHex::ExGuidePeriodChanged(int setting)
 {
     m_exGuidePeriod = setting;
-    resetAbsoluteTargetTracker();
+    resetOneSecondTargetState();
     resetTrackingSmoother();
 }
 
-void SerialPortTurntableHex::resetAbsoluteTargetTracker()
+void SerialPortTurntableHex::resetOneSecondTargetState()
 {
-    SeekerType type = SeekerType::Image;
-    if (m_exGuideSource == 4)
-        type = SeekerType::Laser;
-    else if (m_exGuideSource == 5)
-        type = SeekerType::CCD_Wide;
-
-    m_absoluteTargetTracker = ABTrackManager(type);
-    // 滤波器当前跟踪的是绝对目标角，必须使用转台机械范围，而不是导引头视场。
-    m_absoluteTargetTracker.AzTracker().setAngleMode(AngleMode::Clamp);
-    m_absoluteTargetTracker.AzTracker().setClampRange(-100.0, 100.0);
-    m_absoluteTargetTracker.AzTracker().setAlpha(0.15);
-    m_absoluteTargetTracker.AzTracker().setBeta(0.01);
-    m_absoluteTargetTracker.AzTracker().setSpeedLimit(0.8);
-    m_absoluteTargetTracker.AzTracker().setInnovationGate(
-                0.50, 1.00, 4.0, 0.5, 5);
-    m_absoluteTargetTracker.ElTracker().setAngleMode(AngleMode::Clamp);
-    m_absoluteTargetTracker.ElTracker().setClampRange(-10.0, 70.0);
-    m_absoluteTargetTracker.ElTracker().setAlpha(0.15);
-    m_absoluteTargetTracker.ElTracker().setBeta(0.01);
-    m_absoluteTargetTracker.ElTracker().setSpeedLimit(0.8);
-    m_absoluteTargetTracker.ElTracker().setInnovationGate(
-                0.50, 1.00, 4.0, 0.5, 5);
-
-    m_absoluteTargetReady = false;
+    m_oneSecondTargetReady = false;
     m_lastExGuideSampleMs = -1;
     m_lastRelativeAzimuthDeg = 0.0;
     m_lastRelativeElevationDeg = 0.0;
+    m_oneSecondOuterTargetDeg = m_current_outter_angle;
+    m_oneSecondMiddleTargetDeg = m_current_middle_angle;
+    m_outer1sTrackingSmoother.reset(m_current_outter_angle);
+    m_middle1sTrackingSmoother.reset(m_current_middle_angle);
     m_waitingStatusLogged = false;
 }
 
@@ -932,31 +889,43 @@ void SerialPortTurntableHex::recvExGuideMeasurement(exGuideMeasurement sample)
     const qint64 timestampMs = sample.timestampMs > 0
             ? sample.timestampMs : QDateTime::currentMSecsSinceEpoch();
 
-    if (!m_absoluteTargetReady
-            || (m_lastExGuideSampleMs >= 0
-                && timestampMs - m_lastExGuideSampleMs > 500)) {
-        m_absoluteTargetTracker.Init(
-                    absoluteOuterDeg, absoluteMiddleDeg, timestampMs);
-        m_absoluteTargetReady = true;
+    double dtSec = 0.02;
+    if (!m_oneSecondTargetReady
+            || m_lastExGuideSampleMs < 0
+            || timestampMs <= m_lastExGuideSampleMs
+            || timestampMs - m_lastExGuideSampleMs > 500) {
+        resetOneSecondTargetState();
     } else {
-        m_absoluteTargetTracker.FeedData(
-                    timestampMs, absoluteOuterDeg, absoluteMiddleDeg);
+        dtSec = static_cast<double>(timestampMs - m_lastExGuideSampleMs)
+                / 1000.0;
+        dtSec = std::max(0.005, std::min(0.20, dtSec));
     }
 
+    // 1秒模式仅使用整形器更新“最新绝对目标位置”，没有速度外推。
+    const auto outerStep = m_outer1sTrackingSmoother.update(
+                m_current_outter_angle,
+                absoluteOuterDeg - m_current_outter_angle,
+                dtSec);
+    const auto middleStep = m_middle1sTrackingSmoother.update(
+                m_current_middle_angle,
+                absoluteMiddleDeg - m_current_middle_angle,
+                dtSec);
+    m_oneSecondOuterTargetDeg = outerStep.positionDeg;
+    m_oneSecondMiddleTargetDeg = middleStep.positionDeg;
+    m_oneSecondTargetReady = true;
     m_lastExGuideSampleMs = timestampMs;
     m_lastRelativeAzimuthDeg = ang.az;
     m_lastRelativeElevationDeg = ang.el;
     m_waitingStatusLogged = false;
 }
 
-void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
-        int sourceId, double firstPredictionDelaySec)
+void SerialPortTurntableHex::sendLatestTargetMode_1s(int sourceId)
 {
     if (!m_trackingAllowed || m_exGuidePeriod != 7)
         return;
     if (sourceId != m_exGuideSource)
         return;
-    if (!m_absoluteTargetReady || m_lastExGuideSampleMs < 0) {
+    if (!m_oneSecondTargetReady || m_lastExGuideSampleMs < 0) {
         if (!m_waitingStatusLogged) {
             qDebug() << "[HEX] 1s跟踪: 尚无绝对目标测量，暂不发送";
             m_waitingStatusLogged = true;
@@ -977,29 +946,19 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
         return;
     }
     const qint64 nextSecond = (turntableNowMs / 1000 + 1) % 14400;
-    const double firstDelay = std::max(0.0, firstPredictionDelaySec);
-
-    const sendExGuideData outerPredicted = predictAbsoluteTargetDamped(
-                m_absoluteTargetTracker.AzTracker(),
-                m_current_outter_angle,
-                static_cast<uint32_t>(nextSecond), firstDelay);
-    const sendExGuideData middlePredicted = predictAbsoluteTargetDamped(
-                m_absoluteTargetTracker.ElTracker(),
-                m_current_middle_angle,
-                static_cast<uint32_t>(nextSecond), firstDelay);
-
-    // preview() 接收相对当前反馈的偏移，并输出绝对目标位置。
+    // 不使用AB速度预测：四个点都指向最近一次绝对目标位置，
+    // 由整形器生成受速度和加速度约束的1秒轨迹。
     const std::array<double, 4> outerOffsets = {{
-        outerPredicted.angle1 - m_current_outter_angle,
-        outerPredicted.angle2 - m_current_outter_angle,
-        outerPredicted.angle3 - m_current_outter_angle,
-        outerPredicted.angle4 - m_current_outter_angle
+        m_oneSecondOuterTargetDeg - m_current_outter_angle,
+        m_oneSecondOuterTargetDeg - m_current_outter_angle,
+        m_oneSecondOuterTargetDeg - m_current_outter_angle,
+        m_oneSecondOuterTargetDeg - m_current_outter_angle
     }};
     const std::array<double, 4> middleOffsets = {{
-        middlePredicted.angle1 - m_current_middle_angle,
-        middlePredicted.angle2 - m_current_middle_angle,
-        middlePredicted.angle3 - m_current_middle_angle,
-        middlePredicted.angle4 - m_current_middle_angle
+        m_oneSecondMiddleTargetDeg - m_current_middle_angle,
+        m_oneSecondMiddleTargetDeg - m_current_middle_angle,
+        m_oneSecondMiddleTargetDeg - m_current_middle_angle,
+        m_oneSecondMiddleTargetDeg - m_current_middle_angle
     }};
     const std::array<double, 4> outerPositions =
             m_outer1sTrackingSmoother.preview(

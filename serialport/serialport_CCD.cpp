@@ -379,7 +379,7 @@ void SerialPortCCD::ExmodeChanged(int mode)
                         // 按单调时间选下一目标秒，并在目标秒开始前200ms发送。
                         const auto slot = m_periodicTrackSchedule.currentSlot();
                         // 测量已逐帧发送；这里只触发转台生成绝对目标预测包。
-                        emit exGuide1sTick(5, slot.firstPredictionDelaySec);
+                        emit exGuide1sTick(5);
                         // 串口未打开时不输出外引导跟踪日志
                         if (isOpen())
                             LogManager::instance()->logCCDTracking(m_azimuth, m_pitch);

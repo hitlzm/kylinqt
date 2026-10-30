@@ -1,5 +1,4 @@
 #include "../utils/tracking_target_smoother.h"
-#include "../utils/target_prediction_profile.h"
 
 #include <cmath>
 #include <cstdio>
@@ -45,6 +44,40 @@ void testFineTrackingZoneUsesLowestSpeed()
     check(std::abs(result.positionDeg - 3.0)
               <= smoother.config().fineMaxSpeedDegPerSec * 0.02 + 1e-6,
           "fine tracking zone should use the lowest speed limit");
+}
+
+void testOneSecondFilterSmoothsOneDegreeStep()
+{
+    TrackingTargetSmoother::Config config;
+    config.offsetFilterTimeConstantSec = 0.18;
+    config.offsetFilterFastTimeConstantSec = 0.08;
+    config.offsetFilterFastSlewThresholdDeg = 0.50;
+    config.offsetFilterFastResetDeltaDeg = 1.50;
+    config.offsetFilterSignResetMinDeg = 0.050;
+    config.fineTrackRadiusDeg = 0.12;
+    config.fineMaxSpeedDegPerSec = 0.08;
+    config.fineMaxAccelerationDegPerSec2 = 0.16;
+    config.nearMaxSpeedDegPerSec = 0.8;
+    config.nearMaxAccelerationDegPerSec2 = 1.5;
+    config.maxSpeedDegPerSec = 4.0;
+    config.maxAccelerationDegPerSec2 = 2.0;
+
+    TrackingTargetSmoother smoother(config);
+    smoother.reset(0.0);
+    smoother.update(0.0, 0.0, 0.02);
+
+    double previous = 0.0;
+    TrackingTargetSmoother::StepResult step =
+            smoother.update(0.0, 1.0, 0.02);
+    check(step.positionDeg - previous <= 0.02,
+          "one-second filter must not jump through a 1 deg step");
+
+    for (int i = 0; i < 50; ++i) {
+        previous = step.positionDeg;
+        step = smoother.update(0.0, 1.0, 0.02);
+        check(step.positionDeg - previous <= 0.02,
+              "one-second filtered target must remain rate limited");
+    }
 }
 
 void testLargeOffsetHonorsSpeedAndAcceleration()
@@ -144,21 +177,6 @@ void testInvalidMeasurementHoldsLastTarget()
           "non-finite seeker offset should hold last target");
 }
 
-void testPiecewisePredictionDamping()
-{
-    check(target_prediction::nearTargetVelocityBlend(0.05) == 0.0,
-          "prediction must be disabled very close to the target");
-    check(target_prediction::nearTargetVelocityBlend(0.50) < 0.05,
-          "prediction must remain below five percent inside 0.5 deg");
-    check(target_prediction::nearTargetVelocityBlend(1.0) <= 0.100001,
-          "prediction must remain near ten percent at 1 deg");
-    check(target_prediction::nearTargetVelocityBlend(2.0) > 0.45
-              && target_prediction::nearTargetVelocityBlend(2.0) < 0.550001,
-          "prediction should transition smoothly around 2 deg");
-    check(target_prediction::nearTargetVelocityBlend(3.0) == 1.0,
-          "full prediction should resume at 3 deg");
-}
-
 void testNearZeroHoldsAgainstSensorQuantization()
 {
     TrackingTargetSmoother::Config config;
@@ -216,11 +234,11 @@ int main()
 {
     testSmallOffsetUsesLowSpeedTracking();
     testFineTrackingZoneUsesLowestSpeed();
+    testOneSecondFilterSmoothsOneDegreeStep();
     testLargeOffsetHonorsSpeedAndAcceleration();
     testMovingTargetReversesWithoutJump();
     testPreviewGeneratesOneSecondRamp();
     testInvalidMeasurementHoldsLastTarget();
-    testPiecewisePredictionDamping();
     testNearZeroHoldsAgainstSensorQuantization();
     testZeroHoldEntryRemainsSlewLimited();
 

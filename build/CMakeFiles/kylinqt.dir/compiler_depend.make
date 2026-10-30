@@ -4601,11 +4601,8 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: E:/QTproject
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/vadefs.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wchar.h \
   E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/wctype.h \
-  E:/QTproject/kylinqt/kalman/AlphaBetaTracker.h \
-  E:/QTproject/kylinqt/serialport/serialport.h \
   E:/QTproject/kylinqt/utils/seeker_coordinate_transform.h \
   E:/QTproject/kylinqt/utils/sendlatencyprobe.h \
-  E:/QTproject/kylinqt/utils/target_prediction_profile.h \
   E:/QTproject/kylinqt/utils/tracking_target_smoother.h \
   E:/onnxruntime/cmake/external/eigen/Eigen/Cholesky \
   E:/onnxruntime/cmake/external/eigen/Eigen/Core \
@@ -7461,8 +7458,6 @@ E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/winspool.h:
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/winsvc.h:
 
 E:/QT5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include/winuser.h:
-
-E:/QTproject/kylinqt/utils/target_prediction_profile.h:
 
 E:/opencv-4.2.0/DNN/install/include/opencv2/dnn/layer.hpp:
 

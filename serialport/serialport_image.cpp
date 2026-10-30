@@ -858,7 +858,7 @@ void SerialPortImage::ExmodeChanged(int mode)
                         const auto slot = m_periodicTrackSchedule.currentSlot();
                         // 测量样本已经逐帧发送；这里只触发转台生成下一组
                         // 基于绝对目标角的 1 秒预测轨迹。
-                        emit exGuide1sTick(3, slot.firstPredictionDelaySec);
+                        emit exGuide1sTick(3);
                         LogManager::instance()->logImageTracking(m_azimuth, m_pitch);
                         m_exGuideTimer->start(static_cast<int>(
                             m_periodicTrackSchedule.delayUntilNextSendMs(
