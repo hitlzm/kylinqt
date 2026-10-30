@@ -733,20 +733,36 @@ Rectangle {
             myheight: 60
             title: "俯仰框架角预装"
             labeltext: "°"
+            numericInput: true
+            fieldLabel: "俯仰角"
+
+            onValidationFailed: testmsg.showToast(message, 1500)
 
             onTextChanged: {
-                var val = Number(text)
-                if (!isNaN(val) && (val > 10 || val < -40)) {
+                if (numericResult.state === "valid"
+                        && (numericResult.value > 10 || numericResult.value < -40)) {
                     if (root.pitchInputValid)
                         testmsg.showToast("俯仰角输入范围为-40°~ 10°,请重新输入", 1500)
                     root.pitchInputValid = false
                 } else {
-                    root.pitchInputValid = true
+                    root.pitchInputValid = inputFormatValid
                 }
             }
             onEditingFinished: {
-                if (Number(text) >= -40 && Number(text) <= 10)
-                    imageSendData.m_pitchGimbalPreset = Number(text)
+                if (!inputFormatValid) {
+                    root.pitchInputValid = false
+                    return
+                }
+
+                root.pitchInputValid = numericValue >= -40 && numericValue <= 10
+                if (!root.pitchInputValid) {
+                    testmsg.showToast("俯仰角输入范围为-40°~ 10°,请重新输入", 1500)
+                    return
+                }
+
+                imageSendData.m_pitchGimbalPreset = numericValue
+                if (text === "")
+                    text = "0"
             }
         }
 
@@ -757,20 +773,36 @@ Rectangle {
             myheight: 60
             title: "偏航框架角预装"
             labeltext: "°"
+            numericInput: true
+            fieldLabel: "偏航角"
+
+            onValidationFailed: testmsg.showToast(message, 1500)
 
             onTextChanged: {
-                var val = Number(text)
-                if (!isNaN(val) && (val > 30 || val < -30)) {
+                if (numericResult.state === "valid"
+                        && (numericResult.value > 30 || numericResult.value < -30)) {
                     if (root.yawInputValid)
                         testmsg.showToast("偏航角输入范围为-30°~ 30°,请重新输入", 1500)
                     root.yawInputValid = false
                 } else {
-                    root.yawInputValid = true
+                    root.yawInputValid = inputFormatValid
                 }
             }
             onEditingFinished: {
-                if (Number(text) >= -30 && Number(text) <= 30)
-                    imageSendData.m_yawGimbalPreset = Number(text)
+                if (!inputFormatValid) {
+                    root.yawInputValid = false
+                    return
+                }
+
+                root.yawInputValid = numericValue >= -30 && numericValue <= 30
+                if (!root.yawInputValid) {
+                    testmsg.showToast("偏航角输入范围为-30°~ 30°,请重新输入", 1500)
+                    return
+                }
+
+                imageSendData.m_yawGimbalPreset = numericValue
+                if (text === "")
+                    text = "0"
             }
         }
 

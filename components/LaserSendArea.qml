@@ -18,6 +18,7 @@ Rectangle {
     }
 
     // 输入校验标志（默认 true，未输入不算无效）
+    property bool laserPeriodValid: true
     property bool azimuthAngleValid: true
     property bool elevationAngleValid: true
     property bool searchCenterAzimuthValid: true
@@ -290,6 +291,7 @@ Rectangle {
         height: 42
         text: "发送数据"
         enabled: laserData.portOpen
+                  && laserPeriodValid
                   && azimuthAngleValid && elevationAngleValid
                   && searchCenterAzimuthValid && searchCenterElevationValid
                   && azimuthSearchRangeValid && elevationSearchRangeValid
@@ -332,27 +334,54 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: firstColumn.disabledIndices.indexOf(index) === -1
+                numericInput: true
+                allowNegative: index !== 0
+                allowDecimal: index !== 0
+                maximumFractionDigits: index === 0 ? 0 : 4
+                fieldLabel: modelData.title
+
+                onValidationFailed: toastmsg.showToast(message, 1500)
 
                 // 实时校验
                 onTextChanged: {
-                    if (index === 1) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                    if (index === 0) {
+                        root.laserPeriodValid = inputFormatValid
+                    } else if (index === 1) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.azimuthAngleValid)
                                 toastmsg.showToast("方位角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.azimuthAngleValid = false
                         } else {
-                            root.azimuthAngleValid = true
+                            root.azimuthAngleValid = inputFormatValid
                         }
                     }
                 }
 
                 onEditingFinished: {
                     if (index === 0) {
-                        laserSendData.m_laserPeriod = Number(text)
+                        if (!inputFormatValid) {
+                            root.laserPeriodValid = false
+                            return
+                        }
+                        root.laserPeriodValid = true
+                        laserSendData.m_laserPeriod = numericValue
+                        if (text === "")
+                            text = "0"
                     } else if (index === 1) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_azimuthAngle = Number(text)
+                        if (!inputFormatValid) {
+                            root.azimuthAngleValid = false
+                            return
+                        }
+                        root.azimuthAngleValid = numericValue >= -30 && numericValue <= 30
+                        if (!root.azimuthAngleValid) {
+                            toastmsg.showToast("方位角输入范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_azimuthAngle = numericValue
+                        if (text === "")
+                            text = "0"
                     }
                 }
             }
@@ -382,37 +411,64 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: secondColumn.disabledIndices.indexOf(index) === -1
+                numericInput: true
+                fieldLabel: modelData.title
+
+                onValidationFailed: toastmsg.showToast(message, 1500)
 
                 // 实时校验
                 onTextChanged: {
                     if (index === 0) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.elevationAngleValid)
                                 toastmsg.showToast("俯仰角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.elevationAngleValid = false
                         } else {
-                            root.elevationAngleValid = true
+                            root.elevationAngleValid = inputFormatValid
                         }
                     } else if (index === 1) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.searchCenterAzimuthValid)
                                 toastmsg.showToast("搜索中心方位角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.searchCenterAzimuthValid = false
                         } else {
-                            root.searchCenterAzimuthValid = true
+                            root.searchCenterAzimuthValid = inputFormatValid
                         }
                     }
                 }
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_elevationAngle = Number(text)
+                        if (!inputFormatValid) {
+                            root.elevationAngleValid = false
+                            return
+                        }
+                        root.elevationAngleValid = numericValue >= -30 && numericValue <= 30
+                        if (!root.elevationAngleValid) {
+                            toastmsg.showToast("俯仰角输入范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_elevationAngle = numericValue
+                        if (text === "")
+                            text = "0"
                     } else if (index === 1) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_searchCenterAzimuth = Number(text)
+                        if (!inputFormatValid) {
+                            root.searchCenterAzimuthValid = false
+                            return
+                        }
+                        root.searchCenterAzimuthValid = numericValue >= -30
+                                && numericValue <= 30
+                        if (!root.searchCenterAzimuthValid) {
+                            toastmsg.showToast("搜索中心方位角输入范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_searchCenterAzimuth = numericValue
+                        if (text === "")
+                            text = "0"
                     }
                 }
             }
@@ -441,37 +497,65 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: thirdColumn.disabledIndices.indexOf(index) === -1
+                numericInput: true
+                fieldLabel: modelData.title
+
+                onValidationFailed: toastmsg.showToast(message, 1500)
 
                 // 实时校验
                 onTextChanged: {
                     if (index === 0) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.searchCenterElevationValid)
                                 toastmsg.showToast("搜索中心俯仰角输入范围为-30°~ 30°,请重新输入", 1500)
                             root.searchCenterElevationValid = false
                         } else {
-                            root.searchCenterElevationValid = true
+                            root.searchCenterElevationValid = inputFormatValid
                         }
                     } else if (index === 1) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.azimuthSearchRangeValid)
                                 toastmsg.showToast("方位搜索范围为-30°~ 30°,请重新输入", 1500)
                             root.azimuthSearchRangeValid = false
                         } else {
-                            root.azimuthSearchRangeValid = true
+                            root.azimuthSearchRangeValid = inputFormatValid
                         }
                     }
                 }
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_searchCenterElevation = Number(text)
+                        if (!inputFormatValid) {
+                            root.searchCenterElevationValid = false
+                            return
+                        }
+                        root.searchCenterElevationValid = numericValue >= -30
+                                && numericValue <= 30
+                        if (!root.searchCenterElevationValid) {
+                            toastmsg.showToast("搜索中心俯仰角输入范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_searchCenterElevation = numericValue
+                        if (text === "")
+                            text = "0"
                     } else if (index === 1) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_azimuthSearchRange = Number(text)
+                        if (!inputFormatValid) {
+                            root.azimuthSearchRangeValid = false
+                            return
+                        }
+                        root.azimuthSearchRangeValid = numericValue >= -30
+                                && numericValue <= 30
+                        if (!root.azimuthSearchRangeValid) {
+                            toastmsg.showToast("方位搜索范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_azimuthSearchRange = numericValue
+                        if (text === "")
+                            text = "0"
                     }
                 }
             }
@@ -500,37 +584,65 @@ Rectangle {
                 title: modelData.title
                 labeltext: modelData.unit
                 enabled: fourthColumn.disabledIndices.indexOf(index) === -1
+                numericInput: true
+                fieldLabel: modelData.title
+
+                onValidationFailed: toastmsg.showToast(message, 1500)
 
                 // 实时校验
                 onTextChanged: {
                     if (index === 0) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.elevationSearchRangeValid)
                                 toastmsg.showToast("俯仰搜索范围为-30°~ 30°,请重新输入", 1500)
                             root.elevationSearchRangeValid = false
                         } else {
-                            root.elevationSearchRangeValid = true
+                            root.elevationSearchRangeValid = inputFormatValid
                         }
                     } else if (index === 1) {
-                        var val = Number(text)
-                        if (!isNaN(val) && (val > 30 || val < -30)) {
+                        if (numericResult.state === "valid"
+                                && (numericResult.value > 30 || numericResult.value < -30)) {
                             if (root.searchRadiusValid)
                                 toastmsg.showToast("搜索半径范围为-30°~ 30°,请重新输入", 1500)
                             root.searchRadiusValid = false
                         } else {
-                            root.searchRadiusValid = true
+                            root.searchRadiusValid = inputFormatValid
                         }
                     }
                 }
 
                 onEditingFinished: {
                     if (index === 0) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_elevationSearchRange = Number(text)
+                        if (!inputFormatValid) {
+                            root.elevationSearchRangeValid = false
+                            return
+                        }
+                        root.elevationSearchRangeValid = numericValue >= -30
+                                && numericValue <= 30
+                        if (!root.elevationSearchRangeValid) {
+                            toastmsg.showToast("俯仰搜索范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_elevationSearchRange = numericValue
+                        if (text === "")
+                            text = "0"
                     } else if (index === 1) {
-                        if(Number(text) >= -30 && Number(text) <= 30)
-                                laserSendData.m_searchRadius = Number(text)
+                        if (!inputFormatValid) {
+                            root.searchRadiusValid = false
+                            return
+                        }
+                        root.searchRadiusValid = numericValue >= -30
+                                && numericValue <= 30
+                        if (!root.searchRadiusValid) {
+                            toastmsg.showToast("搜索半径范围为-30°~ 30°,请重新输入", 1500)
+                            return
+                        }
+
+                        laserSendData.m_searchRadius = numericValue
+                        if (text === "")
+                            text = "0"
                     }
                 }
             }

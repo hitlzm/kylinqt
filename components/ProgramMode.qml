@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import taoQuick 1.0
 import QtQuick.Layouts 1.12
 import "./"
+import "InputRules.js" as InputRules
 
 Item{
     id:root
@@ -36,26 +37,10 @@ Item{
         id: validationMsg
     }
 
-    // 数字提取函数
-    function extractNumbers(str) {
-        // 使用正则分割：支持英文逗号、中文逗号、以及它们周围的空白字符
-        var parts = str.split(/[,，\s]+/);
-        var numbers = [];
-        for (var i = 0; i < parts.length; i++) {
-            var trimmed = parts[i].trim();
-            if (trimmed === "") continue;
-            var num = parseFloat(trimmed);
-            if (!isNaN(num)) {
-                numbers.push(num);
-            }
-        }
-        return numbers;  // 返回数字数组
-    }
-
-    // 输入框只取第一个有效数字作为幅值或频率
+    // 空输入按 0 处理；格式非法时返回 0，但调用方必须先检查格式状态。
     function parseInputNumber(str) {
-        var numbers = extractNumbers(str)
-        return numbers.length > 0 ? Number(numbers[0]) : 0
+        var result = InputRules.validateNumber(str, true, true, 4)
+        return result.state === "valid" ? result.value : 0
     }
 
     // 正弦运动峰值加速度：a_max = (2πf)² × A
@@ -121,7 +106,7 @@ Item{
     }
 
     function showValidationError(messages) {
-        validationMsg.message = "输入参数超出允许范围：\n"
+        validationMsg.message = "输入参数不正确：\n"
                 + messages.join("\n")
                 + "\n请修改后重新发送。"
         validationMsg.open()
@@ -134,6 +119,20 @@ Item{
 
         var axisName = controlNames[axisIndex]
         var limits = axisAngleLimits[axisIndex]
+        var fieldLabels = {
+            target: "目标位置",
+            speed: "速度",
+            acceleration: "加速度"
+        }
+        var fieldText = row[fieldName + "Text"]
+        var allowNegative = fieldName !== "acceleration"
+        var formatResult = InputRules.validateNumber(fieldText, allowNegative, true, 4)
+
+        if (formatResult.state !== "valid") {
+            return axisName + " "
+                    + InputRules.errorMessage(fieldLabels[fieldName], formatResult,
+                                              allowNegative, true, 4)
+        }
 
         if (fieldName === "target"
                 && programModeComboBox.currentIndex === 0
@@ -258,13 +257,22 @@ Item{
             color: "#000000"
             Layout.alignment: Qt.AlignVCenter
         }
-        CusTextField{
+        NumericTextField{
             id:sinInput
             horizontalAlignment: TextInput.AlignHCenter
             verticalAlignment: TextInput.AlignVCenter
             Layout.preferredHeight: 35
             Layout.preferredWidth: 80
-            onEditingFinished: range = parseInputNumber(text)
+            fieldLabel: "正弦运动幅度"
+            onValidationFailed: root.showValidationError([message])
+            onEditingFinished: {
+                if (!inputFormatValid)
+                    return
+
+                range = numericValue
+                if (text === "")
+                    text = "0"
+            }
         }
 
         Text {
@@ -274,13 +282,22 @@ Item{
             color: "#000000"
             Layout.alignment: Qt.AlignVCenter
         }
-        CusTextField{
+        NumericTextField{
             id:frequencyInput
             horizontalAlignment: TextInput.AlignHCenter
             verticalAlignment: TextInput.AlignVCenter
             Layout.preferredHeight: 35
             Layout.preferredWidth: 80
-            onEditingFinished: frequency = parseInputNumber(text)
+            fieldLabel: "正弦运动频率"
+            onValidationFailed: root.showValidationError([message])
+            onEditingFinished: {
+                if (!inputFormatValid)
+                    return
+
+                frequency = numericValue
+                if (text === "")
+                    text = "0"
+            }
         }
         Item { Layout.fillWidth: true }
     }
@@ -342,9 +359,19 @@ Item{
             id: axisRowRepeater
             model: root.controlNames
             delegate: Rectangle {
+                readonly property string targetText: targetInput.text
+                readonly property string speedText: speedInput.text
+                readonly property string accelerationText: accelerationInput.text
                 readonly property real targetValue: root.parseInputNumber(targetInput.text)
                 readonly property real speedValue: root.parseInputNumber(speedInput.text)
                 readonly property real accelerationValue: root.parseInputNumber(accelerationInput.text)
+                readonly property bool targetFormatValid: targetInput.inputFormatValid
+                readonly property bool speedFormatValid: speedInput.inputFormatValid
+                readonly property bool accelerationFormatValid:
+                    accelerationInput.inputFormatValid
+                readonly property bool axisFieldsFormatValid:
+                    (programModeComboBox.currentIndex !== 0 || targetFormatValid)
+                    && speedFormatValid && accelerationFormatValid
                 property bool targetInputValid: true
                 property bool speedInputValid: true
                 property bool accelerationInputValid: true
@@ -376,7 +403,7 @@ Item{
                             Layout.alignment: Qt.AlignVCenter
                         }
 
-                        CusTextField {
+                        NumericTextField {
                             id: targetInput
                             enabled: programModeComboBox.currentIndex === 0
                             horizontalAlignment: TextInput.AlignHCenter
@@ -384,33 +411,51 @@ Item{
                             Layout.preferredHeight: 38
                             Layout.preferredWidth: 85
                             placeholderText: "0.0000"
+                            fieldLabel: "目标位置"
+                            onValidationFailed: root.showValidationError([message])
                             onEditingFinished: {
-                                var value = parseInputNumber(text)
-                                text = value.toFixed(4)
+                                if (!inputFormatValid) {
+                                    root.validateAxisField(index, "target")
+                                    return
+                                }
+                                text = numericValue.toFixed(4)
                                 root.validateAxisField(index, "target")
                             }
                         }
-                        CusTextField {
+                        NumericTextField {
                             id: speedInput
                             horizontalAlignment: TextInput.AlignHCenter
                             verticalAlignment: TextInput.AlignVCenter
                             Layout.preferredHeight: 38
                             Layout.preferredWidth: 75
                             placeholderText: "0.0000"
+                            fieldLabel: "速度"
+                            onValidationFailed: root.showValidationError([message])
                             onEditingFinished: {
-                                text = parseInputNumber(text).toFixed(4)
+                                if (!inputFormatValid) {
+                                    root.validateAxisField(index, "speed")
+                                    return
+                                }
+                                text = numericValue.toFixed(4)
                                 root.validateAxisField(index, "speed")
                             }
                         }
-                        CusTextField {
+                        NumericTextField {
                             id: accelerationInput
                             horizontalAlignment: TextInput.AlignHCenter
                             verticalAlignment: TextInput.AlignVCenter
                             Layout.preferredHeight: 38
                             Layout.preferredWidth: 88
                             placeholderText: "0.0000"
+                            allowNegative: false
+                            fieldLabel: "加速度"
+                            onValidationFailed: root.showValidationError([message])
                             onEditingFinished: {
-                                text = parseInputNumber(text).toFixed(4)
+                                if (!inputFormatValid) {
+                                    root.validateAxisField(index, "acceleration")
+                                    return
+                                }
+                                text = numericValue.toFixed(4)
                                 root.validateAxisField(index, "acceleration")
                             }
                         }
@@ -426,7 +471,7 @@ Item{
                             Layout.preferredHeight: 38
                             font.pixelSize: 14
                             text: "发送数据"
-                            enabled: root.isLinkLeader(index)
+                            enabled: root.isLinkLeader(index) && axisFieldsFormatValid
                             onClicked: root.sendAxisOrLink(index)
                         }
 
@@ -439,8 +484,26 @@ Item{
                             enabled: root.isLinkLeader(index)
                             onClicked: {
                                 // 以点击瞬间输入框中的值为准，避免尚未触发 editingFinished 时使用旧值
-                                range = parseInputNumber(sinInput.text)
-                                frequency = parseInputNumber(frequencyInput.text)
+                                var amplitudeResult = InputRules.validateNumber(
+                                            sinInput.text, true, true, 4)
+                                var frequencyResult = InputRules.validateNumber(
+                                            frequencyInput.text, true, true, 4)
+                                var formatErrors = []
+                                if (amplitudeResult.state !== "valid")
+                                    formatErrors.push(InputRules.errorMessage(
+                                                          "正弦运动幅度", amplitudeResult,
+                                                          true, true, 4))
+                                if (frequencyResult.state !== "valid")
+                                    formatErrors.push(InputRules.errorMessage(
+                                                          "正弦运动频率", frequencyResult,
+                                                          true, true, 4))
+                                if (formatErrors.length > 0) {
+                                    root.showValidationError(formatErrors)
+                                    return
+                                }
+
+                                range = amplitudeResult.value
+                                frequency = frequencyResult.value
 
                                 var acceleration = sinePeakAcceleration(range, frequency)
                                 if (acceleration > maxAcceleration) {

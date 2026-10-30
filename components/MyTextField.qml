@@ -15,6 +15,16 @@ Item {
     property alias text: textField.text
     property alias placeholderText: textField.placeholderText
     property alias labeltext: mylabel.text
+    property bool numericInput: false
+    property bool allowNegative: true
+    property bool allowDecimal: true
+    property int maximumFractionDigits: 4
+    property string fieldLabel: title
+    readonly property var numericResult: textField.numericResult
+    readonly property bool inputFormatValid: textField.inputFormatValid
+    readonly property real numericValue: textField.numericValue
+    readonly property string numericError: textField.numericError
+    signal validationFailed(string message)
 
     // 禁用时：文本框背景变灰，清空内容
     onEnabledChanged: {
@@ -46,13 +56,19 @@ Item {
         Layout.preferredWidth: mywidth - mylabel.width - rowLayout.spacing
         Layout.preferredHeight: myheight - titleText.height - rowLayout.spacing
 
-        CusTextField {
+        NumericTextField {
             id: textField
             anchors.fill: parent
             font.pixelSize: 16
             horizontalAlignment: TextInput.AlignHCenter
             verticalAlignment: TextInput.AlignVCenter
+            numericInput: root.numericInput
+            allowNegative: root.allowNegative
+            allowDecimal: root.allowDecimal
+            maximumFractionDigits: root.maximumFractionDigits
+            fieldLabel: root.fieldLabel
             onEditingFinished: root.editingFinished()
+            onValidationFailed: root.validationFailed(message)
         }
 
         // 灰色覆盖层，现在锚定到父项（即 Item）
