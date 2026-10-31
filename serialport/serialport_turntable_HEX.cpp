@@ -1466,7 +1466,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle + m_step_angle;
-                if(cmd.anglePos < 199.995 && cmd.anglePos >-199.995){
+                if(cmd.anglePos < 200 && cmd.anglePos >-200){
                         sendPositionCmd(cmd);
                 }else{
                         qDebug() << "内框接近临界角，停止内框步进";
@@ -1475,7 +1475,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_inner_angle - m_step_angle;
-                if(cmd.anglePos < 199.995 && cmd.anglePos >-199.995){
+                if(cmd.anglePos < 200 && cmd.anglePos >-200){
                         sendPositionCmd(cmd);
                 }else{
                         qDebug() << "内框接近临界角，停止内框步进";
@@ -1490,7 +1490,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle + m_step_angle;
-                if(cmd.anglePos < 99.995 && cmd.anglePos >-99.995){
+                if(cmd.anglePos < 100 && cmd.anglePos >-100){
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "外框接近临界角，停止外框步进";
@@ -1499,7 +1499,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_outter_angle - m_step_angle;
-                if(cmd.anglePos < 99.995 && cmd.anglePos >-99.995){
+                if(cmd.anglePos < 100 && cmd.anglePos >-100){
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "外框接近临界角，停止外框步进";
@@ -1514,7 +1514,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             if (buttonA && Acount >= 1) {
                 cmd.velocity = MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle + m_step_angle;
-                if(cmd.anglePos < 69.995 && cmd.anglePos >-9.995){
+                if(cmd.anglePos < 90 && cmd.anglePos >-10){
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "中框接近临界角，停止中框步进控制";
@@ -1523,7 +1523,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             } else if (buttonB && Bcount >= 1) {
                 cmd.velocity = -MAX_SPEED_HEX ;
                 cmd.anglePos = m_current_middle_angle - m_step_angle;
-                if(cmd.anglePos < 69.995 && cmd.anglePos >-9.995){
+                if(cmd.anglePos < 90 && cmd.anglePos >-10){
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "中框接近临界角，停止中框步进控制";
@@ -1545,7 +1545,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             qDebug() << "内框接近临界角，停止内框速度控制";
         }
 
-        if (m_current_middle_angle < 80.0f && m_current_middle_angle > -10.0f) {
+        if (m_current_middle_angle < 90.0f && m_current_middle_angle > -10.0f) {
             setHandleSpeedTarget(2, middleTarget);
         } else {
             setHandleSpeedTarget(2, 0.0f);

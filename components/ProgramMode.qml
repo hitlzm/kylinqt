@@ -14,7 +14,7 @@ Item{
     readonly property real maxAcceleration: 10.0
     readonly property var axisAngleLimits: [
         { min: -200.0, max: 200.0 },
-        { min: -10.0, max: 70.0 },
+        { min: -10.0, max: 90.0 },
         { min: -100.0, max: 100.0 }
     ]
 
