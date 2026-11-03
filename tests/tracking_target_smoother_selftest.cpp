@@ -144,44 +144,17 @@ void testInvalidMeasurementHoldsLastTarget()
           "non-finite seeker offset should hold last target");
 }
 
-void testVelocityBasedPredictionDamping()
+void testNearTargetPredictionDamping()
 {
-    check(target_prediction::targetVelocityBlend(0.0) == 0.0,
-          "stopped target should disable residual AB velocity");
-    check(target_prediction::targetVelocityBlend(0.03) == 0.0,
-          "velocity deadband boundary should disable prediction");
-    check(target_prediction::targetVelocityBlend(0.075) > 0.45
-              && target_prediction::targetVelocityBlend(0.075) < 0.55,
-          "prediction should ramp through half strength at 0.075 deg/s");
-    check(target_prediction::targetVelocityBlend(0.12) == 1.0,
-          "moving target should receive full velocity feed-forward");
-    check(target_prediction::targetVelocityBlend(2.0) == 1.0,
-          "full prediction must not depend on tracking distance");
-    check(target_prediction::targetVelocityBlend(-0.12) == 1.0,
-          "prediction blend must be symmetric for both directions");
-}
-
-void testPreviewCanInheritInitialVelocity()
-{
-    TrackingTargetSmoother::Config config;
-    config.offsetFilterTimeConstantSec = 0.0;
-    config.fineTrackRadiusDeg = 0.1;
-    config.fineMaxSpeedDegPerSec = 1.5;
-    config.fineMaxAccelerationDegPerSec2 = 1.5;
-    config.nearMaxSpeedDegPerSec = 1.5;
-    config.nearMaxAccelerationDegPerSec2 = 1.5;
-    config.maxSpeedDegPerSec = 1.5;
-    config.maxAccelerationDegPerSec2 = 1.5;
-    TrackingTargetSmoother smoother(config);
-
-    const std::array<double, 4> offsets = {{0.5, 0.5, 0.5, 0.5}};
-    const auto fromRest = smoother.preview(0.0, offsets, 0.25, 0.0);
-    const auto moving = smoother.preview(0.0, offsets, 0.25, 0.5);
-
-    check(moving[0] > fromRest[0] + 0.1,
-          "preview should continue the previous planned velocity");
-    check(std::abs((moving[0] - 0.0) / 0.25 - 0.875) < 1e-6,
-          "preview first interval should honor inherited velocity");
+    check(target_prediction::nearTargetVelocityBlend(0.0) == 0.0,
+          "target at feedback position should disable prediction");
+    check(target_prediction::nearTargetVelocityBlend(0.10) == 0.0,
+          "near-target deadband boundary should disable prediction");
+    check(target_prediction::nearTargetVelocityBlend(1.0) > 0.09
+              && target_prediction::nearTargetVelocityBlend(1.0) < 0.11,
+          "prediction should use the reduced near-target blend at 1 deg");
+    check(target_prediction::nearTargetVelocityBlend(3.0) == 1.0,
+          "far target should receive full velocity feed-forward");
 }
 
 void testNearZeroHoldsAgainstSensorQuantization()
@@ -245,8 +218,7 @@ int main()
     testMovingTargetReversesWithoutJump();
     testPreviewGeneratesOneSecondRamp();
     testInvalidMeasurementHoldsLastTarget();
-    testVelocityBasedPredictionDamping();
-    testPreviewCanInheritInitialVelocity();
+    testNearTargetPredictionDamping();
     testNearZeroHoldsAgainstSensorQuantization();
     testZeroHoldEntryRemainsSlewLimited();
 

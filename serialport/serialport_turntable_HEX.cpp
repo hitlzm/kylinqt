@@ -9,20 +9,29 @@
 #include "../utils/seeker_coordinate_transform.h"
 #include "../utils/target_prediction_profile.h"
 #include "../utils/sendlatencyprobe.h"
-#define MAX_SPEED_HEX 14.0f           //转台的最大速度可以再加大一些
-#define MAX_ACCELERATION_HEX 10.0f
+
+// 转台物理限位（角度单位：度，速度单位：度/秒，加速度单位：度/秒²）。
+#define TURNTABLE_INNER_MIN_DEG          (-200.5f)
+#define TURNTABLE_INNER_MAX_DEG           200.5f
+#define TURNTABLE_MIDDLE_MIN_DEG          (-10.5f)
+#define TURNTABLE_MIDDLE_MAX_DEG           90.0f
+#define TURNTABLE_OUTER_MIN_DEG          (-100.5f)
+#define TURNTABLE_OUTER_MAX_DEG           100.5f
+#define TURNTABLE_MAX_SPEED_DEG_PER_SEC    14.0f
+#define TURNTABLE_MAX_ACCEL_DEG_PER_SEC2   10.0f
+
 #define HANDLE_SPEED_CHANGE_EPSILON 0.1f  // 低于此变化的摇杆噪声不触发停车重设
 
 namespace {
 
 constexpr double kAbsoluteTargetSpeedLimitDegPerSec = 2.0;
 constexpr double kOneSecondPointIntervalSec = 0.25;
-constexpr qint64 kTrackLoopSeconds = 14400;
 
-// 1 秒模式预测窗较长。按目标自身速度控制预测前馈：静止时抑制 AB 残余
-// 速度，运动时保留完整提前量，避免把正常跟踪误当成“接近停止”。
-sendExGuideData predictAbsoluteTargetMotionAware(
+// 1 秒模式预测窗较长。绝对目标接近转台当前角时，AB 中残留的小角速度
+// 不应继续展开成四个目标点，否则目标停止后仍可能产生左右超调。
+sendExGuideData predictAbsoluteTargetDamped(
         AlphaBetaTracker &tracker,
+        double feedbackDeg,
         uint32_t packetTime,
         double firstDelaySec)
 {
@@ -30,8 +39,9 @@ sendExGuideData predictAbsoluteTargetMotionAware(
     packet.time = packetTime;
 
     const double center = tracker.angle();
+    const double relativeDistance = std::abs(center - feedbackDeg);
     const double blend =
-            target_prediction::targetVelocityBlend(tracker.velocity());
+            target_prediction::nearTargetVelocityBlend(relativeDistance);
     const double velocity = tracker.velocity() * blend;
 
     packet.angle1 = center + velocity * firstDelaySec;
@@ -314,15 +324,33 @@ void SerialPortTurntableHex::parseData(const QByteArray &rawData)
 SerialPortTurntableHex::SerialPortTurntableHex(QObject *parent)
     : SerialPort(parent)
 {
+    // 20 ms 模式参数按“1s跟踪还可以的参数”目录中的默认配置固化。
+    TrackingTargetSmoother::Config twentyMillisecondConfig;
+    twentyMillisecondConfig.zeroDeadbandDeg = 0.004;
+    twentyMillisecondConfig.zeroDeadbandReleaseDeg = 0.006;
+    twentyMillisecondConfig.fineTrackRadiusDeg = 0.10;
+    twentyMillisecondConfig.fineMaxSpeedDegPerSec = 1.5;
+    twentyMillisecondConfig.fineMaxAccelerationDegPerSec2 = 3.0;
+    twentyMillisecondConfig.nearTrackRadiusDeg = 1.0;
+    twentyMillisecondConfig.nearMaxSpeedDegPerSec = 1.5;
+    twentyMillisecondConfig.nearMaxAccelerationDegPerSec2 = 3.0;
+    twentyMillisecondConfig.farTrackRadiusDeg = 3.0;
+    twentyMillisecondConfig.maxSpeedDegPerSec = 12.0;
+    twentyMillisecondConfig.maxAccelerationDegPerSec2 = 10.0;
+    twentyMillisecondConfig.settleDeadbandDeg = 0.002;
+    m_outerTrackingSmoother.setConfig(twentyMillisecondConfig);
+    m_middleTrackingSmoother.setConfig(twentyMillisecondConfig);
+
+    // 1 秒绝对目标模式参数按快照配置。
     TrackingTargetSmoother::Config oneSecondConfig;
     oneSecondConfig.zeroDeadbandDeg = 0.008;
     oneSecondConfig.zeroDeadbandReleaseDeg = 0.016;
-    oneSecondConfig.fineTrackRadiusDeg = 0.10;
-    oneSecondConfig.fineMaxSpeedDegPerSec = 0.25;
-    oneSecondConfig.fineMaxAccelerationDegPerSec2 = 0.50;
+    oneSecondConfig.fineTrackRadiusDeg = 0.12;
+    oneSecondConfig.fineMaxSpeedDegPerSec = 0.08;
+    oneSecondConfig.fineMaxAccelerationDegPerSec2 = 0.16;
     oneSecondConfig.nearTrackRadiusDeg = 1.0;
-    oneSecondConfig.nearMaxSpeedDegPerSec = 1.5;
-    oneSecondConfig.nearMaxAccelerationDegPerSec2 = 2.0;
+    oneSecondConfig.nearMaxSpeedDegPerSec = 0.8;
+    oneSecondConfig.nearMaxAccelerationDegPerSec2 = 1.5;
     oneSecondConfig.farTrackRadiusDeg = 3.0;
     oneSecondConfig.maxSpeedDegPerSec = 4.0;
     oneSecondConfig.maxAccelerationDegPerSec2 = 2.0;
@@ -719,7 +747,6 @@ void SerialPortTurntableHex::resetTrackingSmoother()
     m_middleTrackingSmoother.reset(m_current_middle_angle);
     m_outer1sTrackingSmoother.reset(m_current_outter_angle);
     m_middle1sTrackingSmoother.reset(m_current_middle_angle);
-    m_oneSecondTrajectoryMemory = OneSecondTrajectoryMemory();
     m_20msTrackingClock.invalidate();
     m_last20msTargetMs = -1;
 }
@@ -743,21 +770,21 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 三轴联动 ──
         PositionModeCmd1Hex cmd1;
         cmd1.axis = 1;
-        cmd1.acceleration = MAX_ACCELERATION_HEX;
+        cmd1.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
         cmd1.velocity = (frame.inner_endangle - frame.current_inner_angle) / frame.runtime;
         cmd1.anglePos = frame.inner_endangle;
         sendPositionCmd(cmd1);
 
         PositionModeCmd1Hex cmd2;
         cmd2.axis = 2;
-        cmd2.acceleration = MAX_ACCELERATION_HEX;
+        cmd2.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
         cmd2.velocity = (frame.middle_endangle - frame.current_middle_angle) / frame.runtime;
         cmd2.anglePos = frame.middle_endangle;
         sendPositionCmd(cmd2);
 
         PositionModeCmd1Hex cmd3;
         cmd3.axis = 3;
-        cmd3.acceleration = MAX_ACCELERATION_HEX;
+        cmd3.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
         cmd3.velocity = (frame.outter_endangle - frame.current_outter_angle) / frame.runtime;
         cmd3.anglePos = frame.outter_endangle;
         sendPositionCmd(cmd3);
@@ -765,7 +792,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 仅内框 ──
         PositionModeCmd1Hex cmd1;
         cmd1.axis = 1;
-        cmd1.acceleration = MAX_ACCELERATION_HEX;
+        cmd1.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
         cmd1.velocity = (frame.inner_endangle - frame.current_inner_angle) / frame.runtime;
         cmd1.anglePos = frame.inner_endangle;
         sendPositionCmd(cmd1);
@@ -773,7 +800,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 仅中框 ──
         PositionModeCmd1Hex cmd2;
         cmd2.axis = 2;
-        cmd2.acceleration = MAX_ACCELERATION_HEX;
+        cmd2.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
         cmd2.velocity = (frame.middle_endangle - frame.current_middle_angle) / frame.runtime;
         cmd2.anglePos = frame.middle_endangle;
         sendPositionCmd(cmd2);
@@ -781,7 +808,7 @@ void SerialPortTurntableHex::sendProgramMode(programSend_frameHex frame)
         // ── 仅外框 ──
         PositionModeCmd1Hex cmd3;
         cmd3.axis = 3;
-        cmd3.acceleration = MAX_ACCELERATION_HEX;
+        cmd3.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
         cmd3.velocity = (frame.outter_endangle - frame.current_outter_angle) / frame.runtime;
         cmd3.anglePos = frame.outter_endangle;
         sendPositionCmd(cmd3);
@@ -894,7 +921,8 @@ void SerialPortTurntableHex::resetAbsoluteTargetTracker()
     m_absoluteTargetTracker = ABTrackManager(type);
     // 滤波器当前跟踪的是绝对目标角，必须使用转台机械范围，而不是导引头视场。
     m_absoluteTargetTracker.AzTracker().setAngleMode(AngleMode::Clamp);
-    m_absoluteTargetTracker.AzTracker().setClampRange(-100.0, 100.0);
+    m_absoluteTargetTracker.AzTracker().setClampRange(
+                TURNTABLE_OUTER_MIN_DEG, TURNTABLE_OUTER_MAX_DEG);
     m_absoluteTargetTracker.AzTracker().setAlpha(0.15);
     m_absoluteTargetTracker.AzTracker().setBeta(0.01);
     m_absoluteTargetTracker.AzTracker().setSpeedLimit(
@@ -902,7 +930,8 @@ void SerialPortTurntableHex::resetAbsoluteTargetTracker()
     m_absoluteTargetTracker.AzTracker().setInnovationGate(
                 0.50, 1.00, 4.0, 0.5, 5);
     m_absoluteTargetTracker.ElTracker().setAngleMode(AngleMode::Clamp);
-    m_absoluteTargetTracker.ElTracker().setClampRange(-10.0, 70.0);
+    m_absoluteTargetTracker.ElTracker().setClampRange(
+                TURNTABLE_MIDDLE_MIN_DEG, TURNTABLE_MIDDLE_MAX_DEG);
     m_absoluteTargetTracker.ElTracker().setAlpha(0.15);
     m_absoluteTargetTracker.ElTracker().setBeta(0.01);
     m_absoluteTargetTracker.ElTracker().setSpeedLimit(
@@ -987,11 +1016,13 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     const qint64 nextSecond = (turntableNowMs / 1000 + 1) % 14400;
     const double firstDelay = std::max(0.0, firstPredictionDelaySec);
 
-    const sendExGuideData outerPredicted = predictAbsoluteTargetMotionAware(
+    const sendExGuideData outerPredicted = predictAbsoluteTargetDamped(
                 m_absoluteTargetTracker.AzTracker(),
+                m_current_outter_angle,
                 static_cast<uint32_t>(nextSecond), firstDelay);
-    const sendExGuideData middlePredicted = predictAbsoluteTargetMotionAware(
+    const sendExGuideData middlePredicted = predictAbsoluteTargetDamped(
                 m_absoluteTargetTracker.ElTracker(),
+                m_current_middle_angle,
                 static_cast<uint32_t>(nextSecond), firstDelay);
 
     // preview() 接收相对当前反馈的偏移，并输出绝对目标位置。
@@ -1007,30 +1038,14 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
         middlePredicted.angle3 - m_current_middle_angle,
         middlePredicted.angle4 - m_current_middle_angle
     }};
-    double outerInitialVelocity = 0.0;
-    double middleInitialVelocity = 0.0;
-    const OneSecondTrajectoryMemory &previousTrajectory =
-            m_oneSecondTrajectoryMemory;
-    if (previousTrajectory.valid) {
-        const qint64 secondGap =
-                (nextSecond - previousTrajectory.targetSecond
-                 + kTrackLoopSeconds) % kTrackLoopSeconds;
-        if (secondGap == 1) {
-            outerInitialVelocity =
-                    previousTrajectory.outerEndVelocityDegPerSec;
-            middleInitialVelocity =
-                    previousTrajectory.middleEndVelocityDegPerSec;
-        }
-    }
-
     const std::array<double, 4> outerPositions =
             m_outer1sTrackingSmoother.preview(
                 m_current_outter_angle, outerOffsets,
-                kOneSecondPointIntervalSec, outerInitialVelocity);
+                kOneSecondPointIntervalSec);
     const std::array<double, 4> middlePositions =
             m_middle1sTrackingSmoother.preview(
                 m_current_middle_angle, middleOffsets,
-                kOneSecondPointIntervalSec, middleInitialVelocity);
+                kOneSecondPointIntervalSec);
 
     TrackingSendCmd1Hex cmdOuter;
     cmdOuter.axis = 3;
@@ -1040,10 +1055,14 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     cmdOuter.angle3 = static_cast<float>(outerPositions[2]);
     cmdOuter.angle4 = static_cast<float>(outerPositions[3]);
     const bool outerPacketSent =
-            !(cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100
-            || cmdOuter.angle2 < -100 || cmdOuter.angle2 > 100
-            || cmdOuter.angle3 < -100 || cmdOuter.angle3 > 100
-            || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100);
+            !(cmdOuter.angle1 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle1 > TURNTABLE_OUTER_MAX_DEG
+            || cmdOuter.angle2 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle2 > TURNTABLE_OUTER_MAX_DEG
+            || cmdOuter.angle3 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle3 > TURNTABLE_OUTER_MAX_DEG
+            || cmdOuter.angle4 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle4 > TURNTABLE_OUTER_MAX_DEG);
     if (!outerPacketSent) {
         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
     } else {
@@ -1058,29 +1077,18 @@ void SerialPortTurntableHex::sendAbsoluteTrackMode_1s(
     cmdMiddle.angle3 = static_cast<float>(middlePositions[2]);
     cmdMiddle.angle4 = static_cast<float>(middlePositions[3]);
     const bool middlePacketSent =
-            !(cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70
-            || cmdMiddle.angle2 < -10 || cmdMiddle.angle2 > 70
-            || cmdMiddle.angle3 < -10 || cmdMiddle.angle3 > 70
-            || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70);
+            !(cmdMiddle.angle1 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle1 > TURNTABLE_MIDDLE_MAX_DEG
+            || cmdMiddle.angle2 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle2 > TURNTABLE_MIDDLE_MAX_DEG
+            || cmdMiddle.angle3 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle3 > TURNTABLE_MIDDLE_MAX_DEG
+            || cmdMiddle.angle4 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle4 > TURNTABLE_MIDDLE_MAX_DEG);
     if (!middlePacketSent) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
     } else {
         sendTrackCmd_1s(cmdMiddle);
-    }
-
-    // 只有本拍两个随动轴都实际下发时才记录包间速度。任一轴因限位被拒绝
-    // 都清除记忆，下一包重新从当前速度能力起坡，避免继承未发送的轨迹。
-    if (outerPacketSent && middlePacketSent) {
-        m_oneSecondTrajectoryMemory.valid = true;
-        m_oneSecondTrajectoryMemory.targetSecond = nextSecond;
-        m_oneSecondTrajectoryMemory.outerEndVelocityDegPerSec =
-                (outerPositions[3] - outerPositions[2])
-                / kOneSecondPointIntervalSec;
-        m_oneSecondTrajectoryMemory.middleEndVelocityDegPerSec =
-                (middlePositions[3] - middlePositions[2])
-                / kOneSecondPointIntervalSec;
-    } else {
-        m_oneSecondTrajectoryMemory = OneSecondTrajectoryMemory();
     }
 
     TrackingSendCmd1Hex cmdInner;
@@ -1113,7 +1121,7 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     }
     const qint64 nextSecond = (turntableNowMs / 1000 + 1) % 14400;
 
-    //可以判断一下角度是否超过转台运动范围并给出提示，俯仰范围：-10~70，方位范围 -100~100 ，滚转范围 -200~200
+    // 转台运动范围：中框 -10.5~90，外框 -100.5~100.5，内框 -200.5~200.5。
 
     // 图像头/激光头画面零位与转台内框零位存在偏置，坐标变换使用补偿后的内框角。
     // 内框正角对应逆时针旋转补偿，因此直接将补偿后的内框角传给 deRoll 接口。
@@ -1162,8 +1170,14 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     cmdOuter.angle2 = static_cast<float>(outerPositions[1]);
     cmdOuter.angle3 = static_cast<float>(outerPositions[2]);
     cmdOuter.angle4 = static_cast<float>(outerPositions[3]);
-    if (cmdOuter.angle1 < -100 || cmdOuter.angle1 > 100 || cmdOuter.angle2 < -100 || cmdOuter.angle2 > 100 ||
-        cmdOuter.angle3 < -100 || cmdOuter.angle3 > 100 || cmdOuter.angle4 < -100 || cmdOuter.angle4 > 100) {
+    if (cmdOuter.angle1 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle1 > TURNTABLE_OUTER_MAX_DEG
+            || cmdOuter.angle2 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle2 > TURNTABLE_OUTER_MAX_DEG
+            || cmdOuter.angle3 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle3 > TURNTABLE_OUTER_MAX_DEG
+            || cmdOuter.angle4 < TURNTABLE_OUTER_MIN_DEG
+            || cmdOuter.angle4 > TURNTABLE_OUTER_MAX_DEG) {
         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
     }else{
         sendTrackCmd_1s(cmdOuter);
@@ -1178,8 +1192,14 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     cmdMiddle.angle2 = static_cast<float>(middlePositions[1]);
     cmdMiddle.angle3 = static_cast<float>(middlePositions[2]);
     cmdMiddle.angle4 = static_cast<float>(middlePositions[3]);
-    if (cmdMiddle.angle1 < -10 || cmdMiddle.angle1 > 70 || cmdMiddle.angle2 < -10 || cmdMiddle.angle2 > 70 ||
-        cmdMiddle.angle3 < -10 || cmdMiddle.angle3 > 70 || cmdMiddle.angle4 < -10 || cmdMiddle.angle4 > 70) {
+    if (cmdMiddle.angle1 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle1 > TURNTABLE_MIDDLE_MAX_DEG
+            || cmdMiddle.angle2 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle2 > TURNTABLE_MIDDLE_MAX_DEG
+            || cmdMiddle.angle3 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle3 > TURNTABLE_MIDDLE_MAX_DEG
+            || cmdMiddle.angle4 < TURNTABLE_MIDDLE_MIN_DEG
+            || cmdMiddle.angle4 > TURNTABLE_MIDDLE_MAX_DEG) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
     } else {
         sendTrackCmd_1s(cmdMiddle);
@@ -1192,8 +1212,14 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
     cmdInner.trackTime = static_cast<int>(nextSecond);
     cmdInner.angle1 = cmdInner.angle2 =
     cmdInner.angle3 = cmdInner.angle4 = m_current_inner_angle;
-    if (cmdInner.angle1 < -200 || cmdInner.angle1 > 200 || cmdInner.angle2 < -200 || cmdInner.angle2 > 200 ||
-        cmdInner.angle3 < -200 || cmdInner.angle3 > 200 || cmdInner.angle4 < -200 || cmdInner.angle4 > 200) {
+    if (cmdInner.angle1 < TURNTABLE_INNER_MIN_DEG
+            || cmdInner.angle1 > TURNTABLE_INNER_MAX_DEG
+            || cmdInner.angle2 < TURNTABLE_INNER_MIN_DEG
+            || cmdInner.angle2 > TURNTABLE_INNER_MAX_DEG
+            || cmdInner.angle3 < TURNTABLE_INNER_MIN_DEG
+            || cmdInner.angle3 > TURNTABLE_INNER_MAX_DEG
+            || cmdInner.angle4 < TURNTABLE_INNER_MIN_DEG
+            || cmdInner.angle4 > TURNTABLE_INNER_MAX_DEG) {
         qDebug() << "内框跟踪角度超出范围";
     } else {
         sendTrackCmd_1s(cmdInner);
@@ -1257,9 +1283,11 @@ void SerialPortTurntableHex::sendTrackMode_20ms(double yawangle, double pitchang
     m_cmd.angle1 = m_current_inner_angle;                    // 内框保持
     m_cmd.angle2 = static_cast<float>(middleStep.positionDeg); // 中框目标
     m_cmd.angle3 = static_cast<float>(outerStep.positionDeg);  // 外框目标
-    if (m_cmd.angle2 < -10 || m_cmd.angle2 > 70) {
+    if (m_cmd.angle2 < TURNTABLE_MIDDLE_MIN_DEG
+            || m_cmd.angle2 > TURNTABLE_MIDDLE_MAX_DEG) {
         qDebug() << "中框跟踪角度将超出范围，请及时调整转台";
-    } else if (m_cmd.angle3 < -100 || m_cmd.angle3 > 100) {
+    } else if (m_cmd.angle3 < TURNTABLE_OUTER_MIN_DEG
+            || m_cmd.angle3 > TURNTABLE_OUTER_MAX_DEG) {
         qDebug() << "外框跟踪角度将超出范围，请及时调整转台";
     } else {
         m_cmd.timeMs = static_cast<int>(targetMs);
@@ -1298,7 +1326,7 @@ void SerialPortTurntableHex::sendHandleSpeedCmd(int axis, float velocity)
 {
     SpeedModeCmd1Hex cmd;
     cmd.axis = axis;
-    cmd.acceleration = MAX_ACCELERATION_HEX;
+    cmd.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
     cmd.velocity = velocity;
     sendVecCmd(cmd);
 }
@@ -1335,7 +1363,8 @@ void SerialPortTurntableHex::setHandleSpeedTarget(int axis, float target)
 
     if (!std::isfinite(target))
         target = 0.0f;
-    target = std::max(-MAX_SPEED_HEX, std::min(MAX_SPEED_HEX, target));
+    target = std::max(-TURNTABLE_MAX_SPEED_DEG_PER_SEC,
+                      std::min(TURNTABLE_MAX_SPEED_DEG_PER_SEC, target));
 
     // 与协议编码精度对齐，避免浮点尾差被误判为目标变化。
     target = static_cast<float>(speedToRaw(target)) / SPEED_UNIT;
@@ -1462,20 +1491,22 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             // 两扳机同时按下: 内框步进/步退
             PositionModeCmd1Hex cmd;
             cmd.axis = 1;
-            cmd.acceleration = MAX_ACCELERATION_HEX;
+            cmd.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
             if (buttonA && Acount >= 1) {
-                cmd.velocity = MAX_SPEED_HEX ;
+                cmd.velocity = TURNTABLE_MAX_SPEED_DEG_PER_SEC;
                 cmd.anglePos = m_current_inner_angle + m_step_angle;
-                if(cmd.anglePos < 200 && cmd.anglePos >-200){
+                if (cmd.anglePos < TURNTABLE_INNER_MAX_DEG
+                        && cmd.anglePos > TURNTABLE_INNER_MIN_DEG) {
                         sendPositionCmd(cmd);
                 }else{
                         qDebug() << "内框接近临界角，停止内框步进";
                 }
                 //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
-                cmd.velocity = -MAX_SPEED_HEX ;
+                cmd.velocity = -TURNTABLE_MAX_SPEED_DEG_PER_SEC;
                 cmd.anglePos = m_current_inner_angle - m_step_angle;
-                if(cmd.anglePos < 200 && cmd.anglePos >-200){
+                if (cmd.anglePos < TURNTABLE_INNER_MAX_DEG
+                        && cmd.anglePos > TURNTABLE_INNER_MIN_DEG) {
                         sendPositionCmd(cmd);
                 }else{
                         qDebug() << "内框接近临界角，停止内框步进";
@@ -1486,20 +1517,22 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             // 左扳机: 外框
             PositionModeCmd1Hex cmd;
             cmd.axis = 3;
-            cmd.acceleration = MAX_ACCELERATION_HEX;
+            cmd.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
             if (buttonA && Acount >= 1) {
-                cmd.velocity = MAX_SPEED_HEX ;
+                cmd.velocity = TURNTABLE_MAX_SPEED_DEG_PER_SEC;
                 cmd.anglePos = m_current_outter_angle + m_step_angle;
-                if(cmd.anglePos < 100 && cmd.anglePos >-100){
+                if (cmd.anglePos < TURNTABLE_OUTER_MAX_DEG
+                        && cmd.anglePos > TURNTABLE_OUTER_MIN_DEG) {
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "外框接近临界角，停止外框步进";
                 }
                 //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
-                cmd.velocity = -MAX_SPEED_HEX ;
+                cmd.velocity = -TURNTABLE_MAX_SPEED_DEG_PER_SEC;
                 cmd.anglePos = m_current_outter_angle - m_step_angle;
-                if(cmd.anglePos < 100 && cmd.anglePos >-100){
+                if (cmd.anglePos < TURNTABLE_OUTER_MAX_DEG
+                        && cmd.anglePos > TURNTABLE_OUTER_MIN_DEG) {
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "外框接近临界角，停止外框步进";
@@ -1510,20 +1543,22 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
             // 右扳机: 中框
             PositionModeCmd1Hex cmd;
             cmd.axis = 2;
-            cmd.acceleration = MAX_ACCELERATION_HEX;
+            cmd.acceleration = TURNTABLE_MAX_ACCEL_DEG_PER_SEC2;
             if (buttonA && Acount >= 1) {
-                cmd.velocity = MAX_SPEED_HEX ;
+                cmd.velocity = TURNTABLE_MAX_SPEED_DEG_PER_SEC;
                 cmd.anglePos = m_current_middle_angle + m_step_angle;
-                if(cmd.anglePos < 90 && cmd.anglePos >-10){
+                if (cmd.anglePos < TURNTABLE_MIDDLE_MAX_DEG
+                        && cmd.anglePos > TURNTABLE_MIDDLE_MIN_DEG) {
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "中框接近临界角，停止中框步进控制";
                 }
                 //sendPositionCmd(cmd);
             } else if (buttonB && Bcount >= 1) {
-                cmd.velocity = -MAX_SPEED_HEX ;
+                cmd.velocity = -TURNTABLE_MAX_SPEED_DEG_PER_SEC;
                 cmd.anglePos = m_current_middle_angle - m_step_angle;
-                if(cmd.anglePos < 90 && cmd.anglePos >-10){
+                if (cmd.anglePos < TURNTABLE_MIDDLE_MAX_DEG
+                        && cmd.anglePos > TURNTABLE_MIDDLE_MIN_DEG) {
                     sendPositionCmd(cmd);
                 }else{
                     qDebug() << "中框接近临界角，停止中框步进控制";
@@ -1534,25 +1569,31 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
     } else {
         // ── 速度模式 (无扳机 → 摇杆直接控制速度) ──
         // axisLeftX → 外框, axisLeftY → 中框, axisRightX → 内框
-        const float innerTarget = axisRightX * MAX_SPEED_HEX * m_speed_multiplier;
-        const float middleTarget = axisLeftY * MAX_SPEED_HEX * m_speed_multiplier * (-1);   //中框运动方向调整，使手柄与转台保持一致
-        const float outterTarget = axisLeftX * MAX_SPEED_HEX * m_speed_multiplier;
+        const float innerTarget =
+                axisRightX * TURNTABLE_MAX_SPEED_DEG_PER_SEC * m_speed_multiplier;
+        const float middleTarget =
+                axisLeftY * TURNTABLE_MAX_SPEED_DEG_PER_SEC * m_speed_multiplier * (-1);   //中框运动方向调整，使手柄与转台保持一致
+        const float outterTarget =
+                axisLeftX * TURNTABLE_MAX_SPEED_DEG_PER_SEC * m_speed_multiplier;
 
-        if (m_current_inner_angle < 200.0f && m_current_inner_angle > -200.0f) {
+        if (m_current_inner_angle < TURNTABLE_INNER_MAX_DEG
+                && m_current_inner_angle > TURNTABLE_INNER_MIN_DEG) {
             setHandleSpeedTarget(1, innerTarget);
         } else {
             setHandleSpeedTarget(1, 0.0f);
             qDebug() << "内框接近临界角，停止内框速度控制";
         }
 
-        if (m_current_middle_angle < 90.0f && m_current_middle_angle > -10.0f) {
+        if (m_current_middle_angle < TURNTABLE_MIDDLE_MAX_DEG
+                && m_current_middle_angle > TURNTABLE_MIDDLE_MIN_DEG) {
             setHandleSpeedTarget(2, middleTarget);
         } else {
             setHandleSpeedTarget(2, 0.0f);
             qDebug() << "中框接近临界角，停止中框速度控制";
         }
 
-        if (m_current_outter_angle < 100.0f && m_current_outter_angle > -100.0f) {
+        if (m_current_outter_angle < TURNTABLE_OUTER_MAX_DEG
+                && m_current_outter_angle > TURNTABLE_OUTER_MIN_DEG) {
             setHandleSpeedTarget(3, outterTarget);
         } else {
             setHandleSpeedTarget(3, 0.0f);

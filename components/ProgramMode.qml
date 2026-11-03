@@ -12,10 +12,11 @@ Item{
     // 程控模式允许的最大速度与加速度
     readonly property real maxTrackingSpeed: 14.0
     readonly property real maxAcceleration: 10.0
+    // C++ 侧对应宏定义见 serialport_turntable_HEX.cpp，修改时需同步。
     readonly property var axisAngleLimits: [
-        { min: -200.0, max: 200.0 },
-        { min: -10.0, max: 90.0 },
-        { min: -100.0, max: 100.0 }
+        { min: -200.5, max: 200.5 },
+        { min: -10.5, max: 90.0 },
+        { min: -100.5, max: 100.5 }
     ]
 
     property var controlNames: [
@@ -112,6 +113,11 @@ Item{
         validationMsg.open()
     }
 
+    function formatAngleLimit(value) {
+        var text = Number(value).toFixed(1)
+        return text.endsWith(".0") ? text.slice(0, -2) : text
+    }
+
     function axisFieldError(axisIndex, fieldName) {
         var row = axisRowRepeater.itemAt(axisIndex)
         if (!row)
@@ -139,8 +145,8 @@ Item{
                 && (row.targetValue < limits.min || row.targetValue > limits.max)) {
             return axisName + "目标位置 "
                     + row.targetValue.toFixed(4) + "° 超出允许范围 "
-                    + limits.min.toFixed(0) + "～"
-                    + limits.max.toFixed(0) + "°"
+                    + formatAngleLimit(limits.min) + "～"
+                    + formatAngleLimit(limits.max) + "°"
         }
 
         if (fieldName === "speed"
@@ -508,7 +514,7 @@ Item{
                                 var acceleration = sinePeakAcceleration(range, frequency)
                                 if (acceleration > maxAcceleration) {
                                     validationMsg.message =
-                                        "输入数据应满足（2πf）² × A 得到的加速度小于10 °/s²。\n"
+                                        "输入数据应满足（2πf）² × A 得到的加速度不超过10 °/s²。\n"
                                         + "当前计算值为 " + acceleration.toFixed(3) + " °/s²。"
                                     validationMsg.open()
                                     return

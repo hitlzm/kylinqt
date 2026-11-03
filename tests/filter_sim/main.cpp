@@ -853,7 +853,7 @@ static void packet_compare()
                     kf.Extrapolate(tShort[0]), kf.Extrapolate(tShort[1]),
                     kf.Extrapolate(tShort[2]), kf.Extrapolate(tShort[3]));
     }
-    std::printf("\n转台机械范围：方位 -100~100°，俯仰 -10~70°\n");
+    std::printf("\n转台机械范围：方位 -100.5~100.5°，俯仰 -10.5~90°\n");
 }
 
 // 2.2 常值 0 测量：输出能否稳定在 0，加速度状态会不会自己长大
@@ -1285,7 +1285,7 @@ static void kf_clamp_test()
     };
     dump("限幅关闭 (旧行为)", off);
     dump("限幅开启 (±18°)", on);
-    std::printf("真值：t=3s 时目标在 %.1f°（已在视场外）；转台机械范围 方位 -100~100°、俯仰 -10~70°\n",
+    std::printf("真值：t=3s 时目标在 %.1f°（已在视场外）；转台机械范围 方位 -100.5~100.5°、俯仰 -10.5~90°\n",
                 off.truthAtPacket);
     std::printf("限幅开启时触碰 ±18° 的预测点次数 = %d / 2000（目标确实长时间在视场外）\n", on.clipHits);
 }

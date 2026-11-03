@@ -43,7 +43,7 @@ struct StepMetrics {
 
 NoiseMetrics evaluateStationaryNoise(double alpha, double beta, double speedLimit)
 {
-    AlphaBetaTracker tracker(alpha, beta, AngleMode::Clamp, -100.0, 100.0);
+    AlphaBetaTracker tracker(alpha, beta, AngleMode::Clamp, -100.5, 100.5);
     tracker.setSpeedLimit(speedLimit);
     tracker.setInnovationGate(0.05, 0.20, 4.0, 0.5, 3);
     tracker.init(kTargetOuterDeg, 0);
@@ -85,7 +85,7 @@ NoiseMetrics evaluateStationaryNoise(double alpha, double beta, double speedLimi
 
 StopMetrics evaluateStopResponse(double alpha, double beta, double speedLimit)
 {
-    AlphaBetaTracker tracker(alpha, beta, AngleMode::Clamp, -100.0, 100.0);
+    AlphaBetaTracker tracker(alpha, beta, AngleMode::Clamp, -100.5, 100.5);
     tracker.setSpeedLimit(speedLimit);
     tracker.setInnovationGate(0.05, 0.20, 4.0, 0.5, 3);
     tracker.init(0.0, 0);
@@ -120,7 +120,7 @@ StepMetrics evaluateOneDegreeStep(double alpha, double beta, double speedLimit,
                                   double gateMax = 0.20,
                                   int reacquireFrames = 3)
 {
-    AlphaBetaTracker tracker(alpha, beta, AngleMode::Clamp, -100.0, 100.0);
+    AlphaBetaTracker tracker(alpha, beta, AngleMode::Clamp, -100.5, 100.5);
     tracker.setSpeedLimit(speedLimit);
     tracker.setInnovationGate(gateMin, gateMax, 4.0, 0.5, reacquireFrames);
     tracker.init(0.0, 0);
@@ -152,8 +152,8 @@ int main()
 {
     ABTrackManager relativeTracker(SeekerType::Image);
     ABTrackManager absoluteTracker(SeekerType::Image);
-    relativeTracker.AzTracker().setClampRange(-100.0, 100.0);
-    absoluteTracker.AzTracker().setClampRange(-100.0, 100.0);
+    relativeTracker.AzTracker().setClampRange(-100.5, 100.5);
+    absoluteTracker.AzTracker().setClampRange(-100.5, 100.5);
 
     double turntableDeg = 0.0;
     relativeTracker.Init(kTargetOuterDeg - turntableDeg, 0.0, 0);

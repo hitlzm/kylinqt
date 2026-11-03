@@ -629,7 +629,7 @@ Rectangle {
                     onPressed: ccdData.startZoom(1)
                     onReleased: ccdData.stopZoom()
                     Timer {
-                        interval: 180
+                        interval: 20
                         repeat: true
                         running: zoomInButton.pressed
                         onTriggered: {
@@ -652,7 +652,7 @@ Rectangle {
                     onPressed: ccdData.startZoom(-1)
                     onReleased: ccdData.stopZoom()
                     Timer {
-                        interval: 180
+                        interval: 20
                         repeat: true
                         running: zoomOutButton.pressed
                         onTriggered: {
@@ -691,7 +691,7 @@ Rectangle {
                     onPressed: ccdData.startFocus(1)
                     onReleased: ccdData.stopFocus()
                     Timer {
-                        interval: 180
+                        interval: 20
                         repeat: true
                         running: focusPlusButton.pressed
                         onTriggered: {
@@ -715,7 +715,7 @@ Rectangle {
                     onPressed: ccdData.startFocus(-1)
                     onReleased: ccdData.stopFocus()
                     Timer {
-                        interval: 180
+                        interval: 20
                         repeat: true
                         running: focusMinusButton.pressed
                         onTriggered: {
