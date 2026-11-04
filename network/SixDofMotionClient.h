@@ -26,10 +26,12 @@ class QTimer;
  *   - 回中位/回底部并不使用 cmd=3/4，而是统一用 cmd=6（位置运行）+ 位置全零 / tz=-0.5，
  *     cmd=3/4 仅作为协议常量保留。
  *
- * 倾角控制（本次需求重点）：
+ * 倾角与 Z 轴高度控制：
  *   X 轴倾角 → rx（绕 X 轴，弧度），Y 轴倾角 → ry（绕 Y 轴，弧度），
- *   其余自由度（tx/ty/tz/rz）一律置 0，因此只改变倾角，不产生平移与偏航动作。
- *   对外接口角度用“度”，组包时换算为弧度，与 protocol.py 的 deg_to_rad() 一致。
+ *   Z 轴高度 → tz（Z 轴平移，米），对外接口高度使用毫米，组包时换算为米。
+ *   只为保持原有 XY 倾角接口兼容，sendTiltXY*() 仍会将 tz 置 0；需要同时控制
+ *   倾角与高度时使用 sendTiltHeight*()。tx/ty/rz 不在此弹窗中控制，保持 0。
+ *   状态帧中的 heave（Z 轴位移，毫米）通过 currentHeightZMm 提供给 QML 显示。
  *
  * 线程模型：套接字、定时器、组包与发送全部在主线程完成，不使用工作线程，
  *          因此 QML 的按钮 / Timer 可以直接调用，不存在跨线程排队与竞争问题。
@@ -58,6 +60,9 @@ class SixDofMotionClient : public QObject
     Q_PROPERTY(int    executeTimeMs READ executeTimeMs WRITE setExecuteTime NOTIFY executeTimeMsChanged) // 执行时间(ms)
     Q_PROPERTY(double tiltXDeg      READ tiltXDeg      NOTIFY tiltChanged)   // 最近一次下发的 X 轴倾角(°)
     Q_PROPERTY(double tiltYDeg      READ tiltYDeg      NOTIFY tiltChanged)   // 最近一次下发的 Y 轴倾角(°)
+    Q_PROPERTY(double targetHeightZMm READ targetHeightZMm NOTIFY targetPoseChanged) // 最近一次下发的 Z 轴高度(mm)
+    Q_PROPERTY(double currentHeightZMm READ currentHeightZMm NOTIFY currentHeightChanged) // 状态帧反馈的 Z 轴高度(mm)
+    Q_PROPERTY(bool currentHeightValid READ currentHeightValid NOTIFY currentHeightChanged)
 
 public:
     // ── 协议常量（与 protocol.py 一一对应）──
@@ -113,6 +118,9 @@ public:
     int     executeTimeMs() const      { return m_executeTimeMs; }
     double  tiltXDeg() const           { return m_tiltXDeg; }
     double  tiltYDeg() const           { return m_tiltYDeg; }
+    double  targetHeightZMm() const    { return m_targetHeightZMm; }
+    double  currentHeightZMm() const   { return m_currentHeightZMm; }
+    bool    currentHeightValid() const { return m_currentHeightValid; }
 
     // ── 属性设置（网络参数建议在未连接时修改）──
     void setLocalPort(int port);
@@ -133,10 +141,13 @@ public:
     Q_INVOKABLE void startConnectionCheck(int timeoutMs = 3000); // 异步判定，结果经 connectionCheckFinished 返回
 
     // ══════════════════════════════════════════════════════════
-    // X / Y 轴倾角控制
+    // X / Y 轴倾角与 Z 轴高度控制
     // ══════════════════════════════════════════════════════════
     Q_INVOKABLE bool sendTiltXY(double xDeg, double yDeg);                          // 用当前执行时间
     Q_INVOKABLE bool sendTiltXYWithTime(double xDeg, double yDeg, int timeMs);      // 指定本次执行时间
+    Q_INVOKABLE bool sendTiltHeight(double xDeg, double yDeg, double zMm);          // 用当前执行时间
+    Q_INVOKABLE bool sendTiltHeightWithTime(double xDeg, double yDeg,
+                                            double zMm, int timeMs);                 // 指定本次执行时间
 
     // ══════════════════════════════════════════════════════════
     // 预留接口 2：执行时间设置（帧尾 int32 time 字段，单位 ms）
@@ -172,6 +183,8 @@ signals:
 
     void executeTimeMsChanged();
     void tiltChanged();
+    void targetPoseChanged();
+    void currentHeightChanged();
 
     void connectionCheckFinished(bool success, const QString &message);
     void commandSent(const QString &description);
@@ -195,6 +208,7 @@ private:
 
     static QByteArray buildFrame(const MoveFrame &frame);
     static double degToRad(double deg);
+    static double mmToM(double mm);
     static QString statusText(int code);
 
     // 未显式设置执行时间时用各指令自己的默认值，设置过则统一使用 m_executeTimeMs
@@ -206,6 +220,10 @@ private:
     bool transmit(const MoveFrame &frame, const QString &description);
     void sendStatusQuery();
     void parseStatus(const QByteArray &datagram);
+    bool sendTiltHeightInternal(double xDeg, double yDeg, double zMm, int timeMs);
+    void updateTargetPose(double xDeg, double yDeg, double zMm);
+    void updateCurrentHeight(double zMm);
+    void resetCurrentHeight();
 
     void setConnected(bool connected);
     void setLinkAlive(bool alive);
@@ -236,6 +254,9 @@ private:
     bool   m_executeTimeOverridden = false;   // 用户是否调用过 setExecuteTime()
     double m_tiltXDeg = 0.0;
     double m_tiltYDeg = 0.0;
+    double m_targetHeightZMm = 0.0;
+    double m_currentHeightZMm = 0.0;
+    bool   m_currentHeightValid = false;
 
     QString m_statusMessage;
     QString m_lastError;

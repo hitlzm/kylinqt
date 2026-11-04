@@ -14,7 +14,7 @@ import taoQuick 1.0
  *
  * 界面分区：
  *   1) 连接    —— 控制卡 IP、链路三态（未连接 / 等待应答 / 链路正常）、连接与断开
- *   2) 运动控制 —— X / Y 倾角（±10°）、运动时间、发送、回中位、回底部
+ *   2) 运动控制 —— X / Y 倾角（±10°）、Z 高度、当前 Z 高度、运动时间、发送、回中位、回底部
  *   3) 状态    —— 控制卡状态与报警（只呈现故障类 100-125 与运行状态类 1-8）
  *   4) 高级设置 —— 发送广播地址、本机端口（默认值正确时无需改动）
  *   5) 底部    —— 急停（失联时仍可发送，因为急停走广播）
@@ -55,6 +55,10 @@ Window {
     readonly property string statusMessageText:
         (hasClient && motion.statusMessage.length > 0) ? motion.statusMessage
                                                        : "（尚未收到控制卡状态应答）"
+    readonly property string currentHeightText:
+        (hasClient && motion.currentHeightValid)
+        ? motion.currentHeightZMm.toFixed(1) + " mm"
+        : "--"
 
     // 最近一次成功下发的指令（来自 commandSent 信号）
     property string lastCommand: ""
@@ -79,6 +83,7 @@ Window {
                                                    : defaultMoveTimeMs).toString()
         tiltXField.text = motion.tiltXDeg.toFixed(2)
         tiltYField.text = motion.tiltYDeg.toFixed(2)
+        heightZField.text = motion.targetHeightZMm.toFixed(1)
     }
 
     function showPopup() {
@@ -96,6 +101,11 @@ Window {
     function formatTilt(field) {
         var v = parseFloat(field.text)
         field.text = isFinite(v) ? v.toFixed(2) : "0.00"
+    }
+
+    function formatHeight(field) {
+        var v = parseFloat(field.text)
+        field.text = isFinite(v) ? v.toFixed(1) : "0.0"
     }
 
     function formatTime(field) {
@@ -147,14 +157,15 @@ Window {
         }
     }
 
-    function sendTilt() {
+    function sendPose() {
         if (!ensureConnected())
             return
 
         var rx = parseFloat(tiltXField.text)
         var ry = parseFloat(tiltYField.text)
-        if (!isFinite(rx) || !isFinite(ry)) {
-            toast.showToast("X / Y 倾角请填写数字", 2500)
+        var rz = parseFloat(heightZField.text)
+        if (!isFinite(rx) || !isFinite(ry) || !isFinite(rz)) {
+            toast.showToast("X / Y 倾角及 Z 高度请填写数字", 2500)
             return
         }
         if (Math.abs(rx) > maxTiltDeg || Math.abs(ry) > maxTiltDeg) {
@@ -162,14 +173,15 @@ Window {
             return
         }
 
+        formatHeight(heightZField)
         formatTime(timeField)
         var t = parseInt(timeField.text)
 
         // 逐次传入执行时间，不调用 setExecuteTime()，
         // 以免回中位 / 回底部的默认时间被全局覆盖
-        if (motion.sendTiltXYWithTime(rx, ry, t)) {
+        if (motion.sendTiltHeightWithTime(rx, ry, rz, t)) {
             toast.showToast("已下发  X=" + rx.toFixed(2) + "°  Y=" + ry.toFixed(2)
-                            + "°  (" + t + "ms)")
+                            + "°  Z=" + rz.toFixed(1) + "mm  (" + t + "ms)")
         } else {
             toast.showToast("发送失败：" + motion.lastError, 3500)
         }
@@ -416,11 +428,11 @@ Window {
                         Row {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 55
-                            spacing: 30
+                            spacing: 18
 
                             MyTextField {
                                 id: tiltXField
-                                mywidth: 155
+                                mywidth: 140
                                 myheight: 55
                                 title: "X 倾角"
                                 labeltext: "°"
@@ -429,11 +441,57 @@ Window {
 
                             MyTextField {
                                 id: tiltYField
-                                mywidth: 155
+                                mywidth: 140
                                 myheight: 55
                                 title: "Y 倾角"
                                 labeltext: "°"
                                 onEditingFinished: popup.formatTilt(tiltYField)
+                            }
+
+                            MyTextField {
+                                id: heightZField
+                                mywidth: 140
+                                myheight: 55
+                                title: "Z 轴高度"
+                                labeltext: "mm"
+                                onEditingFinished: popup.formatHeight(heightZField)
+                            }
+
+                            Item {
+                                width: 190
+                                height: 55
+
+                                Text {
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    height: 20
+                                    verticalAlignment: Text.AlignVCenter
+                                    text: "当前 Z 高度"
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                    color: "#333333"
+                                }
+
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 22
+                                    height: 33
+                                    radius: 4
+                                    color: "#F0F4F8"
+                                    border.color: "#C8D2DC"
+                                    border.width: 1
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        font.pixelSize: 16
+                                        font.bold: true
+                                        color: popup.hasClient && popup.motion.currentHeightValid
+                                               ? "#1976D2" : "#888888"
+                                        text: popup.currentHeightText
+                                    }
+                                }
                             }
 
                             Item {
@@ -449,6 +507,7 @@ Window {
                                     onClicked: {
                                         tiltXField.text = "0.00"
                                         tiltYField.text = "0.00"
+                                        heightZField.text = "0.0"
                                     }
                                 }
                             }
@@ -495,7 +554,7 @@ Window {
                                 height: 40
                                 text: "发送指令"
                                 font.pixelSize: 18
-                                onClicked: popup.sendTilt()
+                                onClicked: popup.sendPose()
                             }
 
                             CusButton_Blue {
@@ -521,7 +580,7 @@ Window {
                             color: "#d93025"
                             elide: Text.ElideRight
                             text: "倾角限位 ±" + popup.maxTiltDeg
-                                  + "°（超限将被拒绝发送）；回中位六轴归零，回底部 tz = -0.5m。"
+                                  + "°（超限将被拒绝发送）；Z 高度单位 mm，当前值取自平台状态反馈。"
                         }
                     }
                 }
