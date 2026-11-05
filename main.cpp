@@ -77,6 +77,9 @@ int main(int argc, char *argv[])
     qRegisterMetaType<ProgramAxisCommandHex>("ProgramAxisCommandHex");
     qRegisterMetaType<StatusFeedbackHex>("StatusFeedbackHex");
     qRegisterMetaType<TrackingCorrectionCmdHex>("TrackingCorrectionCmdHex");
+    qRegisterMetaType<ProgramTrackingPoint>("ProgramTrackingPoint");
+    qRegisterMetaType<QVector<ProgramTrackingPoint>>(
+                "QVector<ProgramTrackingPoint>");
     qRegisterMetaType<RMCData>("RMCData");
     qRegisterMetaType<sendExGuideData>("sendExGuideData");
     qRegisterMetaType<exGuideMeasurement>("exGuideMeasurement");
@@ -259,6 +262,26 @@ int main(int argc, char *argv[])
                      Qt::QueuedConnection);
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,
                      turntablePort, &SerialPortTurntableHex::zeroInnerAngleOffset,
+                     Qt::QueuedConnection);
+    QObject::connect(turntableSendData,
+                     &TurntableSendDataHex::requestStartProgramTracking,
+                     turntablePort,
+                     &SerialPortTurntableHex::startProgramTracking,
+                     Qt::QueuedConnection);
+    QObject::connect(turntableSendData,
+                     &TurntableSendDataHex::requestStopProgramTracking,
+                     turntablePort,
+                     &SerialPortTurntableHex::stopProgramTracking,
+                     Qt::QueuedConnection);
+    QObject::connect(turntablePort,
+                     &SerialPortTurntableHex::programTrackingRunningChanged,
+                     turntableSendData,
+                     &TurntableSendDataHex::setProgramTrackingRunning,
+                     Qt::QueuedConnection);
+    QObject::connect(turntablePort,
+                     &SerialPortTurntableHex::programTrackingFailed,
+                     turntableSendData,
+                     &TurntableSendDataHex::reportProgramTrackingError,
                      Qt::QueuedConnection);
     // 零位修正请求发出后立即记录会话状态，作为进入外引导模式的统一门禁。
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,

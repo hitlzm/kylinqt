@@ -21,8 +21,11 @@ brief: 转台串口类（HEX十六进制协议版本）
 
 #include "serialport.h"
 #include "../utils/tracking_target_smoother.h"
+#include "../utils/program_tracking_file.h"
 #include "../kalman/AlphaBetaTracker.h"
 #include <QElapsedTimer>
+
+class QTimer;
 
 // ═════════════════════ 指令代号定义（byte2的低6位）═════════════════════
 #define CMD_ENABLE      0x01    // 使能/释放电机
@@ -298,10 +301,20 @@ class TurntableSendDataHex : public QObject
     Q_PROPERTY(float middle_endangle MEMBER m_middle_endangle NOTIFY middle_endangleChanged)
     Q_PROPERTY(float outter_startangle MEMBER m_outter_startangle NOTIFY outter_startangleChanged)
     Q_PROPERTY(float outter_endangle MEMBER m_outter_endangle NOTIFY outter_endangleChanged)
+    Q_PROPERTY(bool programTrackingRunning READ programTrackingRunning
+               NOTIFY programTrackingRunningChanged)
+    Q_PROPERTY(QString programTrackingFileName READ programTrackingFileName
+               NOTIFY programTrackingFileNameChanged)
+    Q_PROPERTY(int programTrackingPointCount READ programTrackingPointCount
+               NOTIFY programTrackingPointCountChanged)
 
 public:
     explicit TurntableSendDataHex(QObject *parent = nullptr);
     ~TurntableSendDataHex() override {};
+
+    bool programTrackingRunning() const { return m_programTrackingRunning; }
+    QString programTrackingFileName() const { return m_programTrackingFileName; }
+    int programTrackingPointCount() const { return m_programTrackingPoints.size(); }
 
     Q_INVOKABLE void buildFrame(int m_index);
     Q_INVOKABLE void sendProgramCommand(int axis, int mode, float position,
@@ -317,11 +330,18 @@ public:
                                                int target = 1);
     // 将内框偏置角校正为 -当前内框角度，使当前画面零位对应内框零度。
     Q_INVOKABLE void requestInnerAngleZeroCorrection();
+    // 读取并校验跟踪 CSV，校验通过后立即以 20 ms 周期开始跟踪。
+    // 后续 ProgramMode.qml 的导入按钮只需调用此接口。
+    Q_INVOKABLE bool importProgramTrackingFile(const QString &filePath);
+    Q_INVOKABLE void startProgramTracking();
+    Q_INVOKABLE void stopProgramTracking();
 
 public slots:
     void recvinner_angle(float angle)  { m_current_inner_angle = angle; }
     void recvmiddle_angle(float angle) { m_current_middle_angle = angle; }
     void recvoutter_angle(float angle) { m_current_outter_angle = angle; }
+    void setProgramTrackingRunning(bool running);
+    void reportProgramTrackingError(const QString &message);
 
 signals:
     void requestSendProgramMode(programSend_frameHex frame);
@@ -347,6 +367,13 @@ signals:
     void sinMove(int m_index, float amplitude, float frequency);//桥接信号，驱动三轴进行正弦运动
     void reqTrackingCorrection(TrackingCorrectionCmdHex cmd);
     void reqInnerAngleZeroCorrection();
+    void requestStartProgramTracking(const QVector<ProgramTrackingPoint> &points,
+                                     int intervalMs);
+    void requestStopProgramTracking();
+    void programTrackingRunningChanged();
+    void programTrackingFileNameChanged();
+    void programTrackingPointCountChanged();
+    void programTrackingError(const QString &message);
 
 private:
     int m_runtime = 1;
@@ -359,6 +386,9 @@ private:
     float m_outter_startangle = 0.0f;
     float m_current_outter_angle = 0.0f;
     float m_outter_endangle = 0.0f;
+    QVector<ProgramTrackingPoint> m_programTrackingPoints;
+    QString m_programTrackingFileName;
+    bool m_programTrackingRunning = false;
 };
 
 
@@ -383,6 +413,9 @@ signals:
     void portClosed();
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
+    void programTrackingRunningChanged(bool running);
+    void programTrackingFinished();
+    void programTrackingFailed(const QString &message);
 
 public slots:
     // ── 基础指令 ──
@@ -414,6 +447,11 @@ public slots:
     void sendTrackMode_20ms(double yawangle, double pitchangle);
     void ExGuideSourceChanged(int source);
     void ExGuidePeriodChanged(int setting);
+
+    // ── 程控文件跟踪（当前仅实现 20 ms 模式）──
+    void startProgramTracking(const QVector<ProgramTrackingPoint> &points,
+                              int intervalMs);
+    void stopProgramTracking();
 
     // ── 跟踪修正 ──
     void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
@@ -496,6 +534,10 @@ protected:
     static float rawToSpeed(int32_t raw);
 
 private:
+    void onProgramTrackingTimer();
+    void failProgramTracking(const QString &message);
+    void finishProgramTracking();
+
     // 用最近一帧状态时间加上该帧到达后的经过时间，估算当前转台时间。
     // 返回 -1 表示还没有状态帧，或反馈已超时。
     qint64 estimatedTurntableTimeMs() const;
@@ -543,6 +585,14 @@ private:
     qint64 m_lastExGuideSampleMs = -1;
     double m_lastRelativeAzimuthDeg = 0.0;
     double m_lastRelativeElevationDeg = 0.0;
+
+    QTimer *m_programTrackingTimer = nullptr;
+    QVector<ProgramTrackingPoint> m_programTrackingPoints;
+    int m_programTrackingIntervalMs = 20;
+    int m_programTrackingIndex = 0;
+    bool m_programTrackingActive = false;
+    QElapsedTimer m_programTrackingPacingClock;
+    QElapsedTimer m_programTrackingWaitClock;
 
     // 转台从已有速度切换到新速度时必须先停车，并等待对应轴回到伺服状态。
     enum class HandleSpeedState {

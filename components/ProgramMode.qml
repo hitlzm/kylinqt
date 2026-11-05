@@ -38,6 +38,16 @@ Item{
         id: validationMsg
     }
 
+    // 后续导入按钮调用 turntableSendData.importProgramTrackingFile(path) 后，
+    // 文件格式、表头、角度范围或模式错误均从这里统一提示。
+    Connections {
+        target: turntableSendData
+        onProgramTrackingError: {
+            validationMsg.message = message
+            validationMsg.open()
+        }
+    }
+
     // 空输入按 0 处理；格式非法时返回 0，但调用方必须先检查格式状态。
     function parseInputNumber(str) {
         var result = InputRules.validateNumber(str, true, true, 4)

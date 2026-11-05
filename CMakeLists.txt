@@ -89,6 +89,7 @@ if(ANDROID)
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable_HEX.cpp
+      utils/program_tracking_file.cpp
       kalman/AlphaBetaTracker.cpp
       video/vlcplayer.cpp
     )
@@ -100,6 +101,7 @@ else()
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
       serialport/serialport_turntable_HEX.cpp
+      utils/program_tracking_file.cpp
       serialport/serialport_BD.cpp
       serialport/serialport_CCD.cpp
       kalman/AlphaBetaTracker.cpp
@@ -151,6 +153,19 @@ target_link_libraries(kylinqt
     ${OpenCV_LIBS}
     ${ONNXRUNTIME_LIBRARY}
 )
+
+# 可选的无界面自测目标；默认不参与构建。
+option(KYLINQT_BUILD_SELFTESTS "Build kylinqt command-line self-tests" OFF)
+if(KYLINQT_BUILD_SELFTESTS)
+    enable_testing()
+    add_executable(kylinqt_program_tracking_file_selftest
+        tests/program_tracking_file_selftest.cpp
+        utils/program_tracking_file.cpp
+    )
+    target_link_libraries(kylinqt_program_tracking_file_selftest PRIVATE Qt5::Core)
+    add_test(NAME program_tracking_file_selftest
+             COMMAND kylinqt_program_tracking_file_selftest)
+endif()
 
 # ── 视频接收侧延迟探针（utils/videolatencyprobe.*）─────────────────────
 # 默认关闭，对现有功能零影响。需要出延迟报告时取消下面注释并重新编译，

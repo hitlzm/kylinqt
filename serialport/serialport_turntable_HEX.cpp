@@ -1,7 +1,9 @@
 #include "serialport_turntable_HEX.h"
 #include <QDebug>
 #include <QByteArray>
+#include <QFileInfo>
 #include <QThread>
+#include <QTimer>
 #include <cmath>
 #include <cstring>
 #include <QTime>
@@ -443,6 +445,7 @@ void SerialPortTurntableHex::openTurntable()
 // ════════════════════════ 高级指令：释放 ════════════════════════
 void SerialPortTurntableHex::releaseTurntable()
 {
+    stopProgramTracking();
     resetAllHandleSpeedStates();
     // 释放三轴电机
     sendEnableCmd(1, false); sendEnableCmd(2, false); sendEnableCmd(3, false);
@@ -452,6 +455,7 @@ void SerialPortTurntableHex::releaseTurntable()
 
 void SerialPortTurntableHex::closeTurntable()
 {
+    stopProgramTracking();
     resetAllHandleSpeedStates();
     sendStopCmd(1);
     sendStopCmd(2);
@@ -463,6 +467,7 @@ void SerialPortTurntableHex::closeTurntable()
 
 void SerialPortTurntableHex::zeroTurntable()
 {
+    stopProgramTracking();
     // 回零是状态切换指令。清除遥控轴状态，避免等待中的新速度覆盖回零。
     resetAllHandleSpeedStates();
 
@@ -476,6 +481,7 @@ void SerialPortTurntableHex::zeroTurntable()
 
 void SerialPortTurntableHex::resetTurntable()
 {
+    stopProgramTracking();
     resetAllHandleSpeedStates();
     sendResetCmd();
 }
@@ -714,6 +720,9 @@ void SerialPortTurntableHex::sendTimesync(int seconds)
 
 void SerialPortTurntableHex::ProgramModeChanged(int mode)
 {
+    if (m_operationMode == 1 && mode != 1)
+        stopProgramTracking();
+
     const bool leavingExguide = (m_operationMode == 0 && mode != 0);
 
     m_operationMode = mode;
@@ -861,6 +870,7 @@ void SerialPortTurntableHex::stopAxis(int axis)
     if (axis < 1 || axis > 3)
         return;
 
+    stopProgramTracking();
     resetHandleSpeedState(axis);
     sendStopCmd(axis);
 }
@@ -870,8 +880,184 @@ void SerialPortTurntableHex::zeroAxis(int axis)
     if (axis < 1 || axis > 3)
         return;
 
+    stopProgramTracking();
     resetHandleSpeedState(axis);
     sendZeroCmd(axis);
+}
+
+void SerialPortTurntableHex::startProgramTracking(
+        const QVector<ProgramTrackingPoint> &points, int intervalMs)
+{
+    if (m_programTrackingActive)
+        stopProgramTracking();
+
+    if (!m_isProgramMode) {
+        failProgramTracking(QStringLiteral(
+                    "请先切换到程控模式，再导入跟踪文件。"));
+        return;
+    }
+    if (intervalMs != 20) {
+        failProgramTracking(QStringLiteral(
+                    "当前版本只实现了 20 ms 程控跟踪模式。"));
+        return;
+    }
+    if (points.isEmpty()) {
+        failProgramTracking(QStringLiteral("跟踪文件没有有效数据。"));
+        return;
+    }
+    if (!m_serialPort || !m_serialPort->isOpen()) {
+        failProgramTracking(QStringLiteral(
+                    "转台串口未打开，无法开始文件跟踪。"));
+        return;
+    }
+
+    m_programTrackingPoints = points;
+    m_programTrackingIntervalMs = intervalMs;
+    m_programTrackingIndex = 0;
+    m_programTrackingPacingClock.invalidate();
+    m_programTrackingWaitClock.start();
+    m_last20msTargetMs = -1;
+
+    if (!m_programTrackingTimer) {
+        m_programTrackingTimer = new QTimer(this);
+        m_programTrackingTimer->setTimerType(Qt::PreciseTimer);
+        connect(m_programTrackingTimer, &QTimer::timeout,
+                this, &SerialPortTurntableHex::onProgramTrackingTimer);
+    }
+
+    // 与现有 20 ms 外引导一致：先把转台毫秒时钟对齐到 0，
+    // 等收到新的状态帧后再按 20 ms 边界下发。
+    sendTimesync(0);
+    m_programTrackingActive = true;
+    m_waitingStatusLogged = false;
+    // 5 ms 检查一次，确保在转台 20 ms 边界后及时发出，不会因
+    // QTimer 恰好提前触发而退化成 40 ms 周期。
+    m_programTrackingTimer->start(5);
+    emit programTrackingRunningChanged(true);
+    qDebug() << "[HEX] 程控文件跟踪开始，点数:" << points.size();
+}
+
+void SerialPortTurntableHex::stopProgramTracking()
+{
+    const bool wasActive = m_programTrackingActive;
+    m_programTrackingActive = false;
+    if (m_programTrackingTimer)
+        m_programTrackingTimer->stop();
+    m_programTrackingPoints.clear();
+    m_programTrackingIndex = 0;
+    m_programTrackingPacingClock.invalidate();
+    m_programTrackingWaitClock.invalidate();
+
+    if (wasActive)
+        emit programTrackingRunningChanged(false);
+}
+
+void SerialPortTurntableHex::onProgramTrackingTimer()
+{
+    if (!m_programTrackingActive)
+        return;
+    if (!m_isProgramMode) {
+        failProgramTracking(QStringLiteral(
+                    "已离开程控模式，文件跟踪自动停止。"));
+        return;
+    }
+    if (!m_serialPort || !m_serialPort->isOpen()) {
+        failProgramTracking(QStringLiteral(
+                    "转台串口已关闭，文件跟踪自动停止。"));
+        return;
+    }
+
+    const qint64 turntableNowMs = estimatedTurntableTimeMs();
+    if (turntableNowMs < 0) {
+        if (m_programTrackingWaitClock.isValid()
+                && m_programTrackingWaitClock.elapsed() > 500) {
+            failProgramTracking(QStringLiteral(
+                        "等待转台状态帧超时，文件跟踪已停止。"));
+        }
+        return;
+    }
+    m_programTrackingWaitClock.invalidate();
+
+    constexpr qint64 kTrackLoopMs = 14400000;
+    qint64 targetMs = ((turntableNowMs / 20) + 1) * 20;
+    if (targetMs >= kTrackLoopMs)
+        targetMs = 0;
+    if (targetMs == m_last20msTargetMs)
+        return;
+
+    if (!m_programTrackingPacingClock.isValid()) {
+        m_programTrackingPacingClock.start();
+    } else {
+        // 若线程短时卡顿，跳到当前时刻对应的数据点，避免随后高速补发
+        // 大量已经过期的点。
+        const qint64 desiredIndex =
+                m_programTrackingPacingClock.elapsed()
+                / std::max(1, m_programTrackingIntervalMs);
+        const int boundedIndex = static_cast<int>(std::min<qint64>(
+                    desiredIndex, m_programTrackingPoints.size() - 1));
+        if (boundedIndex > m_programTrackingIndex)
+            m_programTrackingIndex = boundedIndex;
+    }
+
+    const ProgramTrackingPoint &point =
+            m_programTrackingPoints.at(m_programTrackingIndex);
+    TrackingSendCmd20msHex command;
+    command.timeMs = static_cast<int>(targetMs);
+    command.angle1 = static_cast<float>(point.innerAngleDeg);
+    command.angle2 = static_cast<float>(point.middleAngleDeg);
+    command.angle3 = static_cast<float>(point.outerAngleDeg);
+
+    if (command.angle1 < TURNTABLE_INNER_MIN_DEG
+            || command.angle1 > TURNTABLE_INNER_MAX_DEG
+            || command.angle2 < TURNTABLE_MIDDLE_MIN_DEG
+            || command.angle2 > TURNTABLE_MIDDLE_MAX_DEG
+            || command.angle3 < TURNTABLE_OUTER_MIN_DEG
+            || command.angle3 > TURNTABLE_OUTER_MAX_DEG) {
+        failProgramTracking(QStringLiteral(
+                    "跟踪文件中的角度超出转台允许范围，跟踪已停止。"));
+        return;
+    }
+
+    m_last20msTargetMs = targetMs;
+    sendTrackCmd_20ms(command);
+    ++m_programTrackingIndex;
+
+    if (m_programTrackingIndex >= m_programTrackingPoints.size()) {
+        finishProgramTracking();
+        qDebug() << "[HEX] 程控文件跟踪完成";
+    }
+}
+
+void SerialPortTurntableHex::failProgramTracking(const QString &message)
+{
+    const bool wasActive = m_programTrackingActive;
+    m_programTrackingActive = false;
+    if (m_programTrackingTimer)
+        m_programTrackingTimer->stop();
+    m_programTrackingPoints.clear();
+    m_programTrackingIndex = 0;
+    m_programTrackingPacingClock.invalidate();
+    m_programTrackingWaitClock.invalidate();
+
+    if (wasActive)
+        emit programTrackingRunningChanged(false);
+    emit programTrackingFailed(message);
+}
+
+void SerialPortTurntableHex::finishProgramTracking()
+{
+    const bool wasActive = m_programTrackingActive;
+    m_programTrackingActive = false;
+    if (m_programTrackingTimer)
+        m_programTrackingTimer->stop();
+    m_programTrackingPoints.clear();
+    m_programTrackingIndex = 0;
+    m_programTrackingPacingClock.invalidate();
+    m_programTrackingWaitClock.invalidate();
+
+    if (wasActive)
+        emit programTrackingRunningChanged(false);
+    emit programTrackingFinished();
 }
 
 
@@ -1613,7 +1799,12 @@ void SerialPortTurntableHex::onOpenPort(const QString &name, int baud)
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");
 }
 
-void SerialPortTurntableHex::onClosePort()  { SerialPort::close(); emit portClosed(); }
+void SerialPortTurntableHex::onClosePort()
+{
+    stopProgramTracking();
+    SerialPort::close();
+    emit portClosed();
+}
 void SerialPortTurntableHex::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 
 
@@ -1708,6 +1899,52 @@ void TurntableSendDataHex::requestTrackingCorrection(float innerDeviation,
 void TurntableSendDataHex::requestInnerAngleZeroCorrection()
 {
     emit reqInnerAngleZeroCorrection();
+}
+
+bool TurntableSendDataHex::importProgramTrackingFile(const QString &filePath)
+{
+    const ProgramTrackingFile::Result result = ProgramTrackingFile::loadCsv(filePath);
+    if (!result.ok) {
+        emit programTrackingError(result.error);
+        return false;
+    }
+
+    m_programTrackingPoints = result.points;
+    m_programTrackingFileName = QFileInfo(filePath).fileName();
+    emit programTrackingFileNameChanged();
+    emit programTrackingPointCountChanged();
+    startProgramTracking();
+    return true;
+}
+
+void TurntableSendDataHex::startProgramTracking()
+{
+    if (m_programTrackingPoints.isEmpty()) {
+        emit programTrackingError(
+                    QStringLiteral("尚未导入有效的程控跟踪文件。"));
+        return;
+    }
+
+    emit requestStartProgramTracking(m_programTrackingPoints, 20);
+}
+
+void TurntableSendDataHex::stopProgramTracking()
+{
+    emit requestStopProgramTracking();
+}
+
+void TurntableSendDataHex::setProgramTrackingRunning(bool running)
+{
+    if (m_programTrackingRunning == running)
+        return;
+    m_programTrackingRunning = running;
+    emit programTrackingRunningChanged();
+}
+
+void TurntableSendDataHex::reportProgramTrackingError(const QString &message)
+{
+    setProgramTrackingRunning(false);
+    emit programTrackingError(message);
 }
 
 
