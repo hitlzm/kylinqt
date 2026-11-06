@@ -30,11 +30,26 @@ include(taoQuick.cmake)
 #endif()
 
 # libmpv 库路径
-set(MPV_ROOT "E:/QTproject/mpv")
+set(MPV_ROOT "E:/QTproject/mpv" CACHE PATH "libmpv SDK root")
 
-# libmpv SDK 头文件和库
-set(MPV_INCLUDE_DIR "${MPV_ROOT}/include")
-set(MPV_LIBRARY_DIR "${MPV_ROOT}/lib")
+# libmpv SDK 头文件、导入库和运行库
+find_path(MPV_INCLUDE_DIR mpv/client.h
+    PATHS "${MPV_ROOT}/include"
+    NO_DEFAULT_PATH)
+find_file(MPV_LIBRARY
+    NAMES libmpv.dll.a libmpv.a mpv.lib libmpv.lib
+    PATHS "${MPV_ROOT}" "${MPV_ROOT}/lib"
+    NO_DEFAULT_PATH)
+find_file(MPV_DLL
+    NAMES libmpv-2.dll mpv-2.dll
+    PATHS "${MPV_ROOT}" "${MPV_ROOT}/bin"
+    NO_DEFAULT_PATH)
+
+# Eigen（坐标变换头文件）
+find_path(EIGEN_INCLUDE_DIR Eigen/Dense
+    PATHS "E:/onnxruntime/cmake/external/eigen"
+          "E:/matlab2/toolbox/shared/robotics/externalDependency/eigen/include/eigen3"
+    NO_DEFAULT_PATH)
 
 
 find_package(Qt5 COMPONENTS Core Quick Gui SerialPort Gamepad Network Widgets QuickControls2 REQUIRED REQUIRED)
@@ -73,13 +88,13 @@ find_file(ONNXRUNTIME_DLL onnxruntime.dll
     PATHS "${ONNXRUNTIME_ROOT}/bin" "${ONNXRUNTIME_ROOT}/lib"
     NO_DEFAULT_PATH)
 
-# if(NOT ONNXRUNTIME_INCLUDE_DIR OR NOT ONNXRUNTIME_LIBRARY)
-#     message(FATAL_ERROR
-#         "ONNX Runtime 未找到。请先获取 MinGW 兼容的 ONNX Runtime 构建，"
-#         "然后把安装前缀配置到 CMake 缓存变量 ONNXRUNTIME_ROOT，例如：\n"
-#         "  cmake -DONNXRUNTIME_ROOT=E:/path/to/onnxruntime-install\n"
-#         "当前尝试路径：${ONNXRUNTIME_ROOT}")
-# endif()
+if(ONNXRUNTIME_INCLUDE_DIR AND ONNXRUNTIME_C_API_INCLUDE_DIR AND ONNXRUNTIME_LIBRARY)
+    set(ONNXRUNTIME_DETECTOR_SOURCE opencv/onnxyolov5detector.cpp)
+    message(STATUS "ONNX Runtime found: ${ONNXRUNTIME_ROOT}")
+else()
+    set(ONNXRUNTIME_DETECTOR_SOURCE opencv/onnxyolov5detector_stub.cpp)
+    message(WARNING "ONNX Runtime not found; building without YOLO inference")
+endif()
 
 if(ANDROID)
     add_library(kylinqt SHARED
@@ -110,7 +125,8 @@ else()
       vlcvideo/VlcVideoItem.cpp
       vlcvideo/VlcFrameItem.cpp
       #opencv/onnxyolodetector.cpp
-      opencv/onnxyolov5detector.cpp
+      ${ONNXRUNTIME_DETECTOR_SOURCE}
+      opencv/onnxyolov5detector.h
       opencv/streamprocessor.cpp
       opencv/pixelkalmantracker.cpp 
       opencv/cvconvert.h
@@ -122,10 +138,10 @@ else()
       log/LogManager.cpp
       #serialport/circularbuffer.h
       #kalman/seekKalman.cpp
-      #utils/videolatencyprobe.cpp
-      #utils/videolatencyprobe.h
-      #utils/sendlatencyprobe.cpp
-      #utils/sendlatencyprobe.h
+      utils/videolatencyprobe.cpp
+      utils/videolatencyprobe.h
+      utils/sendlatencyprobe.cpp
+      utils/sendlatencyprobe.h
       #network/TemplateBindingClient.cpp
       network/SixDofMotionClient.cpp
       ${TaoQuickRes}
@@ -134,14 +150,15 @@ endif()
 
 target_include_directories(kylinqt PRIVATE
     ${MPV_INCLUDE_DIR}
-    ${ONNXRUNTIME_INCLUDE_DIR}
-    ${ONNXRUNTIME_C_API_INCLUDE_DIR}
-    "E:/onnxruntime/cmake/external/eigen"
+    ${EIGEN_INCLUDE_DIR}
 )
 
-target_link_directories(kylinqt PRIVATE
-    ${MPV_LIBRARY_DIR}
-)
+if(ONNXRUNTIME_INCLUDE_DIR AND ONNXRUNTIME_C_API_INCLUDE_DIR AND ONNXRUNTIME_LIBRARY)
+    target_include_directories(kylinqt PRIVATE
+        ${ONNXRUNTIME_INCLUDE_DIR}
+        ${ONNXRUNTIME_C_API_INCLUDE_DIR}
+    )
+endif()
 
 target_compile_definitions(kylinqt
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
@@ -149,10 +166,17 @@ target_compile_definitions(kylinqt
 target_link_libraries(kylinqt
   PRIVATE
     Qt5::Core Qt5::Quick Qt5::Gui Qt5::SerialPort Qt5::Gamepad Qt5::Network Qt5::Widgets Qt5::QuickControls2
-    libvlc libvlccore
+    ${MPV_LIBRARY}
     ${OpenCV_LIBS}
-    ${ONNXRUNTIME_LIBRARY}
 )
+
+if(ONNXRUNTIME_LIBRARY)
+    target_link_libraries(kylinqt PRIVATE ${ONNXRUNTIME_LIBRARY})
+endif()
+
+if(WIN32)
+    target_link_libraries(kylinqt PRIVATE ws2_32)
+endif()
 
 # 可选的无界面自测目标；默认不参与构建。
 option(KYLINQT_BUILD_SELFTESTS "Build kylinqt command-line self-tests" OFF)
@@ -197,6 +221,7 @@ set(OPENCV_DLLS
     libopencv_imgproc420.dll
     libopencv_imgcodecs420.dll
     libopencv_dnn420.dll
+    libopencv_video420.dll
     libopencv_features2d420.dll
     libopencv_flann420.dll
 )
@@ -210,11 +235,13 @@ foreach(DLL ${OPENCV_DLLS})
 endforeach()
 
 # ── 编译后自动复制 mpv DLL 到 exe 目录 ──
-add_custom_command(TARGET kylinqt POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${MPV_ROOT}/mpv-2.dll"
-        "$<TARGET_FILE_DIR:kylinqt>"
-)
+if(MPV_DLL)
+    add_custom_command(TARGET kylinqt POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${MPV_DLL}"
+            "$<TARGET_FILE_DIR:kylinqt>"
+    )
+endif()
 
 if(ONNXRUNTIME_DLL)
     add_custom_command(TARGET kylinqt POST_BUILD

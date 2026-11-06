@@ -1,5 +1,17 @@
 {
     // 核心：告诉C/C++插件，所有配置都由CMake Tools插件提供
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools" ,
-    "cmake.generator": "MinGW Makefiles"
+    "cmake.generator": "MinGW Makefiles",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureSettings": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "E:/QT5.12.8/Tools/mingw730_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "E:/QT5.12.8/Tools/mingw730_64/bin/mingw32-make.exe",
+        "CMAKE_PREFIX_PATH": "E:/QT5.12.8/5.12.8/mingw73_64",
+        "Qt5_DIR": "E:/QT5.12.8/5.12.8/mingw73_64/lib/cmake/Qt5",
+        "OpenCV_DIR": "E:/opencv-4.2.0/DNN/install",
+        "OpenCV_ARCH": "x64",
+        "OpenCV_RUNTIME": "mingw"
+    }
 }

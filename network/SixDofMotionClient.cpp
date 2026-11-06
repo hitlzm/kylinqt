@@ -182,6 +182,7 @@ bool SixDofMotionClient::openConnection()
 
     m_lastStatusRxMs = 0;
     setLinkAlive(false);
+    resetCurrentHeight();
     setConnected(true);
     setStatusMessage(QStringLiteral("套接字已打开：本机端口 %1 → 运动 %2:%3，状态查询 %4:%5")
                          .arg(m_localPort)
@@ -217,6 +218,7 @@ void SixDofMotionClient::closeConnection()
     setConnected(false);
     setLinkAlive(false);
     m_lastStatusRxMs = 0;
+    resetCurrentHeight();
     setStatusMessage(QStringLiteral("UDP 连接已关闭"));
 }
 
@@ -252,7 +254,7 @@ void SixDofMotionClient::startConnectionCheck(int timeoutMs)
 
 
 // ══════════════════════════════════════════════════════════════
-// X / Y 轴倾角控制
+// X / Y 轴倾角与 Z 轴高度控制
 // ══════════════════════════════════════════════════════════════
 
 bool SixDofMotionClient::sendTiltXY(double xDeg, double yDeg)
@@ -264,6 +266,26 @@ bool SixDofMotionClient::sendTiltXY(double xDeg, double yDeg)
 // 与参考实现一致使用 cmd=6（位置运行），角度由度换算为弧度。
 bool SixDofMotionClient::sendTiltXYWithTime(double xDeg, double yDeg, int timeMs)
 {
+    // 保持原有倾角接口语义：只控制 X/Y 倾角，Z 轴回到 0。
+    return sendTiltHeightInternal(xDeg, yDeg, 0.0, timeMs);
+}
+
+bool SixDofMotionClient::sendTiltHeight(double xDeg, double yDeg, double zMm)
+{
+    return sendTiltHeightWithTime(xDeg, yDeg, zMm, effectiveTime(kDefaultMoveTimeMs));
+}
+
+// X 轴倾角 → rx，Y 轴倾角 → ry，Z 轴高度 → tz。
+// 界面输入高度单位为毫米，协议 tz 要求米，因此组包前除以 1000。
+bool SixDofMotionClient::sendTiltHeightWithTime(double xDeg, double yDeg,
+                                                double zMm, int timeMs)
+{
+    return sendTiltHeightInternal(xDeg, yDeg, zMm, timeMs);
+}
+
+bool SixDofMotionClient::sendTiltHeightInternal(double xDeg, double yDeg,
+                                                double zMm, int timeMs)
+{
     // 与参考实现一致：超限直接拒绝发送，不做静默限幅，避免平台被驱到限位
     if (!qIsFinite(xDeg) || !qIsFinite(yDeg)
         || qAbs(xDeg) > kMaxTiltDeg || qAbs(yDeg) > kMaxTiltDeg) {
@@ -274,30 +296,31 @@ bool SixDofMotionClient::sendTiltXYWithTime(double xDeg, double yDeg, int timeMs
         return false;
     }
 
+    if (!qIsFinite(zMm)) {
+        setLastError(QStringLiteral("Z 轴高度不是有效数字，指令未发送"));
+        return false;
+    }
+
     MoveFrame frame;
     frame.cmd  = kCmdPosRun;
     frame.tx   = kZeroFloat;
     frame.ty   = kZeroFloat;
-    frame.tz   = kZeroFloat;
+    frame.tz   = static_cast<float>(mmToM(zMm));
     frame.rx   = static_cast<float>(degToRad(xDeg));
     frame.ry   = static_cast<float>(degToRad(yDeg));
     frame.rz   = kZeroFloat;
     frame.time = static_cast<qint32>(qMax(1, timeMs));
 
-    const QString description = QStringLiteral("倾角指令 X=%1° Y=%2° 执行时间 %3ms")
+    const QString description = QStringLiteral("位姿指令 X=%1° Y=%2° Z=%3mm 执行时间 %4ms")
                                     .arg(xDeg, 0, 'f', 3)
                                     .arg(yDeg, 0, 'f', 3)
+                                    .arg(zMm, 0, 'f', 2)
                                     .arg(frame.time);
 
     if (!transmit(frame, description))
         return false;
 
-    if (!qFuzzyCompare(m_tiltXDeg + 1.0, xDeg + 1.0)
-        || !qFuzzyCompare(m_tiltYDeg + 1.0, yDeg + 1.0)) {
-        m_tiltXDeg = xDeg;
-        m_tiltYDeg = yDeg;
-        emit tiltChanged();
-    }
+    updateTargetPose(xDeg, yDeg, zMm);
     return true;
 }
 
@@ -337,7 +360,11 @@ bool SixDofMotionClient::goMiddleWithTime(int timeMs)
     frame.time = static_cast<qint32>(qMax(1, timeMs));
 
     const QString description = QStringLiteral("回中位（六轴归零）执行时间 %1ms").arg(frame.time);
-    return transmit(frame, description);
+    if (!transmit(frame, description))
+        return false;
+
+    updateTargetPose(0.0, 0.0, 0.0);
+    return true;
 }
 
 // 回底部：tz = -0.5m，其余归零（udp_client.py 的 go_bottom()：cmd=6、tz=-0.5）
@@ -356,7 +383,11 @@ bool SixDofMotionClient::goBottomWithTime(int timeMs)
     const QString description = QStringLiteral("回底部（tz=%1m）执行时间 %2ms")
                                     .arg(kBottomTzMeters, 0, 'f', 3)
                                     .arg(frame.time);
-    return transmit(frame, description);
+    if (!transmit(frame, description))
+        return false;
+
+    updateTargetPose(0.0, 0.0, kBottomTzMeters * 1000.0);
+    return true;
 }
 
 // 急停：cmd=2（udp_client.py 的 estop()）
@@ -418,6 +449,11 @@ QByteArray SixDofMotionClient::buildFrame(const MoveFrame &frame)
 double SixDofMotionClient::degToRad(double deg)
 {
     return deg * 3.141592653589793 / 180.0;
+}
+
+double SixDofMotionClient::mmToM(double mm)
+{
+    return mm / 1000.0;
 }
 
 
@@ -490,7 +526,10 @@ void SixDofMotionClient::onSocketReadyRead()
     }
 }
 
-// 状态反馈报文（与 protocol.py 的 parse_status_response() 一致）：
+// 状态反馈报文：
+//   0x55 0xAA 0xBB | status | 12×float | reserved(int32)
+//     float 依次为 6 个电缸位移、pitch/roll/yaw、surge/sway/heave，均为 mm/°；
+//     heave 位于偏移 48，作为当前 Z 轴高度反馈。
 //   0x64 0x03 <code> → 报警/错误
 //   0xC9 0x3C <code> → 状态反馈
 void SixDofMotionClient::parseStatus(const QByteArray &datagram)
@@ -500,6 +539,38 @@ void SixDofMotionClient::parseStatus(const QByteArray &datagram)
 
     const quint8 first  = static_cast<quint8>(datagram.at(0));
     const quint8 second = static_cast<quint8>(datagram.at(1));
+
+    // V8 协议中的完整运动状态帧。除 Z 高度外不在此界面展示，
+    // 但完整读取可保证 heave 的偏移正确，而不是误把后续状态短帧当作运动数据。
+    if (datagram.size() >= kMoveFrameSize
+        && first == kStart1 && second == kStart2
+        && static_cast<quint8>(datagram.at(2)) == kStart3) {
+        QDataStream ds(datagram);
+        ds.setByteOrder(QDataStream::LittleEndian);
+        ds.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+        quint8 start1 = 0, start2 = 0, start3 = 0, status = 0;
+        float profile[6] = {};
+        float pitch = 0.0f, roll = 0.0f, yaw = 0.0f;
+        float surge = 0.0f, sway = 0.0f, heave = 0.0f;
+        qint32 reserved = 0;
+        ds >> start1 >> start2 >> start3 >> status;
+        for (int i = 0; i < 6; ++i)
+            ds >> profile[i];
+        ds >> pitch >> roll >> yaw;
+        ds >> surge >> sway >> heave;
+        ds >> reserved;
+
+        if (ds.status() == QDataStream::Ok) {
+            setStatusCode(status);
+            updateCurrentHeight(static_cast<double>(heave));
+            setStatusMessage(QStringLiteral("控制卡状态：%1，当前 Z 高度 %2mm")
+                                 .arg(statusText(status))
+                                 .arg(heave, 0, 'f', 1));
+            return;
+        }
+    }
+
     const int code = datagram.size() >= 3 ? static_cast<quint8>(datagram.at(2)) : 0;
 
     if (first == 0x64 && second == 0x03) {
@@ -592,4 +663,46 @@ void SixDofMotionClient::setLastError(const QString &message)
     }
     // 不写入界面日志（本项目不需要六自由度平台的日志记录），仅在控制台留一条警告便于排查
     qWarning() << "[SixDofMotion]" << message;
+}
+
+void SixDofMotionClient::updateTargetPose(double xDeg, double yDeg, double zMm)
+{
+    const bool tiltDiffers = !qFuzzyCompare(m_tiltXDeg + 1.0, xDeg + 1.0)
+                             || !qFuzzyCompare(m_tiltYDeg + 1.0, yDeg + 1.0);
+    const bool heightDiffers = !qFuzzyCompare(m_targetHeightZMm + 1.0, zMm + 1.0);
+
+    if (tiltDiffers) {
+        m_tiltXDeg = xDeg;
+        m_tiltYDeg = yDeg;
+        emit tiltChanged();
+    }
+
+    if (heightDiffers)
+        m_targetHeightZMm = zMm;
+
+    if (tiltDiffers || heightDiffers)
+        emit targetPoseChanged();
+}
+
+void SixDofMotionClient::updateCurrentHeight(double zMm)
+{
+    if (!qIsFinite(zMm))
+        return;
+
+    if (m_currentHeightValid && qFuzzyCompare(m_currentHeightZMm + 1.0, zMm + 1.0))
+        return;
+
+    m_currentHeightZMm = zMm;
+    m_currentHeightValid = true;
+    emit currentHeightChanged();
+}
+
+void SixDofMotionClient::resetCurrentHeight()
+{
+    if (!m_currentHeightValid && qFuzzyCompare(m_currentHeightZMm + 1.0, 1.0))
+        return;
+
+    m_currentHeightZMm = 0.0;
+    m_currentHeightValid = false;
+    emit currentHeightChanged();
 }
