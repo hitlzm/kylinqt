@@ -1,4 +1,5 @@
 #include "serialport_turntable_HEX.h"
+#include "serialport_CCD.h"
 #include <QDebug>
 #include <QByteArray>
 #include <QFileInfo>
@@ -636,11 +637,32 @@ void SerialPortTurntableHex::sendTrackingCorrection(TrackingCorrectionCmdHex cmd
 
 void SerialPortTurntableHex::zeroInnerAngleOffset()
 {
-    // 当前画面零位对应的内框偏置，使“当前内框角 + 偏置角”等于零。
-    m_inner_angle_offset_deg = -m_current_inner_angle;
-    qDebug() << "[HEX] 内框零位已校正，当前内框角:"
+    // 图像头当前画面零位对应的内框偏置，使“当前内框角 + 偏置角”等于零。
+    m_image_inner_angle_offset_deg = -m_current_inner_angle;
+    qDebug() << "[HEX] 图像头内框零位已校正，当前内框角:"
              << m_current_inner_angle
-             << "°，偏置角:" << m_inner_angle_offset_deg << "°";
+             << "°，偏置角:" << m_image_inner_angle_offset_deg << "°";
+}
+
+void SerialPortTurntableHex::setLaserInnerAngleOffset(float offsetDeg)
+{
+    if (!std::isfinite(offsetDeg))
+        return;
+
+    m_laser_inner_angle_offset_deg = offsetDeg;
+    qDebug() << "[HEX] 激光头内框零位已修正，偏置角:"
+             << m_laser_inner_angle_offset_deg << "°";
+}
+
+float SerialPortTurntableHex::innerAngleOffsetForCurrentSource() const
+{
+    // 3=图像，4=激光，5=CCD。CCD 使用固定的安装偏置角，
+    // 不参与图像头/激光头的人工零位修正。
+    if (m_exGuideSource == 4)
+        return m_laser_inner_angle_offset_deg;
+    if (m_exGuideSource == 5)
+        return SerialPortCCD::kFixedInnerAngleOffsetDeg;
+    return m_image_inner_angle_offset_deg;
 }
 
 
@@ -1144,7 +1166,7 @@ void SerialPortTurntableHex::recvExGuideMeasurement(exGuideMeasurement sample)
         return;
 
     const float innerAngleForTransform =
-            m_current_inner_angle + m_inner_angle_offset_deg;
+            m_current_inner_angle + innerAngleOffsetForCurrentSource();
     const auto ang = seeker::deRollAboutBoresightDeg(
                 sample.azimuth, sample.elevation, innerAngleForTransform);
 
@@ -1311,7 +1333,8 @@ void SerialPortTurntableHex::sendTrackMode_1s(sendExGuideData frame1, sendExGuid
 
     // 图像头/激光头画面零位与转台内框零位存在偏置，坐标变换使用补偿后的内框角。
     // 内框正角对应逆时针旋转补偿，因此直接将补偿后的内框角传给 deRoll 接口。
-    const float innerAngleForTransform = m_current_inner_angle + m_inner_angle_offset_deg;
+    const float innerAngleForTransform =
+            m_current_inner_angle + innerAngleOffsetForCurrentSource();
 
     //对方位角与俯仰角结构体进行更新
     auto ang = seeker::deRollAboutBoresightDeg(frame1.angle1, frame2.angle1, innerAngleForTransform);
@@ -1430,7 +1453,8 @@ void SerialPortTurntableHex::sendTrackMode_20ms(double yawangle, double pitchang
 
     // 对俯仰角和方位角进行变换；画面零位偏置只用于坐标变换，不改变内框保持角。
     // 内框正角对应逆时针旋转补偿，因此直接将补偿后的内框角传给 deRoll 接口。
-    const float innerAngleForTransform = m_current_inner_angle + m_inner_angle_offset_deg;
+    const float innerAngleForTransform =
+            m_current_inner_angle + innerAngleOffsetForCurrentSource();
     auto ang = seeker::deRollAboutBoresightDeg(yawangle, pitchangle, innerAngleForTransform);
     yawangle = ang.az;
     pitchangle = ang.el;
@@ -1899,6 +1923,11 @@ void TurntableSendDataHex::requestTrackingCorrection(float innerDeviation,
 void TurntableSendDataHex::requestInnerAngleZeroCorrection()
 {
     emit reqInnerAngleZeroCorrection();
+}
+
+void TurntableSendDataHex::requestLaserInnerAngleZeroCorrection(float offsetDeg)
+{
+    emit reqLaserInnerAngleZeroCorrection(offsetDeg);
 }
 
 bool TurntableSendDataHex::importProgramTrackingFile(const QString &filePath)

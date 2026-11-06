@@ -5,6 +5,9 @@
 #include <QObject>
 #include <QString>
 
+// 升起高度偏置（单位：mm）。最终发送的 Z 轴指令 = 输入框值 - 该偏置。
+#define SIXDOF_Z_HEIGHT_OFFSET_MM (0.0)
+
 class QUdpSocket;
 class QTimer;
 
@@ -26,9 +29,9 @@ class QTimer;
  *   - 回中位/回底部并不使用 cmd=3/4，而是统一用 cmd=6（位置运行）+ 位置全零 / tz=-0.5，
  *     cmd=3/4 仅作为协议常量保留。
  *
- * 倾角与 Z 轴高度控制：
+ * 倾角与升起高度控制：
  *   X 轴倾角 → rx（绕 X 轴，弧度），Y 轴倾角 → ry（绕 Y 轴，弧度），
- *   Z 轴高度 → tz（Z 轴平移，米），对外接口高度使用毫米，组包时换算为米。
+ *   升起高度 → tz（Z 轴平移，米），对外接口高度使用毫米，减去偏置后换算为米。
  *   只为保持原有 XY 倾角接口兼容，sendTiltXY*() 仍会将 tz 置 0；需要同时控制
  *   倾角与高度时使用 sendTiltHeight*()。tx/ty/rz 不在此弹窗中控制，保持 0。
  *   状态帧中的 heave（Z 轴位移，毫米）通过 currentHeightZMm 提供给 QML 显示。

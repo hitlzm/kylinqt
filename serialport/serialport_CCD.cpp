@@ -4,7 +4,6 @@
 #include <QTimeZone>
 #include <cmath>
 #include "../log/LogManager.h"
-#include "../utils/seeker_coordinate_transform.h"
 // ─────────────────────────────────────────────
 // 外引导模式常量
 // ─────────────────────────────────────────────
@@ -303,12 +302,8 @@ void SerialPortCCD::recvTargetCenter(int centerX, int centerY)
     m_pitch = qRadiansToDegrees(
                 std::atan(normalizedY * std::tan(qDegreesToRadians(m_vFov / 2.0))));
 
-    //考虑到CCD安装有一定倾斜角，要进行CCD到转台内框基坐标系的变换,CCD转角固定为22.5度
-    if (m_rotation_angle != 0) {
-        auto ang = seeker::deRollAboutBoresightDeg(m_azimuth, m_pitch, m_rotation_angle);
-        m_azimuth = ang.az;
-        m_pitch = ang.el;
-    }
+    // CCD 固定安装偏置由转台线程按 sourceId=5 并入内框去滚转补偿，
+    // 此处保持原始相对测量角，避免同一偏置被重复应用。
 
     // 1 秒模式只上报逐帧相对测量，绝对目标合成和预测由转台线程负责。
     if (exindex == ExguideMode && exguidesetting == Exguide_1s) {

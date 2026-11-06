@@ -328,8 +328,10 @@ public:
                                                float middleDeviation,
                                                float outerDeviation,
                                                int target = 1);
-    // 将内框偏置角校正为 -当前内框角度，使当前画面零位对应内框零度。
+    // 将图像头内框偏置角校正为 -当前内框角度，使当前画面零位对应内框零度。
     Q_INVOKABLE void requestInnerAngleZeroCorrection();
+    // 激光头没有供人工观察的零位画面，偏置角由用户直接输入。
+    Q_INVOKABLE void requestLaserInnerAngleZeroCorrection(float offsetDeg);
     // 读取并校验跟踪 CSV，校验通过后立即以 20 ms 周期开始跟踪。
     // 后续 ProgramMode.qml 的导入按钮只需调用此接口。
     Q_INVOKABLE bool importProgramTrackingFile(const QString &filePath);
@@ -367,6 +369,7 @@ signals:
     void sinMove(int m_index, float amplitude, float frequency);//桥接信号，驱动三轴进行正弦运动
     void reqTrackingCorrection(TrackingCorrectionCmdHex cmd);
     void reqInnerAngleZeroCorrection();
+    void reqLaserInnerAngleZeroCorrection(float offsetDeg);
     void requestStartProgramTracking(const QVector<ProgramTrackingPoint> &points,
                                      int intervalMs);
     void requestStopProgramTracking();
@@ -456,6 +459,7 @@ public slots:
     // ── 跟踪修正 ──
     void sendTrackingCorrection(TrackingCorrectionCmdHex cmd);
     void zeroInnerAngleOffset();
+    void setLaserInnerAngleOffset(float offsetDeg);
 
     // ── 摇摆模式 ──
     void sendSwingMode(int index, float amplitude, float freq);
@@ -555,8 +559,11 @@ private:
     float m_current_inner_angle = 0.0f;
     float m_current_middle_angle = 0.0f;
     float m_current_outter_angle = 0.0f;
-    // 按下“零位校正”后设为 -当前内框角度；不再使用固定 75° 默认值。
-    float m_inner_angle_offset_deg = 0.0f;
+    // 图像头按下“零位校正”后设为 -当前内框角度；激光头由用户输入。
+    // CCD 使用 SerialPortCCD 中定义的固定安装偏置角。
+    float m_image_inner_angle_offset_deg = 0.0f;
+    float m_laser_inner_angle_offset_deg = 0.0f;
+    float innerAngleOffsetForCurrentSource() const;
 
     // 状态反馈中的转台毫秒时间（0-14399999，4小时循环）。
     // 跟踪目标时刻以此为准，避免本地时钟与转台时基不一致。

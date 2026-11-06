@@ -165,7 +165,7 @@ Window {
         var ry = parseFloat(tiltYField.text)
         var rz = parseFloat(heightZField.text)
         if (!isFinite(rx) || !isFinite(ry) || !isFinite(rz)) {
-            toast.showToast("X / Y 倾角及 Z 高度请填写数字", 2500)
+            toast.showToast("X / Y 倾角及升起高度请填写数字", 2500)
             return
         }
         if (Math.abs(rx) > maxTiltDeg || Math.abs(ry) > maxTiltDeg) {
@@ -453,7 +453,7 @@ Window {
                                 id: heightZField
                                 mywidth: 140
                                 myheight: 68
-                                title: "Z 轴高度"
+                                title: "升起高度"
                                 labeltext: "mm"
                                 onEditingFinished: popup.formatHeight(heightZField)
                             }

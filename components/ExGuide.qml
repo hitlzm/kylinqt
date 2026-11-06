@@ -9,6 +9,8 @@ Item {
 
     // 1s 跟踪模式允许发送一次三轴跟踪偏差修正
     readonly property bool guide1sSelected: period250ms.checked
+    property string zeroCorrectionStage: "choose"
+    property string zeroCorrectionError: ""
 
     function applyTrackingCorrection() {
         turntableSendData.requestTrackingCorrection(
@@ -20,6 +22,38 @@ Item {
     // 用户确认视频画面已调整为正后，才计算并填入内框偏置修正角。
     function confirmInnerAngleZeroCorrection() {
         turntableSendData.requestInnerAngleZeroCorrection()
+        innerAngleZeroPopup.close()
+    }
+
+    function showImageZeroCorrection() {
+        zeroCorrectionStage = "image"
+        zeroCorrectionError = ""
+    }
+
+    function showLaserZeroCorrection() {
+        zeroCorrectionStage = "laser"
+        zeroCorrectionError = ""
+        laserInnerAngleOffsetInput.text = ""
+        laserInnerAngleOffsetInput.forceActiveFocus()
+    }
+
+    function confirmLaserZeroCorrection() {
+        if (laserInnerAngleOffsetInput.text.trim() === ""
+                || !laserInnerAngleOffsetInput.inputFormatValid) {
+            zeroCorrectionError = laserInnerAngleOffsetInput.text.trim() === ""
+                    ? "请输入激光头零位修正角"
+                    : laserInnerAngleOffsetInput.numericError
+            return
+        }
+
+        turntableSendData.requestLaserInnerAngleZeroCorrection(
+                    laserInnerAngleOffsetInput.numericValue)
+        innerAngleZeroPopup.close()
+    }
+
+    function closeZeroCorrectionPopup() {
+        zeroCorrectionStage = "choose"
+        zeroCorrectionError = ""
         innerAngleZeroPopup.close()
     }
 
@@ -154,18 +188,24 @@ Item {
         }
     }
 
-    // 零位修正会以点击确认时的内框角度计算偏置，因此打开弹窗本身不修改任何数值。
+    // 图像头零位修正会按点击确认时的内框角度计算偏置；
+    // 激光头零位修正只在用户确认输入的偏置角后才修改数值。
     Popup {
         id: innerAngleZeroPopup
         parent: Overlay.overlay
-        width: Math.min(560, parent ? parent.width - 40 : 560)
-        height: 190
+        width: Math.min(680, parent ? parent.width - 48 : 680)
+        height: zeroCorrectionStage === "choose" ? 300
+                : (zeroCorrectionStage === "image" ? 350 : 390)
         x: Math.round((parent.width - width) / 2)
         y: Math.round((parent.height - height) / 2)
 
         modal: true
         focus: true
         closePolicy: Popup.NoAutoClose
+        onClosed: {
+            root.zeroCorrectionStage = "choose"
+            root.zeroCorrectionError = ""
+        }
 
         Overlay.modal: Rectangle {
             color: "#70000000"
@@ -179,18 +219,114 @@ Item {
         }
 
         Column {
-            anchors.fill: parent
-            anchors.margins: 24
-            spacing: 22
+            width: parent.width - 64
+            anchors.centerIn: parent
+            spacing: 24
 
             Text {
                 width: parent.width
-                text: "请先确认导引头视频画面为正，再进行外引导零位修正"
-                font.pixelSize: 20
+                text: root.zeroCorrectionStage === "choose"
+                      ? "请选择需要修正零位的导引头"
+                      : (root.zeroCorrectionStage === "image"
+                         ? "图像头零位修正"
+                         : "激光头零位修正")
+                font.pixelSize: 26
                 font.bold: true
                 color: "#333333"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+            }
+
+            Text {
+                width: parent.width
+                visible: root.zeroCorrectionStage === "image"
+                text: "请先确认图像头视频画面为正，再进行外引导零位修正"
+                font.pixelSize: 20
+                lineHeight: 1.45
+                lineHeightMode: Text.ProportionalHeight
+                color: "#333333"
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+            }
+
+            Text {
+                width: parent.width
+                visible: root.zeroCorrectionStage === "laser"
+                text: "请输入激光头零位修正角，确认后将立即用于激光头外引导坐标变换"
+                font.pixelSize: 19
+                lineHeight: 1.45
+                lineHeightMode: Text.ProportionalHeight
+                color: "#333333"
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+            }
+
+            Row {
+                visible: root.zeroCorrectionStage === "choose"
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 18
+
+                CusButton_Blue {
+                    width: 190
+                    height: 50
+                    text: "图像头零位修正"
+                    font.pixelSize: 19
+                    onClicked: root.showImageZeroCorrection()
+                }
+
+                CusButton_Blue {
+                    width: 190
+                    height: 50
+                    text: "激光头零位修正"
+                    font.pixelSize: 19
+                    onClicked: root.showLaserZeroCorrection()
+                }
+            }
+
+            Row {
+                visible: root.zeroCorrectionStage === "laser"
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+
+                Text {
+                    text: "零位修正角:"
+                    font.pixelSize: 19
+                    color: "#333333"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                NumericTextField {
+                    id: laserInnerAngleOffsetInput
+                    width: 210
+                    height: 46
+                    font.pixelSize: 19
+                    horizontalAlignment: TextInput.AlignHCenter
+                    verticalAlignment: TextInput.AlignVCenter
+                    placeholderText: "请输入角度"
+                    fieldLabel: "激光头零位修正角"
+                    maximumFractionDigits: 4
+                    onTextEdited: root.zeroCorrectionError = ""
+                }
+
+                Text {
+                    text: "°"
+                    font.pixelSize: 19
+                    color: "#333333"
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Text {
+                width: parent.width
+                visible: root.zeroCorrectionStage === "laser"
+                         && root.zeroCorrectionError !== ""
+                text: root.zeroCorrectionError
+                color: "#c62828"
+                font.pixelSize: 17
+                lineHeight: 1.35
+                lineHeightMode: Text.ProportionalHeight
+                horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
             }
 
@@ -199,19 +335,25 @@ Item {
                 spacing: 18
 
                 CusButton_Blue {
-                    width: 110
-                    height: 38
-                    text: "确认"
-                    font.pixelSize: 16
-                    onClicked: root.confirmInnerAngleZeroCorrection()
+                    visible: root.zeroCorrectionStage !== "choose"
+                    width: 140
+                    height: 46
+                    text: root.zeroCorrectionStage === "image" ? "确认修正" : "确认"
+                    font.pixelSize: 18
+                    onClicked: {
+                        if (root.zeroCorrectionStage === "image")
+                            root.confirmInnerAngleZeroCorrection()
+                        else
+                            root.confirmLaserZeroCorrection()
+                    }
                 }
 
                 CusButton_White {
-                    width: 110
-                    height: 38
+                    width: 140
+                    height: 46
                     text: "取消"
-                    font.pixelSize: 16
-                    onClicked: innerAngleZeroPopup.close()
+                    font.pixelSize: 18
+                    onClicked: root.closeZeroCorrectionPopup()
                 }
             }
         }

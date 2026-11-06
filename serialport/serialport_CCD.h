@@ -180,6 +180,9 @@ public:
     explicit SerialPortCCD(QObject *parent = nullptr);
     ~SerialPortCCD() override { }
 
+    // CCD 绕光轴安装的固定偏置角，由转台线程并入内框去滚转补偿。
+    static constexpr float kFixedInnerAngleOffsetDeg = 22.5f;
+
     CCDData* ccdData() const;
     // 该指针由 main() 注入（对象归 main 的 QML 侧所有，本类只引用不负责释放），
     // 外部只需要“注入”，不需要直接读写成员，因此移到 private，仅通过 setter 赋值。
@@ -282,7 +285,6 @@ private:
     double m_opticalZoom = 1.0;       // 光学倍率，1.0-30.0
     QByteArray m_zoomReplyBuffer;     // 倍率查询应答缓存
 
-    float m_rotation_angle = 22.5f;        // CCD安装旋转角度（绕光轴旋转，单位：度）
 };
 
 

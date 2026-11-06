@@ -263,6 +263,9 @@ int main(int argc, char *argv[])
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,
                      turntablePort, &SerialPortTurntableHex::zeroInnerAngleOffset,
                      Qt::QueuedConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqLaserInnerAngleZeroCorrection,
+                     turntablePort, &SerialPortTurntableHex::setLaserInnerAngleOffset,
+                     Qt::QueuedConnection);
     QObject::connect(turntableSendData,
                      &TurntableSendDataHex::requestStartProgramTracking,
                      turntablePort,
@@ -285,6 +288,9 @@ int main(int argc, char *argv[])
                      Qt::QueuedConnection);
     // 零位修正请求发出后立即记录会话状态，作为进入外引导模式的统一门禁。
     QObject::connect(turntableSendData, &TurntableSendDataHex::reqInnerAngleZeroCorrection,
+                     &m_modeController, &ModeController::markInnerAngleZeroCorrected,
+                     Qt::DirectConnection);
+    QObject::connect(turntableSendData, &TurntableSendDataHex::reqLaserInnerAngleZeroCorrection,
                      &m_modeController, &ModeController::markInnerAngleZeroCorrected,
                      Qt::DirectConnection);
 

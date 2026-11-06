@@ -254,7 +254,7 @@ void SixDofMotionClient::startConnectionCheck(int timeoutMs)
 
 
 // ══════════════════════════════════════════════════════════════
-// X / Y 轴倾角与 Z 轴高度控制
+// X / Y 轴倾角与升起高度控制
 // ══════════════════════════════════════════════════════════════
 
 bool SixDofMotionClient::sendTiltXY(double xDeg, double yDeg)
@@ -275,8 +275,8 @@ bool SixDofMotionClient::sendTiltHeight(double xDeg, double yDeg, double zMm)
     return sendTiltHeightWithTime(xDeg, yDeg, zMm, effectiveTime(kDefaultMoveTimeMs));
 }
 
-// X 轴倾角 → rx，Y 轴倾角 → ry，Z 轴高度 → tz。
-// 界面输入高度单位为毫米，协议 tz 要求米，因此组包前除以 1000。
+// X 轴倾角 → rx，Y 轴倾角 → ry，升起高度 → tz。
+// 最终 Z 指令 = 界面升起高度 - SIXDOF_Z_HEIGHT_OFFSET_MM，再除以 1000 换算为米。
 bool SixDofMotionClient::sendTiltHeightWithTime(double xDeg, double yDeg,
                                                 double zMm, int timeMs)
 {
@@ -297,24 +297,27 @@ bool SixDofMotionClient::sendTiltHeightInternal(double xDeg, double yDeg,
     }
 
     if (!qIsFinite(zMm)) {
-        setLastError(QStringLiteral("Z 轴高度不是有效数字，指令未发送"));
+        setLastError(QStringLiteral("升起高度不是有效数字，指令未发送"));
         return false;
     }
+
+    const double zCommandMm = zMm - SIXDOF_Z_HEIGHT_OFFSET_MM;
 
     MoveFrame frame;
     frame.cmd  = kCmdPosRun;
     frame.tx   = kZeroFloat;
     frame.ty   = kZeroFloat;
-    frame.tz   = static_cast<float>(mmToM(zMm));
+    frame.tz   = static_cast<float>(mmToM(zCommandMm));
     frame.rx   = static_cast<float>(degToRad(xDeg));
     frame.ry   = static_cast<float>(degToRad(yDeg));
     frame.rz   = kZeroFloat;
     frame.time = static_cast<qint32>(qMax(1, timeMs));
 
-    const QString description = QStringLiteral("位姿指令 X=%1° Y=%2° Z=%3mm 执行时间 %4ms")
+    const QString description = QStringLiteral("位姿指令 X=%1° Y=%2° 升起高度=%3mm Z指令=%4mm 执行时间 %5ms")
                                     .arg(xDeg, 0, 'f', 3)
                                     .arg(yDeg, 0, 'f', 3)
                                     .arg(zMm, 0, 'f', 2)
+                                    .arg(zCommandMm, 0, 'f', 2)
                                     .arg(frame.time);
 
     if (!transmit(frame, description))
