@@ -387,12 +387,12 @@ private:
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
     uint8_t xorChecksum(const QByteArray& data);
     //维护一个存储导引头反馈的俯仰角与方位角的数据容器
-    //激光导引头数据周期为10ms，3s接收300个数据，环形缓冲区大小设置为360
+    //激光导引头数据周期为20ms，3s接收150个数据，环形缓冲区大小设置为360
     // CircularBuffer<laserExGuideData> m_circularbuf;
 
-    // Alpha-Beta 跟踪管理器：每10ms更新滤波，1s定时器外推预测角度
+    // Alpha-Beta 跟踪管理器：每20ms更新滤波，1s定时器外推预测角度
     ABTrackManager m_abMgr{SeekerType::Laser};
-    qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每10ms+10
+    qint64 m_filterTime = 0;         // 虚拟时间戳(ms)，每20ms+20
     bool   m_abNeedReset = true;     // 进入外引导后首次喂数据时复位滤波器（清陈旧角速度）
     double m_azimuth = 0.0f;
     double m_pitch = 0.0f;

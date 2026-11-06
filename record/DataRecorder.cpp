@@ -10,7 +10,7 @@
 
 // 三路数据的标称采样率（Hz），与各自串口协议周期一致。
 static constexpr int kImageSampleRateHz = 50;       // 20 ms
-static constexpr int kLaserSampleRateHz = 100;      // 10 ms
+static constexpr int kLaserSampleRateHz = 50;       // 20 ms
 static constexpr int kTurntableSampleRateHz = 200;  // 5 ms
 
 // 保存帧内返回时间戳的微秒部分，固定保留三位（0~999）。

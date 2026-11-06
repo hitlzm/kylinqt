@@ -480,7 +480,7 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
 
     int sendCount = 0;
     static quint8 datacount=0;
-    timer->setInterval(10); // 10ms
+    timer->setInterval(20); // 20ms
     // 连接定时器的超时信号
     connect(timer, &QTimer::timeout, this, [=]() mutable {
         // 帧计数器：先写当前值（从 0 开始），发送成功后再递增
@@ -520,7 +520,7 @@ void SerialPortLaser::onSendData(laser_send_frame frame)
         }
     });
 
-    //  启动定时器（立即触发第一次发送，若想先等20ms再发，可改为 timer->start(20) 但默认立即触发）
+    // 启动定时器（立即触发第一次发送，后续每20ms发送一次）
     timer->start();
  }
 
