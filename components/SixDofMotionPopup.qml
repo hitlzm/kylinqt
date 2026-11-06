@@ -14,7 +14,7 @@ import taoQuick 1.0
  *
  * 界面分区：
  *   1) 连接    —— 控制卡 IP、链路三态（未连接 / 等待应答 / 链路正常）、连接与断开
- *   2) 运动控制 —— X / Y 倾角（±10°）、运动时间、发送、回中位、回底部
+ *   2) 运动控制 —— X / Y 倾角（±10°）、Z 高度、当前 Z 高度、运动时间、发送、回中位、回底部
  *   3) 状态    —— 控制卡状态与报警（只呈现故障类 100-125 与运行状态类 1-8）
  *   4) 高级设置 —— 发送广播地址、本机端口（默认值正确时无需改动）
  *   5) 底部    —— 急停（失联时仍可发送，因为急停走广播）
@@ -55,6 +55,10 @@ Window {
     readonly property string statusMessageText:
         (hasClient && motion.statusMessage.length > 0) ? motion.statusMessage
                                                        : "（尚未收到控制卡状态应答）"
+    readonly property string currentHeightText:
+        (hasClient && motion.currentHeightValid)
+        ? motion.currentHeightZMm.toFixed(1) + " mm"
+        : "--"
 
     // 最近一次成功下发的指令（来自 commandSent 信号）
     property string lastCommand: ""
@@ -79,6 +83,7 @@ Window {
                                                    : defaultMoveTimeMs).toString()
         tiltXField.text = motion.tiltXDeg.toFixed(2)
         tiltYField.text = motion.tiltYDeg.toFixed(2)
+        heightZField.text = motion.targetHeightZMm.toFixed(1)
     }
 
     function showPopup() {
@@ -98,11 +103,16 @@ Window {
         field.text = isFinite(v) ? v.toFixed(2) : "0.00"
     }
 
+    function formatHeight(field) {
+        var v = parseFloat(field.text)
+        field.text = isFinite(v) ? v.toFixed(1) : "0.0"
+    }
+
     function formatTime(field) {
         var t = Math.round(parseFloat(field.text))
         if (!isFinite(t) || t <= 0)
             t = defaultMoveTimeMs
-        field.text = Math.max(1, Math.min(60000, t)).toString()
+        field.text = Math.max(200, Math.min(500, t)).toString()
     }
 
     function ensureConnected() {
@@ -147,14 +157,15 @@ Window {
         }
     }
 
-    function sendTilt() {
+    function sendPose() {
         if (!ensureConnected())
             return
 
         var rx = parseFloat(tiltXField.text)
         var ry = parseFloat(tiltYField.text)
-        if (!isFinite(rx) || !isFinite(ry)) {
-            toast.showToast("X / Y 倾角请填写数字", 2500)
+        var rz = parseFloat(heightZField.text)
+        if (!isFinite(rx) || !isFinite(ry) || !isFinite(rz)) {
+            toast.showToast("X / Y 倾角及 Z 高度请填写数字", 2500)
             return
         }
         if (Math.abs(rx) > maxTiltDeg || Math.abs(ry) > maxTiltDeg) {
@@ -162,14 +173,15 @@ Window {
             return
         }
 
+        formatHeight(heightZField)
         formatTime(timeField)
         var t = parseInt(timeField.text)
 
         // 逐次传入执行时间，不调用 setExecuteTime()，
         // 以免回中位 / 回底部的默认时间被全局覆盖
-        if (motion.sendTiltXYWithTime(rx, ry, t)) {
+        if (motion.sendTiltHeightWithTime(rx, ry, rz, t)) {
             toast.showToast("已下发  X=" + rx.toFixed(2) + "°  Y=" + ry.toFixed(2)
-                            + "°  (" + t + "ms)")
+                            + "°  Z=" + rz.toFixed(1) + "mm  (" + t + "ms)")
         } else {
             toast.showToast("发送失败：" + motion.lastError, 3500)
         }
@@ -416,13 +428,13 @@ Window {
 
                         Row {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 55
-                            spacing: 30
+                            Layout.preferredHeight: 68
+                            spacing: 18
 
                             MyTextField {
                                 id: tiltXField
-                                mywidth: 155
-                                myheight: 55
+                                mywidth: 140
+                                myheight: 68
                                 title: "X 倾角"
                                 labeltext: "°"
                                 onEditingFinished: popup.formatTilt(tiltXField)
@@ -430,26 +442,78 @@ Window {
 
                             MyTextField {
                                 id: tiltYField
-                                mywidth: 155
-                                myheight: 55
+                                mywidth: 140
+                                myheight: 68
                                 title: "Y 倾角"
                                 labeltext: "°"
                                 onEditingFinished: popup.formatTilt(tiltYField)
                             }
 
+                            MyTextField {
+                                id: heightZField
+                                mywidth: 140
+                                myheight: 68
+                                title: "Z 轴高度"
+                                labeltext: "mm"
+                                onEditingFinished: popup.formatHeight(heightZField)
+                            }
+
+                            Item {
+                                width: 24
+                                height: 1
+                            }
+
+                            Item {
+                                width: 190
+                                height: 68
+
+                                Text {
+                                    anchors.left: parent.left
+                                    anchors.top: parent.top
+                                    height: 20
+                                    verticalAlignment: Text.AlignVCenter
+                                    text: "当前 Z 高度"
+                                    font.pixelSize: 14
+                                    font.bold: true
+                                    color: "#333333"
+                                }
+
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 22
+                                    height: 40
+                                    radius: 4
+                                    color: "#F0F4F8"
+                                    border.color: "#C8D2DC"
+                                    border.width: 1
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        font.pixelSize: 16
+                                        font.bold: true
+                                        color: popup.hasClient && popup.motion.currentHeightValid
+                                               ? "#1976D2" : "#888888"
+                                        text: popup.currentHeightText
+                                    }
+                                }
+                            }
+
                             Item {
                                 width: 96
-                                height: 55
+                                height: 68
 
                                 CusButton_Blue {
                                     width: 96
-                                    height: 32
-                                    anchors.bottom: parent.bottom
-                                    anchors.bottomMargin: 1
+                                    height: 40
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 22
                                     text: "输入清零"
                                     onClicked: {
                                         tiltXField.text = "0.00"
                                         tiltYField.text = "0.00"
+                                        heightZField.text = "0.0"
                                     }
                                 }
                             }
@@ -457,13 +521,13 @@ Window {
 
                         Row {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 55
+                            Layout.preferredHeight: 68
                             spacing: 30
 
                             MyTextField {
                                 id: timeField
                                 mywidth: 155
-                                myheight: 55
+                                myheight: 68
                                 title: "运动时间"
                                 labeltext: "ms"
                                 text: popup.defaultMoveTimeMs.toString()
@@ -472,16 +536,18 @@ Window {
 
                             Item {
                                 width: parent.width - 155 - 30
-                                height: 55
+                                height: 68
 
                                 Text {
                                     width: parent.width
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 22
+                                    height: 40
+                                    verticalAlignment: Text.AlignVCenter
                                     wrapMode: Text.WordWrap
                                     font.pixelSize: 13
                                     color: "#666666"
-                                    text: "默认 " + popup.defaultMoveTimeMs
-                                          + "ms，范围 1–60000ms；时间越短动作越快，下限按机构承受能力设定。"
+                                    text: "默认300ms.范围200-500ms"
                                 }
                             }
                         }
@@ -496,7 +562,7 @@ Window {
                                 height: 40
                                 text: "发送指令"
                                 font.pixelSize: 18
-                                onClicked: popup.sendTilt()
+                                onClicked: popup.sendPose()
                             }
 
                             CusButton_Blue {
@@ -521,8 +587,7 @@ Window {
                             font.pixelSize: 12
                             color: "#d93025"
                             elide: Text.ElideRight
-                            text: "倾角限位 ±" + popup.maxTiltDeg
-                                  + "°（超限将被拒绝发送）；回中位六轴归零，回底部 tz = -0.5m。"
+                            text: "倾角限位 ±" + popup.maxTiltDeg + "°"
                         }
                     }
                 }
@@ -646,14 +711,14 @@ Window {
 
                         Row {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 55
+                            Layout.preferredHeight: 68
                             spacing: 30
                             visible: popup.advancedExpanded
 
                             MyTextField {
                                 id: targetField
                                 mywidth: 155
-                                myheight: 55
+                                myheight: 68
                                 title: "指令发送地址"
                                 labeltext: ""
                             }
@@ -661,14 +726,14 @@ Window {
                             MyTextField {
                                 id: localPortField
                                 mywidth: 155
-                                myheight: 55
+                                myheight: 68
                                 title: "本机端口"
                                 labeltext: ""
                             }
 
                             Item {
                                 width: parent.width - 155 * 2 - 30 * 2
-                                height: 55
+                                height: 68
 
                                 Text {
                                     width: parent.width
