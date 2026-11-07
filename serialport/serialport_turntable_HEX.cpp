@@ -1932,8 +1932,20 @@ void TurntableSendDataHex::requestLaserInnerAngleZeroCorrection(float offsetDeg)
 
 bool TurntableSendDataHex::importProgramTrackingFile(const QString &filePath)
 {
+    // 新文件选择代表一轮新的准备动作；先终止旧文件跟踪，但不删除磁盘文件。
+    emit requestStopProgramTracking();
+
     const ProgramTrackingFile::Result result = ProgramTrackingFile::loadCsv(filePath);
     if (!result.ok) {
+        const bool hadPreviousSelection =
+                !m_programTrackingPoints.isEmpty()
+                || !m_programTrackingFileName.isEmpty();
+        m_programTrackingPoints.clear();
+        m_programTrackingFileName.clear();
+        if (hadPreviousSelection) {
+            emit programTrackingFileNameChanged();
+            emit programTrackingPointCountChanged();
+        }
         emit programTrackingError(result.error);
         return false;
     }
@@ -1942,8 +1954,17 @@ bool TurntableSendDataHex::importProgramTrackingFile(const QString &filePath)
     m_programTrackingFileName = QFileInfo(filePath).fileName();
     emit programTrackingFileNameChanged();
     emit programTrackingPointCountChanged();
-    startProgramTracking();
     return true;
+}
+
+bool TurntableSendDataHex::importProgramTrackingUrl(const QUrl &fileUrl)
+{
+    if (!fileUrl.isLocalFile()) {
+        emit programTrackingError(
+                    QStringLiteral("请从本地文件系统中选择跟踪文件。"));
+        return false;
+    }
+    return importProgramTrackingFile(fileUrl.toLocalFile());
 }
 
 void TurntableSendDataHex::startProgramTracking()

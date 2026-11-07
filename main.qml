@@ -54,6 +54,15 @@ ApplicationWindow {
         sourceComponent: appContent
     }
 
+    // 主界面先完成首帧布局和绘制，再启动 YOLO 模型加载、视频及串口线程，
+    // 避免登录成功后硬件初始化抢占 UI 首帧，表现为程控页晚半拍出现。
+    Timer {
+        id: startupDelayTimer
+        interval: 16
+        repeat: false
+        onTriggered: auth.beginStartup()
+    }
+
     Component {
         id: appContent
 
@@ -224,7 +233,7 @@ ApplicationWindow {
         onLoginSucceeded: {
             // 顺序固定：先实例化主界面，再让 C++ 启动视频/串口线程
             appLoader.active = true
-            auth.beginStartup()
+            startupDelayTimer.start()
         }
     }
 }

@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import taoQuick 1.0
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.3
 import "./"
 import "InputRules.js" as InputRules
 
@@ -28,6 +29,9 @@ Item{
     property var axisEnabledStates: [false, false, false]
     property var axisLinkedStates: [false, false, false]
     property bool globalAxesEnabled: false
+    property bool customModeWasActive: false
+    readonly property bool customModeActive:
+        programModeComboBox.currentIndex === 2
 
     //正弦摆动的幅值与频率range,frequency
     property real range: 0.0
@@ -38,8 +42,17 @@ Item{
         id: validationMsg
     }
 
-    // 后续导入按钮调用 turntableSendData.importProgramTrackingFile(path) 后，
-    // 文件格式、表头、角度范围或模式错误均从这里统一提示。
+    FileDialog {
+        id: trackingFileDialog
+        title: "选择跟踪文件"
+        selectExisting: true
+        selectMultiple: false
+        nameFilters: ["CSV 文件 (*.csv)"]
+        onAccepted: turntableSendData.importProgramTrackingUrl(fileUrl)
+    }
+
+    // 文件选择、启动或运行过程中的格式、表头、角度范围及通信错误
+    // 均从这里统一提示。
     Connections {
         target: turntableSendData
         onProgramTrackingError: {
@@ -74,7 +87,10 @@ Item{
     }
 
     onGlobalAxesEnabledChanged: setAllAxisEnabled(globalAxesEnabled)
-    Component.onCompleted: setAllAxisEnabled(globalAxesEnabled)
+    Component.onCompleted: {
+        setAllAxisEnabled(globalAxesEnabled)
+        applyModeLinkDefaults(customModeActive)
+    }
 
     function toggleAxisControl(axisIndex) {
         var states = axisEnabledStates.slice()
@@ -91,6 +107,24 @@ Item{
         var states = axisLinkedStates.slice()
         states[axisIndex] = linked
         axisLinkedStates = states
+    }
+
+    function setAllAxisLinked(linked) {
+        if (axisLinkedStates[0] === linked
+                && axisLinkedStates[1] === linked
+                && axisLinkedStates[2] === linked)
+            return
+
+        axisLinkedStates = [linked, linked, linked]
+    }
+
+    function applyModeLinkDefaults(isCustom) {
+        if (isCustom)
+            setAllAxisLinked(true)
+        else if (customModeWasActive)
+            setAllAxisLinked(false)
+
+        customModeWasActive = isCustom
     }
 
     function linkedAxesFor(axisIndex) {
@@ -222,6 +256,16 @@ Item{
     }
 
     function sendAxisOrLink(axisIndex) {
+        if (programModeComboBox.currentIndex === 2) {
+            if (turntableSendData.programTrackingPointCount <= 0) {
+                validationMsg.message = "请先选择格式正确的跟踪文件。"
+                validationMsg.open()
+                return
+            }
+            turntableSendData.startProgramTracking()
+            return
+        }
+
         var axes = linkedAxesFor(axisIndex)
         if (!validateAxisGroup(axes))
             return
@@ -262,9 +306,17 @@ Item{
             id: programModeComboBox
             Layout.preferredWidth: 105
             Layout.preferredHeight: 35
-            model: ["位置模式", "速率模式"]
-            popupMinWidth: 130
+            model: ["位置模式", "速率模式", "自定义模式"]
+            popupMinWidth: 145
+            onCurrentIndexChanged: {
+                var isCustom = currentIndex === 2
+                if (!isCustom && root.customModeWasActive)
+                    turntableSendData.stopProgramTracking()
+                root.applyModeLinkDefaults(isCustom)
+            }
         }
+
+        Item { Layout.fillWidth: true }
 
         Text {
             text: "正弦运动幅度："
@@ -278,7 +330,9 @@ Item{
             horizontalAlignment: TextInput.AlignHCenter
             verticalAlignment: TextInput.AlignVCenter
             Layout.preferredHeight: 35
-            Layout.preferredWidth: 80
+            Layout.preferredWidth: 90
+            Layout.minimumWidth: 90
+            Layout.maximumWidth: 90
             fieldLabel: "正弦运动幅度"
             onValidationFailed: root.showValidationError([message])
             onEditingFinished: {
@@ -303,7 +357,9 @@ Item{
             horizontalAlignment: TextInput.AlignHCenter
             verticalAlignment: TextInput.AlignVCenter
             Layout.preferredHeight: 35
-            Layout.preferredWidth: 80
+            Layout.preferredWidth: 90
+            Layout.minimumWidth: 90
+            Layout.maximumWidth: 90
             fieldLabel: "正弦运动频率"
             onValidationFailed: root.showValidationError([message])
             onEditingFinished: {
@@ -315,7 +371,6 @@ Item{
                     text = "0"
             }
         }
-        Item { Layout.fillWidth: true }
     }
 
     ColumnLayout {
@@ -367,8 +422,16 @@ Item{
                 Layout.preferredWidth: 45
                 horizontalAlignment: Text.AlignHCenter
             }
-            Item { Layout.preferredWidth: 82 }
-            Item { Layout.preferredWidth: 82 }
+            Item { Layout.fillWidth: true }
+            CusButton_Blue {
+                id: chooseTrackingFileButton
+                Layout.preferredWidth: 122
+                Layout.preferredHeight: 28
+                font.pixelSize: 14
+                text: "选择跟踪文件"
+                enabled: programModeComboBox.currentIndex === 2
+                onClicked: trackingFileDialog.open()
+            }
         }
 
         Repeater {
@@ -440,6 +503,7 @@ Item{
                         }
                         NumericTextField {
                             id: speedInput
+                            enabled: programModeComboBox.currentIndex !== 2
                             horizontalAlignment: TextInput.AlignHCenter
                             verticalAlignment: TextInput.AlignVCenter
                             Layout.preferredHeight: 38
@@ -458,6 +522,7 @@ Item{
                         }
                         NumericTextField {
                             id: accelerationInput
+                            enabled: programModeComboBox.currentIndex !== 2
                             horizontalAlignment: TextInput.AlignHCenter
                             verticalAlignment: TextInput.AlignVCenter
                             Layout.preferredHeight: 38
@@ -479,6 +544,7 @@ Item{
                             Layout.preferredWidth: 45
                             Layout.preferredHeight: 38
                             checked: root.axisLinked(index)
+                            enabled: !root.customModeActive
                             onClicked: root.setAxisLinked(index, checked)
                         }
                         CusButton_Blue {
@@ -486,8 +552,11 @@ Item{
                             Layout.preferredWidth: 82
                             Layout.preferredHeight: 38
                             font.pixelSize: 14
-                            text: "发送数据"
-                            enabled: root.isLinkLeader(index) && axisFieldsFormatValid
+                            text: "发送/执行"
+                            enabled: root.isLinkLeader(index)
+                                     && (programModeComboBox.currentIndex === 2
+                                         ? !turntableSendData.programTrackingRunning
+                                         : axisFieldsFormatValid)
                             onClicked: root.sendAxisOrLink(index)
                         }
 
@@ -498,6 +567,7 @@ Item{
                             font.pixelSize: 14
                             text: "正弦运动"
                             enabled: root.isLinkLeader(index)
+                                     && programModeComboBox.currentIndex !== 2
                             onClicked: {
                                 // 以点击瞬间输入框中的值为准，避免尚未触发 editingFinished 时使用旧值
                                 var amplitudeResult = InputRules.validateNumber(

@@ -510,6 +510,7 @@ CMakeFiles/kylinqt.dir/kylinqt_autogen/mocs_compilation.cpp.obj: kylinqt_autogen
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVariantMap \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVector \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
@@ -1159,6 +1160,7 @@ CMakeFiles/kylinqt.dir/main.cpp.obj: E:/QTproject/kylinqt/main.cpp \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVariantMap \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVector \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
@@ -3006,6 +3008,7 @@ CMakeFiles/kylinqt.dir/record/DataRecorder.cpp.obj: E:/QTproject/kylinqt/record/
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QStringList \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVariantMap \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVector \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
@@ -4662,6 +4665,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: E:/QTproject
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTime \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVector \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtGlobal \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qalgorithms.h \
@@ -4724,6 +4728,7 @@ CMakeFiles/kylinqt.dir/serialport/serialport_turntable_HEX.cpp.obj: E:/QTproject
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qthread.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtimer.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qtypeinfo.h \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qurl.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvariant.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvarlengtharray.h \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qvector.h \
@@ -7976,6 +7981,8 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QHash:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QThread:
 
+E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl:
+
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVector:
 
 E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h:
@@ -8252,9 +8259,9 @@ E:/QT5.12.8/5.12.8/mingw73_64/include/QtGui/qopenglext.h:
 
 E:/onnxruntime/cmake/external/eigen/Eigen/src/Core/CwiseBinaryOp.h:
 
-kylinqt_autogen/7HEHEGDA3T/moc_videolatencyprobe.cpp:
-
 E:/QT5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/x86intrin.h:
+
+kylinqt_autogen/7HEHEGDA3T/moc_videolatencyprobe.cpp:
 
 kylinqt_autogen/DPWVDNBJWW/moc_VlcVideoItem.cpp:
 

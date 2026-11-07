@@ -203,11 +203,16 @@ XXX数据率高于或低于 20 ms 时，发送端使用最近一次有效测量�
 - 支持 UTF-8（含 BOM）和 GB18030/GBK 编码。
 - 每行对应一个 20 ms 跟踪点，三轴角度作为绝对目标直接写入 `0x0B` 帧。
 - 导入、停车、回零、释放、关闭串口或切换控制模式都会停止文件跟踪。
+- 程控界面选择“自定义模式”后，三个联动勾选框默认全部选中；退出该模式时
+  自动取消联动。
+- “选择跟踪文件”只完成文件读取和校验，必须在自定义模式下再点击
+  “发送数据”才开始跟踪。
 
-预留的 QML 调用入口为：
+QML 调用入口为：
 
 ```qml
-turntableSendData.importProgramTrackingFile(fileDialog.file)
+turntableSendData.importProgramTrackingUrl(fileDialog.fileUrl) // 只读取、校验
+turntableSendData.startProgramTracking()                       // 点击发送数据时调用
 turntableSendData.stopProgramTracking()
 ```
 

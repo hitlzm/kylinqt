@@ -596,9 +596,9 @@ int main(int argc, char *argv[])
                     break;
                 }
             }
-            if (!streamProc->loadYoloModel(modelPath, namesPath)) {
-                qWarning() << "[main] YOLO 模型加载失败:" << modelPath;
-            }
+            // 路径只传给工作对象；实际加载在 StreamProcessor::start() 中执行，
+            // 避免 ONNX 初始化阻塞登录后的 QML 首帧。
+            streamProc->setModelFiles(modelPath, namesPath);
         } else {
             qWarning() << "[main] 未找到 YOLO 模型文件（已禁用检测，仅透传视频帧）:"
                        << modelCandidates.join(" / ");

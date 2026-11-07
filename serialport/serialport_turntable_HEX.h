@@ -24,6 +24,7 @@ brief: 转台串口类（HEX十六进制协议版本）
 #include "../utils/program_tracking_file.h"
 #include "../kalman/AlphaBetaTracker.h"
 #include <QElapsedTimer>
+#include <QUrl>
 
 class QTimer;
 
@@ -332,9 +333,11 @@ public:
     Q_INVOKABLE void requestInnerAngleZeroCorrection();
     // 激光头没有供人工观察的零位画面，偏置角由用户直接输入。
     Q_INVOKABLE void requestLaserInnerAngleZeroCorrection(float offsetDeg);
-    // 读取并校验跟踪 CSV，校验通过后立即以 20 ms 周期开始跟踪。
-    // 后续 ProgramMode.qml 的导入按钮只需调用此接口。
+    // 读取并校验跟踪 CSV。导入只准备数据，不启动跟踪。
     Q_INVOKABLE bool importProgramTrackingFile(const QString &filePath);
+    // 供 FileDialog 直接传递 fileUrl，避免 QML 手工拼接带中文的本地路径。
+    Q_INVOKABLE bool importProgramTrackingUrl(const QUrl &fileUrl);
+    // 在自定义模式下点击“发送数据”后，以 20 ms 周期启动已导入的点集。
     Q_INVOKABLE void startProgramTracking();
     Q_INVOKABLE void stopProgramTracking();
 

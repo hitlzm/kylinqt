@@ -22,7 +22,7 @@
 //   QThread *thread = new QThread;
 //   StreamProcessor *proc = new StreamProcessor;
 //   proc->setVideoSource(vlcItem);
-//   proc->loadYoloModel("yolov3-tiny.onnx", "coco.names");
+//   proc->setModelFiles("yolov3-tiny.onnx", "coco.names");
 //   proc->moveToThread(thread);
 //   QObject::connect(thread, &QThread::started, proc, &StreamProcessor::start);
 //   QObject::connect(proc, &StreamProcessor::frameReady, ...);
@@ -65,6 +65,9 @@ public:
     void setVideoSource(VlcVideoItem *source);
 
     // ── 模型加载 ──────────────────────────────────────────
+    // 只记录路径；实际加载在 start() 中由视频工作线程执行，避免阻塞 UI 首帧。
+    void setModelFiles(const QString &onnxPath,
+                       const QString &namesPath = QString());
     bool loadYoloModel(const QString &onnxPath,
                        const QString &namesPath = QString());
 
@@ -139,6 +142,9 @@ private:
 
     OnnxYoloV5Detector m_detector;
     VlcVideoItem *m_videoSource = nullptr;   // 外部 VlcVideoItem（拉流+显示）
+    QString m_modelPath;
+    QString m_modelNamesPath;
+    bool m_modelLoadAttempted = false;
 
     QTimer *m_timer = nullptr;
     std::atomic<bool> m_running{false};

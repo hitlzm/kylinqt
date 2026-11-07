@@ -82,6 +82,13 @@ void StreamProcessor::setInputSize(int width, int height) {
 // 模型加载
 // ══════════════════════════════════════════════════════════════════════════════
 
+void StreamProcessor::setModelFiles(const QString &onnxPath,
+                                    const QString &namesPath) {
+    m_modelPath = onnxPath;
+    m_modelNamesPath = namesPath;
+    m_modelLoadAttempted = false;
+}
+
 bool StreamProcessor::loadYoloModel(const QString &onnxPath,
                                     const QString &namesPath) {
     if (!m_detector.loadModel(onnxPath.toStdString())) {
@@ -199,6 +206,13 @@ void StreamProcessor::drawDetections(
 // ══════════════════════════════════════════════════════════════════════════════
 
 void StreamProcessor::start() {
+    // 模型加载可能耗时数百毫秒，必须在工作线程里执行。若在主线程加载，
+    // 登录成功后的主界面会停在尚未绘制首帧的状态。
+    if (!m_modelLoadAttempted && !m_modelPath.isEmpty()) {
+        m_modelLoadAttempted = true;
+        loadYoloModel(m_modelPath, m_modelNamesPath);
+    }
+
     m_running = true;
 
     if (!m_timer) {

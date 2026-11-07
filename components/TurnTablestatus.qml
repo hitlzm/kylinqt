@@ -217,9 +217,11 @@ Rectangle {
         Repeater {
             model: ["ExGuide.qml", "ProgramMode.qml", "Remotectlmode.qml"]
             Loader {
-                asynchronous: true
+                // 程控页是登录后的默认页，首次进入时同步创建，避免先出现空白占位
+                // 再等异步 QML 组件解析完成。离开页面后仍保持已加载，切回时无需重建。
+                asynchronous: index !== 1
                 source: modelData
-                active: stack.currentIndex === index
+                active: index === 1 || stack.currentIndex === index
 
                 property bool globalAxesEnabled: root.enableorelease === 1
 
