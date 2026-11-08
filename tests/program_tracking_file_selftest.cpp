@@ -97,13 +97,34 @@ int main(int argc, char *argv[])
         return 9;
     }
 
+    const QString oversizedPath =
+            directory.filePath(QStringLiteral("oversized.csv"));
+    QFile oversizedFile(oversizedPath);
+    if (!check(oversizedFile.open(QIODevice::WriteOnly),
+               "create oversized fixture")) {
+        return 10;
+    }
+    oversizedFile.write("序号,内框角度,中框角度,外框角度\n");
+    const QByteArray filler(1024 * 1024, ' ');
+    for (int i = 0; i < 17; ++i)
+        oversizedFile.write(filler);
+    oversizedFile.close();
+
+    const ProgramTrackingFile::Result oversized =
+            ProgramTrackingFile::loadCsv(oversizedPath);
+    if (!check(!oversized.ok, "oversized tracking file is rejected")
+            || !check(oversized.error.contains(QStringLiteral("过大")),
+                      "oversized rejection has useful message")) {
+        return 11;
+    }
+
     if (argc >= 3 && QByteArray(argv[1]) == "--expect-invalid") {
         const ProgramTrackingFile::Result external =
                 ProgramTrackingFile::loadCsv(QString::fromLocal8Bit(argv[2]));
         if (!check(!external.ok, "requested external file is rejected")
                 || !check(external.error.contains(QStringLiteral("表头")),
                           "external file rejection is a header error")) {
-            return 10;
+            return 12;
         }
         std::printf("external format rejection: %s\n",
                     external.error.toLocal8Bit().constData());

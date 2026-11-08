@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QtMath>
 #include <QMouseEvent>
+#include <QUrl>
 #include <cerrno>
 #include <cstring>
 #include <clocale>
@@ -41,6 +42,14 @@ static void *mpvGetProcAddress(void * /*ctx*/, const char *name)
     if (!glCtx)
         return nullptr;
     return reinterpret_cast<void *>(glCtx->getProcAddress(QByteArray(name)));
+}
+
+static QString redactedStreamUrl(const QString &url)
+{
+    QUrl parsed(url);
+    if (!parsed.userInfo().isEmpty())
+        parsed.setUserInfo(QStringLiteral("***"));
+    return parsed.toString();
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -974,7 +983,7 @@ void VlcVideoItem::doSetupPlayer()
         return;
     m_setupInProgress = true;
 
-    qDebug() << "[MpvVideo] doSetupPlayer, loading:" << m_source;
+    qDebug() << "[MpvVideo] doSetupPlayer, loading:" << redactedStreamUrl(m_source);
 
     // 先设为暂停状态，等用户点击 play() 再取消暂停
     int paused = 1;

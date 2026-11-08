@@ -38,6 +38,8 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <cstdint>
+#include <limits>
 #include <QDebug>
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -133,10 +135,27 @@ bool OnnxYoloV5Detector::loadModel(const std::string &onnxPath) {
             auto tensorInfo = typeInfo.GetTensorTypeAndShapeInfo();
             m_impl->inputShape = tensorInfo.GetShape();
 
-            if (m_impl->inputShape.size() == 4) {
-                if (m_impl->inputShape[0] == -1) m_impl->inputShape[0] = 1;
-                if (m_impl->inputShape[2] == -1) m_impl->inputShape[2] = m_inputHeight;
-                if (m_impl->inputShape[3] == -1) m_impl->inputShape[3] = m_inputWidth;
+            if (tensorInfo.GetElementType()
+                    != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT) {
+                emit errorOccurred("YOLOv5n: input tensor must be float32");
+                m_impl->release();
+                return false;
+            }
+            if (m_impl->inputShape.size() != 4
+                    || m_impl->inputShape[1] != 3) {
+                emit errorOccurred("YOLOv5n: input must have NCHW shape with 3 channels");
+                m_impl->release();
+                return false;
+            }
+            if (m_impl->inputShape[0] == -1) m_impl->inputShape[0] = 1;
+            if (m_impl->inputShape[2] == -1) m_impl->inputShape[2] = m_inputHeight;
+            if (m_impl->inputShape[3] == -1) m_impl->inputShape[3] = m_inputWidth;
+            if (m_impl->inputShape[0] <= 0
+                    || m_impl->inputShape[2] <= 0
+                    || m_impl->inputShape[3] <= 0) {
+                emit errorOccurred("YOLOv5n: unresolved input dimensions");
+                m_impl->release();
+                return false;
             }
 
             qDebug() << "[OnnxYoloV5] Input:" << QString::fromStdString(m_impl->inputName)
@@ -149,8 +168,10 @@ bool OnnxYoloV5Detector::loadModel(const std::string &onnxPath) {
         // ── 输出信息 ──
         {
             size_t numOutputs = m_impl->session->GetOutputCount();
-            if (numOutputs < 1) {
-                emit errorOccurred("YOLOv5n: model has no outputs");
+            if (numOutputs != 1) {
+                emit errorOccurred(
+                            QString("YOLOv5n: expected 1 output, got %1")
+                            .arg(numOutputs));
                 m_impl->release();
                 return false;
             }
@@ -163,6 +184,17 @@ bool OnnxYoloV5Detector::loadModel(const std::string &onnxPath) {
                 Ort::TypeInfo typeInfo = m_impl->session->GetOutputTypeInfo(i);
                 auto tensorInfo = typeInfo.GetTensorTypeAndShapeInfo();
                 auto shape = tensorInfo.GetShape();
+                if (tensorInfo.GetElementType()
+                        != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT) {
+                    emit errorOccurred("YOLOv5n: output tensor must be float32");
+                    m_impl->release();
+                    return false;
+                }
+                if (shape.size() != 2 && shape.size() != 3) {
+                    emit errorOccurred("YOLOv5n: output must be [N,5+K] or [1,N,5+K]");
+                    m_impl->release();
+                    return false;
+                }
 
                 qDebug() << "[OnnxYoloV5] Output" << i
                          << ":" << QString::fromStdString(m_impl->outputNames[i])
@@ -218,10 +250,17 @@ void OnnxYoloV5Detector::setClassNames(const std::vector<std::string> &names) {
 
 static cv::Mat preprocessV5(const cv::Mat &frame, int w, int h,
                              float &outScale, int &outPadX, int &outPadY) {
+    if (frame.empty() || frame.cols <= 0 || frame.rows <= 0 || w <= 0 || h <= 0)
+        return {};
+
     const float scale = std::min(static_cast<float>(w) / frame.cols,
                                  static_cast<float>(h) / frame.rows);
     const int newW = static_cast<int>(std::round(frame.cols * scale));
     const int newH = static_cast<int>(std::round(frame.rows * scale));
+    if (!std::isfinite(scale) || scale <= 0.0f || newW <= 0 || newH <= 0
+            || newW > w || newH > h) {
+        return {};
+    }
 
     outScale = scale;
     outPadX  = (w - newW) / 2;
@@ -294,6 +333,11 @@ static void postProcessYoloV5(
         const float bw = row[2];
         const float bh = row[3];
         const float objConf = row[4];     // 已 sigmoid
+
+        if (!std::isfinite(cx) || !std::isfinite(cy)
+                || !std::isfinite(bw) || !std::isfinite(bh)
+                || bw <= 0.0f || bh <= 0.0f)
+            continue;
 
         // ── 快速跳过极低目标置信度 ──
         if (objConf < confThreshold * 0.1f)
@@ -382,22 +426,39 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
 
     try {
         // ══ 步骤① 预处理 LetterBox + NCHW ══
-        float letterBoxScale;
-        int letterBoxPadX, letterBoxPadY;
+        float letterBoxScale = 0.0f;
+        int letterBoxPadX = 0;
+        int letterBoxPadY = 0;
         // 输入尺寸以模型实际 shape 为准（loadModel 时解析，动态维度回退到 setInputSize）
         std::vector<int64_t> inputShape = m_impl->inputShape;
-        if (inputShape.size() != 4) {
-            inputShape = {1, 3, m_inputHeight, m_inputWidth};
+        if (inputShape.size() != 4 || inputShape[1] != 3
+                || m_inputWidth <= 0 || m_inputHeight <= 0) {
+            std::cerr << "[OnnxYoloV5] Invalid input descriptor." << std::endl;
+            return false;
         }
         if (inputShape[0] <= 0) inputShape[0] = 1;
-        if (inputShape[1] <= 0) inputShape[1] = 3;
         if (inputShape[2] <= 0) inputShape[2] = m_inputHeight;
         if (inputShape[3] <= 0) inputShape[3] = m_inputWidth;
+        if (inputShape[0] != 1) {
+            std::cerr << "[OnnxYoloV5] Only batch size 1 is supported." << std::endl;
+            return false;
+        }
+        if (inputShape[2] > std::numeric_limits<int>::max()
+                || inputShape[3] > std::numeric_limits<int>::max()) {
+            std::cerr << "[OnnxYoloV5] Input dimensions are too large." << std::endl;
+            return false;
+        }
         const int inputW = static_cast<int>(inputShape[3]);
         const int inputH = static_cast<int>(inputShape[2]);
 
         cv::Mat blob = preprocessV5(frame, inputW, inputH,
                                      letterBoxScale, letterBoxPadX, letterBoxPadY);
+        if (!std::isfinite(letterBoxScale) || letterBoxScale <= 0.0f
+                || blob.empty()) {
+            std::cerr << "[OnnxYoloV5] Invalid LetterBox preprocessing result."
+                      << std::endl;
+            return false;
+        }
         m_letterBoxScale = letterBoxScale;
         m_letterBoxPadX  = letterBoxPadX;
         m_letterBoxPadY  = letterBoxPadY;
@@ -406,8 +467,23 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
         Ort::MemoryInfo memoryInfo = Ort::MemoryInfo::CreateCpu(
             OrtArenaAllocator, OrtMemTypeDefault);
 
-        size_t inputElementCount = static_cast<size_t>(
-            inputShape[0] * inputShape[1] * inputShape[2] * inputShape[3]);
+        const size_t maxSize = std::numeric_limits<size_t>::max();
+        size_t inputElementCount = 1;
+        for (int64_t dimension : inputShape) {
+            if (dimension <= 0
+                    || static_cast<uint64_t>(dimension)
+                       > maxSize / inputElementCount) {
+                std::cerr << "[OnnxYoloV5] Input element count overflow."
+                          << std::endl;
+                return false;
+            }
+            inputElementCount *= static_cast<size_t>(dimension);
+        }
+        if (blob.total() != inputElementCount) {
+            std::cerr << "[OnnxYoloV5] Input blob size does not match model shape."
+                      << std::endl;
+            return false;
+        }
 
         Ort::Value inputTensor = Ort::Value::CreateTensor<float>(
             memoryInfo,
@@ -429,27 +505,57 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
             inputNames.data(), &inputTensor, 1,
             outputNames.data(), outputNames.size()
         );
+        if (outputTensors.size() != 1) {
+            std::cerr << "[OnnxYoloV5] Unexpected output tensor count:"
+                      << outputTensors.size() << std::endl;
+            return false;
+        }
 
         // ══ 步骤④ 后处理：单输出张量，直接解析 ══
         // YOLOv5n 导出时 Detect 层已打包进模型
         // 输出: [1, N, 5+K]  每行已是解码后的像素坐标 + sigmoid 置信度
         auto &tensor = outputTensors[0];
-        float *outputData = tensor.GetTensorMutableData<float>();
         auto shapeInfo = tensor.GetTensorTypeAndShapeInfo();
+        if (shapeInfo.GetElementType()
+                != ONNX_TENSOR_ELEMENT_DATA_TYPE_FLOAT) {
+            std::cerr << "[OnnxYoloV5] Output tensor is not float32."
+                      << std::endl;
+            return false;
+        }
         auto shape = shapeInfo.GetShape();
 
-        int numDetections = 0;
-        int numAttrs = 0;
+        int64_t numDetections = 0;
+        int64_t numAttrs = 0;
         if (shape.size() >= 3) {
-            numDetections = static_cast<int>(shape[1]);  // N
-            numAttrs      = static_cast<int>(shape[2]);  // 5+K
+            if (shape[0] != 1 || shape[1] <= 0 || shape[2] <= 0) {
+                std::cerr << "[OnnxYoloV5] Invalid output dimensions."
+                          << std::endl;
+                return false;
+            }
+            numDetections = shape[1];  // N
+            numAttrs      = shape[2];  // 5+K
         } else if (shape.size() == 2) {
-            numDetections = static_cast<int>(shape[0]);
-            numAttrs      = static_cast<int>(shape[1]);
+            if (shape[0] <= 0 || shape[1] <= 0) {
+                std::cerr << "[OnnxYoloV5] Invalid output dimensions."
+                          << std::endl;
+                return false;
+            }
+            numDetections = shape[0];
+            numAttrs      = shape[1];
+        } else {
+            std::cerr << "[OnnxYoloV5] Unsupported output rank:"
+                      << shape.size() << std::endl;
+            return false;
         }
 
         // 从输出张量推断类别数（若用户未通过 setNumClasses 设置）
-        const int actualNumClasses = numAttrs - 5;
+        if (numAttrs <= 5
+                || numDetections > std::numeric_limits<int>::max()
+                || numAttrs > std::numeric_limits<int>::max()) {
+            std::cerr << "[OnnxYoloV5] Invalid output shape." << std::endl;
+            return false;
+        }
+        const int actualNumClasses = static_cast<int>(numAttrs - 5);
         const int K = (m_numClasses > 0 && m_numClasses < actualNumClasses)
                           ? m_numClasses
                           : actualNumClasses;
@@ -460,9 +566,22 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
             m_lastAutoDetectedClasses = K;
         }
 
-        if (numDetections <= 0 || K <= 0) {
+        if (K <= 0) {
             std::cerr << "[OnnxYoloV5] Invalid output shape: ["
                       << shape.size() << " dims]" << std::endl;
+            return false;
+        }
+        const size_t rowSize = 5u + static_cast<size_t>(K);
+        if (static_cast<uint64_t>(numDetections)
+                > shapeInfo.GetElementCount() / rowSize) {
+            std::cerr << "[OnnxYoloV5] Output tensor is shorter than declared shape."
+                      << std::endl;
+            return false;
+        }
+        float *outputData = tensor.GetTensorMutableData<float>();
+        if (!outputData) {
+            std::cerr << "[OnnxYoloV5] Output tensor has no writable data."
+                      << std::endl;
             return false;
         }
 
@@ -472,7 +591,7 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
 
         postProcessYoloV5(
             outputData,
-            numDetections,
+            static_cast<int>(numDetections),
             K,
             inputW, inputH,
             frame.cols, frame.rows,
@@ -509,6 +628,9 @@ bool OnnxYoloV5Detector::detect(const cv::Mat &frame,
         return false;
     } catch (const cv::Exception &e) {
         std::cerr << "[OnnxYoloV5] OpenCV error: " << e.what() << std::endl;
+        return false;
+    } catch (const std::exception &e) {
+        std::cerr << "[OnnxYoloV5] Inference error: " << e.what() << std::endl;
         return false;
     }
 }

@@ -6456,6 +6456,7 @@ CMakeFiles/kylinqt.dir/vlcvideo/VlcVideoItem.cpp.obj: E:/QTproject/kylinqt/vlcvi
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QSize \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QTimer \
+  E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QUrl \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVariantMap \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QVector \
   E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore/QtMath \

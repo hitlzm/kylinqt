@@ -10,6 +10,8 @@
 
 namespace {
 
+constexpr qint64 kMaxTrackingFileBytes = 16 * 1024 * 1024;
+
 constexpr double kInnerMinDeg = -200.5;
 constexpr double kInnerMaxDeg = 200.5;
 constexpr double kMiddleMinDeg = -10.5;
@@ -95,13 +97,19 @@ Result loadCsv(const QString &filePath)
 {
     Result result;
 
-    const QFileInfo fileInfo(filePath);
-    if (filePath.trimmed().isEmpty()) {
+    const QString trimmedPath = filePath.trimmed();
+    if (trimmedPath.isEmpty()) {
         result.error = QStringLiteral("未指定跟踪文件路径。");
         return result;
     }
+    const QFileInfo fileInfo(trimmedPath);
     if (!fileInfo.exists() || !fileInfo.isFile()) {
         result.error = QStringLiteral("跟踪文件不存在：%1").arg(filePath);
+        return result;
+    }
+    const QString canonicalPath = fileInfo.canonicalFilePath();
+    if (canonicalPath.isEmpty()) {
+        result.error = QStringLiteral("无法解析跟踪文件路径：%1").arg(filePath);
         return result;
     }
     if (fileInfo.suffix().compare(QStringLiteral("csv"), Qt::CaseInsensitive) != 0) {
@@ -110,15 +118,34 @@ Result loadCsv(const QString &filePath)
                     "另存为“CSV（逗号分隔）(*.csv)”后重新导入。");
         return result;
     }
+    if (fileInfo.size() < 0 || fileInfo.size() > kMaxTrackingFileBytes) {
+        result.error = QStringLiteral(
+                    "跟踪文件过大（上限 %1 MB）：%2")
+                .arg(kMaxTrackingFileBytes / (1024 * 1024))
+                .arg(fileInfo.fileName());
+        return result;
+    }
 
-    QFile file(filePath);
+    QFile file(canonicalPath);
     if (!file.open(QIODevice::ReadOnly)) {
         result.error = QStringLiteral("无法读取跟踪文件：%1\n%2")
                 .arg(fileInfo.fileName(), file.errorString());
         return result;
     }
 
-    const QString text = decodeText(file.readAll());
+    const QByteArray raw = file.read(kMaxTrackingFileBytes + 1);
+    if (file.error() != QFileDevice::NoError) {
+        result.error = QStringLiteral("读取跟踪文件失败：%1\n%2")
+                .arg(fileInfo.fileName(), file.errorString());
+        return result;
+    }
+    if (raw.size() > kMaxTrackingFileBytes) {
+        result.error = QStringLiteral("跟踪文件过大（上限 %1 MB）：%2")
+                .arg(kMaxTrackingFileBytes / (1024 * 1024))
+                .arg(fileInfo.fileName());
+        return result;
+    }
+    const QString text = decodeText(raw);
     const QStringList lines =
             text.split(QRegularExpression(QStringLiteral("\\r\\n|\\n|\\r")));
 

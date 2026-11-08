@@ -97,7 +97,7 @@ int detectTsPacketSize(const uchar *p, int len, int &start)
     return 0;
 }
 
-/// 解析 udp://@226.0.0.80:8001 形式的地址
+/// 解析 udp://@<组播地址>:<端口> 形式的地址
 bool parseUdpUrl(const QString &url, QString &host, quint16 &port)
 {
     QString s = url.trimmed();
@@ -552,7 +552,29 @@ void VideoLatencyProbe::flushCsv()
         qWarning() << "[LatProbe] 无法写入 CSV:" << m_csvPath << f.errorString();
         return;
     }
-    f.write(pending);
+#if defined(Q_OS_UNIX)
+    if (!QFile::setPermissions(
+                m_csvPath,
+                QFileDevice::ReadOwner | QFileDevice::WriteOwner)) {
+        qWarning() << "[LatProbe] 无法收紧 CSV 文件权限:" << m_csvPath;
+    }
+#endif
+
+    qint64 total = 0;
+    while (total < pending.size()) {
+        const qint64 written =
+                f.write(pending.constData() + total, pending.size() - total);
+        if (written <= 0)
+            break;
+        total += written;
+    }
+    if (total < pending.size() || !f.flush()) {
+        if (total < pending.size()) {
+            QMutexLocker lock(&m_mutex);
+            m_csvBuf.prepend(pending.mid(static_cast<int>(total)));
+        }
+        qWarning() << "[LatProbe] CSV 写入失败:" << m_csvPath << f.errorString();
+    }
     f.close();
 }
 

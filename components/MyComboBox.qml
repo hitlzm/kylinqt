@@ -7,8 +7,10 @@ Item {
     property alias title: titleText.text
     property int mywidth
     property int myheight
+    property int titleFontSize: 14
     property alias model: myCombox.model
     property alias mycurrentIndex: myCombox.currentIndex
+    property alias popupMinWidth: myCombox.popupMinWidth
     width:mywidth
     height:myheight
     signal currentIndexChanged(int index)
@@ -20,7 +22,7 @@ Item {
     anchors.left: parent.left
     anchors.top: parent.top   // 替代 anchors.top
     anchors.topMargin: 2
-    font.pixelSize: 14
+    font.pixelSize: root.titleFontSize
     font.bold: true
     color: "black"
     }

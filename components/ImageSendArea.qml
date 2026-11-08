@@ -53,9 +53,77 @@ Rectangle {
     property int currentCmd: 0
     property int opticalParamCtrlCmd: 0
 
+    // 当前使用设备决定框架角预装输入的限位范围
+    property int seekerDeviceIndex: 0
+    property var seekerDeviceList: [
+        "电视/红外复合",
+        "中波红外制冷",
+        "电视",
+        "其他"
+    ]
+    readonly property bool gimbalLimitEnabled: seekerDeviceIndex !== 3
+    readonly property real pitchLimitMin:
+        seekerDeviceIndex === 0 ? -30
+        : seekerDeviceIndex === 1 ? -18
+        : seekerDeviceIndex === 2 ? -20 : 0
+    readonly property real pitchLimitMax:
+        seekerDeviceIndex === 0 ? 10
+        : seekerDeviceIndex === 1 ? 18
+        : seekerDeviceIndex === 2 ? 20 : 0
+    readonly property real yawLimitMin:
+        seekerDeviceIndex === 0 ? -20
+        : seekerDeviceIndex === 1 ? -18
+        : seekerDeviceIndex === 2 ? -20 : 0
+    readonly property real yawLimitMax:
+        seekerDeviceIndex === 0 ? 20
+        : seekerDeviceIndex === 1 ? 18
+        : seekerDeviceIndex === 2 ? 20 : 0
+
     // 输入校验标志（默认 true，未输入不算无效）
     property bool pitchInputValid: true
     property bool yawInputValid: true
+
+    function angleRangeMessage(label, minValue, maxValue) {
+        return label + "输入范围为" + minValue + "°~ " + maxValue
+                + "°，请重新输入"
+    }
+
+    function pitchValueInRange(value) {
+        return !gimbalLimitEnabled
+                || (value >= pitchLimitMin && value <= pitchLimitMax)
+    }
+
+    function yawValueInRange(value) {
+        return !gimbalLimitEnabled
+                || (value >= yawLimitMin && value <= yawLimitMax)
+    }
+
+    function updatePitchInputValidation(showRangeToast) {
+        var wasValid = root.pitchInputValid
+        var rangeInvalid = pitchPresetField.numericResult.state === "valid"
+                && !pitchValueInRange(pitchPresetField.numericValue)
+        root.pitchInputValid = pitchPresetField.inputFormatValid && !rangeInvalid
+        if (showRangeToast && wasValid && rangeInvalid) {
+            testmsg.showToast(angleRangeMessage("俯仰角", pitchLimitMin,
+                                                pitchLimitMax), 1500)
+        }
+    }
+
+    function updateYawInputValidation(showRangeToast) {
+        var wasValid = root.yawInputValid
+        var rangeInvalid = yawPresetField.numericResult.state === "valid"
+                && !yawValueInRange(yawPresetField.numericValue)
+        root.yawInputValid = yawPresetField.inputFormatValid && !rangeInvalid
+        if (showRangeToast && wasValid && rangeInvalid) {
+            testmsg.showToast(angleRangeMessage("偏航角", yawLimitMin,
+                                                yawLimitMax), 1500)
+        }
+    }
+
+    onSeekerDeviceIndexChanged: {
+        updatePitchInputValidation(true)
+        updateYawInputValidation(true)
+    }
 
     // 接收回告描述缓存（无效值时保持上一次的描述）
     property string lastValidDesc1: "默认值"
@@ -104,19 +172,33 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 480
+        height: 540
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
         anchors.leftMargin: 30
         anchors.top: parent.top
-        anchors.topMargin: 60
+        anchors.topMargin: 45
 
         Column {
             spacing: 6
             anchors.fill: parent
             anchors.margins: 12
+
+            MyComboBox {
+                id: seekerDeviceComboBox
+                mywidth: commandArea.width - 24
+                myheight: 55
+                title: "当前使用设备"
+                titleFontSize: 16
+                model: root.seekerDeviceList
+                popupMinWidth: 200
+                onCurrentIndexChanged: {
+                    if (mycurrentIndex !== -1)
+                        root.seekerDeviceIndex = mycurrentIndex
+                }
+            }
 
             Text {
                 text: "图像导引头控制字"
@@ -739,14 +821,7 @@ Rectangle {
             onValidationFailed: testmsg.showToast(message, 1500)
 
             onTextChanged: {
-                if (numericResult.state === "valid"
-                        && (numericResult.value > 10 || numericResult.value < -40)) {
-                    if (root.pitchInputValid)
-                        testmsg.showToast("俯仰角输入范围为-40°~ 10°,请重新输入", 1500)
-                    root.pitchInputValid = false
-                } else {
-                    root.pitchInputValid = inputFormatValid
-                }
+                root.updatePitchInputValidation(true)
             }
             onEditingFinished: {
                 if (!inputFormatValid) {
@@ -754,9 +829,8 @@ Rectangle {
                     return
                 }
 
-                root.pitchInputValid = numericValue >= -40 && numericValue <= 10
+                root.updatePitchInputValidation(true)
                 if (!root.pitchInputValid) {
-                    testmsg.showToast("俯仰角输入范围为-40°~ 10°,请重新输入", 1500)
                     return
                 }
 
@@ -779,14 +853,7 @@ Rectangle {
             onValidationFailed: testmsg.showToast(message, 1500)
 
             onTextChanged: {
-                if (numericResult.state === "valid"
-                        && (numericResult.value > 30 || numericResult.value < -30)) {
-                    if (root.yawInputValid)
-                        testmsg.showToast("偏航角输入范围为-30°~ 30°,请重新输入", 1500)
-                    root.yawInputValid = false
-                } else {
-                    root.yawInputValid = inputFormatValid
-                }
+                root.updateYawInputValidation(true)
             }
             onEditingFinished: {
                 if (!inputFormatValid) {
@@ -794,9 +861,8 @@ Rectangle {
                     return
                 }
 
-                root.yawInputValid = numericValue >= -30 && numericValue <= 30
+                root.updateYawInputValidation(true)
                 if (!root.yawInputValid) {
-                    testmsg.showToast("偏航角输入范围为-30°~ 30°,请重新输入", 1500)
                     return
                 }
 
@@ -1211,7 +1277,7 @@ Rectangle {
                             return imageData.currentWorkChannel === 0x01 ? "红外" : (imageData.currentWorkChannel
                                                                                     === 0x00 ? "电视" : "未知")
                         if (index === 3)
-                            return "0x" + imageData.selfCheckFlag.toString(16).toUpperCase()
+                            return imageData.selfCheckFlag1 === 1 ? "自检通过" : "自检不通过"
                         if (index === 4) {
                             switch (imageData.m_targetBackgroundType1) {
                             case 0x00:

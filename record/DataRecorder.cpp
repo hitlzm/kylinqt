@@ -12,6 +12,45 @@
 static constexpr int kImageSampleRateHz = 50;       // 20 ms
 static constexpr int kLaserSampleRateHz = 50;       // 20 ms
 static constexpr int kTurntableSampleRateHz = 200;  // 5 ms
+static constexpr int kMaxUniquePathAttempts = 1000;
+
+static bool restrictDirectoryPermissions(const QString &path)
+{
+#if defined(Q_OS_UNIX)
+    return QFile::setPermissions(
+                path,
+                QFileDevice::ReadOwner | QFileDevice::WriteOwner
+                | QFileDevice::ExeOwner);
+#else
+    Q_UNUSED(path);
+    return true;
+#endif
+}
+
+static bool restrictFilePermissions(const QString &path)
+{
+#if defined(Q_OS_UNIX)
+    return QFile::setPermissions(
+                path,
+                QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+#else
+    Q_UNUSED(path);
+    return true;
+#endif
+}
+
+static bool writeAll(QFile &file, const QByteArray &data)
+{
+    qint64 total = 0;
+    while (total < data.size()) {
+        const qint64 written =
+                file.write(data.constData() + total, data.size() - total);
+        if (written <= 0)
+            return false;
+        total += written;
+    }
+    return true;
+}
 
 // 保存帧内返回时间戳的微秒部分，固定保留三位（0~999）。
 static QString receivedMicrosecondsText(int usTime)
@@ -36,7 +75,14 @@ DataRecorder::DataRecorder(QObject *parent)
             return;
         const bool ok = (exitCode == 0 && status == QProcess::NormalExit);
         if (ok) {
-            QFile::remove(m_videoTsPath);
+            if (!QFile::remove(m_videoTsPath)) {
+                qWarning() << "[DataRecorder] 视频转封装完成，但临时 TS 删除失败:"
+                           << m_videoTsPath;
+            }
+            if (!restrictFilePermissions(m_videoMp4Path)) {
+                qWarning() << "[DataRecorder] 无法收紧 MP4 文件权限:"
+                           << m_videoMp4Path;
+            }
             qDebug() << "[DataRecorder] 视频转封装完成:" << m_videoMp4Path;
         } else {
             emit errorOccurred(QString("视频转封装失败(ffmpeg exit=%1)，已保留原始文件：%2")
@@ -130,6 +176,10 @@ bool DataRecorder::startSource(SourceState &st, const char *name)
     const QString dir = m_saveDir + "/" + now.toString("M.d");   // 例如 /data/savedata/9.28
     if (!QDir().mkpath(dir)) {
         emit errorOccurred("无法创建保存目录: " + dir);
+        return false;
+    }
+    if (!restrictDirectoryPermissions(dir)) {
+        emit errorOccurred("无法收紧保存目录权限: " + dir);
         return false;
     }
 
@@ -353,6 +403,7 @@ void DataRecorder::onImageFrame()
             "采样率(Hz),时间,返回时间戳微秒,B帧流水号,当前工作通道,"
             "俯仰视线角速度(°/s),偏航视线角速度(°/s),"
             "光学工作状态,俯仰框架角(°),偏航框架角(°),"
+            "方位偏差像素,俯仰偏差像素,"
             "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
             "红外帧编号,电视帧编号\n");
     ensureSourceFile(m_image, QStringLiteral("image"), kImageHeader, "图像");
@@ -377,6 +428,8 @@ void DataRecorder::onImageFrame()
     line += ','; line += imageOpticalWorkStateText(m_imageData->opticalWorkState());
     line += ','; line += QString::number(m_imageData->pitchFrameAngle(), 'f', 4);
     line += ','; line += QString::number(m_imageData->yawFrameAngle(), 'f', 4);
+    line += ','; line += QString::number(m_imageData->azimuthDeviationPixel());
+    line += ','; line += QString::number(m_imageData->pitchDeviationPixel());
     line += ','; line += QString::number(m_imageData->pitchGyro(), 'f', 4);
     line += ','; line += QString::number(m_imageData->yawGyro(), 'f', 4);
     line += ','; line += imageTrackingStateText(m_imageData->trackingState());
@@ -573,13 +626,32 @@ void DataRecorder::ensureSourceFile(SourceState &st, const QString &prefix,
         return;
 
     st.path = makeUniquePath(st.dir + "/" + prefix + st.time + ".csv");
+    if (st.path.isEmpty()) {
+        st.openFailed = true;
+        emit errorOccurred(QString("无法生成不重复的%1文件名")
+                           .arg(QString::fromUtf8(name)));
+        return;
+    }
     st.file.setFileName(st.path);
     if (!st.file.open(QIODevice::WriteOnly | QIODevice::Append)) {
         st.openFailed = true;   // 打开失败：停止重试，避免每帧重复报错
         emit errorOccurred(QString("无法创建%1数据文件: %2").arg(QString::fromUtf8(name), st.path));
         return;
     }
-    st.file.write(header);
+    if (!restrictFilePermissions(st.path)) {
+        st.openFailed = true;
+        st.file.close();
+        emit errorOccurred(QString("无法收紧%1数据文件权限: %2")
+                           .arg(QString::fromUtf8(name), st.path));
+        return;
+    }
+    if (!writeAll(st.file, header)) {
+        st.openFailed = true;
+        st.file.close();
+        emit errorOccurred(QString("写入%1文件表头失败: %2")
+                           .arg(QString::fromUtf8(name), st.path));
+        return;
+    }
     qDebug() << "[DataRecorder]" << name << "数据保存到:" << st.path;
 }
 
@@ -588,10 +660,26 @@ void DataRecorder::flushSource(SourceState &st, const char *name)
 {
     if (!st.file.isOpen() || st.buffer.isEmpty())
         return;
-    const qint64 written = st.file.write(st.buffer);
-    if (written < 0) {
+    qint64 total = 0;
+    while (total < st.buffer.size()) {
+        const qint64 written =
+                st.file.write(st.buffer.constData() + total,
+                              st.buffer.size() - total);
+        if (written <= 0) {
+            if (total > 0)
+                st.buffer.remove(0, static_cast<int>(total));
+            emit errorOccurred(QString("%1数据写入失败: %2")
+                               .arg(QString::fromUtf8(name), st.path));
+            return;   // 保留未写入部分，下次 flush 重试
+        }
+        total += written;
+    }
+    if (!st.file.flush()) {
+        st.openFailed = true;
+        st.file.close();
+        st.buffer.clear();
         emit errorOccurred(QString("%1数据写入失败: %2").arg(QString::fromUtf8(name), st.path));
-        return;   // 保留缓冲，下次 flush 重试
+        return;
     }
     st.buffer.clear();
 }
@@ -616,11 +704,23 @@ void DataRecorder::startVideoRecord(const QString &dir, const QString &time)
     QString stem = "video" + time;
     QString tsBase = dir + "/" + stem + ".ts";
     QString mp4Path = dir + "/" + stem + ".mp4";
-    int n = 1;
-    while (QFile::exists(tsBase) || QFile::exists(mp4Path)) {
-        stem = "video" + time + "_" + QString::number(n++);
+    bool foundAvailablePath = false;
+    for (int n = 1; n <= kMaxUniquePathAttempts; ++n) {
+        stem = "video" + time;
+        if (n > 1)
+            stem += "_" + QString::number(n - 1);
         tsBase = dir + "/" + stem + ".ts";
         mp4Path = dir + "/" + stem + ".mp4";
+        if (!QFile::exists(tsBase) && !QFile::exists(mp4Path)) {
+            foundAvailablePath = true;
+            break;
+        }
+    }
+    if (!foundAvailablePath) {
+        m_videoTsPath.clear();
+        m_videoMp4Path.clear();
+        emit errorOccurred("视频文件重名过多，已停止本次录像");
+        return;
     }
     m_videoTsPath = tsBase;
     m_videoMp4Path = mp4Path;
@@ -692,11 +792,11 @@ QString DataRecorder::makeUniquePath(const QString &basePath) const
     const QString dir = fi.path();
     const QString base = fi.completeBaseName();
     const QString suffix = fi.suffix();
-    for (int i = 1; i < 1000; ++i) {
+    for (int i = 1; i < kMaxUniquePathAttempts; ++i) {
         const QString candidate = dir + "/" + base + "_" + QString::number(i)
                                   + (suffix.isEmpty() ? QString() : "." + suffix);
         if (!QFile::exists(candidate))
             return candidate;
     }
-    return basePath;   // 理论不可达：1..999 都用满时退回原路径
+    return QString();
 }
