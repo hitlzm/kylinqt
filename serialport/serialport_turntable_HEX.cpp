@@ -23,7 +23,7 @@
 #define TURNTABLE_MAX_SPEED_DEG_PER_SEC    14.0f
 #define TURNTABLE_MAX_ACCEL_DEG_PER_SEC2   10.0f
 
-#define HANDLE_SPEED_CHANGE_EPSILON 0.1f  // 低于此变化的摇杆噪声不触发停车重设
+#define HANDLE_SPEED_CHANGE_EPSILON 0.5f  // 低于此变化的摇杆噪声不触发停车重设
 
 namespace {
 

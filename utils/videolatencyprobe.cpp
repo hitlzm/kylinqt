@@ -365,6 +365,24 @@ bool VideoLatencyProbe::setStreamUrl(const QString &url)
         if (!url.isEmpty())
             qWarning() << "[LatProbe] 当前只支持 udp:// 组播地址，已忽略:" << url;
         stopCapture();
+        {
+            QMutexLocker lock(&m_mutex);
+            m_arrive.clear();
+            m_order.clear();
+            m_samples.clear();
+            m_misses = 0;
+            m_anchorReady = false;
+            m_anchorPending = false;
+            m_modeConfirmed = false;
+            m_useRawPts = false;
+            m_missStreak = 0;
+            m_lastArrivalPts = 0;
+            m_stepSum = 0.0;
+            m_stepCount = 0;
+            m_arrivalLeadMs = -1.0;
+            m_arrivalStepSumMs = 0.0;
+            m_lastArrivalWallMs = -1;
+        }
         return false;
     }
 
@@ -395,9 +413,25 @@ void VideoLatencyProbe::stopCapture()
 void VideoLatencyProbe::notePlaybackStart()
 {
     QMutexLocker lock(&m_mutex);
-    // 下一帧到达时重新锚定 PTS 基准（换流、重连都会走到这里）
+
+    // 换流/重连后不能复用上一路流的 PTS 表，否则新 PTS 可能恰好命中一条
+    // 旧记录，导致延迟出现整秒级常量偏差。模式也必须重新判定：mpv 在不同
+    // 输入容器上可能返回归一化 PTS，也可能返回原始 PTS。
+    m_arrive.clear();
+    m_order.clear();
     m_anchorReady = false;
     m_anchorPending = true;
+    m_modeConfirmed = false;
+    m_useRawPts = false;
+    m_missStreak = 0;
+    m_lastArrivalPts = 0;
+    m_stepSum = 0.0;
+    m_stepCount = 0;
+    m_arrivalLeadMs = -1.0;
+    m_arrivalStepSumMs = 0.0;
+    m_lastArrivalWallMs = -1;
+    m_samples.clear();
+    m_misses = 0;
 }
 
 void VideoLatencyProbe::onCaptureArrival(quint64 pts90k, qint64 tArriveMs)
@@ -424,10 +458,16 @@ void VideoLatencyProbe::onCaptureArrival(quint64 pts90k, qint64 tArriveMs)
         const quint64 d = (pts90k - m_lastArrivalPts) & kPtsMask;
         if (d > 0 && d < 90000ull) {       // 小于 1s 视为正常帧间隔
             m_stepSum += static_cast<double>(d);
+            if (m_lastArrivalWallMs >= 0) {
+                const qint64 arrivalStep = tArriveMs - m_lastArrivalWallMs;
+                if (arrivalStep >= 0 && arrivalStep < 1000)
+                    m_arrivalStepSumMs += static_cast<double>(arrivalStep);
+            }
             ++m_stepCount;
         }
     }
     m_lastArrivalPts = pts90k;
+    m_lastArrivalWallMs = tArriveMs;
 
     if (m_order.size() > kOrderMax) {
         const int drop = m_order.size() - kOrderMax;
@@ -512,6 +552,16 @@ void VideoLatencyProbe::onFrameDisplayed(double mpvPtsSeconds)
         return;
     }
 
+    // m_order.last() 是抓包侧已经收到的最大原始 PTS，key 是当前显示帧的
+    // 原始 PTS。差值近似“接收端还领先显示多少毫秒”：
+    //   ~latency：确实积压了对应帧数；
+    //   ~0：没有未来帧积压，应优先怀疑 PTS 对齐或抓包口径。
+    const quint64 newestPts = m_order.last();
+    const quint64 leadTicks = (newestPts - key) & kPtsMask;
+    m_arrivalLeadMs = (leadTicks < 90000ull * 10ull)
+            ? static_cast<double>(leadTicks) / 90.0
+            : -1.0;
+
     if (m_samples.size() < kSampleMax)
         m_samples.append(latency);
     writeCsvRow(key, tArrive, tDisplay, latency);
@@ -589,8 +639,11 @@ VideoLatencyProbe::Stats VideoLatencyProbe::stats() const
         s.misses      = m_misses;
         s.anchorPts   = m_anchorPts;
         s.anchorReady = m_anchorReady;
-        if (m_stepCount > 0)
+        s.arrivalLeadMs = m_arrivalLeadMs;
+        if (m_stepCount > 0) {
             s.ptsStepMs = m_stepSum / static_cast<double>(m_stepCount) / 90.0;
+            s.arrivalStepMs = m_arrivalStepSumMs / static_cast<double>(m_stepCount);
+        }
     }
     if (copy.isEmpty())
         return s;
@@ -638,6 +691,8 @@ void VideoLatencyProbe::onStatTimer()
                 << "  P99=" << QString::number(s.p99Ms, 'f', 1)
                 << "  最小=" << QString::number(s.minMs, 'f', 1)
                 << "  最大=" << QString::number(s.maxMs, 'f', 1)
+                << "  到达领先=" << QString::number(s.arrivalLeadMs, 'f', 1) << "ms"
+                << "  到达步长=" << QString::number(s.arrivalStepMs, 'f', 2) << "ms"
                 << "  查不到=" << s.misses
                 << "  帧间隔=" << QString::number(s.ptsStepMs, 'f', 2) << "ms";
         } else {

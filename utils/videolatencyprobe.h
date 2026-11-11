@@ -81,6 +81,8 @@ public:
         double  p99Ms     = 0.0;
         double  minMs     = 0.0;
         double  maxMs     = 0.0;
+        double  arrivalLeadMs = -1.0; // 已到达最新 PTS 领先当前显示帧的时长
+        double  arrivalStepMs = -1.0; // 相邻帧实际到达本机的时间间隔
         bool    anchorReady = false;
         quint64 anchorPts   = 0;    // 原始 PTS 基准（90kHz）
         double  ptsStepMs   = 0.0;  // 实测帧间隔，用于自检
@@ -151,6 +153,9 @@ private:
     double  m_stepSum      = 0.0;
     qint64  m_stepCount    = 0;
     quint64 m_lastArrivalPts = 0;
+    double  m_arrivalLeadMs = -1.0;
+    double  m_arrivalStepSumMs = 0.0;
+    qint64  m_lastArrivalWallMs = -1;
 
     QTimer  *m_statTimer   = nullptr;
     qint64   m_lastLogMs   = 0;

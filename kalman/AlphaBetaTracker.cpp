@@ -469,6 +469,11 @@ bool AlphaBetaTracker::update(bool hasMeasurement,
 void AlphaBetaTracker::correct(double measurement,
                                double dt)
 {
+    // correct() 内部会除以 dt。虽然 update() 已过滤无效时间步，
+    // 在私有实现边界再次校验，避免后续新增调用方绕过该前置条件。
+    if (!(dt > 0.0) || !std::isfinite(dt))
+        return;
+
     //--------------------------------------
     // Prediction
     //--------------------------------------
@@ -480,9 +485,11 @@ void AlphaBetaTracker::correct(double measurement,
     double predictAngle =
             normalizeAngle(predictRaw);
 
-    // 是否被限幅钳住（只有 Clamp 模式会出现 predictAngle != predictRaw）
+    // 是否被限幅钳住。Wrap 模式下 normalizeAngle() 也可能改变数值，
+    // 不能仅凭 predictAngle != predictRaw 判断进入了 Clamp 状态。
     const bool clamped =
-            (predictAngle != predictRaw);
+            (m_mode == AngleMode::Clamp
+             && predictAngle != predictRaw);
 
     double predictVelocity =
             m_velocity;

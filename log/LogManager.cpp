@@ -34,10 +34,11 @@ void LogManager::appendEntry(const QString &entry)
 {
     m_logEntries.append(entry);
 
-    // 超过上限时从头部裁剪
-    while (m_logEntries.size() > m_maxEntries) {
-        m_logEntries.removeFirst();
-    }
+    // 一次裁剪到固定上限，避免用循环表达可直接计算的区间删除。
+    const int excess = m_logEntries.size() - m_maxEntries;
+    if (excess > 0)
+        m_logEntries.erase(m_logEntries.begin(),
+                           m_logEntries.begin() + excess);
 
     emit logEntriesChanged();
 }

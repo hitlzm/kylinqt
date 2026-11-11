@@ -140,6 +140,8 @@ else()
       #kalman/seekKalman.cpp
       utils/videolatencyprobe.cpp
       utils/videolatencyprobe.h
+      utils/ccdlatencyprobe.cpp
+      utils/ccdlatencyprobe.h
       utils/sendlatencyprobe.cpp
       utils/sendlatencyprobe.h
       #network/TemplateBindingClient.cpp

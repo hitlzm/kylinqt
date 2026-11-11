@@ -960,11 +960,11 @@ void SerialPortImage::stopFrameWatch()
 
 void SerialPortImage::checkImageFrameAlive()
 {
-    if (!isOpen()) {
-        stopFrameWatch();
-        return;
-    }
-
+    // 不能以 isOpen() 作为停止条件：拔掉串口线时 QSerialPort 往往先报
+    // ResourceError 并由 SerialPort::handleError() 关闭端口，此时帧号看门狗
+    // 若立即退出，就永远等不到下面的 2s 帧号未变化判定。
+    // 用户主动关闭串口的路径已经在 onClosePort() 中先调用 stopFrameWatch()，
+    // 因此这里继续计时不会把正常关闭误报成通信故障。
     const int seq = m_imageData ? m_imageData->bFrameSequence() : -1;
     if (seq != m_lastWatchedFrameSeq) {
         m_lastWatchedFrameSeq = seq;
@@ -979,8 +979,15 @@ void SerialPortImage::checkImageFrameAlive()
 
     if (!m_frameFaultNotified) {
         m_frameFaultNotified = true;
+        m_frameWatchTimer->stop();
         emit imageCommunicationFault(
             QStringLiteral("图像头通信故障：帧编号连续2s未变化"));
+
+        // 通信故障后本次串口会话已经失效。即使 QSerialPort 因拔线已自行
+        // 关闭，也仍需发送 portClosed，让主线程的 imageData.portOpen 复位；
+        // QML 的串口按钮据此从“关闭串口”切回“打开串口”。
+        SerialPort::close();
+        emit portClosed();
     }
 }
 

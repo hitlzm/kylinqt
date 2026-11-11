@@ -14,6 +14,7 @@ struct mpv_render_context;
 
 class VlcVideoRenderer;
 class VideoLatencyProbe;
+class CcdLatencyProbe;
 
 class VlcVideoItem : public QQuickFramebufferObject
 {
@@ -27,6 +28,7 @@ class VlcVideoItem : public QQuickFramebufferObject
     Q_PROPERTY(qreal frameWidth READ frameWidth NOTIFY frameSizeChanged)
     Q_PROPERTY(qreal frameHeight READ frameHeight NOTIFY frameSizeChanged)
     Q_PROPERTY(bool cpuFrameConsumer READ cpuFrameConsumer WRITE setCpuFrameConsumer NOTIFY cpuFrameConsumerChanged)
+    Q_PROPERTY(bool ccdSource READ ccdSource WRITE setCcdSource NOTIFY ccdSourceChanged)
     Q_PROPERTY(bool recording READ recording NOTIFY recordingChanged)
 
 public:
@@ -92,12 +94,18 @@ public:
     bool cpuFrameConsumer() const { return m_cpuConsumerActive.load(); }
     Q_INVOKABLE void setCpuFrameConsumer(bool on);
 
+    /// 当前连接是否来自 CCD。CCD 直显延迟探针据此区分 CCD 与其他 RTSP 源。
+    bool ccdSource() const { return m_ccdSource.load(); }
+    Q_INVOKABLE void setCcdSource(bool on);
+
     // ── 视频接收侧延迟探针（测试用，默认关闭）──────────────
     /// 等价于环境变量 KYLIN_LATPROBE=1；打开后无需重启即可持续测量
     Q_INVOKABLE void setLatencyProbeEnabled(bool on);
     Q_INVOKABLE bool latencyProbeEnabled() const;
     /// 当前统计：samples/avgMs/p50Ms/p95Ms/p99Ms/minMs/maxMs/misses/anchorReady
     Q_INVOKABLE QVariantMap latencyProbeStats() const;
+    /// CCD 直显延迟：mpv 解码帧就绪 -> Qt 完成本帧绘制。
+    Q_INVOKABLE QVariantMap ccdLatencyProbeStats() const;
 
     /// 视频固有显示尺寸（mpv video-params 的 dw/dh）。
     /// 供放大镜等"一帧多显"场景裁剪 mpv 离屏渲染时在帧内留下的黑边。
@@ -116,6 +124,7 @@ signals:
     void seekableChanged();
     void frameSizeChanged();
     void cpuFrameConsumerChanged();
+    void ccdSourceChanged();
     void recordingChanged();
     void stopped();
     void ended();
@@ -147,6 +156,7 @@ private:
 
     // 视频接收侧延迟探针打点（仅导引头直显、且探针打开时生效）
     void reportLatencySample(bool newFrameRendered);
+    void reportCcdLatencySample(bool newFrameRendered);
 
     // ── mpv 回调 ─────────────────────────────────────────
     static void onMpvWakeup(void *ctx);
@@ -158,6 +168,7 @@ private:
 
     // 视频接收侧延迟探针（默认关闭；KYLIN_LATPROBE=1 或 setEnabled(true) 打开）
     VideoLatencyProbe *m_latencyProbe = nullptr;
+    CcdLatencyProbe *m_ccdLatencyProbe = nullptr;
 
     // mpv 渲染上下文：由 VlcVideoRenderer 在渲染线程创建和使用
     mpv_render_context *m_mpvCtx = nullptr;
@@ -195,6 +206,7 @@ private:
 
     // 是否有 CPU 侧消费者需要读回像素（渲染线程读 / GUI 线程写，须 atomic）
     std::atomic<bool> m_cpuConsumerActive{true};
+    std::atomic<bool> m_ccdSource{false};
 
     bool m_playing = false;
     bool m_playClicked = false;

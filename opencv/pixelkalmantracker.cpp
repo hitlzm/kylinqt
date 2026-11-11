@@ -13,6 +13,15 @@
 #include <opencv2/core.hpp>
 #include <cmath>
 
+namespace {
+constexpr float kDefaultDtSec = 0.033f;
+
+float normalizeDtSec(float dt)
+{
+    return (std::isfinite(dt) && dt > 0.0f) ? dt : kDefaultDtSec;
+}
+} // namespace
+
 // ══════════════════════════════════════════════════════════════════════════════
 // 构造
 // ══════════════════════════════════════════════════════════════════════════════
@@ -84,9 +93,7 @@ void PixelKalmanTracker::initKalman(float x0, float y0)
 
 void PixelKalmanTracker::predict(float dt)
 {
-    if (dt <= 0.0f) {
-        dt = 0.033f;    // 保护：默认 ~30fps
-    }
+    dt = normalizeDtSec(dt);    // 保护：无效时间步按 ~30fps 处理
 
     // ── 更新转移矩阵 Φ 中的 dt 项 ──
     //     使用 ptr<float>() 直接访问连续内存：
@@ -145,8 +152,7 @@ void PixelKalmanTracker::correct(float mx, float my)
 
 void PixelKalmanTracker::predictPosition(float dt, float &px, float &py) const
 {
-    if (dt <= 0.0f)
-        dt = 0.033f;                       // 与 predict() 的保护保持一致
+    dt = normalizeDtSec(dt);               // 与 predict() 的保护保持一致
 
     px = m_kf.statePost.at<float>(0) + dt * m_kf.statePost.at<float>(2);
     py = m_kf.statePost.at<float>(1) + dt * m_kf.statePost.at<float>(3);
@@ -154,8 +160,7 @@ void PixelKalmanTracker::predictPosition(float dt, float &px, float &py) const
 
 float PixelKalmanTracker::innovationVar(float dt) const
 {
-    if (dt <= 0.0f)
-        dt = 0.033f;
+    dt = normalizeDtSec(dt);
 
     // 预测位置方差 = Φ·P·Φᵀ 的位置元素
     //   Φ = [1 0 dt 0; 0 1 0 dt; 0 0 1 0; 0 0 0 1]
@@ -208,6 +213,8 @@ bool PixelKalmanTracker::gateMeasurement(float mx, float my, float dt, float gam
 
 void PixelKalmanTracker::feed(float measX, float measY, float dt)
 {
+    dt = normalizeDtSec(dt);
+
     // ════════════════════════════════════════════════════════════
     // 情况 A：UNINIT → 首次检测到来
     //          初始化 KF，输出原始测量值，不执行 predict+correct

@@ -275,14 +275,22 @@ static cv::Mat preprocessV5(const cv::Mat &frame, int w, int h,
     // HWC → CHW，uint8 → float，BGR → RGB，归一化 [0,1]，一次遍历完成
     int sz[] = {1, 3, h, w};
     cv::Mat blob(4, sz, CV_32F);
+    float *chR = blob.ptr<float>(0, 0);
+    float *chG = blob.ptr<float>(0, 1);
+    float *chB = blob.ptr<float>(0, 2);
 
     for (int y = 0; y < h; ++y) {
         const uint8_t *srcRow = canvas.ptr<uint8_t>(y);
+        const std::size_t rowOffset =
+                static_cast<std::size_t>(y) * static_cast<std::size_t>(w);
         for (int x = 0; x < w; ++x) {
-            const uint8_t *px = srcRow + x * 3;
-            blob.ptr<float>(0, 0)[y * w + x] = px[2] / 255.0f;  // R
-            blob.ptr<float>(0, 1)[y * w + x] = px[1] / 255.0f;  // G
-            blob.ptr<float>(0, 2)[y * w + x] = px[0] / 255.0f;  // B
+            const std::size_t index =
+                    rowOffset + static_cast<std::size_t>(x);
+            const uint8_t *px =
+                    srcRow + static_cast<std::size_t>(x) * 3u;
+            chR[index] = px[2] / 255.0f;
+            chG[index] = px[1] / 255.0f;
+            chB[index] = px[0] / 255.0f;
         }
     }
 

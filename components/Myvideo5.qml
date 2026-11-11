@@ -236,6 +236,7 @@ Rectangle {
         }
         _connected = false
         _connectedSourceIsCCD = sourceCCD.checked
+        videoPlayer.ccdSource = sourceCCD.checked
         _stopped = false
         _isPlaying = false
         videoPlayer.stop()

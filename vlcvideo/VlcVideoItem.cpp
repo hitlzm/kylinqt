@@ -1,4 +1,5 @@
 #include "VlcVideoItem.h"
+#include "utils/ccdlatencyprobe.h"
 #include "utils/videolatencyprobe.h"
 #include <mpv/client.h>
 #include <mpv/render_gl.h>
@@ -6,6 +7,7 @@
 #include <QOpenGLContext>
 #include <QQuickWindow>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QDebug>
 #include <QtMath>
 #include <QMouseEvent>
@@ -13,6 +15,30 @@
 #include <cerrno>
 #include <cstring>
 #include <clocale>
+
+// ══════════════════════════════════════════════════════════════════
+// 图像头 UDP 解码模式（二选一）
+//
+// 当前使用软件解码：CPU 占用较高，但实测接收侧延迟约 59 ms。
+// 需要改回硬件解码时：
+//   1. 注释下面 KYLIN_GUIDE_HWDEC_MODE 的软件解码定义；
+//   2. 取消下面硬件解码定义前的注释；
+//   3. 重新完整编译。
+//
+// 可用硬件模式：auto-safe、auto-copy-safe、v4l2m2m（需平台支持）。
+// 运行时仍可用 KYLIN_MPV_HWDEC 临时覆盖这里的默认值。
+// ══════════════════════════════════════════════════════════════════
+#define KYLIN_GUIDE_HWDEC_MODE "no"       // ← 当前：软件解码
+// #define KYLIN_GUIDE_HWDEC_MODE "auto-safe"  // ← 启用硬件解码时打开
+
+static QByteArray defaultHwdecForStream(const QString &source, bool ccdSource)
+{
+    if (source.startsWith(QStringLiteral("udp://"), Qt::CaseInsensitive)
+            && !ccdSource) {
+        return QByteArray(KYLIN_GUIDE_HWDEC_MODE);
+    }
+    return QByteArrayLiteral("auto-safe");
+}
 
 // ══════════════════════════════════════════════════════════════════
 // GLSL Shader — 用于把一帧纹理绘制到 Qt Quick FBO 中
@@ -50,6 +76,82 @@ static QString redactedStreamUrl(const QString &url)
     if (!parsed.userInfo().isEmpty())
         parsed.setUserInfo(QStringLiteral("***"));
     return parsed.toString();
+}
+
+static bool setMpvOptionChecked(mpv_handle *mpv, const char *name, const char *value)
+{
+    const int ret = mpv_set_option_string(mpv, name, value);
+    if (ret < 0) {
+        qWarning() << "[MpvVideo] mpv option rejected:" << name << "=" << value
+                   << "error:" << mpv_error_string(ret);
+        return false;
+    }
+    return true;
+}
+
+static void reportMpvPipelineDiagnostics(mpv_handle *mpv)
+{
+    static thread_local QElapsedTimer timer;
+    static thread_local qint64 nextReportMs = 5000;
+    if (!timer.isValid())
+        timer.start();
+    const qint64 nowMs = timer.elapsed();
+    if (nowMs < nextReportMs)
+        return;
+    nextReportMs = nowMs + 5000;
+
+    double demuxCacheSec = -1.0;
+    double videoPts = -1.0;
+    double timePos = -1.0;
+    double videoBitrate = -1.0;
+    qint64 frameNumber = -1;
+    qint64 decoderDrops = -1;
+    qint64 outputDrops = -1;
+    qint64 mistimed = -1;
+    qint64 voDelayed = -1;
+    qint64 bufferingState = -1;
+    int cacheIdle = -1;
+    int untimed = -1;
+
+    mpv_get_property(mpv, "demuxer-cache-duration", MPV_FORMAT_DOUBLE, &demuxCacheSec);
+    mpv_get_property(mpv, "video-pts",             MPV_FORMAT_DOUBLE, &videoPts);
+    mpv_get_property(mpv, "time-pos",              MPV_FORMAT_DOUBLE, &timePos);
+    mpv_get_property(mpv, "video-bitrate",         MPV_FORMAT_DOUBLE, &videoBitrate);
+    mpv_get_property(mpv, "estimated-frame-number", MPV_FORMAT_INT64, &frameNumber);
+    mpv_get_property(mpv, "decoder-frame-drop-count", MPV_FORMAT_INT64, &decoderDrops);
+    mpv_get_property(mpv, "frame-drop-count",      MPV_FORMAT_INT64, &outputDrops);
+    mpv_get_property(mpv, "mistimed-frame-count",  MPV_FORMAT_INT64, &mistimed);
+    mpv_get_property(mpv, "vo-delayed-frame-count", MPV_FORMAT_INT64, &voDelayed);
+    mpv_get_property(mpv, "cache-buffering-state", MPV_FORMAT_INT64, &bufferingState);
+    mpv_get_property(mpv, "demuxer-cache-idle",    MPV_FORMAT_FLAG, &cacheIdle);
+    mpv_get_property(mpv, "untimed",               MPV_FORMAT_FLAG, &untimed);
+
+    char *hwdecRaw = mpv_get_property_string(mpv, "hwdec-current");
+    const QString hwdec = hwdecRaw
+            ? QString::fromUtf8(hwdecRaw)
+            : QStringLiteral("n/a");
+    if (hwdecRaw)
+        mpv_free(hwdecRaw);
+
+    qDebug().nospace()
+        << "[LatProbeDiag] demux-cache="
+        << (demuxCacheSec >= 0.0
+            ? QString::number(demuxCacheSec * 1000.0, 'f', 1) + QStringLiteral("ms")
+            : QStringLiteral("n/a"))
+        << "  cache-idle=" << cacheIdle
+        << "  buffering=" << bufferingState
+        << "  decoder-drop=" << decoderDrops
+        << "  output-drop=" << outputDrops
+        << "  mistimed=" << mistimed
+        << "  vo-delayed=" << voDelayed
+        << "  frame=" << frameNumber
+        << "  video-pts=" << QString::number(videoPts, 'f', 3)
+        << "  time-pos=" << QString::number(timePos, 'f', 3)
+        << "  bitrate=" << (videoBitrate >= 0.0
+            ? QString::number(videoBitrate / 1000000.0, 'f', 2) + QStringLiteral("Mbps")
+            : QStringLiteral("n/a"))
+        << "  untimed=" << untimed
+        << "  hwdec=" << hwdec;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -208,6 +310,7 @@ public:
         //    仅导引头直显、且探针已打开时执行；内部只读一次 mpv 属性，
         //    不改变任何渲染行为。探针关闭时在 reportLatencySample 里直接返回。
         m_item->reportLatencySample(m_renderedNewFrame);
+        m_item->reportCcdLatencySample(m_renderedNewFrame);
     }
 
 private:
@@ -304,6 +407,15 @@ private:
             qDebug() << "[MpvVideo] offscreen FBO resized to:" << w << "x" << h;
         }
         if (!m_offscreenFbo) return;
+
+        // CCD 直显探针的 T1：mpv 已输出本帧，离屏 FBO 也已就绪。
+        // 视觉推理开启时 cpuFrameConsumer=true，不进入该计时路径。
+        // 起点选在 mpv 实际绘制之前，使统计覆盖 mpv 离屏渲染和 Qt 绘制。
+        if (m_item->m_ccdSource.load()
+                && !m_item->m_cpuConsumerActive.load()
+                && m_item->m_ccdLatencyProbe) {
+            m_item->m_ccdLatencyProbe->onFrameDecoded();
+        }
 
         // 保存 Qt 的 FBO + viewport
         GLint qtFbo = 0, qtVp[4] = {};
@@ -574,6 +686,7 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
     // 视频接收侧延迟探针：默认关闭，关闭时不抓包、不查询 mpv、零开销。
     // 打开方式：环境变量 KYLIN_LATPROBE=1，或调用 m_latencyProbe->setEnabled(true)。
     m_latencyProbe = new VideoLatencyProbe(this);
+    m_ccdLatencyProbe = new CcdLatencyProbe(this);
 }
 
 // QML 组件完成布局后才调用 —— 此时 width/height 有效，update() 能触发 render()
@@ -606,14 +719,64 @@ void VlcVideoItem::ensureMpvCreated()
 
     qDebug() << "[MpvVideo] mpv_create OK";
 
-    mpv_set_option_string(m_mpv, "vo", "libmpv");
-    // 优先使用安全的硬件解码后端；不支持的格式会由 mpv 自动回退到软件解码。
-    mpv_set_option_string(m_mpv, "hwdec", "auto-safe");
+    setMpvOptionChecked(m_mpv, "vo", "libmpv");
+    // 图像头默认按顶部 KYLIN_GUIDE_HWDEC_MODE 选择软件/硬件解码；
+    // CCD 等其它源使用安全的 auto-safe，并在不支持时由 mpv 回退。
+    QByteArray hwdec = qgetenv("KYLIN_MPV_HWDEC").trimmed();
+    if (hwdec.isEmpty()) {
+        // 在 mpv_initialize() 之前确定默认值。旧版 mpv 不一定允许运行时
+        // 切换 hwdec，因此不能只依赖 doSetupPlayer() 中的属性设置。
+        hwdec = defaultHwdecForStream(m_source, m_ccdSource.load());
+    }
+    setMpvOptionChecked(m_mpv, "hwdec", hwdec.constData());
+    qDebug() << "[MpvVideo] initial hwdec =" << hwdec;
+    const QByteArray hwdecExtraFrames =
+            qgetenv("KYLIN_MPV_HWDEC_EXTRA_FRAMES").trimmed();
+    if (!hwdecExtraFrames.isEmpty()) {
+        setMpvOptionChecked(m_mpv, "hwdec-extra-frames",
+                            hwdecExtraFrames.constData());
+        qDebug() << "[MpvVideo] hwdec-extra-frames =" << hwdecExtraFrames;
+    }
     // 本应用只显示视频：不选择音频轨，避免音频解码和播放。
-    mpv_set_option_string(m_mpv, "aid", "no");
-    mpv_set_option_string(m_mpv, "config", "no");
-    mpv_set_option_string(m_mpv, "msg-level", "all=warn");
-    mpv_set_option_string(m_mpv, "profile", "low-latency");  // 低延迟模式，减少解码缓冲
+    setMpvOptionChecked(m_mpv, "aid", "no");
+    setMpvOptionChecked(m_mpv, "config", "no");
+    setMpvOptionChecked(m_mpv, "msg-level", "all=warn");
+
+    // 不要只依赖内置 low-latency profile。不同发行版的 mpv 版本内容不同，
+    // 有些版本仍保留默认的 1 秒 demuxer readahead，表现为接收端约 1 秒
+    // 的稳定固定延迟。直播流没有回看需求，因此这里显式关闭 readahead 和回退缓存。
+    setMpvOptionChecked(m_mpv, "profile", "low-latency");
+    setMpvOptionChecked(m_mpv, "cache-pause", "no");
+    setMpvOptionChecked(m_mpv, "cache-pause-wait", "0");
+    setMpvOptionChecked(m_mpv, "video-timing-offset", "0");
+    QByteArray readaheadSecs = qgetenv("KYLIN_MPV_READAHEAD_SECS").trimmed();
+    if (readaheadSecs.isEmpty())
+        readaheadSecs = "0";
+    setMpvOptionChecked(m_mpv, "demuxer-readahead-secs", readaheadSecs.constData());
+    setMpvOptionChecked(m_mpv, "demuxer-max-bytes", "1048576");
+    setMpvOptionChecked(m_mpv, "demuxer-max-back-bytes", "0");
+    setMpvOptionChecked(m_mpv, "stream-buffer-size", "4096");
+    setMpvOptionChecked(m_mpv, "vd-lavc-threads", "1");
+    setMpvOptionChecked(m_mpv, "vd-queue-enable", "no");
+    setMpvOptionChecked(m_mpv, "video-latency-hacks", "yes");
+
+    // FFmpeg 的 UDP 协议层还有独立的环形 FIFO 和 socket 接收缓冲。
+    // ffmpeg 默认 fifo_size=28672 个 188 字节包（约 5.4 MiB），即使
+    // demuxer-readahead-secs=0 也可能积压接近 1 秒。这里给直播 UDP 设置
+    // 明确的低延迟上限；现场若出现花屏，可把两个值逐步调大。
+    QByteArray udpFifoPackets = qgetenv("KYLIN_MPV_UDP_FIFO_PACKETS").trimmed();
+    QByteArray udpBufferBytes = qgetenv("KYLIN_MPV_UDP_BUFFER_BYTES").trimmed();
+    if (udpFifoPackets.isEmpty())
+        udpFifoPackets = "512";
+    if (udpBufferBytes.isEmpty())
+        udpBufferBytes = "131072";
+    const QByteArray lavfOptions =
+            "fflags=+nobuffer,fifo_size=" + udpFifoPackets
+            + ",buffer_size=" + udpBufferBytes
+            + ",overrun_nonfatal=1";
+    setMpvOptionChecked(m_mpv, "demuxer-lavf-o", lavfOptions.constData());
+    qDebug() << "[MpvVideo] UDP latency limits: fifo_size=" << udpFifoPackets
+             << "buffer_size=" << udpBufferBytes;
 
     int ret = mpv_initialize(m_mpv);
     if (ret < 0) {
@@ -637,6 +800,10 @@ VlcVideoItem::~VlcVideoItem()
     if (m_latencyProbe) {
         m_latencyProbe->setEnabled(false);
         m_latencyProbe = nullptr;
+    }
+    if (m_ccdLatencyProbe) {
+        m_ccdLatencyProbe->setEnabled(false);
+        m_ccdLatencyProbe = nullptr;
     }
 
     releasePlayer();
@@ -727,6 +894,17 @@ void VlcVideoItem::setCpuFrameConsumer(bool on)
     }
 }
 
+void VlcVideoItem::setCcdSource(bool on)
+{
+    if (m_ccdSource.load() != on) {
+        m_ccdSource.store(on);
+        if (m_ccdLatencyProbe)
+            m_ccdLatencyProbe->notePlaybackStart();
+        emit ccdSourceChanged();
+        update();
+    }
+}
+
 // ══════════════════════════════════════════════════════════════════
 // StreamProcessor 接口
 // ══════════════════════════════════════════════════════════════════
@@ -786,6 +964,8 @@ void VlcVideoItem::reportLatencySample(bool newFrameRendered)
         return;
     if (!m_latencyProbe->isEnabled())
         return;
+    if (m_ccdSource.load())            // CCD 由独立探针统计
+        return;
     if (m_cpuConsumerActive.load())     // 仅导引头直显路径，CCD 模式不测
         return;
     if (!m_mpv)
@@ -799,6 +979,18 @@ void VlcVideoItem::reportLatencySample(bool newFrameRendered)
         return;                          // 视频参数尚未就绪时读不到，忽略即可
 
     m_latencyProbe->onFrameDisplayed(pts);
+    reportMpvPipelineDiagnostics(m_mpv);
+}
+
+void VlcVideoItem::reportCcdLatencySample(bool newFrameRendered)
+{
+    if (!m_ccdLatencyProbe || !newFrameRendered)
+        return;
+    if (!m_ccdSource.load())
+        return;
+    if (m_cpuConsumerActive.load())     // 视觉模型推理开启时不测 CCD
+        return;
+    m_ccdLatencyProbe->onFrameRendered(true);
 }
 
 // ── 供 QML 使用的探针控制与读数（测试用）─────────────────────────
@@ -827,8 +1019,30 @@ QVariantMap VlcVideoItem::latencyProbeStats() const
     m.insert(QStringLiteral("p99Ms"),       s.p99Ms);
     m.insert(QStringLiteral("minMs"),       s.minMs);
     m.insert(QStringLiteral("maxMs"),       s.maxMs);
+    m.insert(QStringLiteral("arrivalLeadMs"), s.arrivalLeadMs);
+    m.insert(QStringLiteral("arrivalStepMs"), s.arrivalStepMs);
     m.insert(QStringLiteral("anchorReady"), s.anchorReady);
     m.insert(QStringLiteral("frameMs"),     s.ptsStepMs);
+    return m;
+}
+
+QVariantMap VlcVideoItem::ccdLatencyProbeStats() const
+{
+    QVariantMap m;
+    if (!m_ccdLatencyProbe)
+        return m;
+    const CcdLatencyProbe::Stats s = m_ccdLatencyProbe->stats();
+    m.insert(QStringLiteral("samples"), QVariant::fromValue(s.samples));
+    m.insert(QStringLiteral("misses"), QVariant::fromValue(s.misses));
+    m.insert(QStringLiteral("avgMs"), s.avgMs);
+    m.insert(QStringLiteral("p50Ms"), s.p50Ms);
+    m.insert(QStringLiteral("p95Ms"), s.p95Ms);
+    m.insert(QStringLiteral("p99Ms"), s.p99Ms);
+    m.insert(QStringLiteral("minMs"), s.minMs);
+    m.insert(QStringLiteral("maxMs"), s.maxMs);
+    m.insert(QStringLiteral("metric"),
+             QStringLiteral("ccd_direct_decoded_to_render"));
+    m.insert(QStringLiteral("inferenceActive"), cpuFrameConsumer());
     return m;
 }
 
@@ -840,8 +1054,10 @@ void VlcVideoItem::setSource(const QString &url)
         emit sourceChanged();
         ensureMpvCreated();  // QML 对象构造完成后，首次 setSource 时才初始化 mpv
         // 延迟探针跟随视频源：udp:// 组播地址开始抓包；空串或非组播协议则停止
-        if (m_latencyProbe)
-            m_latencyProbe->setStreamUrl(url);
+        if (m_latencyProbe) {
+            // CCD 使用独立的进程内直显探针，不尝试解析 RTSP/PTS 到达表。
+            m_latencyProbe->setStreamUrl(m_ccdSource.load() ? QString() : url);
+        }
         setupPlayer();
     }
 }
@@ -880,6 +1096,13 @@ void VlcVideoItem::play()
     if (m_source.isEmpty()) return;
 
     m_playClicked = true;
+
+    // 直播流在等待视频参数期间可能已经积压了一段缓冲。取消暂停前先丢弃
+    // 旧队列，否则即使 readahead=0，启动阶段的积压仍会长期保持约 1 秒延迟。
+    const char *dropCmd[] = {"drop-buffers", nullptr};
+    const int dropRet = mpv_command(m_mpv, dropCmd);
+    if (dropRet < 0)
+        qWarning() << "[MpvVideo] drop-buffers failed:" << mpv_error_string(dropRet);
 
     // 使用 MPV_FORMAT_FLAG，避免 "yes"/"no" 字符串解析问题
     int paused = 0;  // 0 = 不暂停 = 播放
@@ -985,6 +1208,37 @@ void VlcVideoItem::doSetupPlayer()
 
     qDebug() << "[MpvVideo] doSetupPlayer, loading:" << redactedStreamUrl(m_source);
 
+    // 图像头的解码模式由文件顶部的 KYLIN_GUIDE_HWDEC_MODE 统一控制。
+    // 现场实测：imgvideo/omx 硬件解码约积压 25 帧，软件解码约 59ms。
+    // CCD 等其它源仍默认 auto-safe；环境变量可覆盖两条路径的默认值。
+    QByteArray streamHwdec = qgetenv("KYLIN_MPV_HWDEC").trimmed();
+    if (streamHwdec.isEmpty())
+        streamHwdec = defaultHwdecForStream(m_source, m_ccdSource.load());
+    const int hwdecRet = mpv_set_property_string(
+                m_mpv, "hwdec", streamHwdec.constData());
+    if (hwdecRet < 0) {
+        qWarning() << "[MpvVideo] failed to set hwdec:" << mpv_error_string(hwdecRet);
+    } else {
+        qDebug() << "[MpvVideo] hwdec =" << streamHwdec;
+    }
+
+    // 无音频的直播 UDP 流没有音画同步需求，优先追最新帧。码流缺少有效
+    // PTS 时尤其重要：若继续按生成的 25 fps 时间轴排队，会稳定积压近 1 秒。
+    // 默认仅对导引头 UDP 生效；可用 KYLIN_MPV_UNTIMED=0/1 强制关闭/打开。
+    const QByteArray untimedOverride = qgetenv("KYLIN_MPV_UNTIMED").trimmed().toLower();
+    const bool untimed = !untimedOverride.isEmpty()
+            ? (untimedOverride != "0" && untimedOverride != "false" && untimedOverride != "no")
+            : (m_source.startsWith(QStringLiteral("udp://"), Qt::CaseInsensitive)
+               && !m_ccdSource.load());
+    int untimedFlag = untimed ? 1 : 0;
+    const int untimedRet = mpv_set_property(
+                m_mpv, "untimed", MPV_FORMAT_FLAG, &untimedFlag);
+    if (untimedRet < 0) {
+        qWarning() << "[MpvVideo] failed to set untimed:" << mpv_error_string(untimedRet);
+    } else {
+        qDebug() << "[MpvVideo] untimed =" << untimed;
+    }
+
     // 先设为暂停状态，等用户点击 play() 再取消暂停
     int paused = 1;
     mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
@@ -1002,6 +1256,8 @@ void VlcVideoItem::doSetupPlayer()
     // 而 TS 里是原始 PTS，两侧需要这个基准才能对上同一帧）。
     if (m_latencyProbe)
         m_latencyProbe->notePlaybackStart();
+    if (m_ccdLatencyProbe)
+        m_ccdLatencyProbe->notePlaybackStart();
 
     const QByteArray url = m_source.toUtf8();
     const char *cmd[] = {"loadfile", url.constData(), nullptr};

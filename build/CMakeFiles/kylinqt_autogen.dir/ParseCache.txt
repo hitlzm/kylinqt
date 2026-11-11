@@ -33,6 +33,7 @@ E:/QTproject/kylinqt/serialport/serialport_CCD.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_image.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/utils/ccdlatencyprobe.cpp
 E:/QTproject/kylinqt/serialport/serialport_laser.h
  mmc:Q_OBJECT
 E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.h
@@ -50,6 +51,8 @@ E:/QTproject/kylinqt/log/LogManager.cpp
 E:/QTproject/kylinqt/main.cpp
 E:/QTproject/kylinqt/serialport/serialport.cpp
 E:/QTproject/kylinqt/network/SixDofMotionClient.cpp
+E:/QTproject/kylinqt/utils/ccdlatencyprobe.h
+ mmc:Q_OBJECT
 E:/QTproject/kylinqt/opencv/onnxyolov5detector_stub.cpp
 E:/QTproject/kylinqt/opencv/streamprocessor.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp
