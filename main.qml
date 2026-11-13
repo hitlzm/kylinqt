@@ -155,6 +155,7 @@ ApplicationWindow {
                 anchors.top:parent.top
                 anchors.left:dyt.right
                 anchors.leftMargin: 5
+                onMagnifierToggleRequested: magnifierOverlay.visible = !magnifierOverlay.visible
             }
             TurnTablestatus {
                 id: turntablestatus
@@ -168,6 +169,14 @@ ApplicationWindow {
                 // 左侧内容下边沿 = bar.height + ImageSendArea(610) + ImageRecvArea(330) = bar.height + 940
                 // turntablestatus 高度 = bar.height + 940 - myvideo(430) - 顶部间隔(5)
                 myheight: bar.height + 610 + 330 - 430 - 5
+            }
+
+            // 单实例放大镜，与主播放器处于同一个窗口和 OpenGL context。
+            // 关闭时仅隐藏，主界面和放大镜之间不再创建/销毁独立窗口。
+            MagnifierOverlay {
+                id: magnifierOverlay
+                frameSource: myvideo.videoPlayerItem
+                onVisibleChanged: myvideo.magnifierVisible = visible
             }
         }
     }

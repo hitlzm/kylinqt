@@ -79,7 +79,10 @@ public:
     void submitProcessedFrame(const QImage &frame);
 
     /// 返回当前显示的 GL 纹理 ID（放大镜直接绑定，省 GPU→CPU→GPU 拷贝）
-    unsigned int displayTextureId() const { return m_displayTexId; }
+    unsigned int displayTextureId() const
+    {
+        return m_displayTexId.load(std::memory_order_relaxed);
+    }
 
     qreal frameWidth() const { return m_width; }
     qreal frameHeight() const { return m_height; }
@@ -133,6 +136,8 @@ signals:
     void fileLoaded();
     /// mpv 解析到真实视频参数（video-params）时发出，表示连接成功
     void videoReady();
+    /// 渲染线程实际完成一帧显示后发出，供放大镜等低频消费者按帧刷新。
+    void frameRendered(quint64 serial);
 
     // ── 像素读取结果信号 ──────────────────────────────────
     /// 点击到视频画面内时发出，携带帧坐标，请求图像导引头发送偏差像素
@@ -145,6 +150,8 @@ private slots:
 
     // 渲染上下文就绪后的回调（由 VlcVideoRenderer 通过 invokeMethod 触发）
     void onRenderContextReady();
+    // 保证 frameRendered 从主线程发出，避免 QML 连接跨线程直接执行。
+    void notifyFrameRendered(quint64 serial);
 
 private:
     friend class VlcVideoRenderer;
@@ -202,7 +209,7 @@ private:
     QImage m_processedFrame;
     bool   m_hasProcessedFrame = false;
 
-    unsigned int m_displayTexId = 0;
+    std::atomic<unsigned int> m_displayTexId{0};
 
     // 是否有 CPU 侧消费者需要读回像素（渲染线程读 / GUI 线程写，须 atomic）
     std::atomic<bool> m_cpuConsumerActive{true};

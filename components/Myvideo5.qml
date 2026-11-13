@@ -17,7 +17,9 @@ Rectangle {
     property bool _retrying: false
     property int _retryCount: 0
     property int _maxRetries: 1
-    property var magnifierWindow: null
+    property bool magnifierVisible: false
+    readonly property var videoPlayerItem: videoPlayer
+    signal magnifierToggleRequested()
     property bool _failureDialogShown: false
     property real _lastWatchdogFrameSerial: 0
     property real _lastVideoFrameAt: 0
@@ -198,7 +200,7 @@ Rectangle {
                 _isPlaying = false
                 stopOverlay.visible = true
             } }
-        CusButton_Blue { text: root.magnifierWindow ? "关闭新窗口" : "🔍 放大"; Layout.fillWidth: true; height: 40
+        CusButton_Blue { text: root.magnifierVisible ? "关闭放大镜" : "🔍 放大"; Layout.fillWidth: true; height: 40
             onClicked: toggleMagnifier() }
         // Text { text: "🔈"; font.pixelSize: 18; Layout.alignment: Qt.AlignVCenter }
         // CusSlider { id: volumeSlider; Layout.preferredWidth: 120; showNumber: true; from: 0; to: 100
@@ -315,44 +317,7 @@ Rectangle {
     }
 
     function toggleMagnifier() {
-        if (magnifierWindow) {
-            magnifierWindow.close()
-            magnifierWindow = null
-            console.log("Magnifier: window closed")
-            return
-        }
-
-        console.log("Magnifier: creating component...")
-        var comp = Qt.createComponent("qrc:/components/MagnifierWindow.qml")
-
-        function doCreate() {
-            console.log("Magnifier: component ready, creating window...")
-            // Window 必须用 null 父对象，不能用 root
-            magnifierWindow = comp.createObject(null, { "frameSource": videoPlayer })
-            if (magnifierWindow) {
-                console.log("Magnifier: window created, showing...")
-                magnifierWindow.closing.connect(function() {
-                    console.log("Magnifier: closing")
-                    magnifierWindow = null
-                })
-                magnifierWindow.show()
-            } else {
-                console.warn("Magnifier: createObject returned null! Error:", comp.errorString())
-            }
-        }
-
-        if (comp.status === Component.Ready) {
-            doCreate()
-        } else if (comp.status === Component.Error) {
-            console.warn("Magnifier: load error:", comp.errorString())
-        } else {
-            console.log("Magnifier: loading...")
-            comp.statusChanged.connect(function() {
-                console.log("Magnifier: statusChanged ->", comp.status)
-                if (comp.status === Component.Ready) doCreate()
-                else if (comp.status === Component.Error) console.warn("Magnifier: load error:", comp.errorString())
-            })
-        }
+        magnifierToggleRequested()
     }
 
     Connections {

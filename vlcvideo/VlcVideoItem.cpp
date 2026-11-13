@@ -17,22 +17,23 @@
 #include <clocale>
 
 // ══════════════════════════════════════════════════════════════════
-// 图像头 UDP 解码模式（二选一）
+// 视频源默认解码模式
 //
-// 当前使用软件解码：CPU 占用较高，但实测接收侧延迟约 59 ms。
-// 需要改回硬件解码时：
-//   1. 注释下面 KYLIN_GUIDE_HWDEC_MODE 的软件解码定义；
-//   2. 取消下面硬件解码定义前的注释；
-//   3. 重新完整编译。
+// 图像头 UDP 和所有 RTSP 源当前均使用软件解码。软件解码 CPU 占用较高，
+// 但不会因 RTP 少量丢包导致 OMX 硬件解码器立即丢弃缺少参考帧的图像。
+// 需要改回硬件解码时，修改对应的模式定义并重新完整编译。
 //
 // 可用硬件模式：auto-safe、auto-copy-safe、v4l2m2m（需平台支持）。
 // 运行时仍可用 KYLIN_MPV_HWDEC 临时覆盖这里的默认值。
 // ══════════════════════════════════════════════════════════════════
-#define KYLIN_GUIDE_HWDEC_MODE "no"       // ← 当前：软件解码
+#define KYLIN_GUIDE_HWDEC_MODE "no"       // 图像头 UDP：软件解码
+#define KYLIN_RTSP_HWDEC_MODE  "no"       // 所有 RTSP 源：软件解码
 // #define KYLIN_GUIDE_HWDEC_MODE "auto-safe"  // ← 启用硬件解码时打开
 
 static QByteArray defaultHwdecForStream(const QString &source, bool ccdSource)
 {
+    if (source.startsWith(QStringLiteral("rtsp://"), Qt::CaseInsensitive))
+        return QByteArray(KYLIN_RTSP_HWDEC_MODE);
     if (source.startsWith(QStringLiteral("udp://"), Qt::CaseInsensitive)
             && !ccdSource) {
         return QByteArray(KYLIN_GUIDE_HWDEC_MODE);
@@ -167,7 +168,7 @@ public:
     ~VlcVideoRenderer() override
     {
         if (!m_glInitialized) return;
-        m_item->m_displayTexId = 0;   // 可能指向 m_texture 或 m_offscreenTex，统一复位
+        m_item->m_displayTexId.store(0, std::memory_order_relaxed);
         if (m_texture)        glDeleteTextures(1, &m_texture);
         if (m_vbo)            glDeleteBuffers(1, &m_vbo);
         if (m_program)        glDeleteProgram(m_program);
@@ -268,7 +269,7 @@ public:
         } else {
             srcTex = m_offscreenTex;
         }
-        m_item->m_displayTexId = srcTex;   // 放大镜绑定跟随
+        m_item->m_displayTexId.store(srcTex, std::memory_order_relaxed);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -465,7 +466,10 @@ private:
         }
 
         m_renderedNewFrame = true;   // 本轮确实渲染出了新的一帧
-        m_item->m_renderedFrameSerial.fetch_add(1, std::memory_order_relaxed);
+        const quint64 serial =
+                m_item->m_renderedFrameSerial.fetch_add(1, std::memory_order_relaxed) + 1;
+        QMetaObject::invokeMethod(m_item, "notifyFrameRendered",
+                                  Qt::QueuedConnection, Q_ARG(quint64, serial));
 
         // ── 恢复 Qt FBO + viewport（关键！否则后续绘制错位） ──
         glBindFramebuffer(GL_FRAMEBUFFER, qtFbo);
@@ -475,6 +479,8 @@ private:
     // ---- 重建离屏 FBO（窗口尺寸变化时调用） ----
     void rebuildOffscreenFbo()
     {
+        // 放大镜可能在下一轮 sync 前读取纹理 ID；销毁旧纹目前先使 ID 失效。
+        m_item->m_displayTexId.store(0, std::memory_order_relaxed);
         if (m_offscreenFbo)
             glDeleteFramebuffers(1, &m_offscreenFbo);
         if (m_offscreenTex)
@@ -544,7 +550,7 @@ private:
 
         glBindTexture(GL_TEXTURE_2D, 0);
         m_textureDirty = false;
-        m_item->m_displayTexId = m_texture;  // 暴露给放大镜直接绑定
+        m_item->m_displayTexId.store(m_texture, std::memory_order_relaxed);
     }
 
     // ---- 计算保持宽高比的居中 quad（NDC 坐标） ----
@@ -720,8 +726,8 @@ void VlcVideoItem::ensureMpvCreated()
     qDebug() << "[MpvVideo] mpv_create OK";
 
     setMpvOptionChecked(m_mpv, "vo", "libmpv");
-    // 图像头默认按顶部 KYLIN_GUIDE_HWDEC_MODE 选择软件/硬件解码；
-    // CCD 等其它源使用安全的 auto-safe，并在不支持时由 mpv 回退。
+    // 图像头 UDP 和所有 RTSP 源默认均使用软件解码；其它协议源仍使用
+    // 安全的 auto-safe，并在硬件解码不支持时由 mpv 回退。
     QByteArray hwdec = qgetenv("KYLIN_MPV_HWDEC").trimmed();
     if (hwdec.isEmpty()) {
         // 在 mpv_initialize() 之前确定默认值。旧版 mpv 不一定允许运行时
@@ -1208,9 +1214,9 @@ void VlcVideoItem::doSetupPlayer()
 
     qDebug() << "[MpvVideo] doSetupPlayer, loading:" << redactedStreamUrl(m_source);
 
-    // 图像头的解码模式由文件顶部的 KYLIN_GUIDE_HWDEC_MODE 统一控制。
-    // 现场实测：imgvideo/omx 硬件解码约积压 25 帧，软件解码约 59ms。
-    // CCD 等其它源仍默认 auto-safe；环境变量可覆盖两条路径的默认值。
+    // 图像头 UDP 与所有 RTSP 源的解码模式分别由文件顶部的
+    // KYLIN_GUIDE_HWDEC_MODE、KYLIN_RTSP_HWDEC_MODE 控制。
+    // 环境变量可覆盖上述默认值。
     QByteArray streamHwdec = qgetenv("KYLIN_MPV_HWDEC").trimmed();
     if (streamHwdec.isEmpty())
         streamHwdec = defaultHwdecForStream(m_source, m_ccdSource.load());
@@ -1315,6 +1321,11 @@ void VlcVideoItem::onRenderContextReady()
     qDebug() << "[MpvVideo] render context ready";
     // 走统一入口 setupPlayer()，避免与重试定时器产生竞态
     setupPlayer();
+}
+
+void VlcVideoItem::notifyFrameRendered(quint64 serial)
+{
+    emit frameRendered(serial);
 }
 
 // 从 mpv video-params 节点中解析出视频固有显示尺寸（dw/dh）
