@@ -88,7 +88,20 @@ void LaserData::scanPorts()                                     { emit requestSc
 // void LaserData::sendData(const QByteArray &data)                { emit requestSendData(data); }
 
 // ── 工作线程回推：QueuedConnection 调用，更新状态并 NOTIFY QML ──
-void LaserData::setPortOpen(bool open) { if (m_portOpen != open) { m_portOpen = open; emit portOpenChanged(); } }
+void LaserData::setPortOpen(bool open)
+{
+    if (m_portOpen != open) {
+        m_portOpen = open;
+        emit portOpenChanged();
+    }
+    if (!open) {
+        m_previousValidTimeStampUs = 0;
+        if (m_timeScaleAccuracyValid) {
+            m_timeScaleAccuracyValid = false;
+            emit timeScaleAccuracyValidChanged();
+        }
+    }
+}
 void LaserData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
 void LaserData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
 
@@ -127,6 +140,8 @@ float LaserData::softwareVersion2() const { return m_softwareVersion2; }
 qint64 LaserData::msTime() const { return m_msTime; }
 int LaserData::usTime() const { return m_usTime; }
 qint64 LaserData::timeStampUs() const { return m_timeStampUs; }
+qint64 LaserData::timeScaleAccuracyUs() const { return m_timeScaleAccuracyUs; }
+bool LaserData::timeScaleAccuracyValid() const { return m_timeScaleAccuracyValid; }
 QDateTime LaserData::recvDateTime() const { return m_recvDateTime; }
 QString LaserData::recvTimeText() const { return m_recvTimeText; }
 
@@ -283,8 +298,31 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
         emit timeStampUsChanged();
     }
 
-    // 把返回时间戳换算成年月日时分秒保存：
-    // 时间戳按 UTC 毫秒解释(与发送侧同一基准)，再折算成北京时间(UTC+8)的“年月日时分秒.毫秒微秒”
+    // 仅在连续两组非零返回时标之间计算时标精度。
+    // 协议标称帧周期为20000us，因此精度 = 相邻时标差(us) - 20000us。
+    bool accuracyValid = false;
+    qint64 accuracyUs = 0;
+    if (msTime > 0) {
+        if (m_previousValidTimeStampUs > 0) {
+            accuracyUs = timeStampUs - m_previousValidTimeStampUs - 20000;
+            accuracyValid = true;
+        }
+        m_previousValidTimeStampUs = timeStampUs;
+    } else {
+        // 未时间同步或返回时标为0时，不能跨过该帧继续计算。
+        m_previousValidTimeStampUs = 0;
+    }
+    if (m_timeScaleAccuracyUs != accuracyUs) {
+        m_timeScaleAccuracyUs = accuracyUs;
+        emit timeScaleAccuracyUsChanged();
+    }
+    if (m_timeScaleAccuracyValid != accuracyValid) {
+        m_timeScaleAccuracyValid = accuracyValid;
+        emit timeScaleAccuracyValidChanged();
+    }
+
+    // 把返回时间戳换算成时分秒保存：
+    // 时间戳按 UTC 毫秒解释(与发送侧同一基准)，再折算成北京时间(UTC+8)的“时:分:秒.毫秒微秒”
     if (msTime > 0) {
         const QDateTime recvUtc = QDateTime::fromMSecsSinceEpoch(msTime, Qt::UTC);
         // 用固定偏移时区做UTC→北京时间换算，避免Qt5.12在Windows上访问时区库出问题
@@ -294,7 +332,7 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
             emit recvDateTimeChanged();
         }
         //秒的小数部分：毫秒(3位) + 微秒(3位)，合计微秒精度，例如 2026-09-24 11:01:57.054321
-        const QString recvText = recvBj.toString("yyyy-MM-dd HH:mm:ss.zzz")
+        const QString recvText = recvBj.toString("HH:mm:ss.zzz")
                                + QString("%1").arg(usTime, 3, 10, QLatin1Char('0'));
         if (m_recvTimeText != recvText) {
             m_recvTimeText = recvText;
@@ -425,7 +463,7 @@ SerialPortLaser::~SerialPortLaser() {
 
 // ── Worker slots：接收主线程 Data 的请求（QueuedConnection）──
 void SerialPortLaser::onOpenPort(const QString &name, int baud) {
-    if (SerialPort::open(name, baud))
+    if (SerialPort::openSerialDevice(name, baud))
         emit portOpened(true);
     else
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");

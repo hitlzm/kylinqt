@@ -77,8 +77,11 @@ class ImageData : public QObject
     Q_PROPERTY(qlonglong msTime READ msTime NOTIFY msTimeChanged)
     Q_PROPERTY(int usTime READ usTime NOTIFY usTimeChanged)
     Q_PROPERTY(qlonglong timeStampUs READ timeStampUs NOTIFY timeStampUsChanged)
+    // 时标精度：相邻两组非零返回时标的差值减去20000us，单位us
+    Q_PROPERTY(qlonglong timeScaleAccuracyUs READ timeScaleAccuracyUs NOTIFY timeScaleAccuracyUsChanged)
+    Q_PROPERTY(bool timeScaleAccuracyValid READ timeScaleAccuracyValid NOTIFY timeScaleAccuracyValidChanged)
     // 返回时间换算结果：recvDateTime 为 UTC 时刻，
-    // recvTimeText 为北京时间“年月日时分秒.毫秒微秒”（秒的小数部分6位，微秒精度）
+    // recvTimeText 为北京时间“时:分:秒.毫秒微秒”（秒的小数部分6位，微秒精度）
     Q_PROPERTY(QDateTime recvDateTime READ recvDateTime NOTIFY recvDateTimeChanged)
     Q_PROPERTY(QString recvTimeText READ recvTimeText NOTIFY recvTimeTextChanged)
 
@@ -137,6 +140,8 @@ public:
     qint64 msTime() const;
     int usTime() const;
     qint64 timeStampUs() const;
+    qint64 timeScaleAccuracyUs() const;
+    bool timeScaleAccuracyValid() const;
     QDateTime recvDateTime() const;
     QString recvTimeText() const;
 
@@ -212,6 +217,8 @@ signals:
     void msTimeChanged();
     void usTimeChanged();
     void timeStampUsChanged();
+    void timeScaleAccuracyUsChanged();
+    void timeScaleAccuracyValidChanged();
     void recvDateTimeChanged();
     void recvTimeTextChanged();
 
@@ -326,8 +333,11 @@ private:
     qint64 m_msTime = 0;
     int m_usTime = 0;
     qint64 m_timeStampUs = 0;
+    qint64 m_previousValidTimeStampUs = 0;
+    qint64 m_timeScaleAccuracyUs = 0;
+    bool m_timeScaleAccuracyValid = false;
     QDateTime m_recvDateTime;      // 返回时间(UTC)
-    QString m_recvTimeText;        // 返回时间(北京时间，年月日时分秒.毫秒微秒，微秒精度)
+    QString m_recvTimeText;        // 返回时间(北京时间，时:分:秒.毫秒微秒，微秒精度)
 
     bool m_portOpen = false;
     QStringList m_availablePorts;

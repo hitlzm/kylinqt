@@ -15,6 +15,9 @@ ComboBox {
     // 下拉弹层最小宽度：0 表示与控件同宽；设置后弹层（及选项）至少这么宽，
     // 避免控件本身较窄时下拉后看不到完整选项内容
     property int popupMinWidth: 0
+    readonly property int effectivePopupWidth: Math.max(cusComboBox.width,
+                                                        cusComboBox.popupMinWidth,
+                                                        110)
     property real defaultHeight: CusConfig.fixedHeight * 6
     displayText: qsTr(currentText) + CusConfig.transString
     background: Rectangle {
@@ -82,7 +85,7 @@ ComboBox {
 
     popup: Popup {
         y: cusComboBox.height
-        width: Math.max(cusComboBox.width, cusComboBox.popupMinWidth)
+        width: cusComboBox.effectivePopupWidth
         implicitHeight: Math.min(contentItem.implicitHeight, defaultHeight)
         height: visible ? implicitHeight : 0
 
@@ -90,6 +93,10 @@ ComboBox {
 
         contentItem: ListView {
             id: list
+            // 部分 Linux/Qt 平台样式不会自动把 ListView 拉伸到 Popup 宽度，
+            // 这里显式绑定，避免只有弹层背景变宽、实际选项区域仍保持原宽度。
+            width: cusComboBox.effectivePopupWidth
+            implicitWidth: cusComboBox.effectivePopupWidth
             clip: true
             implicitHeight: contentHeight
             model: cusComboBox.popup.visible ? cusComboBox.delegateModel : null
@@ -110,7 +117,7 @@ ComboBox {
     }
     property int hoveredIndex: -1
     delegate: ItemDelegate {
-        width: Math.max(cusComboBox.width, cusComboBox.popupMinWidth)
+        width: cusComboBox.effectivePopupWidth
         height: cusComboBox.height
         contentItem: CusLabel {
             leftPadding: cusComboBox.leftPadding
@@ -125,7 +132,7 @@ ComboBox {
         }
         highlighted: cusComboBox.hoveredIndex === index
         background: Item {
-            width: Math.max(cusComboBox.width, cusComboBox.popupMinWidth)
+            width: cusComboBox.effectivePopupWidth
             height: cusComboBox.height
             Rectangle {
                 anchors {

@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QThread>
 #include <QTimer>
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <QTime>
@@ -14,12 +15,12 @@
 #include "../utils/sendlatencyprobe.h"
 
 // 转台物理限位（角度单位：度，速度单位：度/秒，加速度单位：度/秒²）。
-#define TURNTABLE_INNER_MIN_DEG          (-200.5f)
-#define TURNTABLE_INNER_MAX_DEG           200.5f
-#define TURNTABLE_MIDDLE_MIN_DEG          (-10.5f)
+#define TURNTABLE_INNER_MIN_DEG          (-201.0f)
+#define TURNTABLE_INNER_MAX_DEG           201.0f
+#define TURNTABLE_MIDDLE_MIN_DEG          (-11.0f)
 #define TURNTABLE_MIDDLE_MAX_DEG           90.0f
-#define TURNTABLE_OUTER_MIN_DEG          (-100.5f)
-#define TURNTABLE_OUTER_MAX_DEG           100.5f
+#define TURNTABLE_OUTER_MIN_DEG          (-101.0f)
+#define TURNTABLE_OUTER_MAX_DEG           101.0f
 #define TURNTABLE_MAX_SPEED_DEG_PER_SEC    14.0f
 #define TURNTABLE_MAX_ACCEL_DEG_PER_SEC2   10.0f
 
@@ -172,7 +173,7 @@ void SerialPortTurntableHex::buildAndSend(uint8_t axis_cmd, const uint8_t params
     buf[0] = 0x55;
     buf[1] = 0xAA;
     buf[2] = axis_cmd;
-    std::memcpy(buf + 3, params, 14);
+    std::copy_n(params, 14, buf + 3);
 
     // 计算校验和 (bytes 2-16, 共15字节)
     uint16_t sum = calcChecksum(buf + 2, 15);
@@ -1817,7 +1818,7 @@ void SerialPortTurntableHex::sendHandleMode(float axisLeftX, float axisLeftY, fl
 
 void SerialPortTurntableHex::onOpenPort(const QString &name, int baud)
 {
-    if (SerialPort::open(name, baud))
+    if (SerialPort::openSerialDevice(name, baud))
         emit portOpened(true);
     else
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");

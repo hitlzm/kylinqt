@@ -307,7 +307,8 @@ Item{
             Layout.preferredWidth: 105
             Layout.preferredHeight: 35
             model: ["位置模式", "速率模式", "自定义模式"]
-            popupMinWidth: 145
+            // 下拉选项比控件本身宽，避免“自定义模式”等文字被截断。
+            popupMinWidth: 150
             onCurrentIndexChanged: {
                 var isCustom = currentIndex === 2
                 if (!isCustom && root.customModeWasActive)

@@ -59,7 +59,7 @@ void SerialPort::scanPorts()
 
 bool SerialPort::openPort(const QString &portName, int baudRate)
 {
-    return open(portName, static_cast<qint32>(baudRate));
+    return openSerialDevice(portName, static_cast<qint32>(baudRate));
 }
 
 void SerialPort::closePort()
@@ -72,8 +72,15 @@ bool SerialPort::sendData(const QByteArray &data)
     return send(data) > 0;
 }
 
-bool SerialPort::open(const QString &portName, qint32 baudRate)
+bool SerialPort::openSerialDevice(const QString &portName, qint32 baudRate)
 {
+    // dowork() 负责在目标线程中创建 QSerialPort。正常调用顺序下它必然先执行，
+    // 这里保留判空，避免生命周期异常时直接解引用空指针。
+    if (!m_serialPort) {
+        emit errorOccurred("Serial port is not initialized");
+        return false;
+    }
+
     m_serialPort->setPortName(portName);
     m_serialPort->setBaudRate(baudRate);
     m_serialPort->setDataBits(QSerialPort::Data8);

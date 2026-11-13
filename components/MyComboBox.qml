@@ -10,7 +10,8 @@ Item {
     property int titleFontSize: 14
     property alias model: myCombox.model
     property alias mycurrentIndex: myCombox.currentIndex
-    property alias popupMinWidth: myCombox.popupMinWidth
+    // 兼容旧版 CusComboBox：保留本地属性，但不再直接别名到内部属性。
+    property int popupMinWidth: 0
     width:mywidth
     height:myheight
     signal currentIndexChanged(int index)

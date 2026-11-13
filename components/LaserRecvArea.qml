@@ -80,12 +80,15 @@ Rectangle {
 
     function statusValueColor(index) {
         // 探测器状态非正常（丢光/不同步/能量饱和）红色
-        if (index === 3) return (laserData.detectorStatus & 0x03) !== 0 ? "#d93025" : "#1a73e8"
+        if (index === 3) return (laserData.detectorStatus & 0x03) !== 0
+                ? CusConfig.dataValueColorAbnormal : CusConfig.dataValueColor
         // 自检故障红色
-        if (index === 2) return (laserData.detectorStatus & 0x0C) === 0x0C ? "#d93025" : "#1a73e8"
-        if (index === 4) return laserData.faultInfo1 === 1 ? "#1a73e8" : "#d93025"
-        if (index === 5) return "#d93025"
-        return "#1a73e8"
+        if (index === 2) return (laserData.detectorStatus & 0x0C) === 0x0C
+                ? CusConfig.dataValueColorAbnormal : CusConfig.dataValueColor
+        if (index === 4) return laserData.faultInfo1 === 1
+                ? CusConfig.dataValueColor : CusConfig.dataValueColorAbnormal
+        if (index === 5) return CusConfig.dataValueColorAbnormal
+        return CusConfig.dataValueColor
     }
 
     MsgPopup2 {

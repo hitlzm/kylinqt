@@ -52,10 +52,19 @@ static bool writeAll(QFile &file, const QByteArray &data)
     return true;
 }
 
-// 保存帧内返回时间戳的微秒部分，固定保留三位（0~999）。
-static QString receivedMicrosecondsText(int usTime)
+// 有DYT返回时标时使用同步后的返回时间；未同步或返回时标为0时回退到系统时间。
+static QString recordingTimeText(bool hasReturnedTimestamp,
+                                 const QString &returnedTimeText)
 {
-    return QStringLiteral("%1").arg(usTime, 3, 10, QLatin1Char('0'));
+    if (hasReturnedTimestamp && !returnedTimeText.isEmpty())
+        return returnedTimeText;
+    return QDateTime::currentDateTime().toString(
+                QStringLiteral("HH:mm:ss.zzz"));
+}
+
+static QString timeScaleAccuracyText(bool valid, qint64 accuracyUs)
+{
+    return valid ? QString::number(accuracyUs) : QString();
 }
 
 DataRecorder::DataRecorder(QObject *parent)
@@ -400,27 +409,25 @@ void DataRecorder::onImageFrame()
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kImageHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "采样率(Hz),时间,返回时间戳微秒,B帧流水号,当前工作通道,"
+            "时间,采样率(Hz),B帧流水号,当前工作通道,"
             "俯仰视线角速度(°/s),偏航视线角速度(°/s),"
             "光学工作状态,俯仰框架角(°),偏航框架角(°),"
             "方位偏差像素,俯仰偏差像素,"
             "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
-            "红外帧编号,电视帧编号\n");
+            "红外帧编号,电视帧编号,时标精度(us)\n");
     ensureSourceFile(m_image, QStringLiteral("image"), kImageHeader, "图像");
     if (m_image.openFailed)
         return;
 
-    // 时间：由 B 帧“返回时间戳1(毫秒) + 返回时间戳2(微秒)”合并后的北京时间
-    //（与界面显示同源，ImageData 在解析时已按 UTC+8 折算好；未收到时间同步前为空）
-    const QString timeText = (m_imageData->msTime() > 0) ? m_imageData->recvTimeText()
-                                                         : QString();
+    // 时间：优先使用时间同步后 B 帧返回的微秒级北京时间；
+    // 未同步或返回时标为0时使用本机系统时间。
+    const QString timeText = recordingTimeText(
+                m_imageData->msTime() > 0, m_imageData->recvTimeText());
 
     QString line;
     line.reserve(200);
-    line += QString::number(kImageSampleRateHz);
-    line += ',';
     line += timeText;
-    line += ','; line += receivedMicrosecondsText(m_imageData->usTime());
+    line += ','; line += QString::number(kImageSampleRateHz);
     line += ','; line += QString::number(m_imageData->bFrameSequence());
     line += ','; line += imageWorkChannelText(m_imageData->currentWorkChannel());
     line += ','; line += QString::number(m_imageData->pitchLosAngVel(), 'f', 4);
@@ -436,6 +443,9 @@ void DataRecorder::onImageFrame()
     line += ','; line += imageTrackerStateText(m_imageData->trackerState());
     line += ','; line += QString::number(m_imageData->infraredFrameNum());
     line += ','; line += QString::number(m_imageData->cbhTv4405());
+    line += ','; line += timeScaleAccuracyText(
+                m_imageData->timeScaleAccuracyValid(),
+                m_imageData->timeScaleAccuracyUs());
     line += '\n';
 
     m_image.buffer.append(line.toUtf8());
@@ -462,26 +472,25 @@ void DataRecorder::onLaserFrame()
     // 懒创建：该路第一帧到达时才建文件并写表头（列序必须与下面写行严格一致）
     static const QByteArray kLaserHeader = QByteArrayLiteral(
             "\xEF\xBB\xBF"
-            "采样率(Hz),时间,返回时间戳微秒,光轴方位角(°),光轴俯仰角(°),"
+            "时间,采样率(Hz),光轴方位角(°),光轴俯仰角(°),"
             "方位陀螺输出角速度(°/s),俯仰陀螺输出角速度(°/s),"
             "方位视线角速度(°/s),俯仰视线角速度(°/s),"
             "方位偏差角(°),俯仰偏差角(°),激光周期(ms),增益状态,"
-            "第一象限能量强度,第二象限能量强度,第三象限能量强度,第四象限能量强度\n");
+            "第一象限能量强度,第二象限能量强度,第三象限能量强度,第四象限能量强度,"
+            "时标精度(us)\n");
     ensureSourceFile(m_laser, QStringLiteral("laser"), kLaserHeader, "激光");
     if (m_laser.openFailed)
         return;
 
-    // 时间：由接收帧“返回时间戳1(毫秒) + 返回时间戳2(微秒)”合并后的北京时间
-    //（解析时已按 UTC+8 折算好；未收到时间同步前为空）
-    const QString timeText = (m_laserData->msTime() > 0) ? m_laserData->recvTimeText()
-                                                         : QString();
+    // 时间：优先使用时间同步后 DYT 返回的微秒级北京时间；
+    // 未同步或返回时标为0时使用本机系统时间。
+    const QString timeText = recordingTimeText(
+                m_laserData->msTime() > 0, m_laserData->recvTimeText());
 
     QString line;
     line.reserve(220);
-    line += QString::number(kLaserSampleRateHz);
-    line += ',';
     line += timeText;
-    line += ','; line += receivedMicrosecondsText(m_laserData->usTime());
+    line += ','; line += QString::number(kLaserSampleRateHz);
     line += ','; line += QString::number(m_laserData->opticalAzimuth(), 'f', 4);
     line += ','; line += QString::number(m_laserData->opticalPitch(), 'f', 4);
     line += ','; line += QString::number(m_laserData->gyroAzimuthRate(), 'f', 4);
@@ -496,6 +505,9 @@ void DataRecorder::onLaserFrame()
     line += ','; line += QString::number(m_laserData->quadrant2Energy(), 'f', 4);
     line += ','; line += QString::number(m_laserData->quadrant3Energy(), 'f', 4);
     line += ','; line += QString::number(m_laserData->quadrant4Energy(), 'f', 4);
+    line += ','; line += timeScaleAccuracyText(
+                m_laserData->timeScaleAccuracyValid(),
+                m_laserData->timeScaleAccuracyUs());
     line += '\n';
 
     m_laser.buffer.append(line.toUtf8());

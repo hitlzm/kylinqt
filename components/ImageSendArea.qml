@@ -63,19 +63,19 @@ Rectangle {
     ]
     readonly property bool gimbalLimitEnabled: seekerDeviceIndex !== 3
     readonly property real pitchLimitMin:
-        seekerDeviceIndex === 0 ? -30
+        seekerDeviceIndex === 0 ? -40
         : seekerDeviceIndex === 1 ? -18
-        : seekerDeviceIndex === 2 ? -20 : 0
+        : seekerDeviceIndex === 2 ? -23 : 0
     readonly property real pitchLimitMax:
         seekerDeviceIndex === 0 ? 10
         : seekerDeviceIndex === 1 ? 18
-        : seekerDeviceIndex === 2 ? 20 : 0
+        : seekerDeviceIndex === 2 ? 23 : 0
     readonly property real yawLimitMin:
-        seekerDeviceIndex === 0 ? -20
+        seekerDeviceIndex === 0 ? -32
         : seekerDeviceIndex === 1 ? -18
         : seekerDeviceIndex === 2 ? -20 : 0
     readonly property real yawLimitMax:
-        seekerDeviceIndex === 0 ? 20
+        seekerDeviceIndex === 0 ? 32
         : seekerDeviceIndex === 1 ? 18
         : seekerDeviceIndex === 2 ? 20 : 0
 
@@ -193,7 +193,6 @@ Rectangle {
                 title: "当前使用设备"
                 titleFontSize: 16
                 model: root.seekerDeviceList
-                popupMinWidth: 200
                 onCurrentIndexChanged: {
                     if (mycurrentIndex !== -1)
                         root.seekerDeviceIndex = mycurrentIndex
@@ -1110,17 +1109,20 @@ Rectangle {
                         if (index === 0) return "接收帧流水号:"
                         if (index === 1) return "发送帧流水号:"
                         if (index === 2) return "发送帧有效标志:"
-                        return "返回时间戳微秒:"
+                        return "时标精度:"
                     }
                     value: {
                         if (index === 0) return imageData.bFrameSequence
                         if (index === 1) return imageData.aFrameSequenceReply
                         if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "有效" : "无效"
-                        return ("00" + imageData.usTime).slice(-3) + " us"
+                        return imageData.timeScaleAccuracyValid
+                                ? imageData.timeScaleAccuracyUs + " us"
+                                : "--"
                     }
                     valueColor: {
-                        if (index === 2) return imageData.aFrameValidFlag === 0xAA ? "#1a73e8" : "#d93025"
-                        return "#1a73e8"
+                        if (index === 2) return imageData.aFrameValidFlag === 0xAA
+                                ? CusConfig.dataValueColor : CusConfig.dataValueColorAbnormal
+                        return CusConfig.dataValueColor
                     }
                 }
             }
@@ -1362,18 +1364,18 @@ Rectangle {
                             if (v === 0x44 || v === 0xE1 || v === 0xE2)
                                 return "#e68a00"
                             if (v >= 0xF0 || v === 0x43)
-                                return "#d93025"
-                            return "#1a73e8"
+                                return CusConfig.dataValueColorAbnormal
+                            return CusConfig.dataValueColor
                         }
                         if (index === 1) {
                             var v = imageData.opticalParamReply
                             if (v === 0xE3 || v === 0xE5)
                                 return "#e68a00"
                             if (v === 0xE7 || v === 0xE8)
-                                return "#d93025"
-                            return "#1a73e8"
+                                return CusConfig.dataValueColorAbnormal
+                            return CusConfig.dataValueColor
                         }
-                        return "#1a73e8"
+                        return CusConfig.dataValueColor
                     }
                 }
             }
@@ -1534,8 +1536,9 @@ Rectangle {
                     }
                     valueColor: {
                         if (index === 0)
-                            return imageData.trackingState === 0x22 ? "#d93025" : "#1a73e8"
-                        return "#1a73e8"
+                            return imageData.trackingState === 0x22
+                                    ? CusConfig.dataValueColorAbnormal : CusConfig.dataValueColor
+                        return CusConfig.dataValueColor
                     }
                 }
             }

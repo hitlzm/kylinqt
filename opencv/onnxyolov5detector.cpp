@@ -251,7 +251,7 @@ void OnnxYoloV5Detector::setClassNames(const std::vector<std::string> &names) {
 static cv::Mat preprocessV5(const cv::Mat &frame, int w, int h,
                              float &outScale, int &outPadX, int &outPadY) {
     if (frame.empty() || frame.cols <= 0 || frame.rows <= 0 || w <= 0 || h <= 0)
-        return {};
+        return cv::Mat();
 
     const float scale = std::min(static_cast<float>(w) / frame.cols,
                                  static_cast<float>(h) / frame.rows);
@@ -259,7 +259,7 @@ static cv::Mat preprocessV5(const cv::Mat &frame, int w, int h,
     const int newH = static_cast<int>(std::round(frame.rows * scale));
     if (!std::isfinite(scale) || scale <= 0.0f || newW <= 0 || newH <= 0
             || newW > w || newH > h) {
-        return {};
+        return cv::Mat();
     }
 
     outScale = scale;

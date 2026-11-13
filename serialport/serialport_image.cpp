@@ -71,6 +71,11 @@ void ImageData::setPortOpen(bool open)
     if (!open) {
         m_ackCheckActive = false;
         m_ackCheckFramesRemaining = 0;
+        m_previousValidTimeStampUs = 0;
+        if (m_timeScaleAccuracyValid) {
+            m_timeScaleAccuracyValid = false;
+            emit timeScaleAccuracyValidChanged();
+        }
         if (m_aFrameValidFlag != 0) {
             m_aFrameValidFlag = 0;
             emit aFrameValidFlagChanged();
@@ -143,6 +148,8 @@ int ImageData::softwareVersion3() const { return m_softwareVersion3; }
 qint64 ImageData::msTime() const { return m_msTime; }
 int ImageData::usTime() const { return m_usTime; }
 qint64 ImageData::timeStampUs() const { return m_timeStampUs; }
+qint64 ImageData::timeScaleAccuracyUs() const { return m_timeScaleAccuracyUs; }
+bool ImageData::timeScaleAccuracyValid() const { return m_timeScaleAccuracyValid; }
 QDateTime ImageData::recvDateTime() const { return m_recvDateTime; }
 QString ImageData::recvTimeText() const { return m_recvTimeText; }
 
@@ -297,8 +304,31 @@ void ImageData::updateFromFrame(const QByteArray &frame)
         emit timeStampUsChanged();
     }
 
-    // 把返回时间戳换算成年月日时分秒保存：
-    // 时间戳按 UTC 毫秒解释(与发送侧同一基准)，再折算成北京时间(UTC+8)的“年月日时分秒.毫秒微秒”
+    // 仅在连续两组非零返回时标之间计算时标精度。
+    // 协议标称帧周期为20000us，因此精度 = 相邻时标差(us) - 20000us。
+    bool accuracyValid = false;
+    qint64 accuracyUs = 0;
+    if (msTime > 0) {
+        if (m_previousValidTimeStampUs > 0) {
+            accuracyUs = timeStampUs - m_previousValidTimeStampUs - 20000;
+            accuracyValid = true;
+        }
+        m_previousValidTimeStampUs = timeStampUs;
+    } else {
+        // 未时间同步或返回时标为0时，不能跨过该帧继续计算。
+        m_previousValidTimeStampUs = 0;
+    }
+    if (m_timeScaleAccuracyUs != accuracyUs) {
+        m_timeScaleAccuracyUs = accuracyUs;
+        emit timeScaleAccuracyUsChanged();
+    }
+    if (m_timeScaleAccuracyValid != accuracyValid) {
+        m_timeScaleAccuracyValid = accuracyValid;
+        emit timeScaleAccuracyValidChanged();
+    }
+
+    // 把返回时间戳换算成时分秒保存：
+    // 时间戳按 UTC 毫秒解释(与发送侧同一基准)，再折算成北京时间(UTC+8)的“时:分:秒.毫秒微秒”
     if (msTime > 0) {
         const QDateTime recvUtc = QDateTime::fromMSecsSinceEpoch(msTime, Qt::UTC);
         // 用固定偏移时区做UTC→北京时间换算，避免Qt5.12在Windows上访问时区库出问题
@@ -308,7 +338,7 @@ void ImageData::updateFromFrame(const QByteArray &frame)
             emit recvDateTimeChanged();
         }
         //秒的小数部分：毫秒(3位) + 微秒(3位)，合计微秒精度，例如 2026-09-24 11:01:57.054321
-        const QString recvText = recvBj.toString("yyyy-MM-dd HH:mm:ss.zzz")
+        const QString recvText = recvBj.toString("HH:mm:ss.zzz")
                                + QString("%1").arg(usTime, 3, 10, QLatin1Char('0'));
         if (m_recvTimeText != recvText) {
             m_recvTimeText = recvText;
@@ -645,7 +675,7 @@ SerialPortImage::~SerialPortImage() {
 
 // ── Worker slots ──
 void SerialPortImage::onOpenPort(const QString &name, int baud) {
-    if (SerialPort::open(name, baud)) {
+    if (SerialPort::openSerialDevice(name, baud)) {
         startFrameWatch();
         emit portOpened(true);
     } else {

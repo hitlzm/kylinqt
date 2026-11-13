@@ -12,12 +12,12 @@ namespace {
 
 constexpr qint64 kMaxTrackingFileBytes = 16 * 1024 * 1024;
 
-constexpr double kInnerMinDeg = -200.5;
-constexpr double kInnerMaxDeg = 200.5;
-constexpr double kMiddleMinDeg = -10.5;
+constexpr double kInnerMinDeg = -201;
+constexpr double kInnerMaxDeg = 201;
+constexpr double kMiddleMinDeg = -11;
 constexpr double kMiddleMaxDeg = 90.0;
-constexpr double kOuterMinDeg = -100.5;
-constexpr double kOuterMaxDeg = 100.5;
+constexpr double kOuterMinDeg = -101;
+constexpr double kOuterMaxDeg = 101;
 
 QString decodeText(const QByteArray &raw)
 {

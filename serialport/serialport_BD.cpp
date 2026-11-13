@@ -151,7 +151,7 @@ double SerialPortBD::nmeaToDecimal(const QString& coord, const QString& dir)
 
 //串口操作槽函数
 void SerialPortBD::onOpenPort(const QString &name, int baud) {
-    if (SerialPort::open(name, baud))
+    if (SerialPort::openSerialDevice(name, baud))
         emit portOpened(true);
     else
         emit portError(m_serialPort ? m_serialPort->errorString() : "QSerialPort not created");

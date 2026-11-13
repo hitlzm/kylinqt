@@ -487,7 +487,7 @@ void SerialPortCCD::parseData(const QByteArray &rawData)
 
 // 串口操作槽函数
 void SerialPortCCD::onOpenPort(const QString &name, int baud) {
-    if (SerialPort::open(name, baud)) {
+    if (SerialPort::openSerialDevice(name, baud)) {
         emit portOpened(true);
         requestZoomRatio();
     } else {

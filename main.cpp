@@ -645,7 +645,7 @@ int main(int argc, char *argv[])
 
     // 1) Video processing thread: ask StreamProcessor to stop inside its own
     //    thread (BlockingQueuedConnection), then quit and wait.
-    if (streamThread && streamThread->isRunning()) {
+    if (streamProc && streamThread && streamThread->isRunning()) {
         QMetaObject::invokeMethod(streamProc, "stop", Qt::BlockingQueuedConnection);
         streamThread->quit();
         streamThread->wait();

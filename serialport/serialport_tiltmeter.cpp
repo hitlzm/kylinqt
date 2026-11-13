@@ -423,7 +423,7 @@ qint16 SerialPortTiltmeter::readInt16BE(const QByteArray &frame, int pos)
 // ── 串口操作槽函数 ──
 void SerialPortTiltmeter::onOpenPort(const QString &name, int baud)
 {
-    if (!SerialPort::open(name, baud)) {
+    if (!SerialPort::openSerialDevice(name, baud)) {
         emit portError(m_serialPort ? m_serialPort->errorString() : QStringLiteral("QSerialPort not created"));
         return;
     }

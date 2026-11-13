@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 import taoQuick 1.0
 import "./"
 
@@ -176,6 +177,10 @@ Rectangle {
         }
     }
 
+    function axisValueColor(alarm) {
+        return Number(alarm) === 0 ? CusConfig.dataValueColor : CusConfig.dataValueColorAbnormal
+    }
+
     function showNextAxisAlarm() {
         if (axisAlarmShowing || axisAlarmQueue.length === 0)
             return
@@ -243,7 +248,6 @@ Rectangle {
                     height: 28
                     model: imageData.availablePorts
                     font.pixelSize: 14
-                    popupMinWidth: 200
                 }
                 Text {
                     text: "波特率:"
@@ -257,7 +261,6 @@ Rectangle {
                     height: 28
                     model: ["9600"]
                     font.pixelSize: 14
-                    popupMinWidth: 200
                 }
                 CusButton_Blue {
                     id: scanButton
@@ -352,6 +355,11 @@ Rectangle {
         width: root.leftPanelWidth
         topPadding: 25
 
+        // 顶部信息行与三轴状态列共用同一套列宽和间距，保证左侧边界一致。
+        readonly property int axisColumnWidth: 215
+        readonly property int axisColumnSpacing: 14
+        readonly property int valueFontSize: 18
+
         title: "转台状态显示"
         font.pixelSize: 18
         label: Label {
@@ -374,21 +382,47 @@ Rectangle {
             spacing: 10
 
             Row {
-                spacing: 20
+                spacing: statusBox.axisColumnSpacing
 
-                DataLabel { fontSize: 18; labelWidth: 55; valueWidth: 100; labelBold: true
-                    label: "时间:"; value: formatTurntableTime(turntableData.time) }
-                DataLabel { fontSize: 18; labelWidth: 100; valueWidth: 100; labelBold: true
-                    label: "运行指令:"; value: runCommandText }
                 Item {
-                    width: 180
-                    height: 20
+                    width: statusBox.axisColumnWidth
+                    height: savebtn.height
+                    DataLabel {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        fontSize: statusBox.valueFontSize
+                        labelWidth: 55
+                        valueWidth: 100
+                        labelBold: true
+                        labelHorizontalAlignment: Text.AlignLeft
+                        label: "时间:"
+                        value: formatTurntableTime(turntableData.time)
+                    }
+                }
+                Item {
+                    width: statusBox.axisColumnWidth
+                    height: savebtn.height
+                    DataLabel {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        fontSize: statusBox.valueFontSize
+                        labelWidth: 100
+                        valueWidth: 100
+                        labelBold: true
+                        labelHorizontalAlignment: Text.AlignLeft
+                        label: "运行指令:"
+                        value: runCommandText
+                    }
+                }
+                Item {
+                    width: statusBox.axisColumnWidth
+                    height: savebtn.height
                     CusButton_Blue {
                         id: savebtn
-                        width: 80
-                        height: 20
+                        width: 90
+                        height: 30
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.left: parent.left
                         text: dataRecorder.savingTurntable ? "停止保存" : "保存数据"
                         onClicked: {
                             if (dataRecorder.savingTurntable) {
@@ -403,33 +437,34 @@ Rectangle {
 
             Row {
                 id: axisStatusRow
-                spacing: 14
+                spacing: statusBox.axisColumnSpacing
 
                 // 内框（滚转轴）
                 Column {
                     spacing: 3
                     Text {
-                        width: 215
+                        width: statusBox.axisColumnWidth
                         text: "内框（滚转轴）"
-                        font.pixelSize: 18
+                        font.pixelSize: statusBox.valueFontSize
                         font.bold: true
                         horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 16; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int innerstatus: turntableData.inner_status
                         property int inneralarm: turntableData.inner_alarm
                         onInneralarmChanged: handleAxisAlarm("内框", inneralarm)
                         value: axisDisplayText(innerstatus, inneralarm)
+                        valueColor: root.axisValueColor(inneralarm)
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: formatAngle(turntableData.inner_angle) + "°"
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: formatAngle(turntableData.inner_ctlDeviation) + "°"
                     }
@@ -439,27 +474,28 @@ Rectangle {
                 Column {
                     spacing: 3
                     Text {
-                        width: 215
+                        width: statusBox.axisColumnWidth
                         text: "中框（俯仰轴）"
-                        font.pixelSize: 18
+                        font.pixelSize: statusBox.valueFontSize
                         font.bold: true
                         horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 16; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int middlestatus: turntableData.middle_status
                         property int middlealarm: turntableData.middle_alarm
                         onMiddlealarmChanged: handleAxisAlarm("中框", middlealarm)
                         value: axisDisplayText(middlestatus, middlealarm)
+                        valueColor: root.axisValueColor(middlealarm)
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: formatAngle(turntableData.middle_angle) + "°"
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: formatAngle(turntableData.middle_ctlDeviation) + "°"
                     }
@@ -469,27 +505,28 @@ Rectangle {
                 Column {
                     spacing: 3
                     Text {
-                        width: 215
+                        width: statusBox.axisColumnWidth
                         text: "外框（方位轴）"
-                        font.pixelSize: 18
+                        font.pixelSize: statusBox.valueFontSize
                         font.bold: true
                         horizontalAlignment: Text.AlignLeft
                     }
                     DataLabel {
-                        fontSize: 16; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 56; valueWidth: 154; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "状态："
                         property int outterstatus: turntableData.outter_status
                         property int outteralarm: turntableData.outter_alarm
                         onOutteralarmChanged: handleAxisAlarm("外框", outteralarm)
                         value: axisDisplayText(outterstatus, outteralarm)
+                        valueColor: root.axisValueColor(outteralarm)
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "角度值："
                         value: formatAngle(turntableData.outter_angle) + "°"
                     }
                     DataLabel {
-                        fontSize: 18; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
+                        fontSize: statusBox.valueFontSize; labelWidth: 80; valueWidth: 130; labelBold: true; labelHorizontalAlignment: Text.AlignLeft
                         label: "偏差："
                         value: formatAngle(turntableData.outter_ctlDeviation) + "°"
                     }
@@ -512,6 +549,9 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: root.pageMargin
         topPadding: 22
+
+        readonly property int ccdLabelWidth: 84
+        readonly property int ccdRowSpacing: 6
 
         title: "CCD配置"
         font.pixelSize: 17
@@ -551,7 +591,8 @@ Rectangle {
                     height: 26
                     model: ccdData.availablePorts
                     font.pixelSize: 12
-                    popupMinWidth: 150
+                    // 串口名称较长时，下拉显示区至少保持该宽度。
+                    popupMinWidth: 160
                 }
                 Text {
                     text: "波特率:"
@@ -566,7 +607,6 @@ Rectangle {
                     model: ["9600"]
                     font.pixelSize: 12
                     currentIndex: 0
-                    popupMinWidth: 100
                 }
                 CusButton_Blue {
                     text: "扫描串口"
@@ -605,23 +645,41 @@ Rectangle {
             }
 
             // 变焦与聚焦。按下立即运动，长按持续运动，松开停止。
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 7
+            Item {
+                width: parent.width
+                height: 31
+
+                Row {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 6
 
                 Text {
                     text: "变焦:"
                     font.pixelSize: 14
                     font.bold: true
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
                     anchors.verticalCenter: parent.verticalCenter
+                }
+                Item {
+                    width: 14
+                    height: 1
                 }
                 CusButton_White {
                     id: zoomInButton
                     width: 31
                     height: 31
+                    Layout.minimumWidth: 31
+                    Layout.preferredWidth: 31
+                    Layout.maximumWidth: 31
+                    Layout.minimumHeight: 31
+                    Layout.preferredHeight: 31
+                    Layout.maximumHeight: 31
                     contentItem: Image {
                         source: "qrc:/components/plus.png"
                         width: 24; height: 24
+                        sourceSize.width: 24; sourceSize.height: 24
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                         opacity: parent.pressed ? 0.65 : 1.0
@@ -642,9 +700,16 @@ Rectangle {
                     id: zoomOutButton
                     width: 31
                     height: 31
+                    Layout.minimumWidth: 31
+                    Layout.preferredWidth: 31
+                    Layout.maximumWidth: 31
+                    Layout.minimumHeight: 31
+                    Layout.preferredHeight: 31
+                    Layout.maximumHeight: 31
                     contentItem: Image {
                         source: "qrc:/components/minus.png"
                         width: 24; height: 24
+                        sourceSize.width: 24; sourceSize.height: 24
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                         opacity: parent.pressed ? 0.65 : 1.0
@@ -662,28 +727,51 @@ Rectangle {
                     }
                 }
 
+                }
+
+                Row {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 6
+
                 Text {
                     text: "自动聚焦:"
                     font.pixelSize: 14
                     font.bold: true
+                    verticalAlignment: Text.AlignVCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 CusSwitch {
                     width: 38
                     height: 26
+                    Layout.minimumWidth: 38
+                    Layout.preferredWidth: 38
+                    Layout.maximumWidth: 38
+                    anchors.verticalCenter: parent.verticalCenter
                     checked: ccdData.focusMode === 0
                     onCheckedChanged: {
                         ccdData.setFocusMode(checked ? 0 : 1)
                     }
                 }
+                Item {
+                    width: 10
+                    height: 1
+                }
                 CusButton_White {
                     id: focusPlusButton
                     width: 31
                     height: 31
+                    Layout.minimumWidth: 31
+                    Layout.preferredWidth: 31
+                    Layout.maximumWidth: 31
+                    Layout.minimumHeight: 31
+                    Layout.preferredHeight: 31
+                    Layout.maximumHeight: 31
                     enabled: ccdData.focusMode === 1
                     contentItem: Image {
                         source: "qrc:/components/plus.png"
                         width: 24; height: 24
+                        sourceSize.width: 24; sourceSize.height: 24
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                         opacity: parent.pressed ? 0.65 : 1.0
@@ -704,10 +792,17 @@ Rectangle {
                     id: focusMinusButton
                     width: 31
                     height: 31
+                    Layout.minimumWidth: 31
+                    Layout.preferredWidth: 31
+                    Layout.maximumWidth: 31
+                    Layout.minimumHeight: 31
+                    Layout.preferredHeight: 31
+                    Layout.maximumHeight: 31
                     enabled: ccdData.focusMode === 1
                     contentItem: Image {
                         source: "qrc:/components/minus.png"
                         width: 24; height: 24
+                        sourceSize.width: 24; sourceSize.height: 24
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                         opacity: parent.pressed ? 0.65 : 1.0
@@ -724,63 +819,79 @@ Rectangle {
                         }
                     }
                 }
+
+                }
             }
 
             // 分辨率与热浪去除
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 7
+            RowLayout {
+                width: parent.width
+                height: 28
+                spacing: ccdBox.ccdRowSpacing
 
                 Text {
                     text: "分辨率:"
                     font.pixelSize: 14
                     font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
                 }
-                CusComboBox {
-                    width: 100
+                Item {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 86
+                    Layout.preferredWidth: 110
                     height: 27
-                    font.pixelSize: 12
-                    popupMinWidth: 155
-                    model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
-                    currentIndex: root.resolutionUiIndex(ccdData.resolutionIndex)
-                    onCurrentIndexChanged: {
-                        if (enabled && currentIndex >= 0)
-                            ccdData.setResolution(root.resolutionCommandIndex(currentIndex))
+
+                    CusComboBox {
+                        anchors.fill: parent
+                        font.pixelSize: 12
+                        model: ["1080p/30", "1080p/25", "720p/30", "720p/25"]
+                        currentIndex: root.resolutionUiIndex(ccdData.resolutionIndex)
+                        onCurrentIndexChanged: {
+                            if (enabled && currentIndex >= 0)
+                                ccdData.setResolution(root.resolutionCommandIndex(currentIndex))
+                        }
                     }
                 }
 
                 Text {
                     text: "热浪去除等级:"
-                    font.pixelSize: 13
+                    font.pixelSize: 14
                     font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
-                CusComboBox {
-                    width: 64
+                Item {
+                    Layout.minimumWidth: 64
+                    Layout.preferredWidth: 64
+                    Layout.maximumWidth: 64
                     height: 26
-                    model: ["0", "1", "2", "3", "4", "5",
-                            "6", "7", "8", "9", "10"]
-                    font.pixelSize: 12
-                    popupMinWidth: 60
-                    currentIndex: ccdData.heatHazeLevel
-                    onCurrentIndexChanged: {
-                        if (enabled && currentIndex >= 0)
-                            ccdData.setHeatHazeLevel(currentIndex)
+
+                    CusComboBox {
+                        anchors.fill: parent
+                        model: ["0", "1", "2", "3", "4", "5",
+                                "6", "7", "8", "9", "10"]
+                        font.pixelSize: 12
+                        currentIndex: ccdData.heatHazeLevel
+                        onCurrentIndexChanged: {
+                            if (enabled && currentIndex >= 0)
+                                ccdData.setHeatHazeLevel(currentIndex)
+                        }
                     }
                 }
             }
 
             // 降噪开关与强度
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 7
+            RowLayout {
+                width: parent.width
+                height: 28
+                spacing: ccdBox.ccdRowSpacing
 
                 Text {
                     text: "降噪:"
-                    font.pixelSize: 13
+                    font.pixelSize: 14
                     font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
+                    horizontalAlignment: Text.AlignLeft
+                    verticalAlignment: Text.AlignVCenter
                 }
                 CusSwitch {
                     width: 38
@@ -790,7 +901,9 @@ Rectangle {
                 }
                 CusSlider {
                     id: noiseSlider
-                    width: 235
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 160
+                    Layout.preferredWidth: 235
                     height: 26
                     showNumber: false
                     from: 0
@@ -802,155 +915,200 @@ Rectangle {
                 }
                 Text {
                     text: Math.round(noiseSlider.value)
-                    font.pixelSize: 12
+                    font.pixelSize: 14
                     font.bold: true
                     color: "#1a73e8"
                     width: 24
                     horizontalAlignment: Text.AlignRight
-                    anchors.verticalCenter: parent.verticalCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
 
-            // 防抖与透雾
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 8
+            // 防抖
+            Item {
+                width: parent.width
+                height: 28
 
-                Text {
-                    text: "防抖:"
-                    font.pixelSize: 14
-                    font.bold: true
+                Row {
+                    anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                }
-                CusSwitch {
-                    width: 38
-                    height: 26
-                    checked: ccdData.stabilizationEnabled
-                    onCheckedChanged: ccdData.setStabilization(checked)
-                }
-                Text {
-                    text: "强度:"
-                    font.pixelSize: 13
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                CusComboBox {
-                    width: 62
-                    height: 27
-                    model: ["低", "中", "高"]
-                    font.pixelSize: 12
-                    popupMinWidth: 80
-                    currentIndex: ccdData.stabilizationLevel - 1
-                    enabled: ccdData.stabilizationEnabled
-                    onCurrentIndexChanged: {
-                        if (enabled && currentIndex >= 0)
-                            ccdData.setStabilizationLevel(currentIndex + 1)
-                    }
-                }
-
-                Text {
-                    text: "透雾:"
-                    font.pixelSize: 13
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                CusSwitch {
-                    width: 38
-                    height: 26
-                    checked: ccdData.defogEnabled
-                    onCheckedChanged: ccdData.setDefog(checked)
-                }
-                Text {
-                    text: "强度："
-                    font.pixelSize: 13
-                    font.bold: true
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-                CusComboBox {
-                    width: 58
-                    height: 26
-                    model: ["低", "中", "高"]
-                    font.pixelSize: 12
-                    popupMinWidth: 80
-                    currentIndex: ccdData.defogLevel - 1
-                    enabled: ccdData.defogEnabled
-                    onCurrentIndexChanged: {
-                        if (enabled && currentIndex >= 0)
-                            ccdData.setDefogLevel(currentIndex + 1)
-                    }
-                }
-            }
-
-            // 左侧两行显示自动白平衡，右侧两行分别调节 R/B 增益
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 14
-
-                Column {
-                    width: 90
-                    spacing: 4
-                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 2
 
                     Text {
-                        text: "自动白平衡:"
+                        text: "防抖:"
+                        width: 42
                         font.pixelSize: 14
                         font.bold: true
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        anchors.verticalCenter: parent.verticalCenter
                     }
                     CusSwitch {
-                        width: 38
+                        width: 36
+                        height: 24
+                        leftPadding: 0
+                        rightPadding: 0
+                        clip: true
+                        anchors.verticalCenter: parent.verticalCenter
+                        checked: ccdData.stabilizationEnabled
+                        onCheckedChanged: ccdData.setStabilization(checked)
+                    }
+                    Text {
+                        text: "防抖强度:"
+                        width: 70
+                        font.pixelSize: 14
+                        font.bold: true
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    CusComboBox {
+                        width: 46
                         height: 26
-                        checked: ccdData.whiteBalanceMode === 0
-                        onCheckedChanged: {
-                            ccdData.setWhiteBalanceMode(checked ? 0 : 1)
+                        leftPadding: 2
+                        rightPadding: 0
+                        spacing: 0
+                        anchors.verticalCenter: parent.verticalCenter
+                        model: ["低", "中", "高"]
+                        font.pixelSize: 12
+                        currentIndex: ccdData.stabilizationLevel - 1
+                        enabled: ccdData.stabilizationEnabled
+                        onCurrentIndexChanged: {
+                            if (enabled && currentIndex >= 0)
+                                ccdData.setStabilizationLevel(currentIndex + 1)
                         }
                     }
                 }
 
-                Column {
-                    spacing: 4
+                Row {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 2
 
-                    Row {
-                        spacing: 7
-                        Text {
-                            width: 48
-                            text: "R增益:"
-                            font.pixelSize: 13
-                            font.bold: true
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        CusSlider {
-                            id: redGainSlider
-                            width: 255
-                            height: 28
-                            from: 0
-                            to: 255
-                            stepSize: 1
-                            value: ccdData.redGain
-                            enabled: ccdData.whiteBalanceMode === 1
-                            onMoved: ccdData.setRedGain(Math.round(value))
+                    Text {
+                        text: "透雾:"
+                        width: 42
+                        font.pixelSize: 14
+                        font.bold: true
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    CusSwitch {
+                        width: 36
+                        height: 24
+                        leftPadding: 0
+                        rightPadding: 0
+                        clip: true
+                        anchors.verticalCenter: parent.verticalCenter
+                        checked: ccdData.defogEnabled
+                        onCheckedChanged: ccdData.setDefog(checked)
+                    }
+                    Text {
+                        text: "透雾强度:"
+                        width: 70
+                        font.pixelSize: 14
+                        font.bold: true
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    CusComboBox {
+                        width: 46
+                        height: 26
+                        leftPadding: 2
+                        rightPadding: 0
+                        spacing: 0
+                        anchors.verticalCenter: parent.verticalCenter
+                        model: ["低", "中", "高"]
+                        font.pixelSize: 12
+                        currentIndex: ccdData.defogLevel - 1
+                        enabled: ccdData.defogEnabled
+                        onCurrentIndexChanged: {
+                            if (enabled && currentIndex >= 0)
+                                ccdData.setDefogLevel(currentIndex + 1)
                         }
                     }
+                }
+            }
 
-                    Row {
-                        spacing: 7
-                        Text {
-                            width: 48
-                            text: "B增益:"
-                            font.pixelSize: 13
-                            font.bold: true
+            // 自动白平衡、开关分别与 R/B 增益放在同一行
+            Column {
+                width: parent.width
+                height: 60
+                spacing: 4
+
+                RowLayout {
+                    width: parent.width
+                    height: 28
+                    spacing: 7
+                    Text {
+                        text: "自动白平衡:"
+                        Layout.preferredWidth: 84
+                        font.pixelSize: 14
+                        font.bold: true
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    Text {
+                        Layout.preferredWidth: 52
+                        text: "R增益:"
+                        font.pixelSize: 14
+                        font.bold: true
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    CusSlider {
+                        id: redGainSlider
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 210
+                        Layout.preferredWidth: 255
+                        height: 28
+                        from: 0
+                        to: 255
+                        stepSize: 1
+                        value: ccdData.redGain
+                        enabled: ccdData.whiteBalanceMode === 1
+                        onMoved: ccdData.setRedGain(Math.round(value))
+                    }
+                }
+
+                RowLayout {
+                    width: parent.width
+                    height: 28
+                    spacing: 7
+                    Item {
+                        Layout.preferredWidth: 84
+                        Layout.fillHeight: true
+                        CusSwitch {
+                            width: 38
+                            height: 26
+                            anchors.left: parent.left
                             anchors.verticalCenter: parent.verticalCenter
+                            checked: ccdData.whiteBalanceMode === 0
+                            onCheckedChanged: {
+                                ccdData.setWhiteBalanceMode(checked ? 0 : 1)
+                            }
                         }
-                        CusSlider {
-                            id: blueGainSlider
-                            width: 255
-                            height: 28
-                            from: 0
-                            to: 255
-                            stepSize: 1
-                            value: ccdData.blueGain
-                            enabled: ccdData.whiteBalanceMode === 1
-                            onMoved: ccdData.setBlueGain(Math.round(value))
-                        }
+                    }
+                    Text {
+                        Layout.preferredWidth: 52
+                        text: "B增益:"
+                        font.pixelSize: 14
+                        font.bold: true
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                    CusSlider {
+                        id: blueGainSlider
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 210
+                        Layout.preferredWidth: 255
+                        height: 28
+                        from: 0
+                        to: 255
+                        stepSize: 1
+                        value: ccdData.blueGain
+                        enabled: ccdData.whiteBalanceMode === 1
+                        onMoved: ccdData.setBlueGain(Math.round(value))
                     }
                 }
             }

@@ -39,6 +39,12 @@ QtObject {
     property color backgroundColor
     property color textColor
 
+    // 接收数据显示颜色：正常值为黑色，异常值保持红色。
+    // 切换回蓝色正常值时，只需将 dataValueUseBlueColor 改为 true。
+    property bool dataValueUseBlueColor: false
+    property color dataValueColor: dataValueUseBlueColor ? "#1a73e8" : "#000000"
+    property color dataValueColorAbnormal: "#d93025"
+
     Behavior on themeColor {
         ColorAnimation {
             duration: 400

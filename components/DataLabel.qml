@@ -1,12 +1,14 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import taoQuick 1.0
 Row {
     spacing: 5
     clip: true
     property string label: ""
     property string value: ""
-    property color valueColor: "#1a73e8"
+    property color valueColor: CusConfig.dataValueColor
+    // 原蓝色默认值：property color valueColor: "#1a73e8"
     property int fontSize: 18
     property int labelWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度
     property int valueWidth: 0   // 0 = 自适应宽度，>0 = 固定宽度

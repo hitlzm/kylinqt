@@ -29,7 +29,8 @@ public:
 public slots:
     // virtual void dowork();
     void dowork();
-    bool open(const QString &portName, qint32 baudRate = QSerialPort::Baud115200);
+    bool openSerialDevice(const QString &portName,
+                          qint32 baudRate = QSerialPort::Baud115200);
     void close();
     bool isOpen() const;
     

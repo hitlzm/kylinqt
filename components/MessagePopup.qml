@@ -85,9 +85,9 @@ Popup {
                 radius: 6
 
                 color:
-                    button.down ? "#1565C0" :
-                    button.hovered ? "#2F80ED" :
-                                     "#1976D2"
+                    button.down ? "#111111" :
+                    button.hovered ? "#333333" :
+                                     "#000000"
 
                 Behavior on color {
                     ColorAnimation {
