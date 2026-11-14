@@ -7,14 +7,30 @@ Item {
     id: overlay
 
     property var frameSource: null
+    property string titleText: "放大"
+    property bool overlayActive: false
+    property real sizeScale: 1.0
 
-    width: parent ? Math.max(320, parent.width * 0.65) : 800
-    height: parent ? Math.max(240, parent.height * 0.65) : 500
+    width: parent ? Math.max(320, parent.width * 0.40 * sizeScale) : 800
+    height: parent ? Math.max(240, parent.height * 0.40 * sizeScale) : 500
     x: parent ? (parent.width - width) / 2 : 0
     y: parent ? (parent.height - height) / 2 : 0
     visible: false
-    z: 1000
+    z: overlayActive ? 1100 : 1000
     clip: true
+
+    signal activated()
+
+    function activate() {
+        if (!overlayActive) {
+            overlayActive = true
+            activated()
+        }
+    }
+
+    function deactivate() {
+        overlayActive = false
+    }
 
     function ensureWithinBounds() {
         if (!parent)
@@ -25,10 +41,14 @@ Item {
 
     onVisibleChanged: {
         if (visible) {
+            activate()
             ensureWithinBounds()
             videoFrame.update()
         }
     }
+
+    onWidthChanged: ensureWithinBounds()
+    onHeightChanged: ensureWithinBounds()
 
     Rectangle {
         anchors.fill: parent
@@ -45,7 +65,7 @@ Item {
         zoomFactor: 1.0
     }
 
-    // 不显示标题栏，整个画面区域均可按住拖动。
+    // 标题只用于区分视频来源，整个画面区域均可按住拖动。
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.SizeAllCursor
@@ -56,6 +76,43 @@ Item {
         drag.maximumX: Math.max(0, overlay.parent.width - overlay.width)
         drag.minimumY: 0
         drag.maximumY: Math.max(0, overlay.parent.height - overlay.height)
+        onPressed: overlay.activate()
+        onWheel: {
+            if (!overlay.parent || wheel.angleDelta.y === 0)
+                return
+
+            const oldCenterX = overlay.x + overlay.width / 2
+            const oldCenterY = overlay.y + overlay.height / 2
+            const step = wheel.angleDelta.y > 0 ? 1.10 : 0.90
+            overlay.sizeScale = Math.max(0.50, Math.min(2.00,
+                                                        overlay.sizeScale * step))
+            // 围绕当前放大窗中心缩放，避免每次滚轮都向同一角扩大。
+            overlay.x = oldCenterX - overlay.width / 2
+            overlay.y = oldCenterY - overlay.height / 2
+            overlay.ensureWithinBounds()
+            wheel.accepted = true
+        }
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.leftMargin: 8
+        anchors.topMargin: 8
+        width: titleLabel.implicitWidth + 16
+        height: 28
+        radius: 5
+        color: "#CC333333"
+        z: 10
+
+        Text {
+            id: titleLabel
+            anchors.centerIn: parent
+            text: overlay.titleText
+            color: "#FFFFFF"
+            font.pixelSize: 14
+            font.bold: true
+        }
     }
 
     Rectangle {
@@ -81,7 +138,10 @@ Item {
             id: closeArea
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: overlay.visible = false
+            onClicked: {
+                overlay.visible = false
+                overlay.activate()
+            }
         }
     }
 

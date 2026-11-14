@@ -155,7 +155,12 @@ ApplicationWindow {
                 anchors.top:parent.top
                 anchors.left:dyt.right
                 anchors.leftMargin: 5
-                onMagnifierToggleRequested: magnifierOverlay.visible = !magnifierOverlay.visible
+                onGuideMagnifierToggleRequested: {
+                    guideMagnifierOverlay.visible = !guideMagnifierOverlay.visible
+                }
+                onCcdMagnifierToggleRequested: {
+                    ccdMagnifierOverlay.visible = !ccdMagnifierOverlay.visible
+                }
             }
             TurnTablestatus {
                 id: turntablestatus
@@ -171,12 +176,26 @@ ApplicationWindow {
                 myheight: bar.height + 610 + 330 - 430 - 5
             }
 
-            // 单实例放大镜，与主播放器处于同一个窗口和 OpenGL context。
-            // 关闭时仅隐藏，主界面和放大镜之间不再创建/销毁独立窗口。
+            // 两路放大镜处于同一个窗口和 OpenGL context，但各自绑定独立的
+            // VlcVideoItem 共享纹理，可以同时显示和拖动，不会重新拉流。
             MagnifierOverlay {
-                id: magnifierOverlay
-                frameSource: myvideo.videoPlayerItem
-                onVisibleChanged: myvideo.magnifierVisible = visible
+                id: guideMagnifierOverlay
+                titleText: "导引头放大"
+                frameSource: myvideo.guideVideoPlayerItem
+                x: parent ? 16 : 16
+                y: parent ? Math.max(56, (parent.height - height) / 2 - 24) : 56
+                onVisibleChanged: myvideo.guideMagnifierVisible = visible
+                onActivated: ccdMagnifierOverlay.deactivate()
+            }
+
+            MagnifierOverlay {
+                id: ccdMagnifierOverlay
+                titleText: "CCD放大"
+                frameSource: myvideo.ccdVideoPlayerItem
+                x: parent ? Math.max(16, parent.width - width - 16) : 16
+                y: parent ? Math.max(56, (parent.height - height) / 2 + 24) : 56
+                onVisibleChanged: myvideo.ccdMagnifierVisible = visible
+                onActivated: guideMagnifierOverlay.deactivate()
             }
         }
     }

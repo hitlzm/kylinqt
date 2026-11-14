@@ -548,13 +548,27 @@ int main(int argc, char *argv[])
         streamProc = new StreamProcessor;   // 无父对象，随后移入视频处理线程
         streamThread = new QThread;
 
-        // 从 QML 场景中找到视频播放器（当前界面中唯一的 VlcVideo 实例）
+        // 双路视频：按 objectName 明确区分导引头和 CCD，不能再取“第一个”
+        // VlcVideoItem。视觉推理固定消费 CCD，录像暂时沿用导引头画面。
         if (QObject *rootObj = engine.rootObjects().value(0)) {
-            if (VlcVideoItem *vlcItem = rootObj->findChild<VlcVideoItem*>()) {
-                streamProc->setVideoSource(vlcItem);
-                dataRecorder->setVideoItem(vlcItem);
+            VlcVideoItem *guideVlcItem =
+                    rootObj->findChild<VlcVideoItem*>(QStringLiteral("guideVideoPlayer"));
+            VlcVideoItem *ccdVlcItem =
+                    rootObj->findChild<VlcVideoItem*>(QStringLiteral("ccdVideoPlayer"));
+
+            if (ccdVlcItem) {
+                streamProc->setVideoSource(ccdVlcItem);
             } else {
-                qWarning() << "[main] VlcVideoItem not found; StreamProcessor will run without video source";
+                qWarning() << "[main] ccdVideoPlayer not found; StreamProcessor will run without video source";
+            }
+
+            if (guideVlcItem) {
+                dataRecorder->setVideoItem(guideVlcItem);
+            } else if (ccdVlcItem) {
+                qWarning() << "[main] guideVideoPlayer not found; video recording will use CCD";
+                dataRecorder->setVideoItem(ccdVlcItem);
+            } else {
+                qWarning() << "[main] No VlcVideoItem found; video recording is unavailable";
             }
         } else {
             qWarning() << "[main] QML root object missing; StreamProcessor will run without video source";
