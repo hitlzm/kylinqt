@@ -95,6 +95,8 @@ public slots:
     Q_INVOKABLE void stopTurntableSave();
     // 退出前一次性收尾：等价于三路依次停止（最后一路会触发视频转封装）
     Q_INVOKABLE void stopAll();
+    // 程序退出前等待视频转封装完成，确保成功生成的 MP4 不受进程退出影响
+    bool waitForVideoConversion(int timeoutMs = 60000);
 
     // 图像 B 帧入口：ImageData 解析完一帧后触发（DirectConnection，读到的就是本帧解析值）
     // 串口未打开或数据校验不过时不会走到这里，所以不用担心保存全 0 值

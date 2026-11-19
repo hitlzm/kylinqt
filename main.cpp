@@ -682,6 +682,9 @@ int main(int argc, char *argv[])
 
     // 2.5) 退出前收尾数据保存：三路各自冲刷并关闭文件，最后一路停止时停止视频录制并转封装
     dataRecorder->stopAll();
+    // 转封装由异步 QProcess 执行，必须等它完成后再销毁应用对象；否则窗口关闭会把
+    // ffmpeg 进程一起终止，最终只留下未清理的 TS 文件。
+    dataRecorder->waitForVideoConversion();
 
     // 3) The thread objects were allocated without a parent; collect them now.
     //    Any pending deleteLater events are dropped when the receiver is

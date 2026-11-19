@@ -39,6 +39,9 @@ E:/QTproject/kylinqt/serialport/serialport_laser.h
 E:/QTproject/kylinqt/vlcvideo/VlcVideoItem.cpp
 E:/QTproject/kylinqt/serialport/serialport_turntable_HEX.h
  mmc:Q_OBJECT
+E:/QTproject/kylinqt/network/SixDofMotionClient.cpp
+E:/QTproject/kylinqt/utils/ccdlatencyprobe.h
+ mmc:Q_OBJECT
 E:/QTproject/kylinqt/utils/program_tracking_file.h
 E:/QTproject/kylinqt/utils/sendlatencyprobe.h
 E:/QTproject/kylinqt/utils/videolatencyprobe.h
@@ -50,9 +53,6 @@ E:/QTproject/kylinqt/kalman/AlphaBetaTracker.cpp
 E:/QTproject/kylinqt/log/LogManager.cpp
 E:/QTproject/kylinqt/serialport/serialport.cpp
 E:/QTproject/kylinqt/main.cpp
-E:/QTproject/kylinqt/utils/ccdlatencyprobe.h
- mmc:Q_OBJECT
-E:/QTproject/kylinqt/network/SixDofMotionClient.cpp
 E:/QTproject/kylinqt/opencv/onnxyolov5detector_stub.cpp
 E:/QTproject/kylinqt/vlcvideo/VlcFrameItem.cpp
 E:/QTproject/kylinqt/opencv/streamprocessor.cpp

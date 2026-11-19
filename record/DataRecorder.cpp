@@ -75,18 +75,23 @@ DataRecorder::DataRecorder(QObject *parent)
     // image/laser txt 与转台 csv 共用同一个落盘节拍
     connect(&m_flushTimer, &QTimer::timeout, this, &DataRecorder::flushAll);
 
-    // ffmpeg 转封装结束：成功删 TS，失败保留原始文件
+    // ffmpeg 转封装结束：确认 MP4 有效后删除 TS；失败则保留原始文件
     connect(&m_ffmpegProc,
             QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, [this](int exitCode, QProcess::ExitStatus status) {
         // FailedToStart 等错误已由 errorOccurred 处理并清空路径，避免重复上报
         if (m_videoMp4Path.isEmpty())
             return;
-        const bool ok = (exitCode == 0 && status == QProcess::NormalExit);
+        const QFileInfo mp4Info(m_videoMp4Path);
+        const bool ok = (exitCode == 0
+                         && status == QProcess::NormalExit
+                         && mp4Info.isFile()
+                         && mp4Info.size() > 0);
         if (ok) {
             if (!QFile::remove(m_videoTsPath)) {
                 qWarning() << "[DataRecorder] 视频转封装完成，但临时 TS 删除失败:"
                            << m_videoTsPath;
+                emit errorOccurred("视频已转为 MP4，但临时 TS 文件删除失败：" + m_videoTsPath);
             }
             if (!restrictFilePermissions(m_videoMp4Path)) {
                 qWarning() << "[DataRecorder] 无法收紧 MP4 文件权限:"
@@ -95,9 +100,9 @@ DataRecorder::DataRecorder(QObject *parent)
             qDebug() << "[DataRecorder] 视频转封装完成:" << m_videoMp4Path;
         } else {
             emit errorOccurred(QString("视频转封装失败(ffmpeg exit=%1)，已保留原始文件：%2")
-                               .arg(exitCode).arg(m_videoTsPath));    //可支持QML弹窗提示
+                               .arg(exitCode).arg(m_videoTsPath));
         }
-        emit videoConvertFinished(ok, m_videoMp4Path);   //可支持QML弹窗提示
+        emit videoConvertFinished(ok, m_videoMp4Path);
         m_videoMp4Path.clear();
     });
 
@@ -306,6 +311,29 @@ void DataRecorder::stopAll()
         m_videoRefCount = 0;
         releaseVideoRecording();
     }
+}
+
+bool DataRecorder::waitForVideoConversion(int timeoutMs)
+{
+    if (m_ffmpegProc.state() == QProcess::NotRunning)
+        return true;
+
+    // finished 回调会清空 m_videoMp4Path，先保存本次收尾使用的路径。
+    const QString tsPath = m_videoTsPath;
+    const QString mp4Path = m_videoMp4Path;
+
+    // waitForFinished 会同步处理 finished 信号，因此成功后的 MP4 校验和 TS
+    // 删除仍由上面的统一收尾回调完成。
+    if (!m_ffmpegProc.waitForFinished(timeoutMs)) {
+        emit errorOccurred(
+                    QString("等待视频转封装完成超时(%1 ms)，原始 TS 文件已保留：%2")
+                    .arg(timeoutMs)
+                    .arg(m_videoTsPath));
+        return false;
+    }
+
+    const QFileInfo mp4Info(mp4Path);
+    return !QFile::exists(tsPath) && mp4Info.isFile() && mp4Info.size() > 0;
 }
 
 // ── 视频：多个保存请求共用一份录像 ──
