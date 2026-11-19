@@ -33,7 +33,7 @@ public:
         double offsetFilterFastResetDeltaDeg = 0.5;
         double offsetFilterSignResetMinDeg = 0.006;
         bool offsetFilterResetOnSignChange = true;
-        double maxSpeedDegPerSec = 12.0;
+        double maxSpeedDegPerSec = 14.0;
         double maxAccelerationDegPerSec2 = 10.0;
         double settleDeadbandDeg = 0.002;
     };
