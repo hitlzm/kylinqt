@@ -2,3 +2,5 @@ build/
 test/
 docs/
 docx_task/
+.codex-preview/
+.codex/
