@@ -34,6 +34,7 @@ Item {
         anchors.top: titleText.bottom
         width: mywidth
         height: myheight-titleText.height
+        popupMinWidth: root.popupMinWidth
         onCurrentIndexChanged: (index) => {
             root.currentIndexChanged(index)
         }

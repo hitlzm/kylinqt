@@ -1,0 +1,580 @@
+FILE: L_数据库设计说明.docx
+CORE: {"title": "定点/跟飞试验系统软件 数据库设计说明", "subject": "GJB 438C-2021 文档修订版", "author": "HRB", "last_modified_by": "HRB", "created": "2026-11-08T09:00:00+00:00", "modified": "2026-11-20T12:00:00+00:00", "revision": 30, "version": "V1.2", "comments": "2026年11月8日修订：统一术语、版式、文档版本与编写时间，并按当前源码核对实现描述。", "keywords": ""}
+CUSTOM: {}
+
+[body][Normal][inherit] 密级：SS
+[body][Normal][justify] 文档编号：DD/GF 007-DBDD-001
+[body][Normal][center] 定点/跟飞试验系统软件
+[body][Normal][center] 数据库设计说明
+[body][Normal][center] （依据 GJB 438C-2021 附录 L）
+[body][Normal][center] 软件版本：V2.5.0（Build 20261101）
+[body][Normal][center] 文档版本：V1.2
+[body][Normal][center] 编制单位：HRB
+[body][Normal][center] 修订日期：2026年11月8日
+[body][Normal][center] 文 档 审 签 页
+[body][Normal][center] 前  言
+[body][Normal][justify] 本文件依据 GJB 438C-2021《军用软件开发文档通用要求》附录 L 规定的《数据库设计说明》正文格式编写，规定本软件保存数据时的文件组织、字段定义、写入流程、一致性约束、访问方式及异常处理。本文件以当前 V2.5.0 实现为依据，描述的是已经落盘的数据格式，不描述尚未实现的数据库机制。
+[body][Normal][justify] 本文件的编制依据为 GJB 438C-2021、GJB 2786A-2009 及本项目的研制任务书与技术协议；编制过程中引用了《软件需求规格说明》（DD/GF 007，V2.5.0 修订版）、《软件设计说明》（DD/GF 007-SDD-001）与《软件测试说明（测试用例）》（DD/GF 007-STD-001）等文件，凡上述文件已有明确规定的内容，本文件不再重复叙述，仅按本文件的角度作必要引用。
+[body][Normal][justify] 本文件的读者对象为：需方（甲方）项目管理与验收人员、第三方软件测评机构的技术人员、开发方（HRB）的设计与测试人员、使用与保障人员。不同读者可按目录选取相应章节，不必通读全文。
+[body][Normal][justify] 本文档所述“数据库”在物理上是软件保存的一组数据文件。当前实现不建立数据库管理系统，也不使用 SQL 数据库；图像、激光和转台数据分别写入独立 CSV 文件，视频经原始码流暂存后转为 MP4。为满足附录 L 的组织要求，本文将每类文件视为一张表、将 CSV 表头中的列视为数据元素。
+[body][Normal][justify] 本文件密级为SS，其编制、审批、复制、发放、保管、借阅、归档和销毁，均应按国家及上级主管部门的保密管理规定执行。本文件为涉密载体，未经批准不得复制、摘抄、拍摄或通过任何网络传输。
+[body][Normal][justify] 文中以“应”“须”表述的为强制性要求，以“宜”“可”表述的为推荐性要求。文中给出的周期、容量和时延数值，除明确标注为接口或合同约束外，均为依据当前代码和典型行宽作出的设计参考。程序实际行为以第 3 章至第 5 章所述的实现流程为准。
+[body][Normal][justify] 同批文档中的需求条目、接口和单元标识按已批准版本引用；若个别参数不一致，以最新评审确认版本为准。
+[body][Normal][center] 目      录
+[body][toc 1][inherit] 1  范围 5
+[body][toc 2][inherit] 1.1  标识 5
+[body][toc 2][inherit] 1.2  数据库概述 5
+[body][toc 2][inherit] 1.3  文档概述 7
+[body][toc 1][inherit] 2  引用文档 8
+[body][toc 1][inherit] 3  数据库级设计决策 9
+[body][toc 2][inherit] 3.1  存储方式与数据库管理系统决策 9
+[body][toc 2][inherit] 3.2  输入、输出与响应行为决策 9
+[body][toc 2][inherit] 3.3  数据呈现与命名决策 10
+[body][toc 2][inherit] 3.4  数据完整性与一致性决策 11
+[body][toc 2][inherit] 3.5  性能与容量决策 11
+[body][toc 2][inherit] 3.6  安全性与备份恢复决策 12
+[body][toc 2][inherit] 3.7  分布、维护与生命周期决策 13
+[body][toc 1][inherit] 4  数据库详细设计 14
+[body][toc 2][inherit] 4.1  激光数据文件 15
+[body][toc 2][inherit] 4.2  图像数据文件 16
+[body][toc 2][inherit] 4.3  转台数据文件 17
+[body][toc 2][inherit] 4.4  视频文件 18
+[body][toc 2][inherit] 4.5  运行参数（内存） 19
+[body][toc 1][inherit] 5  用于数据访问或操纵的软件单元的详细设计 20
+[body][toc 2][inherit] 5.1  SI-FN-06 数据记录单元 20
+[body][toc 2][inherit] 5.2  SI-FN-05 视频单元 21
+[body][toc 1][inherit] 6  需求可追踪性 22
+[body][toc 1][inherit] 7  注释 23
+[body][toc 2][inherit] 7.1  术语与缩略语 23
+[body][toc 2][inherit] 7.2  背景说明 23
+[body][Heading 1][left] 1  范围
+[body][Heading 2][left] 1.1  标识
+[body][Normal][justify] 本文档为 定点/跟飞试验系统软件（以下简称“本软件”或“本 CSCI”）的数据库设计说明，规定当前版本在试验过程中保存的图像、激光、转台和视频数据。保存动作由界面中的“保存数据”按钮发起，三路结构化数据可独立启停，视频在任一路保存期间共用一份。本文档的软件、数据存储与文档标识见表 1。
+[body][Caption][inherit] 表 1  软件、数据存储与文档标识
+[body][Normal][justify] 本软件运行于银河麒麟桌面操作系统 V10 国防版，默认将数据保存到本地目录 /data/savedata。数据目录按当前月、日创建为 M.d 子目录，三类 CSV 文件和 MP4 视频文件均保存在该子目录中。当前实现不连接数据库服务器，不向网络位置直接写入数据文件。
+[body][Heading 2][left] 1.2  数据库概述
+[body][Normal][justify] 1. 用途
+[body][Normal][justify] 保存的数据用于复核图像导引头、激光导引头和三轴转台在试验过程中的状态，并保留导引头视频画面。CSV 文件提供逐帧结构化状态，MP4 文件提供对应时段的画面；两类数据共同支撑事后检查、算法回放和问题定位。
+[body][Normal][justify] 2. 一般特性
+[body][Normal][justify] 本软件不采用数据库管理系统（DBMS），保存的数据由四类文件组成：
+[body][Normal][justify] a) 图像数据文件：记录图像导引头 B 帧解析后的工程量，一行对应一帧；
+[body][Normal][justify] b) 激光数据文件：记录激光导引头接收帧解析后的工程量，一行对应一帧；
+[body][Normal][justify] c) 转台数据文件：记录三轴转台周期状态反馈帧，一行对应一帧；
+[body][Normal][justify] d) 视频文件：记录当前导引头视频源，停止保存后形成 MP4；若导引头播放器不可用而 观瞄设备播放器可用，则使用 观瞄设备视频源。
+[body][Normal][justify] 三类 CSV 文件分别由对应数据对象的启停状态控制。任一路开始保存时会登记一次视频录制请求，最后一路停止时结束视频录制。记录器位于主线程；图像和激光解析完成信号直接调用记录槽，转台反馈帧通过排队连接写入记录器。
+[body][Normal][justify] 文件采用追加写入，运行期间不执行随机更新、删除或跨文件事务。CSV 文件的表头使用中文工程量字段，状态和报警字段保存为中文含义；文件内容不包含任务号、通道号或统一的有效性字段。
+[body][Normal][justify] 3. 本版本保存方案
+[body][Normal][justify] 本版本采用“按数据来源分文件、固定周期缓冲、独立启停”的保存方式。每路数据在内存中累积约 200 ms 的文本后写入对应 CSV；视频使用 mpv 的 record-file 功能直接记录原始码流为临时 TS，停止录像后由 ffmpeg 以流复制方式转为 MP4。没有新帧到达时，即使已点击开始保存，也可能不产生该路 CSV 文件。
+[body][Normal][justify] 4. 需方、用户、开发方与保障机构
+[body][Normal][justify] 需方：甲方；用户：甲方；开发方：HRB；保障与运维机构：HRB（现阶段）。数据所有权归使用单位，开发方仅在排故与技术支持时按审批手续接触数据副本。
+[body][Normal][justify] 5. 运行现场
+[body][Normal][justify] 数据存储在方舱内部上位机的本地磁盘。现场不接入互联网，软件不提供远程数据服务；数据交换依靠经审批的移动介质或其他受控介质，按使用单位的数据管理规定执行。当前实现不自动生成媒体标签或数据交接清单。
+[body][Heading 2][left] 1.3  文档概述
+[body][Normal][justify] 本文档用于指导保存功能的维护、CSV 数据解析工具开发、测试中的数据完整性检查以及交付后的数据维护。读者可依据第 4 章的字段表解析 CSV，依据第 5 章理解和检查记录器与视频转换流程。
+[body][Normal][justify] 本文档共 7 章：第 1 章说明标识与保存范围；第 2 章列出引用文档；第 3 章给出文件型存储的全局设计决策；第 4 章给出四类文件的字段和组织；第 5 章说明数据记录器和视频单元的访问方式；第 6 章给出数据与需求的追踪关系；第 7 章为注释。
+[body][Normal][justify] 本 CSCI 不建立数据库，不引入 DBMS，也不提供 SQL 查询、事务隔离或数据库索引。本文档按 GJB 438C-2021 附录 L 的要素组织：将每个 CSV 文件视为一张表，将表头中的列视为数据元素；对以 DBMS 为前提的条款，明确标注“不适用”，并说明当前文件实现采用的替代措施。
+[body][Normal][justify] 本文档与《软件设计说明》的分工为：后者说明软件结构和保存功能为何这样设计，本文档说明当前实现实际保存成什么格式。若文档描述与程序行为不一致，以程序实现和本文档第 3 章至第 5 章的核对结果为依据，并应及时更新文档。文中示例均为构造数据。
+[body][Heading 1][left] 2  引用文档
+[body][Normal][justify] 下列文档中的条款通过本文档的引用而成为本文档的条款。凡注日期或版次的引用文件，仅该版本适用；凡不注日期或版次的引用文件，其最新版本适用于本文档。
+[body][Caption][inherit] 表 2  引用文档
+[body][Heading 1][left] 3  数据库级设计决策
+[body][Normal][justify] 本章按 GJB 438C-2021 附录 L 第 3 章的要求，给出作用于数据保存全局的设计决策。当前实现不存在分布式数据库、数据库并发控制和数据库索引，相应条款标注为不适用，并说明文件型实现的实际处理方式。
+[body][Heading 2][left] 3.1  存储方式与数据库管理系统决策
+[body][Normal][justify] a) 决策内容：本 CSCI 不采用数据库管理系统。数据以三类 CSV 文件保存图像、激光和转台解析结果，以 MP4 文件保存视频。CSV 首行为中文表头，其后每行对应一帧；每路数据独立创建文件，任意一路停止不影响其余路继续保存。
+[body][Normal][justify] b) 决策理由：试验数据按来源逐帧产生，保存需求以顺序记录和事后解析为主，不需要多表关联、随机查询或事务回滚；CSV 可直接用文本工具、表格软件和解析脚本处理，便于现场排故。文件型实现也避免在国产操作系统上引入额外数据库服务和长期运维依赖。
+[body][Normal][justify] c) 替代措施：数据库的表结构约束由第 4 章固定的列顺序和列名承担；事务一致性由“单路顺序追加、停止时冲刷并关闭”保证；访问控制由操作系统文件权限承担；跨文件关联依靠目录日期、文件名中的开始时刻和行内时间字段完成。
+[body][Normal][justify] d) 不适用的条款：附录 L 中关于数据库管理系统名称、版本、SQL 查询、表空间、数据库索引及数据库分布同步的要求均不适用。本软件不依赖 DBMS，也没有主从数据库或分布式存储节点。
+[body][Heading 2][left] 3.2  输入、输出与响应行为决策
+[body][Normal][justify] a) 输入：图像 B 帧经解析完成后通过 frameParsed 信号调用 onImageFrame；激光接收帧经解析完成后通过 frameParsed 信号调用 onLaserFrame；转台状态帧从串口工作线程通过排队连接调用 onTurntableFrame。外部程序不得直接写当前保存文件。
+[body][Normal][justify] b) 输出：界面通过 savingImage、savingLaser、savingTurntable 和 saving 属性显示各路的保存状态；记录器将 CSV 文本写入本地文件；视频单元生成临时 TS，并在录像结束后转换和删除临时文件。当前界面未显示记录时长、数据量或行数，也未提供独立的按任务导出功能。
+[body][Normal][justify] c) 响应与异常：点击开始后，记录器创建 M.d 目录并置位保存状态，CSV 文件在该路第一帧到达时懒创建；每 200 ms 冲刷一次内存缓冲，停止时立即冲刷并关闭。视频转封装异步执行，上一段仍在转换时拒绝开始新的视频录制。当前实现没有磁盘剩余空间门禁，也不自动删除旧数据或自动分卷。
+[body][Heading 2][left] 3.3  数据呈现与命名决策
+[body][Normal][justify] a) 界面呈现：三类数据使用各自的“保存数据/停止保存”按钮。按钮状态来自对应布尔属性，不读取文件内容。图像、激光和转台可同时保存；最后一路停止后，视频引用计数归零。
+[body][Normal][justify] b) CSV 格式：文件使用 UTF-8 编码并带 BOM，换行符为 LF，字段以半角逗号分隔。表头直接使用中文工程量和单位；数值字段使用小数点，浮点工程量统一保留 4 位小数，整数字段按整数文本写入。当前字段内容不包含逗号、换行和双引号，因此写入器不执行引号转义，也不依赖完整的 RFC 4180 引号规则。
+[body][Normal][justify] c) 文件命名：保存根目录默认为 /data/savedata，其下按开始保存时的月、日创建 M.d 目录。三类 CSV 分别命名为 imageHHmmss.csv、laserHHmmss.csv、turntableHHmmss.csv；MP4 命名为 videoHHmmss.mp4。HHmmss 是该路开始保存或第一次视频请求的本地时刻。若同一秒内目标名已存在，则依次追加 _1、_2 等后缀，最多尝试 1000 个名称。
+[body][Normal][justify] d) 视频格式：视频源由界面中的导引头播放器提供；导引头播放器缺失时回退到 观瞄设备播放器。录制期间使用 mpv record-file 保存解包后的原始码流为 TS，不执行视频编码转换。最后一路保存停止后，执行 ffmpeg -c copy -movflags +faststart，将 TS 转为 MP4。
+[body][Normal][justify] e) 字段命名：CSV 表头直接使用中文名称并包含单位，列顺序由记录器中的表头和行写入代码共同确定。状态、报警和指令提示保存为中文文本；未映射的状态写为“未知(0xNN)”，便于在不修改字段结构的情况下保留原始码值。
+[body][Heading 2][left] 3.4  数据完整性与一致性决策
+[body][Normal][justify] a) 时间来源：图像和激光行优先保存设备返回时标对应的北京时间；返回时标无效或为零时，保存本机系统时间。转台行保存转台协议给出的当日毫秒时间。三类文件没有统一的整数时间戳字段，也不保存日期；具体格式见第 4 章。
+[body][Normal][justify] b) 帧有效性：记录入口只由通信层成功解析一帧后触发，校验失败的帧不会进入 CSV。当前 CSV 没有逐行 valid 标志，也没有统一的全局记录序号；转台文件另有从 1 开始递增的“序号”，仅用于本次转台保存的连续性核对。
+[body][Normal][justify] c) 文件级完整性：正常文件应包含且仅包含一行表头，其后每行的逗号分隔字段数与表头一致。正常停止会冲刷缓冲并关闭文件；程序异常终止或断电时，最多可能丢失尚未 flush 的缓冲数据。当前 QFile 只调用 flush，不调用 fsync，操作系统缓存中的尾部数据仍可能受突然断电阻断。
+[body][Normal][justify] d) 跨文件对应：三类 CSV 和视频分别记录各自的开始时刻，不生成任务清单、会话索引或视频索引。事后关联时，应先按 M.d 目录筛选日期，再结合文件名中的开始时刻、CSV 行内时间和视频内容确定同一时段。设备返回时标与转台毫秒时间来源不同，当前实现不能保证跨来源的毫秒级同步。
+[body][Normal][justify] e) 格式演进：CSV 列以表头名称为准，读取工具不应只按固定列序号解析。当前文件没有独立格式版本号；新增或更名字段必须同步修改表头、写入代码和本文档。状态未知值以原始十六进制写入文本，不改变该列的字符串类型。
+[body][Heading 2][left] 3.5  性能与容量决策
+[body][Normal][justify] a) 写入模型：记录器运行在主线程，没有独立记录线程、环形队列或入队错误码。各帧先格式化为一行文本并追加到该路 SourceState 的内存 buffer；只要任一路处于保存状态，共享时长为 200 ms 的粗粒度定时器就周期调用 flushAll，把三路缓冲写入磁盘。
+[body][Normal][justify] b) 容量估算：按当前典型行宽估算，图像约 7 KiB/s（50 Hz），激光约 6.7 KiB/s（50 Hz），转台约 33 KiB/s（200 Hz），三路合计约 47 KiB/s，连续保存 1 h 约 165 MiB。实际值随数值位数、中文状态长度和实际到达频率变化。视频占用取决于源编码码率，通常显著高于结构化数据。
+[body][Normal][justify] c) 空间管理：当前实现不预先检查剩余磁盘空间，不设置预警门限或自动停止阈值，也不按容量或时长分卷。磁盘不可写时由 QFile 写入失败并产生 errorOccurred 信号；文件打开失败后该路进入 openFailed 状态，本次保存期间不再重试。
+[body][Normal][justify] d) 优化取舍：文件按来源拆分，避免不同帧率和不同到达条件互相阻塞；使用 200 ms 批量写减少每次写盘调用。该实现以顺序记录和低改造量为目标，没有随机查询索引、自动归档或多个会话的合并表。
+[body][Heading 2][left] 3.6  安全性与备份恢复决策
+[body][Normal][justify] a) 密级标注：数据文件的密级由随包介质标签和交付清单管理，文件名与 CSV 内容均不写密级。当前实现不根据登录角色生成不同密级的数据文件。
+[body][Normal][justify] b) 访问控制：在 UNIX 类平台上，记录器将新建目录权限收紧为属主读写执行（0700），将 CSV 和成功转换的 MP4 权限收紧为属主读写（0600）。权限设置失败会使本次目录或文件保存失败；Windows 构建中不执行这两类权限限制。
+[body][Normal][justify] c) 敏感字段：CSV、TS 和 MP4 不保存登录口令或密钥。登录校验使用程序内置的盐和 HMAC-SHA256 摘要，明文口令不写入保存文件。图像、激光和转台的状态数据按任务整体密级管理，当前实现不对单个字段加密。
+[body][Normal][justify] d) 运行日志：LogManager 仅在内存中保留最多 500 条界面日志，并对高频日志按 200 ms 节流；重启程序后日志丢失，不生成独立审计文件。视频录制因换源或重连中断时，记录器通过 videoRecordInterrupted 将提示写入该内存日志。
+[body][Normal][justify] e) 备份：记录器不执行自动备份、复制或同步。备份、归档和介质制作由使用单位按数据管理规定实施。视频转封装成功后删除临时 TS；转换失败时保留 TS，以便后续人工处理。
+[body][Normal][justify] f) 恢复：已关闭且结构完整的 CSV 可直接解析；末行字段数不符时应跳过该行。QFile flush 失败时，尚未写入的缓冲会被清空并产生错误信号。视频转换只有在 ffmpeg 正常退出、MP4 存在且大小大于零时才删除 TS；软件不自动修复损坏的 CSV 或 MP4，也不改写原文件。
+[body][Heading 2][left] 3.7  分布、维护与生命周期决策
+[body][Normal][justify] a) 分布：数据全部位于本机保存根目录及其 M.d 子目录，不设置主从副本、网络共享目录或多机同步。保存根目录和 ffmpeg 路径是记录器属性，当前界面未提供修改入口。
+[body][Normal][justify] b) 维护：文件由记录器自动创建、追加、冲刷和关闭；当前实现不执行容量分卷、过期删除或压缩。每次重新开始某一路时创建新的文件名；同名文件已存在时使用数字后缀，避免覆盖。
+[body][Normal][justify] c) 生命周期：数据按试验任务归档，保存期限和执行销毁的审批流程按使用单位数据管理规定执行。软件不自动判定任务边界，M.d 目录可能包含同日多次保存操作产生的文件。
+[body][Heading 1][left] 4  数据库详细设计
+[body][Normal][justify] 本章给出四类文件的详细设计。三类 CSV 均采用“一行中文表头加若干数据行”的结构，一行对应一帧；视频文件不含字段定义。与旧版按统一通道宽表保存的设计不同，当前实现按数据来源拆分文件，文件内不另设 channel、rec_seq 或 valid 列。
+[body][Caption][inherit] 表 3  数据文件一览
+[body][Normal][justify] CSV 文件由每路第一帧触发创建，创建后先写带 UTF-8 BOM 的中文表头，再把数据行写入 200 ms 内存缓冲。下面仅以转台文件前四列为例说明行结构；实际文件的完整列数见后续字段表。
+[body][Normal][justify] 图像、激光和转台文件之间没有公共的通道号、记录序号和有效性列。读取工具应先读取表头，再按当前文件对应的字段表解析；不能把三类文件视为同一宽表。
+[body][Normal][justify] 记录器默认参数、视频转换参数和内存日志参数不形成配置文件，其当前值和处理方式见 4.5 条。
+[body][Heading 2][left] 4.1  激光数据文件
+[body][Normal][justify] 激光数据文件记录激光导引头接收帧解析后的工程量，来源于激光串口通信单元。文件在本次保存收到第一帧后创建，之后每成功解析一帧追加一行。角度和角速度字段按解析后的工程量保存为 4 位小数，不再保存原始整数码值。
+[body][Caption][inherit] 表 4  激光数据文件字段
+[body][Normal][justify] 增益状态按协议映射为“起控1级”至“起控5级”；映射表之外的值保存为“未知(0xNN)”。时标精度按相邻两组有效返回时标之差减去 20000 μs 计算，首帧有效时标没有相邻值，因此该单元格为空。
+[body][Heading 2][left] 4.2  图像数据文件
+[body][Normal][justify] 图像数据文件记录图像导引头 B 帧解析结果，当前实现对应一个图像导引头数据对象和一个保存文件，不使用通道 2、3、4 表示三台设备。文件在收到第一帧 B 帧后创建，每成功解析一帧追加一行。
+[body][Caption][inherit] 表 5  图像数据文件字段
+[body][Heading 2][left] 4.3  转台数据文件
+[body][Normal][justify] 转台数据文件记录三轴转台周期状态反馈帧。文件在本次保存收到第一帧后创建，每帧一行。三轴“理想轨迹角度”不直接来自协议，而是记录器按“实测角度加控制偏差”计算后写入；报警、状态和指令提示均转换为中文文本。
+[body][Caption][inherit] 表 6  转台数据文件字段
+[body][Heading 2][left] 4.4  视频文件
+[body][Normal][justify] 视频文件记录当前注入的导引头视频流。视频不保存每一帧的结构化字段，本节规定录制、文件名、转换和中断处理。图像、激光和转台三路共用同一个视频引用计数，因此多路同时保存只生成一份录像。
+[body][Caption][inherit] 表 7  视频文件组织
+[body][Heading 2][left] 4.5  运行参数（内存）
+[body][Normal][justify] 以下运行参数和内存状态不形成独立数据文件。当前程序中的默认值如下，修改代码或通过属性设置后才会改变：a) 保存路径：saveDir 默认为 /data/savedata；每次保存另建月、日目录 M.d。ffmpegPath 默认为 ffmpeg，程序按可执行文件搜索路径启动转换进程。
+[body][Normal][justify] b) 记录参数：图像和激光标称采样率均为 50 Hz，转台标称采样率为 200 Hz；三路共用 200 ms 粗粒度定时器冲刷缓冲。单路文件名后缀查找上限为 1000，退出时等待视频转换的默认上限为 60000 ms。
+[body][Normal][justify] c) 内存状态：每路保存上下文包含 saving、目录、开始时刻、文件路径、openFailed、QFile 和文本缓冲；转台另有序号。LogManager 最多保留 500 条内存日志。以上状态均在进程退出时丢失，不生成配置或会话文件。
+[body][Heading 1][left] 5  用于数据访问或操纵的软件单元的详细设计
+[body][Normal][justify] 本章按 GJB 438C-2021 附录 L 第 5 章的要求，给出与数据访问和操纵直接相关的软件单元设计。数据记录器和视频录制接口负责实际文件访问；本章描述当前代码提供的调用关系、线程方式和异常处理。
+[body][Heading 2][left] 5.1  SI-FN-06 数据记录单元
+[body][Normal][justify] a) 职责：DataRecorder 接收图像、激光和转台帧，按第 4 章字段表格式化 CSV 行，管理三路独立保存状态和 200 ms 内存缓冲，登记视频录制请求，并在停止时完成冲刷、关闭和视频收尾。
+[body][Normal][justify] b) 数据访问方式：每路保存上下文 SourceState 维护目录、开始时刻、路径、文件句柄、缓冲和打开失败标志。第一帧到达时调用 ensureSourceFile 懒创建文件；后续帧写入该路缓冲。定时器到期后 flushAll 依次冲刷三路，停止某一路时立即冲刷并关闭该文件。
+[body][Normal][justify] c) 对外接口：
+[body][Normal][justify] 1) startImageSave()、startLaserSave()、startTurntableSave()：创建 M.d 目录、置位该路保存状态并登记一次视频请求；成功返回 true，重复启动或目录创建失败返回 false；
+[body][Normal][justify] 2) stopImageSave()、stopLaserSave()、stopTurntableSave()：冲刷并关闭对应 CSV，释放一次视频请求；某一路停止不影响其他路；
+[body][Normal][justify] 3) onImageFrame()、onLaserFrame()、onTurntableFrame()：接收解析完成的数据并写内存缓冲；前两者为直接调用，转台槽通过排队连接接收状态帧；
+[body][Normal][justify] 4) stopAll()：按转台、激光、图像顺序停止三路，并兜底将视频请求计数清零；waitForVideoConversion(timeoutMs)：程序退出时等待 ffmpeg 转封装完成，默认最多 60 s；
+[body][Normal][justify] 5) status 类属性：savingImage、savingLaser、savingTurntable 和 saving 可由界面读取；errorOccurred、videoConvertFinished、videoRecordInterrupted 以信号方式通知外部。
+[body][Normal][justify] DataRecorder 不提供数据库式 open/write/flush/close 句柄，也不提供查询、事务、计数、剩余空间或丢帧统计接口。图像和激光的 frameParsed 信号在它们的数据对象上发出，记录器使用直接连接，以确保读取的是当前帧刚解析完成的值。
+[body][Normal][justify] d) 状态与异常：文件或目录创建失败时发出 errorOccurred；CSV 文件打开失败后置位 openFailed，本次保存期间不再每帧重试；普通写入失败时保留尚未写入的缓冲，等待下一次冲刷；QFile flush 失败时关闭文件并清空剩余缓冲。视频转换失败时保留 TS 并发出失败信号。
+[body][Heading 2][left] 5.2  SI-FN-05 视频单元
+[body][Normal][justify] a) 职责：VlcVideoItem 通过 mpv 的 record-file 属性把当前视频源原始码流写入临时 TS；DataRecorder 按保存请求计数决定何时开始和停止录像，并在最后一路停止后调用 ffmpeg 转封装。
+[body][Normal][justify] b) 数据访问方式：startRecord(path) 设置 mpv record-file；stopRecord() 将 record-file 置空并结束录制。DataRecorder 在第一次保存请求时创建 videoHHmmss.ts，在计数归零后检查 TS 是否存在并启动 ffmpeg。转换命令为 -y -i <TS> -c copy -movflags +faststart <MP4>。
+[body][Normal][justify] c) 对外接口：记录器通过 startVideoRecord、stopVideoRecord、startRemux 和 waitForVideoConversion 完成视频生命周期管理；视频播放器通过 recordingChanged 通知录制状态变化。没有视频播放器或视频源未产生数据时，CSV 仍可保存，但不产生视频文件。
+[body][Normal][justify] d) 异常处理：保存期间视频源切换或重连会触发 stopRecord；记录器不再续录本次视频，并对中断前已形成的 TS 立即尝试转封装，同时发出 videoRecordInterrupted，界面日志记录“视频源已切换或重连”。ffmpeg 未能启动、退出失败或未生成非空 MP4 时保留 TS；转换成功并确认 MP4 非空后才删除 TS。
+[body][Heading 1][left] 6  需求可追踪性
+[body][Normal][justify] 本章按附录 L 第 6 章的要求给出双向追踪：正向确认每个数据文件都有明确用途，反向确认与数据保存有关的需求能够找到承载文件和记录接口。
+[body][Caption][inherit] 表 8  数据文件与需求的双向追踪
+[body][Normal][justify] 需求侧的反向说明：SRS 3.5 条“内部数据需求”规定数据结构由设计阶段确定，当前结论对应第 4 章的三类 CSV 字段表和视频组织；SRS 3.6 条“适应性需求”涉及的路径和运行参数当前由程序属性或代码常量提供，未实现持久化配置。字段或接口变更时，应同步更新第 4 章、第 5 章和本章的追踪关系。
+[body][Heading 1][left] 7  注释
+[body][Heading 2][left] 7.1  术语与缩略语
+[body][Caption][inherit] 表 9  术语与缩略语
+[body][Heading 2][left] 7.2  背景说明
+[body][Normal][justify] a) 本文档依据 GJB 438C-2021 附录 L 规定的《数据库设计说明》正文格式编制。第 3 章对应“数据库级设计决策”，第 4 章对应“数据库详细设计”，第 5 章对应“用于数据库访问或操纵的软件单元的详细设计”，第 6 章对应“需求可追踪性”，第 7 章对应“注释”。
+[body][Normal][justify] b) 本文档将当前文件型存储按附录 L 的要素展开，但不虚构 DBMS、表空间、SQL 接口、数据库索引或事务机制。文件格式、字段顺序、200 ms 缓冲、独立启停、共享视频和 TS 转 MP4 的流程均按当前项目代码修改，使设计说明与实际保存行为保持一致。
+[table1:1:1][Normal][inherit] 文档名称
+[table1:1:2][Normal][inherit] 数据库设计说明
+[table1:1:3][Normal][inherit] 文档编号
+[table1:1:4][Normal][inherit] DD/GF 007-DBDD-001
+[table1:2:1][Normal][inherit] 软件名称
+[table1:2:2][Normal][inherit] 定点/跟飞试验系统软件
+[table1:2:3][Normal][inherit] 软件标识
+[table1:2:4][Normal][inherit] DD/GF 007
+[table1:3:1][Normal][inherit] 软件版本
+[table1:3:2][Normal][inherit] V2.5.0（Build 20261101）
+[table1:3:3][Normal][inherit] 文档版本
+[table1:3:4][Normal][inherit] V1.2
+[table1:4:1][Normal][inherit] 密级
+[table1:4:2][Normal][inherit] SS
+[table1:4:3][Normal][inherit] 共  页
+[table1:5:1][Normal][inherit] 编制单位
+[table1:5:2][Normal][inherit] HRB
+[table1:5:3][Normal][inherit] 编制日期
+[table1:5:4][Normal][inherit] 修订日期：2026年11月8日
+[table2:1:1][Normal][center] 岗位
+[table2:1:2][Normal][center] 姓名（签字）
+[table2:1:3][Normal][center] 日期
+[table2:1:4][Normal][center] 意见
+[table2:2:1][Normal][inherit] 编制
+[table2:3:1][Normal][inherit] 校对
+[table2:4:1][Normal][inherit] 审核
+[table2:5:1][Normal][inherit] 批准
+[table3:1:1][Normal][justify] 项  目
+[table3:1:2][Normal][justify] 内  容
+[table3:2:1][Normal][justify] 软件名称
+[table3:2:2][Normal][justify] 定点/跟飞试验系统软件
+[table3:3:1][Normal][justify] 软件标识号
+[table3:3:2][Normal][justify] DD/GF 007
+[table3:4:1][Normal][justify] 软件版本号
+[table3:4:2][Normal][justify] V2.5.0（Build 20261101）
+[table3:5:1][Normal][justify] 数据存储标识号
+[table3:5:2][Normal][justify] DD/GF 007-DBS-01（激光、图像、转台数据文件与视频文件的总称）
+[table3:6:1][Normal][justify] 文档名称
+[table3:6:2][Normal][justify] 定点/跟飞试验系统软件数据库设计说明
+[table3:7:1][Normal][justify] 文档标识号
+[table3:7:2][Normal][justify] DD/GF 007-DBDD-001
+[table3:8:1][Normal][justify] 文档版本
+[table3:8:2][Normal][justify] V1.2
+[table3:9:1][Normal][justify] 文档密级
+[table3:9:2][Normal][justify] SS
+[table4:1:1][Normal][justify] 序号
+[table4:1:2][Normal][justify] 编号 / 版本
+[table4:1:3][Normal][justify] 名  称
+[table4:1:4][Normal][justify] 编写单位
+[table4:2:1][Normal][justify] 1
+[table4:2:2][Normal][justify] GJB 438C-2021
+[table4:2:3][Normal][justify] 军用软件开发文档通用要求
+[table4:2:4][Normal][justify] 中央军委装备发展部
+[table4:3:1][Normal][justify] 2
+[table4:3:2][Normal][justify] GJB 2786A-2009
+[table4:3:3][Normal][justify] 军用软件开发通用要求
+[table4:3:4][Normal][justify] 中国人民解放军总装备部
+[table4:4:1][Normal][justify] 3
+[table4:4:2][Normal][justify] DD/GF 007（V2.5.0 修订版）
+[table4:4:3][Normal][justify] 软件需求规格说明
+[table4:4:4][Normal][justify] HRB
+[table4:5:1][Normal][justify] 4
+[table4:5:2][Normal][justify] DD/GF 007-SDD-001
+[table4:5:3][Normal][justify] 软件设计说明（V1.0）
+[table4:5:4][Normal][justify] HRB
+[table4:6:1][Normal][justify] 5
+[table4:6:2][Normal][justify] DD/GF 007-IRS-001
+[table4:6:3][Normal][justify] 接口需求规格说明（V1.0）
+[table4:6:4][Normal][justify] HRB
+[table4:7:1][Normal][justify] 6
+[table4:7:2][Normal][justify] DD/GF 007-UM-001
+[table4:7:3][Normal][justify] 软件用户手册（V1.0）
+[table4:7:4][Normal][justify] HRB
+[table4:8:1][Normal][justify] 7
+[table4:8:2][Normal][justify] RFC 4180
+[table4:8:3][Normal][justify] CSV 格式与 MIME 类型
+[table4:8:4][Normal][justify] IETF
+[table5:1:1][Normal][justify] 序号
+[table5:1:2][Normal][justify] 文件类别
+[table5:1:3][Normal][justify] 实际内容
+[table5:1:4][Normal][justify] 形态
+[table5:1:5][Normal][justify] 写入时机
+[table5:1:6][Normal][justify] 文件命名
+[table5:2:1][Normal][justify] 1
+[table5:2:2][Normal][justify] 图像数据文件
+[table5:2:3][Normal][justify] 图像导引头 B 帧解析后的工程量
+[table5:2:4][Normal][justify] CSV 文本
+[table5:2:5][Normal][justify] 该路保存后收到第一帧 B 帧起
+[table5:2:6][Normal][justify] imageHHmmss.csv
+[table5:3:1][Normal][justify] 2
+[table5:3:2][Normal][justify] 激光数据文件
+[table5:3:3][Normal][justify] 激光导引头接收帧解析后的工程量
+[table5:3:4][Normal][justify] CSV 文本
+[table5:3:5][Normal][justify] 该路保存后收到第一帧起
+[table5:3:6][Normal][justify] laserHHmmss.csv
+[table5:4:1][Normal][justify] 3
+[table5:4:2][Normal][justify] 转台数据文件
+[table5:4:3][Normal][justify] 三轴状态、角度、控制偏差与指令提示
+[table5:4:4][Normal][justify] CSV 文本
+[table5:4:5][Normal][justify] 该路保存后收到第一帧状态帧起
+[table5:4:6][Normal][justify] turntableHHmmss.csv
+[table5:5:1][Normal][justify] 4
+[table5:5:2][Normal][justify] 视频文件
+[table5:5:3][Normal][justify] 当前导引头视频源原始码流
+[table5:5:4][Normal][justify] MP4（录制时暂存 TS）
+[table5:5:5][Normal][justify] 任一路开始保存时录，最后一路停止时转换
+[table5:5:6][Normal][justify] videoHHmmss.mp4
+[table6:1:1][Normal][justify] 序号
+[table6:1:2][Normal][justify] 字段名
+[table6:1:3][Normal][justify] 含义
+[table6:1:4][Normal][justify] 格式与写入规则
+[table6:2:1][Normal][justify] 1
+[table6:2:2][Normal][justify] 时间
+[table6:2:3][Normal][justify] 该激光帧的记录时间。
+[table6:2:4][Normal][justify] 字符串；优先为设备返回时标对应的北京时间 HH:mm:ss.ffffff，否则为本机系统时间 HH:mm:ss.zzz。
+[table6:3:1][Normal][justify] 2
+[table6:3:2][Normal][justify] 采样率(Hz)
+[table6:3:3][Normal][justify] 激光数据的标称采样率。
+[table6:3:4][Normal][justify] 固定整数 50，对应 20 ms。
+[table6:4:1][Normal][justify] 3
+[table6:4:2][Normal][justify] 光轴方位角(°)
+[table6:4:3][Normal][justify] 解析后的光轴方位角。
+[table6:4:4][Normal][justify] 4 位小数。
+[table6:5:1][Normal][justify] 4
+[table6:5:2][Normal][justify] 光轴俯仰角(°)
+[table6:5:3][Normal][justify] 解析后的光轴俯仰角。
+[table6:5:4][Normal][justify] 4 位小数。
+[table6:6:1][Normal][justify] 5
+[table6:6:2][Normal][justify] 方位陀螺输出角速度(°/s)
+[table6:6:3][Normal][justify] 方位陀螺输出角速度。
+[table6:6:4][Normal][justify] 4 位小数。
+[table6:7:1][Normal][justify] 6
+[table6:7:2][Normal][justify] 俯仰陀螺输出角速度(°/s)
+[table6:7:3][Normal][justify] 俯仰陀螺输出角速度。
+[table6:7:4][Normal][justify] 4 位小数。
+[table6:8:1][Normal][justify] 7
+[table6:8:2][Normal][justify] 方位视线角速度(°/s)
+[table6:8:3][Normal][justify] 方位视线角速度。
+[table6:8:4][Normal][justify] 4 位小数。
+[table6:9:1][Normal][justify] 8
+[table6:9:2][Normal][justify] 俯仰视线角速度(°/s)
+[table6:9:3][Normal][justify] 俯仰视线角速度。
+[table6:9:4][Normal][justify] 4 位小数。
+[table6:10:1][Normal][justify] 9
+[table6:10:2][Normal][justify] 方位偏差角(°)
+[table6:10:3][Normal][justify] 方位偏差角。
+[table6:10:4][Normal][justify] 4 位小数。
+[table6:11:1][Normal][justify] 10
+[table6:11:2][Normal][justify] 俯仰偏差角(°)
+[table6:11:3][Normal][justify] 俯仰偏差角。
+[table6:11:4][Normal][justify] 4 位小数。
+[table6:12:1][Normal][justify] 11
+[table6:12:2][Normal][justify] 激光周期(ms)
+[table6:12:3][Normal][justify] 协议时间单位换算后的激光周期。
+[table6:12:4][Normal][justify] 4 位小数。
+[table6:13:1][Normal][justify] 12
+[table6:13:2][Normal][justify] 增益状态
+[table6:13:3][Normal][justify] 激光增益起控状态。
+[table6:13:4][Normal][justify] 起控1级、起控2级、起控3级、起控4级、起控5级；其他值为未知(0xNN)。
+[table6:14:1][Normal][justify] 13
+[table6:14:2][Normal][justify] 第一象限能量强度
+[table6:14:3][Normal][justify] 第一象限能量强度。
+[table6:14:4][Normal][justify] 4 位小数。
+[table6:15:1][Normal][justify] 14
+[table6:15:2][Normal][justify] 第二象限能量强度
+[table6:15:3][Normal][justify] 第二象限能量强度。
+[table6:15:4][Normal][justify] 4 位小数。
+[table6:16:1][Normal][justify] 15
+[table6:16:2][Normal][justify] 第三象限能量强度
+[table6:16:3][Normal][justify] 第三象限能量强度。
+[table6:16:4][Normal][justify] 4 位小数。
+[table6:17:1][Normal][justify] 16
+[table6:17:2][Normal][justify] 第四象限能量强度
+[table6:17:3][Normal][justify] 第四象限能量强度。
+[table6:17:4][Normal][justify] 4 位小数。
+[table6:18:1][Normal][justify] 17
+[table6:18:2][Normal][justify] 时标精度(us)
+[table6:18:3][Normal][justify] 相邻两组有效返回时标间隔相对 20000 μs 的偏差。
+[table6:18:4][Normal][justify] 有符号整数；首帧或返回时标无效时为空。
+[table7:1:1][Normal][center] 序号
+[table7:1:2][Normal][inherit] 字段名
+[table7:1:3][Normal][inherit] 含义
+[table7:1:4][Normal][inherit] 格式与写入规则
+[table7:2:1][Normal][center] 1
+[table7:2:2][Normal][inherit] 时间
+[table7:2:3][Normal][inherit] 该图像 B 帧的记录时间。
+[table7:2:4][Normal][inherit] 字符串；优先为 B 帧返回时标对应的北京时间 HH:mm:ss.ffffff，否则为本机系统时间 HH:mm:ss.zzz。
+[table7:3:1][Normal][center] 2
+[table7:3:2][Normal][inherit] 采样率(Hz)
+[table7:3:3][Normal][inherit] 图像数据标称采样率。
+[table7:3:4][Normal][inherit] 固定整数 50，对应 20 ms。
+[table7:4:1][Normal][center] 3
+[table7:4:2][Normal][inherit] B帧流水号
+[table7:4:3][Normal][inherit] 图像导引头 B 帧流水号。
+[table7:4:4][Normal][inherit] 整数，按协议解析值写入。
+[table7:5:1][Normal][center] 4
+[table7:5:2][Normal][inherit] 当前工作通道
+[table7:5:3][Normal][inherit] 当前电视或红外工作通道。
+[table7:5:4][Normal][inherit] 电视、红外；其他值为未知(0xNN)。
+[table7:6:1][Normal][center] 5
+[table7:6:2][Normal][inherit] 俯仰视线角速度(°/s)
+[table7:6:3][Normal][inherit] 俯仰视线角速度。
+[table7:6:4][Normal][inherit] 4 位小数。
+[table7:7:1][Normal][center] 6
+[table7:7:2][Normal][inherit] 偏航视线角速度(°/s)
+[table7:7:3][Normal][inherit] 偏航视线角速度。
+[table7:7:4][Normal][inherit] 4 位小数。
+[table7:8:1][Normal][center] 7
+[table7:8:2][Normal][inherit] 光学工作状态
+[table7:8:3][Normal][inherit] 导引头光学工作状态。
+[table7:8:4][Normal][inherit] 搜索状态（预置状态）、跟踪状态、框架角电锁零位状态、记忆状态、解锁状态；其他值为未知(0xNN)。
+[table7:9:1][Normal][center] 8
+[table7:9:2][Normal][inherit] 俯仰框架角(°)
+[table7:9:3][Normal][inherit] 俯仰框架角。
+[table7:9:4][Normal][inherit] 4 位小数。
+[table7:10:1][Normal][center] 9
+[table7:10:2][Normal][inherit] 偏航框架角(°)
+[table7:10:3][Normal][inherit] 偏航框架角。
+[table7:10:4][Normal][inherit] 4 位小数。
+[table7:11:1][Normal][center] 10
+[table7:11:2][Normal][inherit] 方位偏差像素
+[table7:11:3][Normal][inherit] 目标方位偏差像素。
+[table7:11:4][Normal][inherit] 整数。
+[table7:12:1][Normal][center] 11
+[table7:12:2][Normal][inherit] 俯仰偏差像素
+[table7:12:3][Normal][inherit] 目标俯仰偏差像素。
+[table7:12:4][Normal][inherit] 整数。
+[table7:13:1][Normal][center] 12
+[table7:13:2][Normal][inherit] 俯仰陀螺(°/s)
+[table7:13:3][Normal][inherit] 俯仰陀螺输出。
+[table7:13:4][Normal][inherit] 4 位小数。
+[table7:14:1][Normal][center] 13
+[table7:14:2][Normal][inherit] 偏航陀螺(°/s)
+[table7:14:3][Normal][inherit] 偏航陀螺输出。
+[table7:14:4][Normal][inherit] 4 位小数。
+[table7:15:1][Normal][center] 14
+[table7:15:2][Normal][inherit] 跟踪状态
+[table7:15:3][Normal][inherit] 导引头总体跟踪状态。
+[table7:15:4][Normal][inherit] 默认、搜索中、目标丢失、目标锁定、记忆状态；其他值为未知(0xNN)。
+[table7:16:1][Normal][center] 15
+[table7:16:2][Normal][inherit] 跟踪器状态
+[table7:16:3][Normal][inherit] 图像跟踪器工作状态。
+[table7:16:4][Normal][inherit] 空闲状态、跟踪状态、识别状态、匹配状态、仅识别状态；其他值为未知(0xNN)。
+[table7:17:1][Normal][center] 16
+[table7:17:2][Normal][inherit] 红外帧编号
+[table7:17:3][Normal][inherit] 红外通道帧编号。
+[table7:17:4][Normal][inherit] 整数。
+[table7:18:1][Normal][center] 17
+[table7:18:2][Normal][inherit] 电视帧编号
+[table7:18:3][Normal][inherit] 电视通道帧编号。
+[table7:18:4][Normal][inherit] 整数。
+[table7:19:1][Normal][center] 18
+[table7:19:2][Normal][inherit] 时标精度(us)
+[table7:19:3][Normal][inherit] 相邻两组有效 B 帧返回时标间隔相对 20000 μs 的偏差。
+[table7:19:4][Normal][inherit] 有符号整数；首帧或返回时标无效时为空。
+[table8:1:1][Normal][justify] 序号
+[table8:1:2][Normal][justify] 字段名
+[table8:1:3][Normal][justify] 含义
+[table8:1:4][Normal][justify] 格式与写入规则
+[table8:2:1][Normal][justify] 1
+[table8:2:2][Normal][justify] 采样率(Hz)
+[table8:2:3][Normal][justify] 转台状态反馈标称采样率。
+[table8:2:4][Normal][justify] 固定整数 200，对应 5 ms。
+[table8:3:1][Normal][justify] 2
+[table8:3:2][Normal][justify] 序号
+[table8:3:3][Normal][justify] 本次转台保存内递增的记录序号。
+[table8:3:4][Normal][justify] 从 1 开始逐行加一；每路重新开始保存时复位。
+[table8:4:1][Normal][justify] 3
+[table8:4:2][Normal][justify] 转台毫秒时间
+[table8:4:3][Normal][justify] 状态反馈帧给出的当日毫秒时间。
+[table8:4:4][Normal][justify] 整数，协议范围 0～14399999。
+[table8:5:1][Normal][justify] 4
+[table8:5:2][Normal][justify] 指令提示
+[table8:5:3][Normal][justify] 反馈帧携带的最近有效指令。
+[table8:5:4][Normal][justify] 无、使能、停车、回零、位置、速率、摇摆、3秒跟踪、250ms跟踪、20ms跟踪、5ms跟踪、时间设置、跟踪修正、复位；其他值为未知(0xNN)。
+[table8:6:1][Normal][justify] 5
+[table8:6:2][Normal][justify] 内框报警
+[table8:6:3][Normal][justify] 内框报警状态。
+[table8:6:4][Normal][justify] 无、驱动器报警、伺服超差报警、正向限位报警、逆向限位报警、时钟同步报警、初始化信息报警、限位开关同时导通、编码器数据故障报警、瞬态电流报警、连续电流报警；其他值为未知(0xN)。
+[table8:7:1][Normal][justify] 6
+[table8:7:2][Normal][justify] 内框状态
+[table8:7:3][Normal][justify] 内框运行状态。
+[table8:7:4][Normal][justify] 空闲、伺服、回零执行中、位置执行中、速率执行中、速率稳定、摇摆执行中、摇摆稳定、3秒跟踪模式、250ms跟踪模式、20ms跟踪模式、5ms跟踪模式、停车执行中；其他值为未知(0xN)。
+[table8:8:1][Normal][justify] 7
+[table8:8:2][Normal][justify] 内框角度(°)
+[table8:8:3][Normal][justify] 内框实测角度。
+[table8:8:4][Normal][justify] 4 位小数，协议原始单位为 0.0001°。
+[table8:9:1][Normal][justify] 8
+[table8:9:2][Normal][justify] 内框理想轨迹角度(°)
+[table8:9:3][Normal][justify] 由内框实测角度加控制偏差得到。
+[table8:9:4][Normal][justify] 4 位小数；由记录器计算，不是协议独立字段。
+[table8:10:1][Normal][justify] 9
+[table8:10:2][Normal][justify] 内框控制偏差(°)
+[table8:10:3][Normal][justify] 内框控制偏差。
+[table8:10:4][Normal][justify] 4 位小数，协议原始单位为 0.0001°。
+[table8:11:1][Normal][justify] 10
+[table8:11:2][Normal][justify] 中框报警
+[table8:11:3][Normal][justify] 中框报警状态。
+[table8:11:4][Normal][justify] 无、驱动器报警、伺服超差报警、正向限位报警、逆向限位报警、时钟同步报警、初始化信息报警、限位开关同时导通、编码器数据故障报警、瞬态电流报警、连续电流报警；其他值为未知(0xN)。
+[table8:12:1][Normal][justify] 11
+[table8:12:2][Normal][justify] 中框状态
+[table8:12:3][Normal][justify] 中框运行状态。
+[table8:12:4][Normal][justify] 空闲、伺服、回零执行中、位置执行中、速率执行中、速率稳定、摇摆执行中、摇摆稳定、3秒跟踪模式、250ms跟踪模式、20ms跟踪模式、5ms跟踪模式、停车执行中；其他值为未知(0xN)。
+[table8:13:1][Normal][justify] 12
+[table8:13:2][Normal][justify] 中框角度(°)
+[table8:13:3][Normal][justify] 中框实测角度。
+[table8:13:4][Normal][justify] 4 位小数。
+[table8:14:1][Normal][justify] 13
+[table8:14:2][Normal][justify] 中框理想轨迹角度(°)
+[table8:14:3][Normal][justify] 由中框实测角度加控制偏差得到。
+[table8:14:4][Normal][justify] 4 位小数；由记录器计算。
+[table8:15:1][Normal][justify] 14
+[table8:15:2][Normal][justify] 中框控制偏差(°)
+[table8:15:3][Normal][justify] 中框控制偏差。
+[table8:15:4][Normal][justify] 4 位小数。
+[table8:16:1][Normal][justify] 15
+[table8:16:2][Normal][justify] 外框报警
+[table8:16:3][Normal][justify] 外框报警状态。
+[table8:16:4][Normal][justify] 无、驱动器报警、伺服超差报警、正向限位报警、逆向限位报警、时钟同步报警、初始化信息报警、限位开关同时导通、编码器数据故障报警、瞬态电流报警、连续电流报警；其他值为未知(0xN)。
+[table8:17:1][Normal][justify] 16
+[table8:17:2][Normal][justify] 外框状态
+[table8:17:3][Normal][justify] 外框运行状态。
+[table8:17:4][Normal][justify] 空闲、伺服、回零执行中、位置执行中、速率执行中、速率稳定、摇摆执行中、摇摆稳定、3秒跟踪模式、250ms跟踪模式、20ms跟踪模式、5ms跟踪模式、停车执行中；其他值为未知(0xN)。
+[table8:18:1][Normal][justify] 17
+[table8:18:2][Normal][justify] 外框角度(°)
+[table8:18:3][Normal][justify] 外框实测角度。
+[table8:18:4][Normal][justify] 4 位小数。
+[table8:19:1][Normal][justify] 18
+[table8:19:2][Normal][justify] 外框理想轨迹角度(°)
+[table8:19:3][Normal][justify] 由外框实测角度加控制偏差得到。
+[table8:19:4][Normal][justify] 4 位小数；由记录器计算。
+[table8:20:1][Normal][justify] 19
+[table8:20:2][Normal][justify] 外框控制偏差(°)
+[table8:20:3][Normal][justify] 外框控制偏差。
+[table8:20:4][Normal][justify] 4 位小数。
+[table8:21:1][Normal][justify] 20
+[table8:21:2][Normal][justify] 秒脉冲
+[table8:21:3][Normal][justify] 状态帧的秒脉冲标志。
+[table8:21:4][Normal][justify] 有、无。
+[table9:1:1][Normal][inherit] 项目
+[table9:1:2][Normal][inherit] 当前实现
+[table9:1:3][Normal][inherit] 说明
+[table9:2:1][Normal][inherit] 录制源
+[table9:2:2][Normal][inherit] 导引头播放器；缺失时回退到 观瞄设备播放器
+[table9:2:3][Normal][inherit] 仅录制当前注入 DataRecorder 的一个视频播放器
+[table9:3:1][Normal][inherit] 启动与停止
+[table9:3:2][Normal][inherit] 任一路开始保存时启动，最后一路停止时结束
+[table9:3:3][Normal][inherit] 三路共用视频请求计数，只生成一份录像
+[table9:4:1][Normal][inherit] 暂存格式
+[table9:4:2][Normal][inherit] mpv record-file 写入原始码流 TS
+[table9:4:3][Normal][inherit] 不转码，按源流内容写盘
+[table9:5:1][Normal][inherit] 最终格式
+[table9:5:2][Normal][inherit] ffmpeg -c copy -movflags +faststart 转为 MP4
+[table9:5:3][Normal][inherit] 成功且 MP4 非空后删除 TS，否则保留 TS
+[table9:6:1][Normal][inherit] 文件命名
+[table9:6:2][Normal][inherit] videoHHmmss.mp4
+[table9:6:3][Normal][inherit] HHmmss 为第一次视频请求时刻；重名时追加 _1、_2 等后缀
+[table9:7:1][Normal][inherit] 分卷
+[table9:7:2][Normal][inherit] 当前实现不分卷
+[table9:7:3][Normal][inherit] 录像持续至最后一路停止，或因换源/重连中断
+[table9:8:1][Normal][inherit] 中断处理
+[table9:8:2][Normal][inherit] 立即停止本次录像并转换已录部分
+[table9:8:3][Normal][inherit] 不续录旧文件；发出 videoRecordInterrupted
+[table9:9:1][Normal][inherit] 完整性判据
+[table9:9:2][Normal][inherit] ffmpeg 正常退出且 MP4 存在、大小大于零
+[table9:9:3][Normal][inherit] 转换失败时保留临时 TS 供人工处理
+[table10:1:1][Normal][justify] 数据文件
+[table10:1:2][Normal][justify] 支撑的需求 / 条款
+[table10:1:3][Normal][justify] 实现中的承载接口
+[table10:2:1][Normal][justify] 图像数据文件
+[table10:2:2][Normal][justify] REQ-FUN-002、REQ-FUN-003、REQ-FUN-012
+[table10:2:3][Normal][justify] ImageData::frameParsed → DataRecorder::onImageFrame
+[table10:3:1][Normal][justify] 激光数据文件
+[table10:3:2][Normal][justify] REQ-FUN-002、REQ-FUN-003、REQ-FUN-012
+[table10:3:3][Normal][justify] LaserData::frameParsed → DataRecorder::onLaserFrame
+[table10:4:1][Normal][justify] 转台数据文件
+[table10:4:2][Normal][justify] REQ-FUN-005、REQ-FUN-006、REQ-FUN-008、013、014
+[table10:4:3][Normal][justify] requpdateframe → DataRecorder::onTurntableFrame
+[table10:5:1][Normal][justify] 视频文件
+[table10:5:2][Normal][justify] REQ-FUN-007；SRS 3.2.3、3.2.7
+[table10:5:3][Normal][justify] DataRecorder 视频请求计数、VlcVideoItem、ffmpeg
+[table11:1:1][Normal][center] 术语 / 缩略语
+[table11:1:2][Normal][center] 全称或含义
+[table11:1:3][Normal][center] 在本文件中的说明
+[table11:2:1][Normal][center] DBDD
+[table11:2:2][Normal][center] 数据库设计说明（Database Design Description）
+[table11:2:3][Normal][center] 即本文档
+[table11:3:1][Normal][center] DBMS
+[table11:3:2][Normal][center] 数据库管理系统（Database Management System）
+[table11:3:3][Normal][center] 本软件不使用
+[table11:4:1][Normal][center] 数据元素
+[table11:4:2][Normal][center] 逻辑设计级的数据项或列
+[table11:4:3][Normal][center] 对应 CSV 表头中的一列
+[table11:5:1][Normal][center] CSV
+[table11:5:2][Normal][center] 逗号分隔值（Comma-Separated Values）
+[table11:5:3][Normal][center] 本文档中采用 UTF-8 BOM、LF 换行的简单 CSV
+[table11:6:1][Normal][center] UTF-8 BOM
+[table11:6:2][Normal][center] UTF-8 字节顺序标记
+[table11:6:3][Normal][center] 用于提高中文表格软件的编码识别能力
+[table11:7:1][Normal][center] B帧
+[table11:7:2][Normal][center] 图像导引头回传的一类反馈帧
+[table11:7:3][Normal][center] 每帧解析后写入图像 CSV
+[table11:8:1][Normal][center] TS
+[table11:8:2][Normal][center] MPEG 传输流（Transport Stream）
+[table11:8:3][Normal][center] 视频录制时的临时原始码流文件
+[table11:9:1][Normal][center] MP4
+[table11:9:2][Normal][center] MPEG-4 容器格式
+[table11:9:3][Normal][center] ffmpeg 转封装后的视频文件
+[table11:10:1][Normal][center] 落盘
+[table11:10:2][Normal][center] 把内存缓冲和录制数据写入持久存储
+[table11:10:3][Normal][center] 本文档中包括 QFile flush 与 TS/MP4 写入

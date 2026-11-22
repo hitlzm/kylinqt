@@ -60,9 +60,11 @@ Rectangle {
         "圆形搜索",
         "定轴位置",
         "矩形位置",
-        "圆形位置",
-        "零漂校准",
-        "零漂保存"
+        "圆形位置"
+    ]
+    property var laserDeviceList: [
+        "默认设备",
+        "其他"
     ]
 
     property int currentCmd: 0
@@ -71,19 +73,33 @@ Rectangle {
     Rectangle {
         id: commandArea
         width: 160
-        height: 465
+        height: commandLayout.implicitHeight + commandLayout.anchors.margins * 2
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
         anchors.leftMargin: 50
-        anchors.top: parent.top
-        anchors.topMargin: 80
+        // 在首行串口控件底边与组件底边之间的剩余区域内垂直居中
+        readonly property int firstRowBottom: 52
+        y: firstRowBottom
+           + Math.max(0, (parent.height - firstRowBottom - height) / 2)
 
         Column {
-            spacing: 6
+            id: commandLayout
+            spacing: 10
             anchors.fill: parent
             anchors.margins: 12
+
+            MyComboBox {
+                id: laserDeviceComboBox
+                mywidth: commandArea.width - 24
+                myheight: 55
+                title: "当前使用设备"
+                titleFontSize: 16
+                model: root.laserDeviceList
+                popupMinWidth: 200
+            }
+
             Text {
                 text: "激光导引头控制字"
                 font.pixelSize: 16
@@ -123,7 +139,7 @@ Rectangle {
                         root.elevationSearchRangeValid = true
                         root.searchRadiusValid = true
 
-                         if (index === 0 || index === 1 || index === 10 || index === 11) {
+                         if (index === 0 || index === 1) {
                             firstColumn.disabledIndices = [0,1]      // 都禁用
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]

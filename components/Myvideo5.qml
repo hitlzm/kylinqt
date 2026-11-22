@@ -59,7 +59,7 @@ Rectangle {
 
         RadioButton {
             id: sourceGuide
-            text: "导引头"
+            text: "视频1"
             font.pixelSize: 13
             padding: 0
             checked: true
@@ -69,7 +69,7 @@ Rectangle {
 
         RadioButton {
             id: sourceCCD
-            text: "CCD"
+            text: "视频2"
             font.pixelSize: 13
             padding: 0
             ButtonGroup.group: videoSourceGroup

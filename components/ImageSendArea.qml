@@ -38,14 +38,9 @@ Rectangle {
         "默认值",
         // 以下指令发送三拍，三拍后恢复默认值
         "自检",
-        "射检",
         "搜索",
         "预置",
-        "发射指令",
-        "通讯检查",
         "解锁",
-        "软件升级",
-        "软件升级结束",
         "打开波门叠加",
         "关闭波门叠加"
     ]
@@ -154,35 +149,33 @@ Rectangle {
     switch (word) {
     case 0x00: return 0
     case 0x01: return 1
-    case 0x02: return 2
-    case 0x03: return 3
-    case 0x04: return 4
-    case 0x06: return 5
-    case 0x55: return 6
-    case 0x40: return 7
-    case 0xA1: return 8
-    case 0xB1: return 9
-    case 0xED: return 10
-    case 0xEE: return 11
+    case 0x03: return 2
+    case 0x04: return 3
+    case 0x40: return 4
+    case 0xED: return 5
+    case 0xEE: return 6
     }
-    return 0
+    return -1
     }
 
 
     Rectangle {
         id: commandArea
         width: 160
-        height: 540
+        height: commandLayout.implicitHeight + commandLayout.anchors.margins * 2
         color: '#faf7f7'
         radius: 4
 
         anchors.left: parent.left
         anchors.leftMargin: 30
-        anchors.top: parent.top
-        anchors.topMargin: 45
+        // 在首行串口控件底边与组件底边之间的剩余区域内垂直居中
+        readonly property int firstRowBottom: 42
+        y: firstRowBottom
+           + Math.max(0, (parent.height - firstRowBottom - height) / 2)
 
         Column {
-            spacing: 6
+            id: commandLayout
+            spacing: 14
             anchors.fill: parent
             anchors.margins: 12
 
@@ -193,6 +186,7 @@ Rectangle {
                 title: "当前使用设备"
                 titleFontSize: 16
                 model: root.seekerDeviceList
+                popupMinWidth: 200
                 onCurrentIndexChanged: {
                     if (mycurrentIndex !== -1)
                         root.seekerDeviceIndex = mycurrentIndex
@@ -232,24 +226,14 @@ Rectangle {
                         } else if (currentCmd === 1) {
                             imageSendData.m_seekerCtrlWord = 0x01
                         } else if (currentCmd === 2) {
-                            imageSendData.m_seekerCtrlWord = 0x02
-                        } else if (currentCmd === 3) {
                             imageSendData.m_seekerCtrlWord = 0x03
-                        } else if (currentCmd === 4) {
+                        } else if (currentCmd === 3) {
                             imageSendData.m_seekerCtrlWord = 0x04
-                        } else if (currentCmd === 5) {
-                            imageSendData.m_seekerCtrlWord = 0x06
-                        } else if (currentCmd === 6) {
-                            imageSendData.m_seekerCtrlWord = 0x55
-                        } else if (currentCmd === 7) {
+                        } else if (currentCmd === 4) {
                             imageSendData.m_seekerCtrlWord = 0x40
-                        } else if (currentCmd === 8) {
-                            imageSendData.m_seekerCtrlWord = 0xA1
-                        } else if (currentCmd === 9) {
-                            imageSendData.m_seekerCtrlWord = 0xB1
-                        } else if (currentCmd === 10) {
+                        } else if (currentCmd === 5) {
                             imageSendData.m_seekerCtrlWord = 0xED
-                        } else if (currentCmd === 11) {
+                        } else if (currentCmd === 6) {
                             imageSendData.m_seekerCtrlWord = 0xEE
                         }
                     }
@@ -1162,7 +1146,7 @@ Rectangle {
                 anchors.rightMargin: 8
                 height: 126
                 spacing: 4
-                model: 11
+                model: 9
 
                 delegate: DataLabel {
                     fontSize: 18
@@ -1177,9 +1161,7 @@ Rectangle {
                         if (index === 5) return "目标灰度类型:"
                         if (index === 6) return "目标动/静:"
                         if (index === 7) return "背景类型:"
-                        if (index === 8) return "光学工作状态:"
-                        if (index === 9) return "修正指令状态:"
-                        return "修正指令次数:"
+                        return "光学工作状态:"
                     }
                     value: {
                         if (index === 0) {
@@ -1354,9 +1336,6 @@ Rectangle {
                                 return "未知状态"
                             }
                         }
-                        if (index === 9)
-                            return imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态"
-                        return imageData.correctionCmdCount
                     }
                     valueColor: {
                         if (index === 0) {
@@ -1381,10 +1360,10 @@ Rectangle {
             }
         }
 
-        // ── 角度信息 ──
+        // ── 状态信息 ──
         Rectangle {
-            id: angleInfoBox
-            width: 220
+            id: statusInfoBox
+            width: 260
             height: controlStatusBox.height
             color: "transparent"
             border.color: "gray"
@@ -1392,8 +1371,8 @@ Rectangle {
             radius: 6
 
             Label {
-                id: angleInfoTitle
-                text: "角度信息"
+                id: statusInfoTitle
+                text: "状态信息"
                 font.pixelSize: 18
                 font.bold: true
                 anchors.top: parent.top
@@ -1403,8 +1382,8 @@ Rectangle {
             }
 
             CusListView {
-                id: angleInfoList
-                anchors.top: angleInfoTitle.bottom
+                id: statusInfoList
+                anchors.top: statusInfoTitle.bottom
                 anchors.topMargin: 4
                 anchors.left: parent.left
                 anchors.leftMargin: 8
@@ -1416,19 +1395,20 @@ Rectangle {
 
                 delegate: DataLabel {
                     fontSize: 18
-                    labelWidth: 110
-                    valueWidth: 85
+                    labelWidth: 130
+                    valueWidth: 100
                     label: {
-                        if (index === 0) return "俯仰框架角:"
-                        if (index === 1) return "偏航框架角:"
-                        if (index === 2) return "方位主令:"
-                        return "俯仰主令:"
+                        if (index === 0) return "修正指令状态:"
+                        if (index === 1) return "修正指令次数:"
+                        if (index === 2) return "波门尺寸:"
+                        return "温度:"
                     }
                     value: {
-                        if (index === 0) return imageData.pitchFrameAngle.toFixed(3) + "°"
-                        if (index === 1) return imageData.yawFrameAngle.toFixed(3) + "°"
-                        if (index === 2) return imageData.azimuthMasterCmd.toFixed(4)
-                        return imageData.pitchMasterCmd.toFixed(4)
+                        if (index === 0)
+                            return imageData.correctionCmdStatus === 1 ? "修正状态" : "非修正状态"
+                        if (index === 1) return imageData.correctionCmdCount
+                        if (index === 2) return imageData.gateSize
+                        return imageData.temperture + "°"
                     }
                 }
             }
@@ -1436,22 +1416,21 @@ Rectangle {
     }
 
     // ═══════════════════════════════════════════════════════
-    // 状态显示第二行 — 跟踪信息 + 伺服/平台 + 角速度/陀螺 + 其他信息
+    // 状态显示第二行 — 跟踪信息 + 角度/角速度信息 + 其他信息
     // ═══════════════════════════════════════════════════════
     Row {
         id: statusRow2
-        spacing: 5
+        spacing: statusRow1.spacing
 
         anchors.top: statusRow1.bottom
         anchors.topMargin: 5
-        anchors.left: commandArea.right
-        anchors.leftMargin: 25
+        anchors.left: statusRow1.left
 
         // ── 跟踪信息 ──
         Rectangle {
             id: trackingInfoBox
-            width: 240
-            height: gyroInfoBox.height
+            width: frameInfoBox.width
+            height: angleVelocityInfoBox.height
             color: "transparent"
             border.color: "gray"
             border.width: 2
@@ -1544,70 +1523,19 @@ Rectangle {
             }
         }
 
-        // ── 伺服/平台信息 ──
+        // ── 角度/角速度信息 ──
         Rectangle {
-            id: servoInfoBox
-            width: 240
-            height: gyroInfoBox.height
+            id: angleVelocityInfoBox
+            width: controlStatusBox.width
+            height: angleVelocityTitle.height + angleVelocityList.height + 20
             color: "transparent"
             border.color: "gray"
             border.width: 2
             radius: 6
 
             Label {
-                id: servoInfoTitle
-                text: "伺服/平台信息"
-                font.pixelSize: 18
-                font.bold: true
-                anchors.top: parent.top
-                anchors.topMargin: 6
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-            }
-
-            CusListView {
-                id: servoInfoList
-                anchors.top: servoInfoTitle.bottom
-                anchors.topMargin: 4
-                anchors.left: parent.left
-                anchors.leftMargin: 8
-                anchors.right: parent.right
-                anchors.rightMargin: 8
-                height: 90
-                spacing: 4
-                model: 3
-
-                delegate: DataLabel {
-                    fontSize: 18
-                    labelWidth: 130
-                    valueWidth: 85
-                    label: {
-                        if (index === 0) return "平台自检结果:"
-                        if (index === 1) return "伺服运行时间:"
-                        return "伺服阶跃:"
-                    }
-                    value: {
-                        if (index === 0) return imageData.platformSelfCheck
-                        if (index === 1) return imageData.servoRunningTime + " s"
-                        return imageData.servoStep
-                    }
-                }
-            }
-        }
-
-        // ── 角速度/陀螺信息 ──
-        Rectangle {
-            id: gyroInfoBox
-            width: 260
-            height: gyroInfoTitle.height + gyroInfoList.height + 20
-            color: "transparent"
-            border.color: "gray"
-            border.width: 2
-            radius: 6
-
-            Label {
-                id: gyroInfoTitle
-                text: "角速度/陀螺信息"
+                id: angleVelocityTitle
+                text: "角度/角速度信息"
                 font.pixelSize: 18
                 font.bold: true
                 // 固定标题高度，避免字体行高差异（Win 雅黑 vs 麒麟 Noto）影响盒子高度计算
@@ -1620,8 +1548,8 @@ Rectangle {
             }
 
             CusListView {
-                id: gyroInfoList
-                anchors.top: gyroInfoTitle.bottom
+                id: angleVelocityList
+                anchors.top: angleVelocityTitle.bottom
                 anchors.topMargin: 4
                 anchors.left: parent.left
                 anchors.leftMargin: 8
@@ -1629,27 +1557,32 @@ Rectangle {
                 anchors.rightMargin: 8
                 height: 110
                 spacing: 4
-                model: 6
+                model: 4
 
                 delegate: DataLabel {
                     fontSize: 18
                     labelWidth: 145
                     valueWidth: 90
                     label: {
-                        if (index === 0) return "俯仰视线角速度:"
-                        if (index === 1) return "偏航视线角速度:"
-                        if (index === 2) return "俯仰陀螺:"
-                        if (index === 3) return "偏航陀螺:"
-                        if (index === 4) return "方位陀螺输出:"
-                        return "俯仰陀螺输出:"
+                        if (index === 0) return "俯仰框架角:"
+                        if (index === 1) return "偏航框架角:"
+                        if (index === 2) return "俯仰视线角速度:"
+                        if (index === 3) return "偏航视线角速度:"
+                        // 陀螺相关显示已停用，保留原字段映射供后续恢复：
+                        // if (index === 2) return "俯仰陀螺:"
+                        // if (index === 3) return "偏航陀螺:"
+                        // if (index === 4) return "方位陀螺输出:"
+                        // return "俯仰陀螺输出:"
                     }
                     value: {
-                        if (index === 0) return imageData.pitchLosAngVel.toFixed(2) + "°/s"
-                        if (index === 1) return imageData.yawLosAngVel.toFixed(2) + "°/s"
-                        if (index === 2) return imageData.pitchGyro.toFixed(2) + "°/s"
-                        if (index === 3) return imageData.yawGyro.toFixed(2) + "°/s"
-                        if (index === 4) return imageData.azimuthGyroOutput.toFixed(2) + "°/s"
-                        return imageData.pitchGyroOutput.toFixed(2) + "°/s"
+                        if (index === 0) return imageData.pitchFrameAngle.toFixed(3) + "°"
+                        if (index === 1) return imageData.yawFrameAngle.toFixed(3) + "°"
+                        if (index === 2) return imageData.pitchLosAngVel.toFixed(3) + "°/s"
+                        if (index === 3) return imageData.yawLosAngVel.toFixed(3) + "°/s"
+                        // if (index === 2) return imageData.pitchGyro.toFixed(2) + "°/s"
+                        // if (index === 3) return imageData.yawGyro.toFixed(2) + "°/s"
+                        // if (index === 4) return imageData.azimuthGyroOutput.toFixed(2) + "°/s"
+                        // return imageData.pitchGyroOutput.toFixed(2) + "°/s"
                     }
                 }
             }
@@ -1658,8 +1591,8 @@ Rectangle {
         // ── 其他信息 ──
         Rectangle {
             id: otherInfoBox
-            width: 220
-            height: gyroInfoBox.height
+            width: 260
+            height: angleVelocityInfoBox.height
             color: "transparent"
             border.color: "gray"
             border.width: 2
@@ -1686,7 +1619,7 @@ Rectangle {
                 anchors.rightMargin: 8
                 height: 110
                 spacing: 4
-                model: 8
+                model: 7
 
                 delegate: DataLabel {
                     fontSize: 18
@@ -1697,10 +1630,8 @@ Rectangle {
                         if (index === 1) return "红外帧频:"
                         if (index === 2) return "电视帧频:"
                         if (index === 3) return "电视帧编号:"
-                        if (index === 4) return "温度:"
-                        if (index === 5) return "波门尺寸:"
-                        if (index === 6) return "软件版本1:"
-                        if (index === 7) return "软件版本2:"
+                        if (index === 4) return "软件版本1:"
+                        if (index === 5) return "软件版本2:"
                         return "软件版本3:"
                     }
                     value: {
@@ -1708,10 +1639,8 @@ Rectangle {
                         if (index === 1) return imageData.infraredFrameRate + " Hz"
                         if (index === 2) return imageData.tvFrameRate + " Hz"
                         if (index === 3) return imageData.cbhTv4405
-                        if (index === 4) return imageData.temperture + "°"  //改成具体的温度
-                        if (index === 5) return imageData.gateSize
-                        if (index === 6) return "V" + (imageData.softwareVersion1 / 100).toFixed(2)
-                        if (index === 7) return "V" + (imageData.softwareVersion2 / 100).toFixed(2)        //软件版本的显示如果是数字201，则显示为V2.01
+                        if (index === 4) return "V" + (imageData.softwareVersion1 / 100).toFixed(2)
+                        if (index === 5) return "V" + (imageData.softwareVersion2 / 100).toFixed(2)        //软件版本的显示如果是数字201，则显示为V2.01
                         return "V" + (imageData.softwareVersion3 / 100).toFixed(2)
                     }
                 }

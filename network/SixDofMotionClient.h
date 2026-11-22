@@ -6,7 +6,7 @@
 #include <QString>
 
 // 升起高度偏置（单位：mm）。最终发送的 Z 轴指令 = 输入框值 - 该偏置。
-#define SIXDOF_Z_HEIGHT_OFFSET_MM (0.0)
+#define SIXDOF_Z_HEIGHT_OFFSET_MM (1685.0)  // 现场实测值:2675-400-590
 
 class QUdpSocket;
 class QTimer;

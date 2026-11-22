@@ -47,7 +47,7 @@ Rectangle {
             Text {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                text: qsTr("kylin-qt")
+                text: qsTr("定点/跟飞试验系统软件")
                 font.pixelSize: 26
                 font.bold: true
                 color: "#10233a"

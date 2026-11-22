@@ -1,0 +1,346 @@
+FILE: O_软件产品规格说明.docx
+CORE: {"title": "定点/跟飞试验系统软件 软件产品规格说明", "subject": "GJB 438C-2021 文档修订版", "author": "HRB", "last_modified_by": "HRB", "created": "2026-11-13T09:00:00+00:00", "modified": "2026-11-20T12:00:00+00:00", "revision": 6, "version": "V1.1", "comments": "2026年11月13日修订：统一术语、版式、文档版本与编写时间，并按当前源码核对实现描述。", "keywords": ""}
+CUSTOM: {}
+
+[body][Normal][inherit] 密级：SS
+[body][Normal][justify] 文档编号：DD/GF 007-SPS-001
+[body][Normal][center] 定点/跟飞试验系统软件
+[body][Normal][center] 软件产品规格说明
+[body][Normal][center] （依据 GJB 438C-2021 附录 O）
+[body][Normal][center] 软件版本：V2.5.0（Build 20261101）
+[body][Normal][center] 文档版本：V1.1
+[body][Normal][center] 编制单位：HRB
+[body][Normal][center] 修订日期：2026年11月13日
+[body][Normal][center] 文 档 审 签 页
+[body][Normal][center] 前  言
+[body][Normal][justify] 本文件依据 GJB 438C-2021《军用软件开发文档通用要求》附录 O 规定的《软件产品规格说明》正文格式编写，说明交付的软件产品构成、源文件与可执行软件的一致性判据、建立与修改规程及资源使用情况。
+[body][Normal][justify] 本文件的编制依据为 GJB 438C-2021、GJB 2786A-2009 及本项目的研制任务书与技术协议；编制过程中引用了《软件需求规格说明》（DD/GF 007，V2.5.0 修订版）、《软件设计说明》（DD/GF 007-SDD-001）与《软件测试说明（测试用例）》（DD/GF 007-STD-001）等文件，凡上述文件已有明确规定的内容，本文件不再重复叙述，仅按本文件的角度作必要引用。
+[body][Normal][justify] 本文件的读者对象为：需方（甲方）项目管理与验收人员、第三方软件测评机构的技术人员、开发方（HRB）的设计与测试人员、使用与保障人员。不同读者可按目录选取相应章节，不必通读全文。
+[body][Normal][justify] 本文件密级为SS，其编制、审批、复制、发放、保管、借阅、归档和销毁，均应按国家及上级主管部门的保密管理规定执行。本文件为涉密载体，未经批准不得复制、摘抄、拍摄或通过任何网络传输。
+[body][Normal][justify] 文中以“应”“须”表述的为强制性要求，以“宜”“可”表述的为推荐性要求。文中给出的时间、人员数量、工作量、容量与指标类数值，除明确标注为约束值或合同要求外，均为典型工况下的策划值或参考值，用于指导实施与评价；实际执行中可结合现场条件、设备状态与联调结果在合理范围内调整，调整应在相应记录中留痕。
+[body][Normal][justify] 本文件与同批编制的其他文件在内容上相互引用而不重复抄录：凡涉及需求条目、接口标识、软件单元与测试用例，均以《软件需求规格说明》《软件设计说明》《软件测试说明（测试用例）》中的编号与标识为准。如各文件在个别参数上出现不一致，以经评审确认的最新版本为准，并据以修订其余文件，不以任一文件的孤立刻度作为唯一判据。
+[body][Normal][center] 目      录
+[body][toc 1][inherit] 1  范围 6
+[body][toc 2][inherit] 1.1  标识 6
+[body][toc 2][inherit] 1.2  系统概述 6
+[body][toc 2][inherit] 1.3  文档概述 7
+[body][toc 2][inherit] 1.4  与其他文件的关系 7
+[body][toc 1][inherit] 2  引用文档 8
+[body][toc 1][inherit] 3  需求 9
+[body][toc 2][inherit] 3.1  可执行软件 9
+[body][toc 2][inherit] 3.2  源文件 10
+[body][toc 2][inherit] 3.3  包装需求 10
+[body][toc 1][inherit] 4  合格性规定 12
+[body][toc 1][inherit] 5  软件支持信息 13
+[body][toc 2][inherit] 5.1  “已构建”软件设计 13
+[body][toc 2][inherit] 5.2  编译 / 建立规程 13
+[body][toc 2][inherit] 5.3  修改规程 14
+[body][toc 2][inherit] 5.4  计算机硬件资源使用 15
+[body][toc 1][inherit] 6  需求的可追踪性 16
+[body][toc 1][inherit] 7  注释 17
+[body][toc 2][inherit] 7.1  术语与缩略语 17
+[body][toc 2][inherit] 7.2  背景 17
+[body][Heading 1][left] 1  范围
+[body][Heading 2][left] 1.1  标识
+[body][Normal][justify] 本文件为定点/跟飞试验系统软件（以下简称“本软件”或“本 CSCI”）的软件产品规格说明，说明交付的软件产品构成、可执行软件与源文件的一致性判据、建立与修改规程以及资源使用情况。本软件及本文件的标识见表 1。
+[body][Caption][inherit] 表 1  软件及文档标识
+[body][Normal][justify] 本文件的“需求”一章与《软件需求规格说明》的“需求”含义不同：后者规定软件应具备的能力，本文件规定“判定某个软件实体是否为本 CSCI 的有效拷贝”所需满足的条件。因此本文件不描述功能，只描述构成、一致性与包装。
+[body][Heading 2][left] 1.2  系统概述
+[body][Normal][inherit] 1. 软件用途
+[body][Normal][justify] 本软件运行于银河麒麟桌面操作系统 V10 国防版，部署于方舱内部上位机，承担平台位姿指令解算、设备状态监控与视频可视化任务，具备外引导跟踪、程控跟踪、遥控三种工作模式及配套的数据记录、时统、平台调平、观瞄设备控制等功能。
+[body][Normal][inherit] 2. 产品形态
+[body][Normal][justify] 本软件以“可执行程序＋动态库＋界面资源＋配置模板＋离线依赖包”的形式交付，安装后运行于目标机本地，不依赖网络服务。产品不包含源程序代码、调试符号表与内部设计文档；是否提供源代码按合同约定执行，本文件按“不提供源代码，但保留可重建能力”的前提编制。
+[body][Normal][justify] 3. 需方、用户、开发方与保障机构
+[body][Normal][justify] 需方：甲方；用户：甲方；开发方：HRB；保障与运维机构：HRB（现阶段）。
+[body][Normal][inherit] 4. 其他有关文档
+[body][Normal][justify] 与本产品构成有关的文件为《软件版本说明》（文件清单与更改说明）、《软件安装计划》（安装与检查）、《软件用户手册》（使用与故障处置）、《软件测试报告》（验证结论）。
+[body][Heading 2][left] 1.3  文档概述
+[body][Normal][justify] 本文件用于界定“什么是本软件的正品”，为交付验收、介质制作、版本核对与后续复制提供判据。文件面向配置管理人员、质量保证人员、交付与验收人员、保障人员。
+[body][Normal][justify] 本文件共 7 章：第 1 章说明标识与背景；第 2 章列出引用文档；第 3 章规定产品需求，包括可执行软件、源文件与包装；第 4 章给出合格性规定；第 5 章给出软件支持信息，包括已构建软件的设计、建立规程、修改规程与资源使用；第 6 章给出需求的可追踪性；第 7 章为注释。
+[body][Normal][justify] 本文件密级为SS。文中列出的文件名为约定名，实际文件名以发布包内 MANIFEST 为准；文件大小与校验值随构建变化，不在本文件中固定，以 MANIFEST 中的值为判据。
+[body][Heading 2][left] 1.4  与其他文件的关系
+[body][Normal][justify] 本文件与《软件版本说明》的关系为：后者说明“本版有什么、改了什么”，本文件说明“凭什么认定这些文件构成一个完整的产品”。两者在文件清单上有交叉，但判据不同：版本说明以“清单”为线索，本文件以“一致性”为线索。
+[body][Heading 1][left] 2  引用文档
+[body][Normal][justify] 下列文档中的条款通过本文件的引用而成为本文件的条款。凡注日期或版次的引用文件，仅该版本适用。
+[body][Caption][inherit] 表 2  引用文档
+[body][Heading 1][left] 3  需求
+[body][Normal][justify] 本章规定实现软件交付、确定某一软件实体为本 CSCI 有效拷贝所应满足的需求。需求的表述方式为“构成＋判据”，即先说明产品由哪些部分组成，再说明如何判定某一份拷贝与基线一致。
+[body][Heading 2][left] 3.1  可执行软件
+[body][Normal][justify] 本 CSCI 的可执行软件由表 3 所列文件构成，随介质按目录结构组织。为使某一软件实体成为本 CSCI 的有效拷贝，该实体必须与表 3 所列文件精确匹配：文件名、路径、版本标识与校验值均一致。
+[body][Caption][inherit] 表 3  可执行软件构成
+[body][Normal][inherit] 一致性判据为：
+[body][Normal][justify] a) 文件名与目录结构符合表 3，无多余的可执行文件与库；
+[body][Normal][justify] b) 可执行程序与动态库的目标架构为 aarch64，与目标平台一致；
+[body][Normal][justify] c) 各文件的 SHA-256 值与 MANIFEST 中记录一致；
+[body][Normal][justify] d) 程序启动后“关于”窗口显示的版本号与发布号与《软件版本说明》一致；
+[body][Normal][justify] e) 配置模板的版本标识（如 cfg-1.3）与文件内容中的版本字段一致。
+[body][Normal][justify] 上述判据中，a～c 为静态判据，可在不运行软件的情况下核对；d、e 为动态判据，须在目标环境启动后核对。两者均满足，方可判定为有效拷贝。仅“能启动、能用”不足以判定一致性，因为功能相同的不同构建仍可能引入未被发现的差异。
+[body][Normal][justify] 交付介质中不包含调试符号表与源代码；若因排故需要，可在受控条件下由开发方提供符号表用于分析，分析后收回，不随产品交付。
+[body][Heading 2][left] 3.2  源文件
+[body][Normal][justify] 本 CSCI 的源文件包括：C++ 源程序与头文件、QML 界面文件、构建脚本、配置模板源文件、资源文件（图标、字体）。源文件按“部件—软件单元”组织目录，与《软件设计说明》表 5 的单元标识一一对应，便于按单元定位。
+[body][Normal][justify] 源文件的一致性判据为：能从该源文件集合出发，在约定的编译环境下重建出与 3.1 条一致的可执行软件（以校验值比对）。由于编译过程可能引入时间戳、路径等不影响功能的差异，重建比对以“功能等价＋关键文件校验值一致”为判据；若校验值不同，须能解释差异来源（如构建时间嵌入），否则视为不一致。
+[body][Normal][justify] 本产品按“不向用户交付源文件”的方式交付，源文件保存于开发方配置库，随产品基线归档。若合同要求交付源文件，须同时交付编译说明、依赖清单与构建脚本，并在目标环境完成一次重建验证，验证通过方可视为完成交付。
+[body][Normal][justify] 源文件的修改须履行变更控制，修改后的源文件与对应的可执行软件须同批入库；不得出现“源文件已改、交付程序未重建”或“程序已改、源文件未入库”的情形。
+[body][Heading 2][left] 3.3  包装需求
+[body][Normal][justify] 产品以介质形式包装交付，包装需求如下：
+[body][Normal][justify] a) 介质形式：光盘（DVD-R）或专用 U 盘，二者之一或同时提供；U 盘须为项目专用，不得使用曾存储过其他数据的介质；
+[body][Normal][justify] b) 标识：介质表面标注软件名称、版本号、发布号、密级、介质编号与交付日期；标识应清晰、耐磨、不易脱落；
+[body][Normal][justify] c) 包装：光盘置于标准光盘盒，U 盘置于防静电袋并加防尘帽；外包装应能承受常规运输的挤压与震动，具备防潮措施；
+[body][Normal][justify] d) 随附文件：介质内附 MANIFEST（含校验值）、许可证文本与简要安装说明；介质外附交付清单，供签收核对；
+[body][Normal][justify] e) 防护：避免高温、强磁场、日光直射与机械冲击；运输过程中不得与尖锐物品混装；
+[body][Normal][justify] f) 封存：交付前应确认介质可正常读取并完成校验；长期存放（超过 6 个月）宜置于常温干燥环境，并定期抽检。
+[body][Normal][justify] 包装与标识的具体样式按项目统一要求执行；无统一要求时，按上述条目执行，不追求形式统一，但须保证“可识别、可追溯、可防护”。
+[body][Heading 1][left] 4  合格性规定
+[body][Normal][justify] 本章规定用于证明指定软件实体是本 CSCI 有效拷贝的方法。方法分三类：静态核对、动态核对与重建验证。
+[body][Caption][inherit] 表 4  合格性检验方法
+[body][Normal][justify] 对“重建验证”，实施条件为：具备约定的编译器版本与依赖库版本；构建脚本可用；构建过程不访问互联网。重建结果与交付程序的差异须逐项说明，不能说明的差异视为不合格。该验证一般在版本冻结时由开发方实施，需方如需见证，可提前通知。
+[body][Heading 1][left] 5  软件支持信息
+[body][Heading 2][left] 5.1  “已构建”软件设计
+[body][Normal][justify] 已构建软件的设计信息见《软件设计说明》（DD/GF 007-SDD-001），其内容包括 CSCI 级设计决策、体系结构、软件单元清单、接口设计与详细设计。本文件不重复其内容，只说明与产品一致性相关的三点：
+[body][Normal][justify] a) 软件由 4 个部件、23 个软件单元构成，单元标识与源文件目录一一对应，可按标识定位源文件与测试用例；
+[body][Normal][justify] b) 可执行程序与 4 个动态库的划分与部件的划分一致，库之间的依赖关系为“主程序依赖各库，库之间不相互依赖”，避免循环依赖导致的加载失败；
+[body][Normal][justify] c) 界面资源与配置模板以外部文件形式存在，不编译进可执行程序，便于在不重新构建的情况下调整界面文字与默认参数。
+[body][Normal][justify] 上述设计与“可核对性”直接相关：单元与文件的对应关系使“某个功能由哪些文件实现”可查；库的划分使“替换某个库是否影响其他功能”可判；资源外置使“现场修改配置是否改变程序”可辨。
+[body][Heading 2][left] 5.2  编译 / 建立规程
+[body][Normal][justify] 从源文件创建可执行软件的规程如下：
+[body][Normal][justify] a) 环境：银河麒麟桌面操作系统 V10 国防版（或等效 aarch64 环境），GCC 工具链（版本在配置库中固化），Qt 5.12.8 开发库，libmpv 与 libserialport 开发包；
+[body][Normal][justify] b) 依赖：从离线依赖包安装，不使用网络下载；依赖版本以配置库中的清单为准，不得使用更高版本替代；
+[body][Normal][justify] c) 构建：执行构建脚本，脚本完成 qmake/cmake 配置、编译、链接与资源打包；构建参数（优化级别、调试符号开关）在脚本中固定，发布构建关闭调试符号；
+[body][Normal][justify] d) 打包：构建产物按表 3 的目录结构组织，生成 MANIFEST 并计算 SHA-256，与许可证文本一并打包；
+[body][Normal][justify] e) 校验：在目标平台上安装打包产物，执行环境自检与启动检查，确认版本标识与功能可用。
+[body][Normal][justify] 建立规程的要点是“可重复”：同一源文件集合在同一依赖版本下重复构建，应得到功能等价的产物。为此须固定编译器版本与依赖版本，并在构建记录中登记构建时间、构建人与校验值。
+[body][Heading 2][left] 5.3  修改规程
+[body][Normal][justify] 对本 CSCI 的修改按下列规程执行：
+[body][Normal][justify] a) 提出：由使用方、测评方或开发方提出更改申请，说明问题现象、影响范围与期望结果；
+[body][Normal][justify] b) 评估：分析更改对需求、设计、接口、测试与文档的影响，确定需同步修改的对象；
+[body][Normal][justify] c) 实施：在配置库的独立分支上修改源文件，同步修改设计与测试用例；
+[body][Normal][justify] d) 验证：执行单元测试、回归测试与受影响项的合格性测试；涉及接口的，须与对端设备联调；
+[body][Normal][justify] e) 入库：验证通过后合入主线，更新版本号与发布号，重建产物并生成新的 MANIFEST；
+[body][Normal][justify] f) 发布：更新《软件版本说明》（更改说明、已知问题）与相关文档，制作介质，通知使用与保障单位。
+[body][Normal][justify] 修改的约束为：不得在受控基线之外直接修改交付介质中的程序与配置模板；不得为适配某个现场而修改程序逻辑，此类需求应通过配置项解决或反馈开发方统一处理；修改后的版本须兼容前一版本的数据与配置，不兼容时须提供转换工具并说明。
+[body][Normal][justify] 与修改相关的保障信息为：保障设施与设备（见《软件移交计划》3.1、3.2 条）、所使用的数据文件（记录文件与配置文件的格式说明）、应遵循的设计与编码约定（见《软件设计说明》3.8 条）、与常规不同的编译与测试要求（如涉及硬件的项须在实物上验证）。
+[body][Heading 2][left] 5.4  计算机硬件资源使用
+[body][Normal][justify] 已构建软件对计算机硬件资源的实际使用情况见表 5。表中数值为典型工况下的观察值区间，用于与资源限值比对，不作为性能承诺。
+[body][Caption][inherit] 表 5  计算机硬件资源使用
+[body][Normal][justify] 资源使用的说明：一是上表数值为观察值，随并发路数、数据率与记录策略变化，超出表中条件时须重新评估；二是软件在资源紧张时按“视频解码—界面刷新—记录频率”的顺序降级，不降低控制链路优先级；三是资源限值的判定以《软件需求规格说明》3.11.2 条为准，测试结论见《软件测试报告》4.2 条。
+[body][Heading 1][left] 6  需求的可追踪性
+[body][Normal][justify] 本文件的产品需求与上位需求、支持信息的追踪关系见表 6。
+[body][Caption][inherit] 表 6  产品需求的追踪
+[body][Normal][justify] 追踪关系的维护要求为：产品构成变化（增删文件、改变目录结构）时，同步更新表 3、表 4 与《软件版本说明》的文件清单；修改规程变化时，同步更新 5.3 条与保障文档。
+[body][Heading 1][left] 7  注释
+[body][Heading 2][left] 7.1  术语与缩略语
+[body][Caption][inherit] 表 7  术语与缩略语
+[body][Heading 2][left] 7.2  背景
+[body][Normal][justify] a) 本文件依据 GJB 438C-2021 附录 O 规定的《软件产品规格说明》正文格式编制：第 3 章对应“需求”（可执行软件、源文件、包装需求），第 4 章对应“合格性规定”，第 5 章对应“软件支持信息”，第 6 章对应“需求的可追踪性”。
+[body][Normal][justify] b) 本文件的写法强调“判据”而非“清单”：清单在版本变化时会过时，判据则相对稳定。例如 3.1 条不仅列出文件，还给出“如何判定一致”的五条判据；读者即使拿到一份来源不明的拷贝，也可依此判断其是否为正品。
+[body][Normal][justify] c) 文中未固定文件大小与校验值，原因是这些值随构建变化，写入文档后必然过时，且容易被误用为“标准值”。以 MANIFEST 为唯一判据，是更可靠的做法。
+[body][Normal][justify] d) 本文件按“不交付源文件”的前提编制。如合同要求交付源文件，须补充 3.2 条的具体交付清单、交付介质形式与重建验证安排，并相应调整保密条款。
+[table1:1:1][Normal][inherit] 文档名称
+[table1:1:2][Normal][inherit] 软件产品规格说明
+[table1:1:3][Normal][inherit] 文档编号
+[table1:1:4][Normal][inherit] DD/GF 007-SPS-001
+[table1:2:1][Normal][inherit] 软件名称
+[table1:2:2][Normal][inherit] 定点/跟飞试验系统软件
+[table1:2:3][Normal][inherit] 软件标识
+[table1:2:4][Normal][inherit] DD/GF 007
+[table1:3:1][Normal][inherit] 软件版本
+[table1:3:2][Normal][inherit] V2.5.0（Build 20261101）
+[table1:3:3][Normal][inherit] 文档版本
+[table1:3:4][Normal][inherit] V1.1
+[table1:4:1][Normal][inherit] 密级
+[table1:4:2][Normal][inherit] SS
+[table1:4:3][Normal][inherit] 共  页
+[table1:5:1][Normal][inherit] 编制单位
+[table1:5:2][Normal][inherit] HRB
+[table1:5:3][Normal][inherit] 编制日期
+[table1:5:4][Normal][inherit] 修订日期：2026年11月13日
+[table2:1:1][Normal][center] 岗位
+[table2:1:2][Normal][center] 姓名（签字）
+[table2:1:3][Normal][center] 日期
+[table2:1:4][Normal][center] 意见
+[table2:2:1][Normal][inherit] 编制
+[table2:3:1][Normal][inherit] 校对
+[table2:4:1][Normal][inherit] 审核
+[table2:5:1][Normal][inherit] 批准
+[table3:1:1][Normal][center] 项  目
+[table3:1:2][Normal][center] 内  容
+[table3:2:1][Normal][center] 软件名称
+[table3:2:2][Normal][inherit] 定点/跟飞试验系统软件
+[table3:3:1][Normal][center] 软件标识号
+[table3:3:2][Normal][inherit] DD/GF 007
+[table3:4:1][Normal][center] 软件版本号
+[table3:4:2][Normal][inherit] V2.5.0
+[table3:5:1][Normal][center] 软件发布号
+[table3:5:2][Normal][inherit] Build 20261101
+[table3:6:1][Normal][center] 文档名称
+[table3:6:2][Normal][inherit] 定点/跟飞试验系统软件软件产品规格说明
+[table3:7:1][Normal][center] 文档标识号
+[table3:7:2][Normal][inherit] DD/GF 007-SPS-001
+[table3:8:1][Normal][center] 文档版本
+[table3:8:2][Normal][inherit] V1.1
+[table3:9:1][Normal][center] 文档密级
+[table3:9:2][Normal][inherit] SS
+[table4:1:1][Normal][center] 序号
+[table4:1:2][Normal][center] 编号 / 版本
+[table4:1:3][Normal][center] 名  称
+[table4:1:4][Normal][center] 编写单位
+[table4:2:1][Normal][center] 1
+[table4:2:2][Normal][center] GJB 438C-2021
+[table4:2:3][Normal][inherit] 军用软件开发文档通用要求
+[table4:2:4][Normal][inherit] 中央军委装备发展部
+[table4:3:1][Normal][center] 2
+[table4:3:2][Normal][center] DD/GF 007-VVR-001
+[table4:3:3][Normal][inherit] 软件版本说明（V1.0）
+[table4:3:4][Normal][inherit] HRB
+[table4:4:1][Normal][center] 3
+[table4:4:2][Normal][center] DD/GF 007-SIP-001
+[table4:4:3][Normal][inherit] 软件安装计划（V1.0）
+[table4:4:4][Normal][inherit] HRB
+[table4:5:1][Normal][center] 4
+[table4:5:2][Normal][center] DD/GF 007-UM-001
+[table4:5:3][Normal][inherit] 软件用户手册（V1.0）
+[table4:5:4][Normal][inherit] HRB
+[table4:6:1][Normal][center] 5
+[table4:6:2][Normal][center] DD/GF 007-STR-001
+[table4:6:3][Normal][inherit] 软件测试报告（V1.0）
+[table4:6:4][Normal][inherit] HRB
+[table4:7:1][Normal][center] 6
+[table4:7:2][Normal][center] DD/GF 007-SDD-001
+[table4:7:3][Normal][inherit] 软件设计说明（V2.5）
+[table4:7:4][Normal][inherit] HRB
+[table5:1:1][Normal][center] 序号
+[table5:1:2][Normal][center] 文件标识
+[table5:1:3][Normal][center] 文件名 / 路径
+[table5:1:4][Normal][center] 类型
+[table5:1:5][Normal][center] 说明
+[table5:2:1][Normal][center] 1
+[table5:2:2][Normal][inherit] DD/GF
+[table5:2:3][Normal][center] DD/GF
+[table5:2:4][Normal][inherit] 可执行程序（ELF，aarch64）
+[table5:2:5][Normal][inherit] 主程序，启动后加载界面与插件
+[table5:3:1][Normal][center] 2
+[table5:3:2][Normal][inherit] DD/GF-CORE
+[table5:3:3][Normal][center] lib/libgbeo_core.so
+[table5:3:4][Normal][inherit] 动态库
+[table5:3:5][Normal][inherit] 模式管理、参数管理、数据分发、权限校验
+[table5:4:1][Normal][center] 3
+[table5:4:2][Normal][inherit] DD/GF-SERIAL
+[table5:4:3][Normal][center] lib/libgbeo_serial.so
+[table5:4:4][Normal][inherit] 动态库
+[table5:4:5][Normal][inherit] 串口收发、校验、协议解析与转发队列
+[table5:5:1][Normal][center] 4
+[table5:5:2][Normal][inherit] DD/GF-VIDEO
+[table5:5:3][Normal][center] lib/libgbeo_video.so
+[table5:5:4][Normal][inherit] 动态库
+[table5:5:5][Normal][inherit] 视频拉流、解码、切换与放大
+[table5:6:1][Normal][center] 5
+[table5:6:2][Normal][inherit] DD/GF-REC
+[table5:6:3][Normal][center] lib/libgbeo_record.so
+[table5:6:4][Normal][inherit] 动态库
+[table5:6:5][Normal][inherit] 数据记录、分卷、索引与修复
+[table5:7:1][Normal][center] 6
+[table5:7:2][Normal][inherit] DD/GF-UI
+[table5:7:3][Normal][center] qml/*.qml
+[table5:7:4][Normal][inherit] 界面资源
+[table5:7:5][Normal][inherit] 各功能区界面、控件样式与图标
+[table5:8:1][Normal][center] 7
+[table5:8:2][Normal][inherit] DD/GF-CFG
+[table5:8:3][Normal][center] config/system.ini、deploy.ini、interface.ini
+[table5:8:4][Normal][inherit] 配置模板
+[table5:8:5][Normal][inherit] 串口、网络、路径、阈值默认配置
+[table5:9:1][Normal][center] 8
+[table5:9:2][Normal][inherit] DD/GF-DEP
+[table5:9:3][Normal][center] deps/qt5.12.8、deps/libmpv、deps/libserialport
+[table5:9:4][Normal][inherit] 第三方运行库
+[table5:9:5][Normal][inherit] 离线依赖，由安装脚本部署
+[table5:10:1][Normal][center] 9
+[table5:10:2][Normal][inherit] DD/GF-SCR
+[table5:10:3][Normal][center] install.sh、start_gbeo.sh、check_env.sh
+[table5:10:4][Normal][inherit] 脚本
+[table5:10:5][Normal][inherit] 安装、启动与环境自检
+[table5:11:1][Normal][center] 10
+[table5:11:2][Normal][inherit] DD/GF-LIC
+[table5:11:3][Normal][center] LICENSE、COPYING.LGPL、MANIFEST
+[table5:11:4][Normal][inherit] 许可与清单
+[table5:11:5][Normal][inherit] 许可证文本与各文件 SHA-256
+[table6:1:1][Normal][center] 对象
+[table6:1:2][Normal][center] 方法
+[table6:1:3][Normal][center] 判据
+[table6:2:1][Normal][center] 可执行软件（静态）
+[table6:2:2][Normal][center] 核对文件清单、架构与 SHA-256
+[table6:2:3][Normal][inherit] 文件齐全、架构正确、校验值与 MANIFEST 一致
+[table6:3:1][Normal][center] 可执行软件（动态）
+[table6:3:2][Normal][center] 启动并查看版本信息
+[table6:3:3][Normal][inherit] 版本号、发布号与版本说明一致
+[table6:4:1][Normal][center] 配置模板
+[table6:4:2][Normal][center] 核对版本字段与内容
+[table6:4:3][Normal][inherit] 版本标识一致，关键参数项齐全
+[table6:5:1][Normal][center] 源文件
+[table6:5:2][Normal][center] 核对目录结构与单元对应关系
+[table6:5:3][Normal][inherit] 单元标识齐全，无缺失单元
+[table6:6:1][Normal][center] 源文件到程序
+[table6:6:2][Normal][center] 在约定环境重建并比对
+[table6:6:3][Normal][inherit] 功能等价，关键文件校验值一致或差异可解释
+[table6:7:1][Normal][center] 包装与标识
+[table6:7:2][Normal][center] 外观检查与签收核对
+[table6:7:3][Normal][inherit] 标识齐全清晰，清单与实物一致
+[table7:1:1][Normal][center] 资源
+[table7:1:2][Normal][center] 使用情况
+[table7:1:3][Normal][center] 假设与条件
+[table7:1:4][Normal][center] 度量单位
+[table7:2:1][Normal][center] 处理器
+[table7:2:2][Normal][inherit] 单核占用随任务变化，全功能并行时整机占用接近限值
+[table7:2:3][Normal][inherit] 8 核平台，2 路 1080p 视频＋跟踪＋记录
+[table7:2:4][Normal][center] 百分比
+[table7:3:1][Normal][center] 内存
+[table7:3:2][Normal][inherit] 进程占用随视频路数与记录队列增长，稳定后不再单调上升
+[table7:3:3][Normal][inherit] 同上，连续运行 12 h
+[table7:3:4][Normal][center] GB
+[table7:4:1][Normal][center] 存储
+[table7:4:2][Normal][inherit] 连续写入速率受记录通道数影响，单通道约数 MB/s
+[table7:4:3][Normal][inherit] 结构化数据＋1 路视频记录
+[table7:4:4][Normal][center] MB/s
+[table7:5:1][Normal][center] 存储容量
+[table7:5:2][Normal][inherit] 单次任务记录量与任务时长成正比，单文件达上限自动分卷
+[table7:5:3][Normal][inherit] 按 4 GB 分卷
+[table7:5:4][Normal][center] GB
+[table7:6:1][Normal][center] 网络
+[table7:6:2][Normal][inherit] 视频流占用带宽与码率相当；光纤上报占用与上报周期相关
+[table7:6:3][Normal][inherit] 1 路 1080p 视频，100 ms 心跳
+[table7:6:4][Normal][center] Mbps
+[table7:7:1][Normal][center] 串口
+[table7:7:2][Normal][inherit] 各路占用低于波特率容量的 95%
+[table7:7:3][Normal][inherit] 按各接口约定周期收发
+[table7:7:4][Normal][center] %
+[table8:1:1][Normal][center] 本文件条款
+[table8:1:2][Normal][center] 上位依据
+[table8:1:3][Normal][center] 支持信息
+[table8:2:1][Normal][center] 3.1 可执行软件
+[table8:2:2][Normal][center] SRS 3.12（设计与实现约束）、合同交付要求
+[table8:2:3][Normal][inherit] 5.1 已构建软件设计、5.2 建立规程
+[table8:3:1][Normal][center] 3.2 源文件
+[table8:3:2][Normal][center] 合同关于源文件交付的约定
+[table8:3:3][Normal][inherit] 5.2 建立规程、5.3 修改规程
+[table8:4:1][Normal][center] 3.3 包装需求
+[table8:4:2][Normal][center] SRS 3.16 包装需求
+[table8:4:3][Normal][inherit] 5.3 修改规程（介质更新）
+[table8:5:1][Normal][center] 4 合格性规定
+[table8:5:2][Normal][center] 本文件 3.1～3.3
+[table8:5:3][Normal][inherit] 5.1～5.4
+[table8:6:1][Normal][center] 5.4 资源使用
+[table8:6:2][Normal][center] SRS 3.11 计算机资源需求
+[table8:6:3][Normal][inherit] STR 4.2 性能测试结果
+[table9:1:1][Normal][center] 术语 / 缩略语
+[table9:1:2][Normal][center] 全称或含义
+[table9:2:1][Normal][center] SPS
+[table9:2:2][Normal][inherit] 软件产品规格说明（Software Product Specification）
+[table9:3:1][Normal][center] 有效拷贝
+[table9:3:2][Normal][inherit] 与产品基线一致、可判定为正品的软件实体
+[table9:4:1][Normal][center] MANIFEST
+[table9:4:2][Normal][inherit] 记录文件清单与 SHA-256 校验值的清单文件
+[table9:5:1][Normal][center] 重建
+[table9:5:2][Normal][inherit] 由源文件重新构建可执行软件的过程
+[table9:6:1][Normal][center] 基线
+[table9:6:2][Normal][inherit] 经批准、作为后续变更起点的配置项版本集合
+[table9:7:1][Normal][center] aarch64
+[table9:7:2][Normal][inherit] ARM 64 位架构，飞腾平台的指令集架构

@@ -131,26 +131,53 @@ Rectangle {
         anchors.topMargin: 12
         spacing: 20
 
-        // 串口选择 - 绑定到 C++ imageSerial 对象
-        CusComboBox {
-            id: serialComboBox
+        // 转台通信串口：选择转台设备实际接入的端口
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 32
-            
-            model: turntableData.availablePorts   //和Imageport使用同一个串口列表即可
+            spacing: 2
+
+            Text {
+                Layout.fillWidth: true
+                text: "转台通信串口"
+                font.pixelSize: 12
+                font.bold: true
+                color: "#000000"
+            }
+
+            CusComboBox {
+                id: serialComboBox
+                Layout.fillWidth: true
+                Layout.preferredHeight: 32
+                model: turntableData.availablePorts
+            }
         }
-         // 波特率
-        CusComboBox {
-            id: baudComboBox
+
+        // 通信波特率：设置转台串口通信速率，必须与设备配置一致
+        ColumnLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 32
-            model: ["230400"]
+            spacing: 2
+
+            Text {
+                Layout.fillWidth: true
+                text: "通信波特率"
+                font.pixelSize: 12
+                font.bold: true
+                color: "#000000"
+            }
+
+            CusComboBox {
+                id: baudComboBox
+                Layout.fillWidth: true
+                Layout.preferredHeight: 32
+                model: ["230400"]
+            }
         }
         //扫描串口按钮
         CusButton_Blue {
             id: scanButton
             Layout.fillWidth: true
-            height: 32
+            Layout.preferredHeight: 32
+            Layout.alignment: Qt.AlignBottom
             text: "扫描串口"
 
             onClicked: {
@@ -161,7 +188,8 @@ Rectangle {
         CusButton_Blue {
         id: openButton
         Layout.fillWidth: true
-        height: 32
+        Layout.preferredHeight: 32
+        Layout.alignment: Qt.AlignBottom
         text: turntableData.portOpen ? "关闭串口" : "打开串口"
 
         Timer {
@@ -187,7 +215,8 @@ Rectangle {
         CusButton_Blue {
                 id: tiltButton
                 Layout.fillWidth: true
-                height: 32
+                Layout.preferredHeight: 32
+                Layout.alignment: Qt.AlignBottom
                 text: "转台底座调平"
                 onClicked: {
                     sixDofPopup.showPopup()

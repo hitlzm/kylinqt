@@ -1,0 +1,676 @@
+FILE: R_计算机编程手册.docx
+CORE: {"title": "定点/跟飞试验系统软件 计算机编程手册", "subject": "GJB 438C-2021 文档修订版", "author": "HRB", "last_modified_by": "HRB", "created": "2026-11-16T09:00:00+00:00", "modified": "2026-11-20T12:00:00+00:00", "revision": 14, "version": "V1.2", "comments": "2026年11月16日修订：统一术语、版式、文档版本与编写时间，并按当前源码核对实现描述。", "keywords": ""}
+CUSTOM: {}
+
+[body][Normal][inherit] 密级：SS
+[body][Normal][justify] 文档编号：DD/GF 007-CPM-001
+[body][Normal][center] 定点/跟飞试验系统软件
+[body][Normal][center] 计算机编程手册
+[body][Normal][center] （依据 GJB 438C-2021 附录 R）
+[body][Normal][center] 软件版本：V2.5.0（Build 20261101）
+[body][Normal][center] 文档版本：V1.2
+[body][Normal][center] 编制单位：HRB
+[body][Normal][center] 修订日期：2026年11月16日
+[body][Normal][center] 文 档 审 签 页
+[body][Normal][center] 前  言
+[body][Normal][justify] 本文件依据 GJB 438C-2021《军用软件开发文档通用要求》附录 R 规定的《计算机编程手册》正文格式编写，说明本工程的实际技术栈、构建环境、目录与模块、主要输入输出接口、示例代码和排故方法，供维护、修改、接口适配和功能扩展人员使用。
+[body][Normal][justify] 本文件的编制依据为 GJB 438C-2021、GJB 2786A-2009 及本项目的研制任务书与技术协议；编制过程中引用了《软件需求规格说明》（DD/GF 007，V2.5.0 修订版）、《软件设计说明》（DD/GF 007-SDD-001）与《软件测试说明（测试用例）》（DD/GF 007-STD-001）等文件，凡上述文件已有明确规定的内容，本文件不再重复叙述，仅按本文件的角度作必要引用。
+[body][Normal][justify] 本文件的读者对象为：需方（甲方）项目管理与验收人员、第三方软件测评机构的技术人员、开发方（HRB）的设计与测试人员、使用与保障人员。不同读者可按目录选取相应章节，不必通读全文。
+[body][Normal][justify] 本文档以当前仓库中的 C++/QML 源码、CMakeLists.txt、构建缓存和现有构建产物为依据，核对基线的仓库提交为 b324d29（2026-11-19）。文中区分“交付目标平台”和“当前源码构建环境”：交付目标按项目资料执行，当前仓库已生成 Windows x86_64、MinGW 7.3.0、Qt 5.12.8 的开发构建；目标 Kylin/AArch64 构建须重新配置并复测。封面软件标识沿用已批准版本 V2.5.0（Build 20261101），交付时应以实际构建清单和版本说明为准。
+[body][Normal][justify] 本文件密级为SS，其编制、审批、复制、发放、保管、借阅、归档和销毁，均应按国家及上级主管部门的保密管理规定执行。本文件为涉密载体，未经批准不得复制、摘抄、拍摄或通过任何网络传输。
+[body][Normal][justify] 文中以“应”“须”表述的为强制性要求，以“宜”“可”表述的为推荐性要求。文中给出的时间、容量、周期与指标类数值，除明确标注为约束值或合同要求外，均为典型工况下的设计值或参考值，用于指导实施与评价；实际执行中可结合现场条件、设备状态与联调结果在合理范围内调整，调整应在相应记录中留痕。
+[body][Normal][justify] 同批文档中的需求条目、接口和单元标识按已批准版本引用；若个别参数不一致，以最新评审确认版本和当前源码为准。
+[body][Normal][center] 目      录
+[body][toc 1][inherit] 1  范围 5
+[body][toc 2][inherit] 1.1  标识 5
+[body][toc 2][inherit] 1.2  系统概述 5
+[body][toc 2][inherit] 1.3  文档概述 6
+[body][toc 1][inherit] 2  引用文档 7
+[body][toc 1][inherit] 3  软件编程环境 8
+[body][toc 2][inherit] 3.1  系统配置 8
+[body][toc 2][inherit] 3.2  操作信息 9
+[body][toc 2][inherit] 3.3  编译、汇编和连接 11
+[body][toc 1][inherit] 4  编程信息 13
+[body][toc 2][inherit] 4.1  编程特征 13
+[body][toc 2][inherit] 4.2  程序指令 15
+[body][toc 2][inherit] 4.3  输入和输出控制 16
+[body][toc 2][inherit] 4.4  其他编程技术 17
+[body][toc 2][inherit] 4.5  编程示例 18
+[body][toc 2][inherit] 4.6  错误检测和诊断特征 21
+[body][toc 1][inherit] 5  注释 23
+[body][toc 2][inherit] 5.1  术语与缩略语 23
+[body][toc 2][inherit] 5.2  背景说明 23
+[body][Heading 1][left] 1  范围
+[body][Heading 2][left] 1.1  标识
+[body][Normal][justify] 本文档为定点/跟飞试验系统软件（以下简称“本软件”或“本 CSCI”）的计算机编程手册，规定当前工程的编程环境、源码组织、主要框架、构建方法、输入输出接口、典型实现和诊断手段。本软件及本文档标识见表 1。
+[body][Caption][inherit] 表 1  计算机系统与文档标识
+[body][Normal][justify] 本软件由 C++14、Qt 5 和 QML 2.12 实现，构建系统为 CMake。视频显示与录像使用 libmpv，相关 QML 类型名为 VlcVideoItem/VlcFrameItem，但当前实现不是 libVLC。图像处理使用 OpenCV 4.2，ONNX Runtime 为可选依赖；未找到兼容库时 CMake 编译 onnxyolov5detector_stub.cpp，YOLO 推理不可用。当前仓库已生成 Windows x86_64 开发构建，目标平台部署构建需单独验证。
+[body][Heading 2][left] 1.2  系统概述
+[body][Normal][inherit] 1. 计算机系统的用途
+[body][Normal][justify] 本软件运行于方舱上位机，完成图像DYT和激光DYT数据接收、观瞄设备串口控制与视频显示、北斗 RMC 时间/位置接收、三轴转台控制、六自由度平台 UDP 控制、手柄输入、视频显示与录制，以及图像、激光、转台三路 CSV 数据保存。图像和 观瞄设备视频可按外引导条件启用 YOLO 目标检测；程控模式可导入 CSV 跟踪点并以 20 ms 周期下发转台。界面和硬件访问由同一桌面进程承担，不设置独立服务端。
+[body][Normal][justify] 2. 本软件在系统中的位置
+[body][Normal][justify] 主程序 main.cpp 创建数据对象、串口工作对象、模式控制器、数据记录器、认证与日志对象，并通过 QQmlApplicationEngine 加载 main.qml。登录成功后，QML 才实例化主界面并调用 beginStartup。随后 C++ 启动图像、激光、转台、北斗、手柄五个工作线程和一个视频处理线程；观瞄设备串口对象固定在主线程。
+[body][Normal][inherit] 3. 编程工作的范围
+[body][Normal][justify] 维护工作集中在主程序文件、components 下的界面、serialport 下的串口与协议、network 下的 UDP 客户端、vlcvideo 下的视频组件、opencv 下的视频处理、record 下的数据保存，以及 auth、log、ModeControl、kalman、utils 等目录。倾角仪串口和模板装订网络在 main.cpp 中已停用，相关源码或界面文件仅作保留。本文档不覆盖操作系统内核、串口驱动和设备固件开发。
+[body][Heading 2][left] 1.3  文档概述
+[body][Normal][justify] 本文档用于指导程序人员阅读、修改、构建、调试和回归验证本软件，也可作为接口适配和交付构建的检查依据。
+[body][Normal][justify] 本文档共 5 章：第 1 章说明标识和系统范围；第 2 章列出引用资料；第 3 章说明实际构建环境和构建流程；第 4 章说明编程特征、接口、示例和错误诊断；第 5 章为注释。
+[body][Normal][justify] GJB 438C-2021 附录 R 面向使用计算机系统进行编程的人员。本软件为应用层工程，不包含手写汇编、操作系统内核或设备驱动源码，因此手册以实际使用的 C++14、Qt、QML、CMake、libmpv、OpenCV 和平台接口为主体；AArch64 指令与调用约定仅作为交付目标平台的阅读参考。
+[body][Normal][justify] 本文件密级为 SS。文中代码示例为构造示例，不包含实际任务参数、口令或涉密算法；配置地址、端口和模型路径均为示例。
+[body][Heading 1][left] 2  引用文档
+[body][Normal][justify] 下列资料中的版本或接口约定通过引用成为本文档的工作依据。工程未固化、未随源码交付的厂商资料不得用推定内容替代。
+[body][Caption][inherit] 表 2  引用文档
+[body][Normal][justify] 当前仓库未包含飞腾处理器优化指南、Qt 商业授权资料或设备厂商限制发放文档。程序人员需要查阅时，应通过项目资料管理员或厂商授权渠道获取，不得从公共网络下载后直接用于交付。
+[body][Heading 1][left] 3  软件编程环境
+[body][Heading 2][left] 3.1  系统配置
+[body][Normal][justify] 本软件存在交付目标环境和当前源码构建环境两套口径。项目资料声明的交付目标为飞腾腾锐 D2000、银河麒麟桌面操作系统 V10 国防版；当前仓库的 CMakeCache.txt 和 .vscode/settings.json 固化的是 Windows x86_64、MinGW 7.3.0 和 Qt 5.12.8 MinGW 套件。两者不能互相替代，跨平台代码须在目标环境重新构建和复测。
+[body][Caption][inherit] 表 3  运行与开发环境配置
+[body][Caption][inherit] 表 4  软件环境与工具链
+[body][Normal][justify] 源码按功能目录组织，所有 C++ 源文件编译进单一可执行目标 kylinqt；当前工程没有拆分为多个动态业务库。QML 和 TaoQuick 资源通过 Qt 资源系统和 import 路径加载。目录与产物见表 5。
+[body][Caption][inherit] 表 5  源码目录与主要构建产物
+[body][Heading 2][left] 3.2  操作信息
+[body][Normal][justify] 本节按附录 R 3.2 条列出与本工程有关的操作特性。下列性质以交付目标平台为主，当前 Windows/MinGW 开发构建用于编码、界面和多数功能验证；凡涉及时序、字节序、线程调度或图形后端的内容，必须在最终目标平台上复测。
+[body][Normal][justify] a) 时钟周期：项目资料采用 2.3～2.6 GHz 量级的处理器。软件不依赖固定周期估算业务时间，超时和周期由 QTimer、QElapsedTimer、设备返回时标和 QDateTime 共同构成。当前接口标称周期为：图像和激光每 20 ms 一帧，转台状态每 5 ms 一帧，六自由度状态查询每 200 ms 一次。时延测试工具位于 utils/，通过实测而非指令周期推算。
+[body][Normal][justify] b) 字长：交付目标为 64 位 AArch64，当前开发构建为 64 位 x86_64。协议字段和位操作使用 Qt 的 qint8/quint8、qint16/quint16、qint32/quint32、qint64/quint64，或 <cstdint> 定长类型；不得用 long 表示外部协议宽度。图像和激光接收结构体使用 #pragma pack(push,1)，修改字段时必须核对 sizeof、字节偏移和跨平台对齐。
+[body][Normal][justify] c) 内存：项目资料中的上位机内存为 8 GB 量级。主要动态占用来自 libmpv 解码、OpenCV 图像处理、ONNX 推理、视频帧副本和 CSV 保存缓冲。当前代码没有统一的进程内存上限；排查内存问题时应结合任务管理器、top/ps、qDebug 输出和现有延迟探针，先确认瓶颈在解码、推理、渲染还是文件写入。
+[body][Normal][justify] d) 指令集：交付目标为 ARMv8-A AArch64，当前开发机为 x86_64。源码没有汇编文件，业务代码依赖编译器生成目标指令。NEON/ASIMD、缓存行和 AArch64 寄存器内容只适用于目标构建，不应用于推断当前 Windows 构建的代码行为。
+[body][Normal][justify] e) 中断能力：应用不直接处理硬件中断，也不注册设备中断服务程序。串口通过 QSerialPort::readyRead 进入 Qt 事件循环，UDP 通过 QUdpSocket::readyRead 处理，视频事件由 libmpv 唤醒并在主线程事件循环中分派。
+[body][Normal][justify] f) 操作方式：软件为交互式桌面程序，启动时先显示登录页；认证成功后由 QML 调用 beginStartup，main.cpp 才创建并启动硬件相关线程。运行期包含图像、激光、转台、北斗、手柄五个串口/输入工作线程，一个 StreamProcessor 视频处理线程，以及主线程中的模式控制、六自由度 UDP、观瞄设备串口、视频显示和记录对象。
+[body][Normal][justify] g) 操作寄存器：应用运行在用户态，不直接访问系统寄存器。设备状态通过 QSerialPort、QUdpSocket、libmpv API 和文件系统获取，不需要手工维护浮点状态寄存器。
+[body][Normal][justify] h) 错误指示：Qt 对象通过 errorOccurred、portError、popupMessage、lastError 等信号报告错误；LogManager 在界面保留最多 500 条、按 200 ms 节流的外引导跟踪日志，qDebug/qWarning 写入终端或开发环境输出。工程没有统一的数字错误码表，界面提示和数据层错误需结合信号名称、串口错误串、帧头/校验信息和 qDebug 上下文定位。SIGSEGV 等进程级异常由操作系统处理，当前代码不安装自定义信号处理函数。
+[body][Normal][justify] i) 输入输出：串口设备通过 QSerialPort 访问，统一配置为 8 数据位、无校验、1 停止位、无流控；六自由度平台通过 QUdpSocket 广播收发；视频通过 libmpv 打开 RTSP、UDP 或其他 mpv 支持的 URL；数据通过 QFile 写入 CSV；QML 与 C++ 通过上下文属性、Q_PROPERTY、Q_INVOKABLE 和信号槽交互。
+[body][Normal][justify] j) 特殊特征：协议字节序并不统一。图像接收帧为 156 字节，帧头 0x77 0xAB，CRC16-CCITT 多项式 0x1021、初值 0x0000、不反射，字段按小端读取；图像发送帧为 224 字节。激光接收帧为 48 字节、发送帧为 26 字节，帧头 0x55 0xAA 0xDC，字段按大端读取，末字节为异或校验。转台命令帧 19 字节、状态帧 29 字节，帧头 0x55 0xAA，多字节字段按大端，状态帧校验为 bytes 2～26 累加和。修改协议代码时必须逐字段核对字节偏移，不得假设三类设备共用一种编码。
+[body][Heading 2][left] 3.3  编译、汇编和连接
+[body][Normal][justify] a) 编译与汇编：源码不含 .s/.S 汇编文件，C++14 和 QML 由编译器及 Qt 工具链处理。反汇编只用于排查编译器输出、协议结构布局和崩溃地址，不作为发布源码的组成部分。
+[body][Normal][justify] b) 编译程序与版本：当前仓库验证工具链为 MinGW-W64 g++ 7.3.0，编译标志为 -std=gnu++14；CMakeLists.txt 要求 CMake 3.16 及以上，现有构建缓存由 CMake 4.1 生成，生成器为 MinGW Makefiles。交付目标 AArch64 的编译器、sysroot 和 Qt 套件在仓库中尚未固化，须由交付构建环境提供并在目标机复测。
+[body][Normal][justify] c) 连接程序与库：CMake 查找 Qt5 Core、Quick、Gui、SerialPort、Gamepad、Network、Widgets、QuickControls2，链接 libmpv、OpenCV，可选链接 ONNX Runtime；Windows 还链接 ws2_32。当前构建只生成一个 kylinqt 可执行目标，没有把业务代码拆成多个动态库。
+[body][Normal][justify] d) 编译与链接选项：当前 Debug 构建实际使用 -g、QT_QML_DEBUG 和 QT_DECLARATIVE_DEBUG；C++ 标准由 CMAKE_CXX_STANDARD=14 设置。工程没有配置 -Wall、-Wextra、-Werror、-ffast-math、自定义 rpath 或统一的异常关闭选项。编译选项修改应同步维护 CMakeLists.txt，并在目标构建中重新验证。
+[body][Caption][inherit] 表 6  构建配置与依赖参数
+[body][Normal][justify] e) 构建流程：在新构建目录执行 CMake 配置和构建。AUTOMOC、AUTOUIC、AUTORCC 自动处理元对象、界面和资源；qml.qrc 把主界面资源编入程序。构建后，CMake 只自动复制 OpenCV、libmpv 和可选的 ONNX Runtime DLL，不会自动执行 Windows 的 windeployqt，也不会生成校验清单。
+[body][Normal][justify] f) 加载与执行：当前 Windows 构建产物为 build/kylinqt.exe。运行时需确保 Qt、libmpv、OpenCV、ONNX Runtime 和模型文件路径正确；YOLO 模型按可执行文件目录 models/best.onnx、可执行文件目录 best.onnx、父目录 models/best.onnx 等顺序查找。程序由用户直接启动，登录成功后才启动串口、手柄和视频处理线程；仓库没有 start_gbeo.sh 或 systemd 启动脚本。
+[body][Normal][justify] g) 记录结果：构建记录应至少保存源码版本、CMake 配置、编译器版本、Qt/OpenCV/libmpv/ONNX Runtime 版本和构建时间。当前仓库没有自动生成构建清单的脚本，上述信息需人工登记；不得把仅在本机生成、未经过目标平台验证的产物作为正式交付物。
+[body][Heading 1][left] 4  编程信息
+[body][Heading 2][left] 4.1  编程特征
+[body][Normal][justify] 本节说明本工程实际涉及的 C++、Qt 和平台特征。AArch64 数据布局、调用约定和指令类别用于交付目标阅读；当前 Windows/MinGW 构建的 ABI 与之不同。
+[body][Normal][justify] a) 数据表示：协议解析使用 Qt 定长整数和显式移位拼接。图像与激光接收代码还存在按结构体布局读取帧的方式，修改结构体时必须检查编译器对齐、固定长度和字节序；跨接口传输的数据不得直接依赖 bool 的位模式。
+[body][Caption][inherit] 表 7  基本数据类型的长度与对齐
+[body][Normal][justify] b) 指令格式与寻址：交付目标为 AArch64 时，C++ 数组和结构体访问由 GCC 生成加载/存储及地址计算指令。当前开发构建为 x86_64，不能通过阅读 Windows 反汇编推断目标平台寄存器分配。影响代码移植的主要因素是结构体填充、长整型宽度和字节序。
+[body][Normal][justify] c) 专用寄存器：本软件不直接使用架构寄存器。AArch64 上的 x29/x30、SIMD 寄存器和平台保留寄存器由编译器及运行库管理。需要平台级优化时，应在目标构建中通过性能测量确认，不手工绑定寄存器。
+[body][Normal][justify] d) 调用约定：Qt 信号槽、QObject 元对象、QThread::moveToThread 和跨线程 QueuedConnection 是主要调用边界。跨线程对象必须以 QObject 及其信号槽传递，不通过裸函数指针或跨线程直接访问 QML 对象。目标 AArch64 构建遵循 AAPCS64，当前 x86_64 构建遵循 MinGW/Win64 ABI。
+[body][Caption][inherit] 表 8  调用约定与寄存器用途（AAPCS64 摘要）
+[body][Normal][justify] e) 子程序与过程：业务对象以 QObject 派生类实现，参数通过值、const 引用或 Qt 元类型信号传递。main.cpp 将串口工作对象移动到工作线程，数据对象保留在主线程；ImageData、LaserData、TurntableDataHex、BDData、观瞄设备Data、ModeController、DataRecorder 和 SixDofMotionClient 通过上下文属性暴露给 QML。
+[body][Normal][justify] f) 异步事件：Qt 的 readyRead、timer、signal/slot 和 libmpv 的 update callback 构成主要异步模型。串口工作线程只负责 I/O 与解析，解析结果通过 QueuedConnection 回主线程；视频渲染通过 QQuickFramebufferObject 与渲染线程交互。
+[body][Normal][justify] g) 定时器与时钟：周期任务使用 QTimer，高精度测量使用 QElapsedTimer；业务时间来自设备返回时标、北斗 RMC、转台毫秒时间或本机 QDateTime。图像和激光在返回时标无效时回退本机时间，转台保存协议毫秒时间，各来源不能假定天然同步。
+[body][Normal][justify] h) 内存保护：用户态不能自定义 MPU/MMU 保护。串口和 UDP 解析器必须先积累完整报文、检查长度和校验，再按固定偏移访问。图像、激光和转台接收缓冲在 readyRead 中追加数据并查找帧头，半帧需保留到下一批数据。
+[body][Normal][justify] i) 其他特征：视频原始帧、OpenCV 推理结果和 UI 帧副本是主要大块内存访问对象；保存采用 200 ms 文本缓冲；视频录像采用 mpv record-file 写 TS 后由 ffmpeg 流复制为 MP4。性能优化应先使用现有延迟探针和 qDebug/top 数据确认瓶颈。
+[body][Heading 2][left] 4.2  程序指令
+[body][Normal][justify] 本工程不包含手写机器指令或汇编源程序。程序人员主要修改 C++14、QML、CMake、Qt 信号槽、串口/UDP 协议和设备控制逻辑。下表仅列出阅读目标平台反汇编时可能遇到的指令类别；完整定义以 ARM Architecture Reference Manual 为准。
+[body][Caption][inherit] 表 9  本软件涉及的关键指令类别
+[body][Normal][justify] 性能判断以实际链路和实测时延为准。工程提供视频接收延迟、观瞄设备直显延迟、串口发送延迟和滤波仿真工具，可在相应环境中启用；不得用单条指令周期或理论主频替代端到端测量。
+[body][Normal][justify] 条件码和寄存器内容属于目标平台反汇编层面。阅读代码和维护接口时，应以源码中的固定字节协议、校验函数和 Qt 对象边界为依据。
+[body][Heading 2][left] 4.3  输入和输出控制
+[body][Normal][justify] a) 设备输入：图像帧通过串口工作线程的 readyRead 累积，按 0x77 0xAB 帧头切出 156 字节接收帧并执行 CRC16-CCITT（多项式 0x1021、初值 0x0000）；激光帧按 0x55 0xAA 0xDC 帧头切出 48 字节接收帧并执行异或校验；转台帧按 0x55 0xAA 帧头切出 29 字节并执行 bytes 2～26 累加校验；北斗只解析 $GBRMC/$BDRMC 的 RMC 语句。各接收缓冲都保留半帧，不假设一次 readyRead 对应一帧。
+[body][Caption][inherit] 表 10  串口与主要接口参数
+[body][Normal][justify] b) 程序加载与校验：程序镜像由操作系统加载，软件不在运行期校验自身。当前仓库不读取 INI/JSON 配置文件；串口、波特率、视频 URL、六自由度网络参数等由界面选中值或代码默认值提供。修改默认值后须重新构建并执行接口回归。运行期校验的对象是设备帧的帧头、长度和校验，以及视频播放器和 UDP 链路的运行状态。
+[body][Normal][justify] c) 数据通道：当前使用图像串口 460800 bps、激光串口 115200 bps、转台串口 230400 bps、北斗和 观瞄设备控制串口 9600 bps（均以界面选项为准）。图像和激光标称 20 ms 一帧，转台状态标称 5 ms 一帧；六自由度平台使用 QUdpSocket，默认本机 8080、运动广播 192.168.15.255:7408、状态广播 255.255.255.255:8081，状态查询周期 200 ms。
+[body][Normal][justify] d) 离散输入输出：手柄通过 Qt Gamepad 枚举，由 GamepadBridge 把左右摇杆、扳机、A/B 按键转成 Qt 信号，经 QueuedConnection 送入 Myhandle 工作线程；遥控模式每 20 ms 发送一次手柄状态。界面按钮和开关通过 QML 调用槽函数，输出指示灯和状态文字由 QML 属性绑定，不在串口线程直接修改界面对象。
+[body][Normal][justify] e) 接口部件：主要接口包括 Qt Serial Port、QUdpSocket、libmpv 视频 URL、Qt Quick OpenGL 渲染上下文和本地文件系统。串口端口由 QSerialPortInfo 扫描后在界面下拉框选择，网络地址默认值位于 SixDofMotionClient，视频 URL 位于视频组件；当前没有统一配置管理模块，也没有固定 udev 映射文件。
+[body][Normal][justify] f) 设备操作码：转台命令码定义在 serialport_turntable_HEX.h，包括 CMD_ENABLE、CMD_STOP、CMD_ZERO、CMD_POSITION、CMD_SPEED、CMD_SWING、CMD_TRACK_250、CMD_TRACK_20MS、CMD_CORRECTION 等；图像和激光发送字段定义在各自发送结构体中。新增或修改协议常量时，应同步更新发送构帧、接收解析、界面显示和测试用例。
+[body][Heading 2][left] 4.4  其他编程技术
+[body][Normal][justify] a) QML 与 C++：main.cpp 使用 rootContext 暴露 auth、imageData、imageSendData、laserData、laserSendData、turntableData、turntableSendData、bdData、ccdData、sixDofMotion、modeController、gamepadBridge、logManager 和 dataRecorder；VlcVideoItem/VlcFrameItem 通过 qmlRegisterType 注册。跨线程结构体需先 qRegisterMetaType。QML 直接绑定属性并调用 Q_INVOKABLE 接口。
+[body][Normal][justify] b) 线程模型：图像、激光、转台、北斗各自拥有 QThread；手柄对象在 Handlethread；StreamProcessor 在独立视频处理线程；观瞄设备串口、模式控制、六自由度 UDP、视频显示和 DataRecorder 主要在主线程。QSerialPort 与定时器在工作对象进入线程后由 dowork() 创建；跨线程结果通过 QueuedConnection 投递，主线程解析对象再更新 QML 属性。
+[body][Normal][justify] c) 构建单元：当前工程只生成一个 kylinqt 可执行目标，未拆分为 4 个动态业务库。新增模块应优先加入 CMakeLists.txt 的现有目标；只有在接口稳定、部署收益明确时才考虑新增库，并同步更新依赖复制和手册。
+[body][Normal][justify] d) 资源与配置：主界面和 TaoQuick 资源通过 qml.qrc、qrc:/ URL 和 TaoQuickImportPath 加载。当前没有 system.ini、interface.ini、deploy.ini；参数缺省值在 QML 或 C++ 中，串口端口不固定。不得把当前不存在的配置文件写成维护入口。
+[body][Normal][justify] e) 日志与诊断：LogManager 在内存中最多保存 500 条界面日志，按 200 ms 节流，不落盘；串口、网络、视频组件通过 qDebug/qWarning 输出当前帧、状态和错误。关键链路排故时应同时保存终端输出、界面日志和可复现的操作步骤。
+[body][Normal][justify] f) 安全编程：认证使用程序内置盐和 HMAC-SHA256 摘要，明文口令不保存；登录连续失败 5 次锁定 60 s。设备输入按不可信数据处理，长度和校验未通过时不得进入业务解析。不得在日志中输出明文口令或敏感任务参数；视频 URL 中的账号信息也不应写入交付资料。
+[body][Heading 2][left] 4.5  编程示例
+[body][Normal][justify] 本节给出六个贴近当前工程的示例。示例用于说明修改位置和调用关系，省略了头文件与完整错误处理；直接使用时须结合现有类接口补齐。
+[body][Caption][inherit] 表 11  编程示例清单
+[body][Normal][justify] 示例 1 展示串口按字节流收帧。串口一次 readyRead 可能只到达半帧，因此必须保留缓冲、查找帧头、按定长切帧。激光接收结构体当前为 48 字节，使用三重帧头 0x55 0xAA 0xDC；图像接收帧为 156 字节，帧头 0x77 0xAB；转台状态帧为 29 字节，帧头 0x55 0xAA。
+[body][Normal][justify] void SerialPortLaser::onReadyRead()
+{
+    m_rxBuffer.append(m_serialPort->readAll());
+    const int frameLen = static_cast<int>(sizeof(laser_recv_frame));
+    while (m_rxBuffer.size() >= 3) {
+        int i = m_rxBuffer.indexOf(QByteArray("\x55\xAA\xDC", 3));
+        if (i < 0) { m_rxBuffer = m_rxBuffer.right(2); break; }
+        if (i > 0) m_rxBuffer.remove(0, i);
+        if (m_rxBuffer.size() < frameLen) break;
+        const QByteArray frame = m_rxBuffer.left(frameLen);
+        m_rxBuffer.remove(0, frameLen);
+        parseData(frame);
+    }
+}
+[body][Normal][justify] 示例 2 展示不同协议的校验与字节序。图像接收帧使用 CRC16-CCITT 比对，当前代码的多项式为 0x1021、初值为 0x0000、不反射；激光协议使用异或校验，接收字段按大端解释；转台状态帧的校验为 bytes 2～26 累加和，多字节字段按大端。不能把某一个设备的校验规则复用到其他设备。
+[body][Normal][justify] // CRC16-CCITT：初值 0x0000，多项式 0x1021，不反射（与图像DYT协议一致）
+static quint16 crc16_ccitt(const quint8 *p, int n)
+{
+    static quint16 tab[256]; static bool init = false;
+    if (!init) {
+        for (int i = 0; i < 256; ++i) {
+            quint16 c = quint16(i) << 8;
+            for (int k = 0; k < 8; ++k)
+                c = (c & 0x8000) ? quint16((c << 1) ^ 0x1021) : quint16(c << 1);
+            tab[i] = c;
+        }
+        init = true;
+    }
+    quint16 crc = 0x0000;
+    for (int i = 0; i < n; ++i)
+        crc = quint16((crc << 8) ^ tab[((crc >> 8) ^ p[i]) & 0xFF]);
+    return crc;
+}
+
+// 图像字段按小端解释；激光和转台字段按大端解释
+static inline qint16 le16s(const quint8 *p)
+{ return qint16(quint16(p[0]) | (quint16(p[1]) << 8)); }
+[body][Normal][justify] 示例 3 展示 C++ 对象与 QML 的连接。现工程在 main.cpp 中使用 setContextProperty 暴露数据和控制对象，QML 通过属性绑定显示状态，通过 Q_INVOKABLE 方法发起打开串口、保存、连接或发送指令。跨线程对象通过信号和 QueuedConnection 回推状态。
+[body][Normal][justify] engine.rootContext()->setContextProperty("laserData", laserData);
+engine.rootContext()->setContextProperty("dataRecorder", dataRecorder);
+QObject::connect(laserPort, &SerialPortLaser::laserFrameReceived,
+                 laserData, &LaserData::updateFromFrame,
+                 Qt::QueuedConnection);
+QObject::connect(imageData, &ImageData::frameParsed,
+                 dataRecorder, &DataRecorder::onImageFrame,
+                 Qt::DirectConnection);
+[body][Normal][justify] 示例 4 展示 libmpv 视频显示与录像。VlcVideoItem 是历史类型名，实际持有 mpv_handle 并通过 QQuickFramebufferObject 渲染。图像DYT UDP 和所有 RTSP 源默认使用软件解码，其他源使用 auto-safe；直播 UDP 关闭 readahead 和回退缓存。录像通过 mpv 的 record-file 属性写 TS，停止后由 ffmpeg 流复制为 MP4。
+[body][Normal][justify] mpv_set_option_string(m_mpv, "vo", "libmpv");
+mpv_set_option_string(m_mpv, "hwdec", "no");          // DYT UDP / RTSP 默认软件解码
+mpv_set_option_string(m_mpv, "profile", "low-latency");
+mpv_set_option_string(m_mpv, "demuxer-readahead-secs", "0");
+mpv_set_option_string(m_mpv, "demuxer-max-bytes", "1048576");
+mpv_set_option_string(m_mpv, "rtsp-transport", "tcp");
+// 录制开始 / 结束
+mpv_set_property_string(m_mpv, "record-file", tsPath.toUtf8().constData());
+mpv_set_property_string(m_mpv, "record-file", "");
+[body][Normal][justify] 示例 5 展示当前数据记录方式。DataRecorder 在主线程接收解析完成的数据，为图像、激光、转台各维护一个 SourceState；第一帧到达时才创建带 UTF-8 BOM 的中文表头 CSV。数据先写入内存缓冲，共享 QTimer 每 200 ms 调用 flushAll，停止某一路时立即冲刷并关闭该路文件。三路保存共享一份视频录制，最后一个保存请求结束时转封装。
+[body][Normal][justify] void DataRecorder::onImageFrame()
+{
+    if (!m_image.saving || !m_imageData) return;
+    ensureSourceFile(m_image, QStringLiteral("image"), kImageHeader, "图像");
+    if (m_image.openFailed) return;
+    m_image.buffer.append(buildImageCsvLine().toUtf8());
+}
+// m_flushTimer.setInterval(200); timeout -> flushAll()
+[body][Normal][justify] 示例 6 展示当前 CMake 构建命令。Windows/MinGW 开发环境使用独立构建目录，指定 Qt、OpenCV、libmpv 和可选 ONNX Runtime 路径；目标平台构建必须使用对应工具链重新配置。发布前应检查复制后的依赖 DLL、模型文件和 qml.qrc 资源是否齐全。
+[body][Normal][justify] cmake -S . -B build -G "MinGW Makefiles" ^
+  -DCMAKE_BUILD_TYPE=Debug ^
+  -DCMAKE_C_COMPILER=E:/QT5.12.8/Tools/mingw730_64/bin/gcc.exe ^
+  -DCMAKE_CXX_COMPILER=E:/QT5.12.8/Tools/mingw730_64/bin/g++.exe ^
+  -DCMAKE_PREFIX_PATH=E:/QT5.12.8/5.12.8/mingw73_64 ^
+  -DOpenCV_DIR=E:/opencv-4.2.0/DNN/install ^
+  -DMPV_ROOT=E:/QTproject/mpv ^
+  -DONNXRUNTIME_ROOT=<MinGW-compatible-onnxruntime-root>
+cmake --build build -j8
+[body][Heading 2][left] 4.6  错误检测和诊断特征
+[body][Normal][justify] a) 编译期诊断：当前 CMake 未强制开启 -Wall/-Wextra，也未配置 Werror。修改代码后应至少在 Debug 和 Release 两种配置下构建，检查 AUTOMOC、Qt 信号槽签名、QML 资源和控制台告警。可选自测通过 KYLINQT_BUILD_SELFTESTS 打开，目前 CMake 接入的测试目标覆盖 program_tracking_file。
+[body][Normal][justify] b) 运行期错误：工程没有统一的“模块＋类别＋序号”数字错误码。常见错误以 QSerialPort 错误串、portError/popupMessage、SixDofMotionClient::lastError、VlcVideoItem 的播放错误、DataRecorder::errorOccurred 和 qDebug 消息表现。定位时应先记录信号来源和发生操作，再检查对应对象状态。
+[body][Caption][inherit] 表 12  常见错误与诊断
+[body][Normal][justify] c) 诊断顺序：先复现并记录界面提示，再查看 qDebug/qWarning 与 LogManager。串口检查端口、波特率、帧头、长度、字节序和校验；UDP 检查 8080/7408/8081、控制卡 IP 和 200 ms 查询；视频检查 URL、解码和 record-file；保存检查目录、首帧、权限和 ffmpeg。
+[body][Normal][justify] d) 崩溃分析：如需 core dump，由目标操作系统配置转储路径和大小；当前程序未安装自定义崩溃处理器。core 文件可能含任务数据，须按涉密载体管理。Windows 开发环境可使用 Qt Creator/GDB 调试。
+[body][Normal][justify] e) 启动自检：当前没有 check_env.sh 或独立配置完整性校验器。登录成功后 main.cpp 创建串口/手柄/视频线程；组件通过端口扫描、连接状态、帧解析、UDP 应答和播放器错误暴露问题。发布前应人工确认依赖 DLL、模型文件、视频 URL、串口和网络环境，并执行一次登录、开串口、视频、外引导或程控、保存与退出的完整检查。
+[body][Heading 1][left] 5  注释
+[body][Heading 2][left] 5.1  术语与缩略语
+[body][Caption][inherit] 表 13  术语与缩略语
+[body][Heading 2][left] 5.2  背景说明
+[body][Normal][justify] a) 本文档依据 GJB 438C-2021 附录 R 的章节设置编制，同时按当前工程实际技术栈描述编程环境、编译连接、程序接口、示例与诊断方法。
+[body][Normal][justify] b) 附录 R 为资料性附录。本文档不虚构 qmake 工程、多个业务动态库、配置文件、数字错误码或当前不存在的自检脚本；对尚未固化的目标平台构建工具链，明确说明须在交付环境重新配置和验证。
+[body][Normal][justify] c) 本文档与《软件设计说明》的分工为：设计说明规定软件结构和接口，本手册说明如何阅读、修改、构建和诊断当前源码。两者不一致时，以评审通过的源码和设计基线为准，并同步修订。
+[body][Normal][justify] d) 本文档的更新条件为：CMake 或 Qt 版本变更、编译器或目标平台变更、串口/UDP/视频接口变化、模块目录调整、依赖库替换、模型或保存格式变化，以及构建或诊断流程变化。上述任一条件发生时须同步修订并升版。
+[table1:1:1][Normal][inherit] 文档名称
+[table1:1:2][Normal][inherit] 计算机编程手册
+[table1:1:3][Normal][inherit] 文档编号
+[table1:1:4][Normal][inherit] DD/GF 007-CPM-001
+[table1:2:1][Normal][inherit] 软件名称
+[table1:2:2][Normal][inherit] 定点/跟飞试验系统软件
+[table1:2:3][Normal][inherit] 软件标识
+[table1:2:4][Normal][inherit] DD/GF 007
+[table1:3:1][Normal][inherit] 软件版本
+[table1:3:2][Normal][inherit] V2.5.0（Build 20261101）
+[table1:3:3][Normal][inherit] 文档版本
+[table1:3:4][Normal][inherit] V1.2
+[table1:4:1][Normal][inherit] 密级
+[table1:4:2][Normal][inherit] SS
+[table1:4:3][Normal][inherit] 共  页
+[table1:5:1][Normal][inherit] 编制单位
+[table1:5:2][Normal][inherit] HRB
+[table1:5:3][Normal][inherit] 编制日期
+[table1:5:4][Normal][inherit] 修订日期：2026年11月16日
+[table2:1:1][Normal][center] 岗位
+[table2:1:2][Normal][center] 姓名（签字）
+[table2:1:3][Normal][center] 日期
+[table2:1:4][Normal][center] 意见
+[table2:2:1][Normal][inherit] 编制
+[table2:3:1][Normal][inherit] 校对
+[table2:4:1][Normal][inherit] 审核
+[table2:5:1][Normal][inherit] 会签
+[table2:6:1][Normal][inherit] 批准
+[table3:1:1][Normal][inherit] 项目
+[table3:1:2][Normal][inherit] 内容
+[table3:2:1][Normal][inherit] 计算机系统制造厂商
+[table3:2:2][Normal][inherit] 飞腾信息技术有限公司（处理器）／麒麟软件有限公司（操作系统）
+[table3:3:1][Normal][inherit] 计算机系统型号
+[table3:3:2][Normal][inherit] 交付目标：飞腾腾锐 D2000 平台与银河麒麟桌面操作系统 V10 国防版；当前核对构建：Windows x86_64、MinGW 7.3.0
+[table3:4:1][Normal][inherit] 系统标识号
+[table3:4:2][Normal][inherit] DD/GF 001（对地光电 XX 试验系统）
+[table3:5:1][Normal][inherit] 软件名称
+[table3:5:2][Normal][inherit] 定点/跟飞试验系统软件
+[table3:6:1][Normal][inherit] 软件标识号
+[table3:6:2][Normal][inherit] DD/GF 007
+[table3:7:1][Normal][inherit] 软件版本号
+[table3:7:2][Normal][inherit] V2.5.0（Build 20261101）
+[table3:8:1][Normal][inherit] 文档名称
+[table3:8:2][Normal][inherit] 定点/跟飞试验系统软件计算机编程手册
+[table3:9:1][Normal][inherit] 文档标识号
+[table3:9:2][Normal][inherit] DD/GF 007-CPM-001
+[table3:10:1][Normal][inherit] 文档版本
+[table3:10:2][Normal][inherit] V1.2
+[table3:11:1][Normal][inherit] 文档密级
+[table3:11:2][Normal][inherit] SS
+[table4:1:1][Normal][center] 序号
+[table4:1:2][Normal][inherit] 编号 / 版本
+[table4:1:3][Normal][inherit] 名称
+[table4:1:4][Normal][inherit] 编写单位
+[table4:2:1][Normal][center] 1
+[table4:2:2][Normal][inherit] GJB 438C-2021
+[table4:2:3][Normal][inherit] 军用软件开发文档通用要求
+[table4:2:4][Normal][inherit] 中央军委装备发展部
+[table4:3:1][Normal][center] 2
+[table4:3:2][Normal][inherit] GJB 2786A-2009
+[table4:3:3][Normal][inherit] 军用软件开发通用要求
+[table4:3:4][Normal][inherit] 中国人民解放军总装备部
+[table4:4:1][Normal][center] 3
+[table4:4:2][Normal][inherit] DD/GF 007-SDD-001
+[table4:4:3][Normal][inherit] 软件设计说明（V1.0）
+[table4:4:4][Normal][inherit] HRB
+[table4:5:1][Normal][center] 4
+[table4:5:2][Normal][inherit] DD/GF 007-UM-001
+[table4:5:3][Normal][inherit] 软件用户手册（V1.0）
+[table4:5:4][Normal][inherit] HRB
+[table4:6:1][Normal][center] 5
+[table4:6:2][Normal][inherit] ISO/IEC 14882:2014
+[table4:6:3][Normal][inherit] C++14 语言标准
+[table4:6:4][Normal][inherit] ISO/IEC
+[table4:7:1][Normal][center] 6
+[table4:7:2][Normal][inherit] Qt 5.12
+[table4:7:3][Normal][inherit] Qt Core、Quick、SerialPort、Gamepad、Network 文档
+[table4:7:4][Normal][inherit] The Qt Company
+[table4:8:1][Normal][center] 7
+[table4:8:2][Normal][inherit] CMake 3.16
+[table4:8:3][Normal][inherit] CMake Build System 文档
+[table4:8:4][Normal][inherit] Kitware
+[table4:9:1][Normal][center] 8
+[table4:9:2][Normal][inherit] OpenCV 4.2 / libmpv
+[table4:9:3][Normal][inherit] 图像处理与视频接口文档
+[table4:9:4][Normal][inherit] OpenCV Foundation / mpv 项目
+[table5:1:1][Normal][inherit] 环境
+[table5:1:2][Normal][inherit] 配置
+[table5:1:3][Normal][inherit] 与本工程相关的特性
+[table5:2:1][Normal][inherit] 交付目标处理器
+[table5:2:2][Normal][inherit] 飞腾腾锐 D2000，AArch64
+[table5:2:3][Normal][inherit] 项目资料声明的交付平台；目标构建须重新验证
+[table5:3:1][Normal][inherit] 交付目标系统
+[table5:3:2][Normal][inherit] 银河麒麟桌面操作系统 V10 国防版
+[table5:3:3][Normal][inherit] 系统、Qt 和驱动兼容性以目标环境为准
+[table5:4:1][Normal][inherit] 当前开发环境
+[table5:4:2][Normal][inherit] Windows x86_64
+[table5:4:3][Normal][inherit] 当前构建为 Windows x86_64，MinGW 7.3.0 生成的 Debug 构建
+[table5:5:1][Normal][inherit] 内存与存储
+[table5:5:2][Normal][inherit] 项目资料按 8 GB 内存、固态硬盘配置
+[table5:5:3][Normal][inherit] 软件无固定容量上限，视频与模型加载为主要占用
+[table5:6:1][Normal][inherit] 显示与视频
+[table5:6:2][Normal][inherit] RTSP/UDP 视频
+[table5:6:3][Normal][inherit] 图像DYT UDP/RTSP 默认软件解码；其他源 auto-safe
+[table5:7:1][Normal][inherit] 网络
+[table5:7:2][Normal][inherit] UDP 广播/单播
+[table5:7:3][Normal][inherit] 六自由度默认使用 192.168.15.x 网段；状态查询 200 ms
+[table5:8:1][Normal][inherit] 串口与 USB
+[table5:8:2][Normal][inherit] 多路 QSerialPort 设备与 USB HID 手柄
+[table5:8:3][Normal][inherit] 端口由 QSerialPortInfo 扫描后选择，不依赖固定设备节点
+[table6:1:1][Normal][inherit] 类别
+[table6:1:2][Normal][inherit] 名称与版本
+[table6:1:3][Normal][inherit] 用途与约束
+[table6:2:1][Normal][inherit] 语言与界面
+[table6:2:2][Normal][inherit] C++14、QML 2.12
+[table6:2:3][Normal][inherit] C++ 业务与硬件，QML 界面
+[table6:3:1][Normal][inherit] 构建系统
+[table6:3:2][Normal][inherit] CMake 3.16+（缓存 4.1）
+[table6:3:3][Normal][inherit] AUTOMOC/AUTOUIC/AUTORCC 开启
+[table6:4:1][Normal][inherit] 当前已验证编译器
+[table6:4:2][Normal][inherit] MinGW-W64 g++ 7.3.0
+[table6:4:3][Normal][inherit] x86_64 Windows；AArch64 工具链未固化
+[table6:5:1][Normal][inherit] Qt
+[table6:5:2][Normal][inherit] Qt 5.12.8（MinGW73_64）
+[table6:5:3][Normal][inherit] Core、Quick、Gui、SerialPort、Gamepad、Network 等
+[table6:6:1][Normal][inherit] 图像处理
+[table6:6:2][Normal][inherit] OpenCV 4.2.0 DNN
+[table6:6:3][Normal][inherit] 默认 E:/opencv-4.2.0/DNN/install
+[table6:7:1][Normal][inherit] 视频
+[table6:7:2][Normal][inherit] libmpv SDK
+[table6:7:3][Normal][inherit] 默认 E:/QTproject/mpv；复制 libmpv DLL
+[table6:8:1][Normal][inherit] 可选 AI 推理
+[table6:8:2][Normal][inherit] ONNX Runtime（MinGW 兼容构建）
+[table6:8:3][Normal][inherit] 未找到时使用 stub
+[table6:9:1][Normal][inherit] 测试与诊断
+[table6:9:2][Normal][inherit] Qt Test、qDebug、延迟探针
+[table6:9:3][Normal][inherit] 可选自测；当前覆盖程控文件
+[table7:1:1][Normal][inherit] 目录 / 文件
+[table7:1:2][Normal][inherit] 主要内容
+[table7:1:3][Normal][inherit] 构建与运行关系
+[table7:2:1][Normal][inherit] main.cpp
+[table7:2:2][Normal][inherit] 对象创建、线程装配、信号连接、QML 上下文
+[table7:2:3][Normal][inherit] 程序入口和总装点
+[table7:3:1][Normal][inherit] main.qml / qml.qrc
+[table7:3:2][Normal][inherit] 主界面和资源清单
+[table7:3:3][Normal][inherit] 编译进 qrc 资源
+[table7:4:1][Normal][inherit] components/
+[table7:4:2][Normal][inherit] 业务界面、弹窗、控件和视频组件
+[table7:4:3][Normal][inherit] QML 通过资源 URL 加载
+[table7:5:1][Normal][inherit] serialport/
+[table7:5:2][Normal][inherit] 串口基类、图像、激光、转台、BD（北斗）、观瞄设备
+[table7:5:3][Normal][inherit] QSerialPort 工作线程与协议解析
+[table7:6:1][Normal][inherit] network/
+[table7:6:2][Normal][inherit] SixDofMotionClient
+[table7:6:3][Normal][inherit] UDP 状态查询、运动指令与链路看门狗
+[table7:7:1][Normal][inherit] vlcvideo/
+[table7:7:2][Normal][inherit] VlcVideoItem/VlcFrameItem；实际使用 libmpv
+[table7:7:3][Normal][inherit] libmpv 显示、录像和帧访问
+[table7:8:1][Normal][inherit] opencv/
+[table7:8:2][Normal][inherit] StreamProcessor、ONNX 检测器、像素卡尔曼跟踪
+[table7:8:3][Normal][inherit] 视频处理线程，ONNX 为可选依赖
+[table7:9:1][Normal][inherit] record/、log/、auth/
+[table7:9:2][Normal][inherit] CSV 保存、内存日志、HMAC 登录
+[table7:9:3][Normal][inherit] 主线程对象和 QML 接口
+[table7:10:1][Normal][inherit] ModeControl/、kalman/、utils/
+[table7:10:2][Normal][inherit] 模式控制、AB/Kalman 滤波、坐标变换、程控 CSV、延迟探针
+[table7:10:3][Normal][inherit] 业务解算与诊断支撑
+[table7:11:1][Normal][inherit] tests/
+[table7:11:2][Normal][inherit] 滤波、绝对目标、延迟和程控文件自测/仿真
+[table7:11:3][Normal][inherit] 部分目标由 CMake 选项接入
+[table8:1:1][Normal][inherit] 配置 / 选项
+[table8:1:2][Normal][inherit] 当前用途
+[table8:1:3][Normal][inherit] 维护要求
+[table8:2:1][Normal][inherit] CMAKE_CXX_STANDARD=14
+[table8:2:2][Normal][inherit] C++14
+[table8:2:3][Normal][inherit] 不得无评审地切到更高标准
+[table8:3:1][Normal][inherit] CMAKE_BUILD_TYPE=Debug
+[table8:3:2][Normal][inherit] 当前缓存为 Debug；正式交付应建立 Release 构建并单独验证
+[table8:3:3][Normal][inherit] 正式交付应建立 Release 构建并单独验证
+[table8:4:1][Normal][inherit] QT_QML_DEBUG / QT_DECLARATIVE_DEBUG
+[table8:4:2][Normal][inherit] Debug QML 诊断
+[table8:4:3][Normal][inherit] 仅用于 Debug/RelWithDebInfo
+[table8:5:1][Normal][inherit] AUTOMOC/AUTOUIC/AUTORCC
+[table8:5:2][Normal][inherit] 生成元对象、界面和资源代码
+[table8:5:3][Normal][inherit] 新增 QObject/QML 文件后重新配置
+[table8:6:1][Normal][inherit] MPV_ROOT
+[table8:6:2][Normal][inherit] libmpv SDK 根目录
+[table8:6:3][Normal][inherit] 必须含头文件、链接库和运行库
+[table8:7:1][Normal][inherit] OpenCV_DIR
+[table8:7:2][Normal][inherit] OpenCV 4.2 安装目录
+[table8:7:3][Normal][inherit] DLL 由 POST_BUILD 复制到程序目录
+[table8:8:1][Normal][inherit] ONNXRUNTIME_ROOT
+[table8:8:2][Normal][inherit] 可选 ONNX Runtime 根目录
+[table8:8:3][Normal][inherit] 须与 MinGW ABI 一致，否则使用 stub
+[table8:9:1][Normal][inherit] KYLINQT_BUILD_SELFTESTS
+[table8:9:2][Normal][inherit] 构建命令行自测
+[table8:9:3][Normal][inherit] 默认 OFF；启用后按测试结果回归
+[table9:1:1][Normal][center] 类型
+[table9:1:2][Normal][center] 长度（B）
+[table9:1:3][Normal][center] 对齐（B）
+[table9:1:4][Normal][center] 取值范围
+[table9:1:5][Normal][center] 编程注意
+[table9:2:1][Normal][center] bool
+[table9:2:2][Normal][center] 1
+[table9:2:3][Normal][center] 1
+[table9:2:4][Normal][center] true/false
+[table9:2:5][Normal][inherit] 位模式不保证为 0/1，比较用逻辑运算
+[table9:3:1][Normal][center] char / signed char
+[table9:3:2][Normal][center] 1
+[table9:3:3][Normal][center] 1
+[table9:3:4][Normal][center] −128～127
+[table9:3:5][Normal][inherit] 字符是否为有符号由实现定义，本平台为有符号
+[table9:4:1][Normal][center] short
+[table9:4:2][Normal][center] 2
+[table9:4:3][Normal][center] 2
+[table9:4:4][Normal][center] −32768～32767
+[table9:4:5][Normal][inherit] 协议字段用 int16_t
+[table9:5:1][Normal][center] int
+[table9:5:2][Normal][center] 4
+[table9:5:3][Normal][center] 4
+[table9:5:4][Normal][center] −2^31～2^31−1
+[table9:5:5][Normal][inherit] 默认整型，注意溢出
+[table9:6:1][Normal][center] long
+[table9:6:2][Normal][center] 8
+[table9:6:3][Normal][center] 8
+[table9:6:4][Normal][center] −2^63～2^63−1
+[table9:6:5][Normal][inherit] 与 32 位平台不同，禁止用于协议字段
+[table9:7:1][Normal][center] long long
+[table9:7:2][Normal][center] 8
+[table9:7:3][Normal][center] 8
+[table9:7:4][Normal][center] 同上
+[table9:7:5][Normal][inherit] 跨平台一致
+[table9:8:1][Normal][center] float
+[table9:8:2][Normal][center] 4
+[table9:8:3][Normal][center] 4
+[table9:8:4][Normal][center] IEEE 754 单精度
+[table9:8:5][Normal][inherit] 仅用于显示与像素运算
+[table9:9:1][Normal][center] double
+[table9:9:2][Normal][center] 8
+[table9:9:3][Normal][center] 8
+[table9:9:4][Normal][center] IEEE 754 双精度
+[table9:9:5][Normal][inherit] 坐标与角度换算统一使用
+[table9:10:1][Normal][center] 指针 / size_t
+[table9:10:2][Normal][center] 8
+[table9:10:3][Normal][center] 8
+[table9:10:4][Normal][center] —
+[table9:10:5][Normal][inherit] 64 位地址空间
+[table10:1:1][Normal][center] 寄存器
+[table10:1:2][Normal][center] 用途
+[table10:1:3][Normal][center] 调用前后是否保持
+[table10:2:1][Normal][center] x0～x7
+[table10:2:2][Normal][center] 参数传递、返回值
+[table10:2:3][Normal][center] 否（调用者保存）
+[table10:3:1][Normal][center] x8
+[table10:3:2][Normal][center] 间接结果位置（大结构返回）
+[table10:3:3][Normal][center] 否
+[table10:4:1][Normal][center] x9～x15
+[table10:4:2][Normal][center] 临时寄存器
+[table10:4:3][Normal][center] 否
+[table10:5:1][Normal][center] x16、x17
+[table10:5:2][Normal][center] 链接器暂存（PLT 调用）
+[table10:5:3][Normal][center] 否
+[table10:6:1][Normal][center] x18
+[table10:6:2][Normal][center] 平台寄存器
+[table10:6:3][Normal][center] 不得使用
+[table10:7:1][Normal][center] x19～x28
+[table10:7:2][Normal][center] 被调用者保存的局部变量
+[table10:7:3][Normal][center] 是（被调用者须保存）
+[table10:8:1][Normal][center] x29
+[table10:8:2][Normal][center] 帧指针
+[table10:8:3][Normal][center] 是
+[table10:9:1][Normal][center] x30
+[table10:9:2][Normal][center] 链接寄存器（返回地址）
+[table10:9:3][Normal][center] 是
+[table10:10:1][Normal][center] sp
+[table10:10:2][Normal][center] 栈指针，16 字节对齐
+[table10:10:3][Normal][center] 是
+[table10:11:1][Normal][center] v0～v7
+[table10:11:2][Normal][center] 浮点/SIMD 参数与返回值
+[table10:11:3][Normal][center] 否
+[table10:12:1][Normal][center] v8～v15
+[table10:12:2][Normal][center] 浮点/SIMD 临时
+[table10:12:3][Normal][center] 否
+[table10:13:1][Normal][center] v16～v31
+[table10:13:2][Normal][center] 浮点/SIMD 被调用者保存（低 64 位）
+[table10:13:3][Normal][center] 部分（低 64 位须保存）
+[table11:1:1][Normal][center] 指令类别
+[table11:1:2][Normal][center] 典型指令
+[table11:1:3][Normal][center] 何时出现
+[table11:1:4][Normal][center] 编程禁忌与说明
+[table11:2:1][Normal][center] 数据传送
+[table11:2:2][Normal][center] LDR／STR／LDP／STP
+[table11:2:3][Normal][center] 所有变量与数组访问
+[table11:2:4][Normal][inherit] LDP/STP 成对访问效率更高，结构体成员宜按 8 字节对齐
+[table11:3:1][Normal][center] 算术与逻辑
+[table11:3:2][Normal][center] ADD／SUB／MUL／AND／ORR
+[table11:3:3][Normal][center] 一般运算
+[table11:3:4][Normal][inherit] 整数除法无硬件指令，由编译器转为乘法与移位，热点路径避免频繁除法
+[table11:4:1][Normal][center] 比较与分支
+[table11:4:2][Normal][center] CMP／B.cond／CBZ
+[table11:4:3][Normal][center] 条件判断
+[table11:4:4][Normal][inherit] 分支预测失败代价约 10～20 周期，高频路径宜用无分支写法（如查表、掩码）
+[table11:5:1][Normal][center] 原子访问
+[table11:5:2][Normal][center] LDXR／STXR／CAS／LDADD
+[table11:5:3][Normal][center] 引用计数、无锁队列、状态置位
+[table11:5:4][Normal][inherit] 优先用 std::atomic；原子操作默认 seq_cst，性能敏感处显式指定 memory_order
+[table11:6:1][Normal][center] 内存屏障
+[table11:6:2][Normal][center] DMB／DSB／ISB
+[table11:6:3][Normal][center] 跨核共享数据的顺序保证
+[table11:6:4][Normal][inherit] 不得手写屏障替代原子操作；屏障只保证顺序，不保证原子性
+[table11:7:1][Normal][center] SIMD
+[table11:7:2][Normal][center] ADD.4S／LD1／ST1／TBL
+[table11:7:3][Normal][center] 像素格式转换（YUV→RGB）、批量归一化
+[table11:7:4][Normal][inherit] 当前源码未手写 NEON 指令，由编译器自动向量化
+[table11:8:1][Normal][center] 系统调用
+[table11:8:2][Normal][center] SVC
+[table11:8:3][Normal][center] 文件、串口、socket、线程等全部系统服务
+[table11:8:4][Normal][inherit] 不在实时路径频繁调用；批量 I/O 优于逐次调用
+[table11:9:1][Normal][center] 浮点
+[table11:9:2][Normal][center] FMUL／FADD／FCVT
+[table11:9:3][Normal][center] 角度换算、滤波
+[table11:9:4][Normal][inherit] 统一使用双精度；不使用 -ffast-math，避免破坏 IEEE 语义
+[table12:1:1][Normal][inherit] 接口 / 参数项
+[table12:1:2][Normal][inherit] 当前设置
+[table12:1:3][Normal][inherit] 说明
+[table12:2:1][Normal][inherit] 通用串口配置
+[table12:2:2][Normal][inherit] 8 数据位、无校验、1 停止位、无流控
+[table12:2:3][Normal][inherit] 由 SerialPort 统一设置
+[table12:3:1][Normal][inherit] 图像DYT
+[table12:3:2][Normal][inherit] 460800 bps
+[table12:3:3][Normal][inherit] 界面默认值
+[table12:4:1][Normal][inherit] 激光DYT
+[table12:4:2][Normal][inherit] 115200 bps
+[table12:4:3][Normal][inherit] 界面默认值
+[table12:5:1][Normal][inherit] 三轴转台
+[table12:5:2][Normal][inherit] 230400 bps
+[table12:5:3][Normal][inherit] 界面默认值
+[table12:6:1][Normal][inherit] 北斗模块
+[table12:6:2][Normal][inherit] 9600 bps
+[table12:6:3][Normal][inherit] 界面默认值
+[table12:7:1][Normal][inherit] 观瞄设备控制
+[table12:7:2][Normal][inherit] 9600 bps
+[table12:7:3][Normal][inherit] 界面默认值
+[table12:8:1][Normal][inherit] 读取方式
+[table12:8:2][Normal][inherit] readyRead + 接收缓冲
+[table12:8:3][Normal][inherit] 图像 156 字节/20 ms，激光 48 字节/20 ms，转台 29 字节/5 ms；按帧头或换行切帧
+[table12:9:1][Normal][inherit] 设备选择
+[table12:9:2][Normal][inherit] QSerialPortInfo 扫描 + QML 下拉框
+[table12:9:3][Normal][inherit] 当前不依赖 udev 固定映射配置文件
+[table13:1:1][Normal][center] 序号
+[table13:1:2][Normal][inherit] 示例
+[table13:1:3][Normal][inherit] 对应源码位置
+[table13:1:4][Normal][inherit] 要点
+[table13:2:1][Normal][center] 1
+[table13:2:2][Normal][inherit] 串口按字节流收帧
+[table13:2:3][Normal][inherit] serialport/serialport_*.cpp
+[table13:2:4][Normal][inherit] 帧头、帧长、半帧保留
+[table13:3:1][Normal][center] 2
+[table13:3:2][Normal][inherit] 校验与字节序
+[table13:3:3][Normal][inherit] serialport/*.cpp 校验函数
+[table13:3:4][Normal][inherit] 按设备协议校验
+[table13:4:1][Normal][center] 3
+[table13:4:2][Normal][inherit] C++ 对象暴露给 QML
+[table13:4:3][Normal][inherit] main.cpp、Q_PROPERTY、Q_INVOKABLE
+[table13:4:4][Normal][inherit] 上下文属性与信号槽
+[table13:5:1][Normal][center] 4
+[table13:5:2][Normal][inherit] libmpv 显示与录像
+[table13:5:3][Normal][inherit] vlcvideo/VlcVideoItem.*
+[table13:5:4][Normal][inherit] record-file 与 TS 录制
+[table13:6:1][Normal][center] 5
+[table13:6:2][Normal][inherit] CSV 缓冲写入
+[table13:6:3][Normal][inherit] record/DataRecorder.*
+[table13:6:4][Normal][inherit] 第一帧建 CSV，200 ms 冲刷，三路共用视频
+[table13:7:1][Normal][center] 6
+[table13:7:2][Normal][inherit] CMake 构建
+[table13:7:3][Normal][inherit] CMakeLists.txt
+[table13:7:4][Normal][inherit] MinGW 和依赖路径
+[table14:1:1][Normal][inherit] 类别
+[table14:1:2][Normal][inherit] 典型现象
+[table14:1:3][Normal][inherit] 定位位置
+[table14:1:4][Normal][inherit] 处置
+[table14:2:1][Normal][inherit] 串口打开
+[table14:2:2][Normal][inherit] portError、端口列表无目标设备
+[table14:2:3][Normal][inherit] SerialPort/openPort
+[table14:2:4][Normal][inherit] 检查设备连接、占用、权限和型号
+[table14:3:1][Normal][inherit] 串口解析
+[table14:3:2][Normal][inherit] 无数据更新、CRC/异或/累加校验失败
+[table14:3:3][Normal][inherit] 各 parseData
+[table14:3:4][Normal][inherit] 检查帧头、长度、字节序和该设备的校验规则；图像/激光约 20 ms，转台约 5 ms
+[table14:4:1][Normal][inherit] UDP 链路
+[table14:4:2][Normal][inherit] lastError、linkAlive=false
+[table14:4:3][Normal][inherit] SixDofMotionClient
+[table14:4:4][Normal][inherit] 检查 8080 本机端口、7408/8081 广播、控制卡 IP 和 200 ms 查询
+[table14:5:1][Normal][inherit] 登录
+[table14:5:2][Normal][inherit] 密钥错误、剩余次数减少、锁定
+[table14:5:3][Normal][inherit] AuthManager
+[table14:5:4][Normal][inherit] 使用正确密钥；5 次失败后等待 60 s
+[table14:6:1][Normal][inherit] 视频
+[table14:6:2][Normal][inherit] error、黑屏、反复重连
+[table14:6:3][Normal][inherit] VlcVideoItem、mpv 日志
+[table14:6:4][Normal][inherit] 检查 URL、网络、解码器和播放状态
+[table14:7:1][Normal][inherit] 录像
+[table14:7:2][Normal][inherit] TS 未生成、MP4 转换失败
+[table14:7:3][Normal][inherit] DataRecorder
+[table14:7:4][Normal][inherit] 检查 record-file、ffmpegPath、路径与权限
+[table14:8:1][Normal][inherit] 数据保存
+[table14:8:2][Normal][inherit] errorOccurred、文件未创建
+[table14:8:3][Normal][inherit] DataRecorder
+[table14:8:4][Normal][inherit] 检查保存目录、首帧是否到达和磁盘权限
+[table14:9:1][Normal][inherit] QML 绑定
+[table14:9:2][Normal][inherit] 属性为空、按钮无响应
+[table14:9:3][Normal][inherit] main.cpp、qDebug
+[table14:9:4][Normal][inherit] 检查上下文属性、对象名和信号槽签名
+[table14:10:1][Normal][inherit] AI 推理
+[table14:10:2][Normal][inherit] 模型未加载、无检测结果
+[table14:10:3][Normal][inherit] StreamProcessor、stub
+[table14:10:4][Normal][inherit] 检查 ONNX Runtime、best.onnx、test.names 与 416×416 输入
+[table14:11:1][Normal][inherit] 构建
+[table14:11:2][Normal][inherit] 找不到 Qt/OpenCV/mpv/ONNX
+[table14:11:3][Normal][inherit] CMakeCache.txt
+[table14:11:4][Normal][inherit] 修正 CMAKE_PREFIX_PATH 和依赖根目录
+[table15:1:1][Normal][inherit] 术语 / 缩略语
+[table15:1:2][Normal][inherit] 全称或含义
+[table15:1:3][Normal][inherit] 在本手册中的说明
+[table15:2:1][Normal][inherit] CPM
+[table15:2:2][Normal][inherit] Computer Programming Manual
+[table15:2:3][Normal][inherit] 即本文档
+[table15:3:1][Normal][inherit] CMake
+[table15:3:2][Normal][inherit] 跨平台构建系统
+[table15:3:3][Normal][inherit] 本工程唯一的构建描述入口
+[table15:4:1][Normal][inherit] AUTOMOC
+[table15:4:2][Normal][inherit] Qt 自动元对象编译
+[table15:4:3][Normal][inherit] 自动生成 QObject 相关代码
+[table15:5:1][Normal][inherit] QML
+[table15:5:2][Normal][inherit] Qt Meta Language
+[table15:5:3][Normal][inherit] 界面和交互描述语言
+[table15:6:1][Normal][inherit] QSerialPort
+[table15:6:2][Normal][inherit] Qt 串口模块
+[table15:6:3][Normal][inherit] 串口工作线程的核心接口
+[table15:7:1][Normal][inherit] QUdpSocket
+[table15:7:2][Normal][inherit] Qt UDP 套接字
+[table15:7:3][Normal][inherit] 六自由度平台通信
+[table15:8:1][Normal][inherit] libmpv
+[table15:8:2][Normal][inherit] mpv 客户端库
+[table15:8:3][Normal][inherit] 视频显示、帧访问和原始码流录制
+[table15:9:1][Normal][inherit] OpenCV
+[table15:9:2][Normal][inherit] 开源计算机视觉库
+[table15:9:3][Normal][inherit] 流处理、检测和像素跟踪
+[table15:10:1][Normal][inherit] ONNX Runtime
+[table15:10:2][Normal][inherit] ONNX 模型推理运行时
+[table15:10:3][Normal][inherit] 可选；未安装时使用 stub
+[table15:11:1][Normal][inherit] TS / MP4
+[table15:11:2][Normal][inherit] 视频传输流 / MPEG-4 容器
+[table15:11:3][Normal][inherit] 录像暂存与最终输出格式
+[table15:12:1][Normal][inherit] Q_DECLARE_METATYPE
+[table15:12:2][Normal][inherit] Qt 元类型声明
+[table15:12:3][Normal][inherit] 支持跨线程信号参数

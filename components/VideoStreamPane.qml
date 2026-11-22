@@ -179,7 +179,7 @@ Rectangle {
         CusButton_Blue {
             text: "停止"
             Layout.fillWidth: true
-            Layout.preferredHeight: 32
+            Layout.preferredHeight: 40
             onClicked: root.stopStream()
         }
 

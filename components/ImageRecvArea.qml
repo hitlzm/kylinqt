@@ -577,7 +577,7 @@ Rectangle {
 
             // CCD 串口
             Row {
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.left: parent.left
                 spacing: 6
                 Text {
                     text: "串口:"

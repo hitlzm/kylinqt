@@ -441,7 +441,7 @@ void DataRecorder::onImageFrame()
             "俯仰视线角速度(°/s),偏航视线角速度(°/s),"
             "光学工作状态,俯仰框架角(°),偏航框架角(°),"
             "方位偏差像素,俯仰偏差像素,"
-            "俯仰陀螺(°/s),偏航陀螺(°/s),跟踪状态,跟踪器状态,"
+            "跟踪状态,跟踪器状态,"
             "红外帧编号,电视帧编号,时标精度(us)\n");
     ensureSourceFile(m_image, QStringLiteral("image"), kImageHeader, "图像");
     if (m_image.openFailed)
@@ -465,8 +465,6 @@ void DataRecorder::onImageFrame()
     line += ','; line += QString::number(m_imageData->yawFrameAngle(), 'f', 4);
     line += ','; line += QString::number(m_imageData->azimuthDeviationPixel());
     line += ','; line += QString::number(m_imageData->pitchDeviationPixel());
-    line += ','; line += QString::number(m_imageData->pitchGyro(), 'f', 4);
-    line += ','; line += QString::number(m_imageData->yawGyro(), 'f', 4);
     line += ','; line += imageTrackingStateText(m_imageData->trackingState());
     line += ','; line += imageTrackerStateText(m_imageData->trackerState());
     line += ','; line += QString::number(m_imageData->infraredFrameNum());

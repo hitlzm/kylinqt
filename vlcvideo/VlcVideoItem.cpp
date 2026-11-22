@@ -1248,7 +1248,7 @@ void VlcVideoItem::doSetupPlayer()
     // 先设为暂停状态，等用户点击 play() 再取消暂停
     int paused = 1;
     mpv_set_property(m_mpv, "pause", MPV_FORMAT_FLAG, &paused);
-    // RTSP 优先使用 UDP，减少 TCP 重传和队头阻塞带来的额外延迟。
+    
     // 若现场网络丢包导致花屏，可改回 "tcp"。
     mpv_set_property_string(m_mpv, "rtsp-transport", "tcp");
     // 观察属性变化以获取播放状态

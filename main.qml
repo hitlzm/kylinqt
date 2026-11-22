@@ -15,7 +15,7 @@ ApplicationWindow {
     // 而最大化时窗口管理器会自动避开任务栏，两者观感就对不上了。
     width: Screen.desktopAvailableWidth
     height: Screen.desktopAvailableHeight
-    title: qsTr("kylin-qt")
+    title: qsTr("定点/跟飞试验系统软件")
 
     // 启动后真正进入窗口管理器的最大化状态。
     // 只设置桌面可用区域尺寸仍属于普通窗口，银河麒麟在最小化/恢复时
@@ -180,7 +180,7 @@ ApplicationWindow {
             // VlcVideoItem 共享纹理，可以同时显示和拖动，不会重新拉流。
             MagnifierOverlay {
                 id: guideMagnifierOverlay
-                titleText: "导引头放大"
+                titleText: "视频1放大"
                 frameSource: myvideo.guideVideoPlayerItem
                 x: parent ? 16 : 16
                 y: parent ? Math.max(56, (parent.height - height) / 2 - 24) : 56
@@ -190,7 +190,7 @@ ApplicationWindow {
 
             MagnifierOverlay {
                 id: ccdMagnifierOverlay
-                titleText: "CCD放大"
+                titleText: "视频2放大"
                 frameSource: myvideo.ccdVideoPlayerItem
                 x: parent ? Math.max(16, parent.width - width - 16) : 16
                 y: parent ? Math.max(56, (parent.height - height) / 2 + 24) : 56
