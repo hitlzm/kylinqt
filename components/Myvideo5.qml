@@ -121,7 +121,7 @@ Rectangle {
         VideoStreamPane {
             id: guidePane
             anchors.fill: parent
-            paneTitle: "导引头"
+            paneTitle: "视频1"
             defaultUrl: "udp://@226.0.0.80:8001"
             isCcd: false
             playerObjectName: "guideVideoPlayer"
@@ -139,7 +139,7 @@ Rectangle {
         VideoStreamPane {
             id: ccdPane
             anchors.fill: parent
-            paneTitle: "CCD"
+            paneTitle: "视频2"
             defaultUrl: "rtsp://admin:abcd1234@192.168.1.68:554/Streaming/Channels/101"
             isCcd: true
             playerObjectName: "ccdVideoPlayer"

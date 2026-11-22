@@ -11,6 +11,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(KYLIN_CCD_DISPLAY_ROTATE_DEFAULT
+       "Enable CCD display rotation by default when the supported RTSP source is connected"
+       ON)
+
 set(OpenCV_DIR "E:/opencv-4.2.0/DNN/install")
 
 include(taoQuick.cmake)
@@ -124,6 +128,7 @@ else()
       #serialport/serialport_tiltmeter.cpp
       vlcvideo/VlcVideoItem.cpp
       vlcvideo/VlcFrameItem.cpp
+      vlcvideo/videodisplaygeometry.h
       #opencv/onnxyolodetector.cpp
       ${ONNXRUNTIME_DETECTOR_SOURCE}
       opencv/onnxyolov5detector.h
@@ -163,7 +168,10 @@ if(ONNXRUNTIME_INCLUDE_DIR AND ONNXRUNTIME_C_API_INCLUDE_DIR AND ONNXRUNTIME_LIB
 endif()
 
 target_compile_definitions(kylinqt
-  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+  PRIVATE
+    $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
+    KYLIN_CCD_DISPLAY_ROTATE_DEFAULT=$<BOOL:${KYLIN_CCD_DISPLAY_ROTATE_DEFAULT}>
+)
 
 target_link_libraries(kylinqt
   PRIVATE
@@ -191,6 +199,14 @@ if(KYLINQT_BUILD_SELFTESTS)
     target_link_libraries(kylinqt_program_tracking_file_selftest PRIVATE Qt5::Core)
     add_test(NAME program_tracking_file_selftest
              COMMAND kylinqt_program_tracking_file_selftest)
+
+    add_executable(kylinqt_video_display_geometry_selftest
+        tests/video_display_geometry_selftest.cpp
+    )
+    target_include_directories(kylinqt_video_display_geometry_selftest
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    add_test(NAME video_display_geometry_selftest
+             COMMAND kylinqt_video_display_geometry_selftest)
 endif()
 
 # ── 视频接收侧延迟探针（utils/videolatencyprobe.*）─────────────────────

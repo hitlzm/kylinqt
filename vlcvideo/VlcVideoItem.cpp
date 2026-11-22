@@ -1,4 +1,5 @@
 #include "VlcVideoItem.h"
+#include "videodisplaygeometry.h"
 #include "utils/ccdlatencyprobe.h"
 #include "utils/videolatencyprobe.h"
 #include <mpv/client.h>
@@ -15,6 +16,17 @@
 #include <cerrno>
 #include <cstring>
 #include <clocale>
+
+#ifndef KYLIN_CCD_DISPLAY_ROTATE_DEFAULT
+#define KYLIN_CCD_DISPLAY_ROTATE_DEFAULT 1
+#endif
+
+static const QLatin1String kCcdRotationUrl(
+        "rtsp://admin:abcd1234@192.168.1.68:554/Streaming/Channels/101");
+// 临时测试源：与正式 CCD 使用相同的显示旋转和裁剪。
+static const QLatin1String kTemporaryCcdRotationUrl(
+        "rtsp://localhost:8554/live");
+static constexpr qreal kCcdDisplayRotationDegrees = -22.5;
 
 // ══════════════════════════════════════════════════════════════════
 // 视频源默认解码模式
@@ -51,13 +63,6 @@ static const char *kVertexShader =
     "void main() {\n"
     "    gl_Position = vec4(aPosition, 0.0, 1.0);\n"
     "    vTexCoord = aTexCoord;\n"
-    "}\n";
-
-static const char *kFragmentShader =
-    "varying vec2 vTexCoord;\n"
-    "uniform sampler2D uTexture;\n"
-    "void main() {\n"
-    "    gl_FragColor = texture2D(uTexture, vTexCoord);\n"
     "}\n";
 
 // ══════════════════════════════════════════════════════════════════
@@ -235,11 +240,24 @@ public:
                 m_videoSize = off;
         }
 
+        // CCD 显示旋转只改变最终纹理采样和显示宽高比，不改变 CPU 帧缓冲、
+        // 检测坐标或 m_videoDw/Dh。视频分辨率切换时这里会自动重新计算。
+        m_displayGeometry = VideoDisplayGeometry::calculate(
+                    m_videoSize.width(),
+                    m_videoSize.height(),
+                    m_item->displayRotationDegrees());
+        if (!m_displayGeometry.isEmpty()) {
+            m_displaySize = QSizeF(m_displayGeometry.cropWidth,
+                                   m_displayGeometry.cropHeight);
+        } else {
+            m_displaySize = QSizeF(m_videoSize);
+        }
+
         // 窗口尺寸变化 → 重新计算 quad 顶点
         QSize curItemSize(int(m_item->width()), int(m_item->height()));
-        if (m_itemSize != curItemSize || m_videoSize != m_lastQuadVideoSize) {
+        if (m_itemSize != curItemSize || m_displaySize != m_lastQuadDisplaySize) {
             m_itemSize = curItemSize;
-            m_lastQuadVideoSize = m_videoSize;
+            m_lastQuadDisplaySize = m_displaySize;
             updateQuadVertices();
         }
     }
@@ -284,6 +302,18 @@ public:
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, srcTex);
             glUniform1i(glGetUniformLocation(m_program, "uTexture"), 0);
+            glUniform2f(glGetUniformLocation(m_program, "uSourceSize"),
+                        static_cast<float>(m_displayGeometry.sourceWidth),
+                        static_cast<float>(m_displayGeometry.sourceHeight));
+            glUniform2f(glGetUniformLocation(m_program, "uCropSize"),
+                        static_cast<float>(m_displayGeometry.cropWidth),
+                        static_cast<float>(m_displayGeometry.cropHeight));
+            glUniform2f(glGetUniformLocation(m_program, "uCropCenter"),
+                        static_cast<float>(m_displayGeometry.centerX),
+                        static_cast<float>(m_displayGeometry.centerY));
+            glUniform2f(glGetUniformLocation(m_program, "uRotationCosSin"),
+                        static_cast<float>(m_displayGeometry.rotationCos),
+                        static_cast<float>(m_displayGeometry.rotationSin));
 
             GLint posLoc = glGetAttribLocation(m_program, "aPosition");
             glEnableVertexAttribArray(posLoc);
@@ -318,7 +348,8 @@ private:
     // ---- 延迟初始化 GL 资源 ----
     void initGL()
     {
-        m_program = buildProgram(kVertexShader, kFragmentShader);
+        m_program = buildProgram(kVertexShader,
+                                 VideoDisplayGeometry::fragmentShader());
         glGenBuffers(1, &m_vbo);
         m_glInitialized = true;
         qDebug() << "[MpvVideo] Vendor  :" << (const char*)glGetString(GL_VENDOR);
@@ -558,11 +589,11 @@ private:
     {
         m_vertices.clear();
 
-        if (m_videoSize.isEmpty() || m_itemSize.isEmpty())
+        if (m_displaySize.isEmpty() || m_itemSize.isEmpty())
             return;
 
-        float videoW = m_videoSize.width();
-        float videoH = m_videoSize.height();
+        float videoW = m_displaySize.width();
+        float videoH = m_displaySize.height();
         float itemW  = m_itemSize.width();
         float itemH  = m_itemSize.height();
 
@@ -648,7 +679,9 @@ private:
     // 帧数据
     QImage  m_frameCopy;
     QSize   m_videoSize;
-    QSize   m_lastQuadVideoSize;
+    QSizeF  m_displaySize;
+    QSizeF  m_lastQuadDisplaySize;
+    VideoDisplayGeometry::Geometry m_displayGeometry;
     bool    m_textureDirty = false;
     bool    m_renderedNewFrame = false;   // 本轮 render() 是否真的画出了新的一帧
 
@@ -693,6 +726,7 @@ VlcVideoItem::VlcVideoItem(QQuickItem *parent)
     // 打开方式：环境变量 KYLIN_LATPROBE=1，或调用 m_latencyProbe->setEnabled(true)。
     m_latencyProbe = new VideoLatencyProbe(this);
     m_ccdLatencyProbe = new CcdLatencyProbe(this);
+    m_ccdDisplayRotationEnabled = readCcdRotationEnvironmentDefault();
 }
 
 // QML 组件完成布局后才调用 —— 此时 width/height 有效，update() 能触发 render()
@@ -904,11 +938,60 @@ void VlcVideoItem::setCcdSource(bool on)
 {
     if (m_ccdSource.load() != on) {
         m_ccdSource.store(on);
+        refreshDisplayRotation();
         if (m_ccdLatencyProbe)
             m_ccdLatencyProbe->notePlaybackStart();
         emit ccdSourceChanged();
         update();
     }
+}
+
+void VlcVideoItem::setCcdDisplayRotationEnabled(bool on)
+{
+    if (m_ccdDisplayRotationEnabled == on)
+        return;
+
+    m_ccdDisplayRotationEnabled = on;
+    refreshDisplayRotation();
+    emit ccdDisplayRotationEnabledChanged();
+}
+
+void VlcVideoItem::refreshDisplayRotation()
+{
+    const qreal nextDegrees =
+            m_ccdSource.load()
+            && m_ccdDisplayRotationEnabled
+            && (m_source == kCcdRotationUrl
+                || m_source == kTemporaryCcdRotationUrl)
+            ? kCcdDisplayRotationDegrees
+            : 0.0;
+
+    if (qFuzzyCompare(m_displayRotationDegrees + 1.0, nextDegrees + 1.0))
+        return;
+
+    m_displayRotationDegrees = nextDegrees;
+    emit displayRotationChanged();
+    update();
+
+    qDebug() << "[MpvVideo] CCD display rotation:"
+             << m_displayRotationDegrees << "deg";
+}
+
+bool VlcVideoItem::readCcdRotationEnvironmentDefault()
+{
+    const QByteArray raw =
+            qgetenv("KYLIN_CCD_DISPLAY_ROTATE").trimmed().toLower();
+    if (raw.isEmpty())
+        return KYLIN_CCD_DISPLAY_ROTATE_DEFAULT != 0;
+
+    if (raw == "1" || raw == "true" || raw == "on" || raw == "yes")
+        return true;
+    if (raw == "0" || raw == "false" || raw == "off" || raw == "no")
+        return false;
+
+    qWarning() << "[MpvVideo] invalid KYLIN_CCD_DISPLAY_ROTATE value:"
+               << raw << "- using compile-time default";
+    return KYLIN_CCD_DISPLAY_ROTATE_DEFAULT != 0;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1058,6 +1141,7 @@ void VlcVideoItem::setSource(const QString &url)
     if (m_source != url) {
         m_source = url;
         emit sourceChanged();
+        refreshDisplayRotation();
         ensureMpvCreated();  // QML 对象构造完成后，首次 setSource 时才初始化 mpv
         // 延迟探针跟随视频源：udp:// 组播地址开始抓包；空串或非组播协议则停止
         if (m_latencyProbe) {

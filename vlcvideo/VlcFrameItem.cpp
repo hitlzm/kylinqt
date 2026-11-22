@@ -1,5 +1,6 @@
 #include "VlcFrameItem.h"
 #include "VlcVideoItem.h"
+#include "videodisplaygeometry.h"
 #include <QOpenGLFunctions>
 #include <QQuickWindow>
 #include <QtMath>
@@ -14,13 +15,6 @@ static const char *kVertexShader =
     "void main() {\n"
     "    gl_Position = vec4(aPosition, 0.0, 1.0);\n"
     "    vTexCoord = aTexCoord;\n"
-    "}\n";
-
-static const char *kFragmentShader =
-    "varying vec2 vTexCoord;\n"
-    "uniform sampler2D uTexture;\n"
-    "void main() {\n"
-    "    gl_FragColor = texture2D(uTexture, vTexCoord);\n"
     "}\n";
 
 // ═══════════════════════════════════════════════════════════
@@ -60,42 +54,32 @@ public:
         int fullH = qRound(src->frameHeight());
         if (fullW <= 0 || fullH <= 0) return;
 
-        // ── 先裁剪掉帧内 mpv 留下的黑边，得到真实视频内容区域 ──
-        // 离屏 FBO 的宽高比 = 主播放器控件的宽高比，视频内容在其中保持宽高比居中
-        // （可能上下或左右留黑边）。放大镜若直接整帧贴图，这些黑边会被一并放大，
-        // 出现四边黑框。这里用视频固有显示尺寸（dw/dh）反推出内容在帧中的位置。
-        double ox = 0.0, oy = 0.0, cw = fullW, ch = fullH;
-        {
-            const QSize native = src->videoNativeSize();
-            if (native.width() > 0 && native.height() > 0) {
-                const double scale = qMin(double(fullW) / native.width(),
-                                          double(fullH) / native.height());
-                cw = native.width() * scale;
-                ch = native.height() * scale;
-                ox = (fullW - cw) / 2.0;
-                oy = (fullH - ch) / 2.0;
-            }
-        }
+        // 主播放器的离屏纹理已经是视频原生画面。放大镜必须复用完全相同的
+        // 旋转和裁剪参数，否则会出现主画面已摆正、放大镜仍然倾斜。
+        const VideoDisplayGeometry::Geometry geometry =
+                VideoDisplayGeometry::calculate(
+                    fullW, fullH, src->displayRotationDegrees());
+        if (geometry.isEmpty())
+            return;
 
-        // ── 计算 zoom 区域（基于内容区域，单位为完整帧像素） ──
+        // 当前放大镜默认 zoomFactor=1。保留原有缩放参数能力：缩放区域仍以
+        // 旋转后的安全裁剪区中心为基准，避免切换到旧的源纹理坐标。
         qreal zf = m_item->zoomFactor();
-        double zx = ox, zy = oy, zw = cw, zh = ch;
-        if (zf > 1.0) {
-            qreal cx = m_item->centerX();
-            qreal cy = m_item->centerY();
-            if (cx < 0) cx = ox + cw / 2.0;
-            if (cy < 0) cy = oy + ch / 2.0;
-            zw = cw / zf;
-            zh = ch / zf;
-            zx = qBound(ox, cx - zw / 2.0, ox + cw - zw);
-            zy = qBound(oy, cy - zh / 2.0, oy + ch - zh);
-        }
+        const QSizeF displaySize(geometry.cropWidth / zf,
+                                 geometry.cropHeight / zf);
 
-        // 纹理坐标变化时重建 quad
-        if (zx != m_texU0 || zy != m_texV0 || zw != m_texW || zh != m_texH ||
+        // 几何参数变化时重建 quad
+        if (displaySize != m_displaySize ||
+            geometry.centerX != m_cropCenter.x() ||
+            geometry.centerY != m_cropCenter.y() ||
+            geometry.rotationCos != m_rotationCos ||
+            geometry.rotationSin != m_rotationSin ||
             m_sharedTexWidth != fullW || m_sharedTexHeight != fullH) {
-            m_texU0 = zx; m_texV0 = zy;
-            m_texW  = zw; m_texH  = zh;
+            m_geometry = geometry;
+            m_displaySize = displaySize;
+            m_cropCenter = QPointF(geometry.centerX, geometry.centerY);
+            m_rotationCos = geometry.rotationCos;
+            m_rotationSin = geometry.rotationSin;
             m_sharedTexWidth = fullW;
             m_sharedTexHeight = fullH;
             updateQuadVertices();
@@ -128,6 +112,18 @@ public:
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, m_sharedTexId);
             glUniform1i(glGetUniformLocation(m_program, "uTexture"), 0);
+            glUniform2f(glGetUniformLocation(m_program, "uSourceSize"),
+                        static_cast<float>(m_geometry.sourceWidth),
+                        static_cast<float>(m_geometry.sourceHeight));
+            glUniform2f(glGetUniformLocation(m_program, "uCropSize"),
+                        static_cast<float>(m_displaySize.width()),
+                        static_cast<float>(m_displaySize.height()));
+            glUniform2f(glGetUniformLocation(m_program, "uCropCenter"),
+                        static_cast<float>(m_cropCenter.x()),
+                        static_cast<float>(m_cropCenter.y()));
+            glUniform2f(glGetUniformLocation(m_program, "uRotationCosSin"),
+                        static_cast<float>(m_rotationCos),
+                        static_cast<float>(m_rotationSin));
 
             GLint posLoc = glGetAttribLocation(m_program, "aPosition");
             glEnableVertexAttribArray(posLoc);
@@ -154,7 +150,8 @@ public:
 private:
     void initGL()
     {
-        m_program = buildProgram(kVertexShader, kFragmentShader);
+        m_program = buildProgram(kVertexShader,
+                                 VideoDisplayGeometry::fragmentShader());
         glGenBuffers(1, &m_vbo);
         m_glInitialized = true;
     }
@@ -168,8 +165,8 @@ private:
             return;
 
         // 缩放后的显示尺寸（letterbox，保持宽高比）
-        float zoomW = m_texW;
-        float zoomH = m_texH;
+        float zoomW = m_displaySize.width();
+        float zoomH = m_displaySize.height();
         float itemW = m_itemSize.width();
         float itemH = m_itemSize.height();
 
@@ -180,18 +177,12 @@ private:
         float halfW = displayW / itemW;
         float halfH = displayH / itemH;
 
-        // 归一化纹理坐标（zoom 区域在完整纹理中的位置）
-        float u0 = m_texU0 / m_sharedTexWidth;
-        float v0 = m_texV0 / m_sharedTexHeight;
-        float u1 = (m_texU0 + zoomW) / m_sharedTexWidth;
-        float v1 = (m_texV0 + zoomH) / m_sharedTexHeight;
-
         // 三角形带：左下 → 右下 → 左上 → 右上
         m_vertices = {
-            -halfW, -halfH,   u0, v0,
-             halfW, -halfH,   u1, v0,
-            -halfW,  halfH,   u0, v1,
-             halfW,  halfH,   u1, v1,
+            -halfW, -halfH,   0.0f, 0.0f,
+             halfW, -halfH,   1.0f, 0.0f,
+            -halfW,  halfH,   0.0f, 1.0f,
+             halfW,  halfH,   1.0f, 1.0f,
         };
     }
 
@@ -258,9 +249,11 @@ private:
     int    m_sharedTexWidth  = 0;
     int    m_sharedTexHeight = 0;
 
-    // Zoom 区域在共享纹理中的位置和大小（像素坐标）
-    double m_texU0 = 0.0, m_texV0 = 0.0;
-    double m_texW  = 0.0, m_texH  = 0.0;
+    VideoDisplayGeometry::Geometry m_geometry;
+    QSizeF m_displaySize;
+    QPointF m_cropCenter;
+    double m_rotationCos = 1.0;
+    double m_rotationSin = 0.0;
 
     QVector<float> m_vertices;
     QSize m_itemSize;

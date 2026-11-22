@@ -29,6 +29,13 @@ class VlcVideoItem : public QQuickFramebufferObject
     Q_PROPERTY(qreal frameHeight READ frameHeight NOTIFY frameSizeChanged)
     Q_PROPERTY(bool cpuFrameConsumer READ cpuFrameConsumer WRITE setCpuFrameConsumer NOTIFY cpuFrameConsumerChanged)
     Q_PROPERTY(bool ccdSource READ ccdSource WRITE setCcdSource NOTIFY ccdSourceChanged)
+    Q_PROPERTY(bool ccdDisplayRotationEnabled
+               READ ccdDisplayRotationEnabled
+               WRITE setCcdDisplayRotationEnabled
+               NOTIFY ccdDisplayRotationEnabledChanged)
+    Q_PROPERTY(qreal displayRotationDegrees
+               READ displayRotationDegrees
+               NOTIFY displayRotationChanged)
     Q_PROPERTY(bool recording READ recording NOTIFY recordingChanged)
 
 public:
@@ -101,6 +108,17 @@ public:
     bool ccdSource() const { return m_ccdSource.load(); }
     Q_INVOKABLE void setCcdSource(bool on);
 
+    // CCD 画面显示旋钮。环境变量只决定启动默认值；该属性可运行时切换。
+    bool ccdDisplayRotationEnabled() const
+    {
+        return m_ccdDisplayRotationEnabled;
+    }
+    Q_INVOKABLE void setCcdDisplayRotationEnabled(bool on);
+    qreal displayRotationDegrees() const
+    {
+        return m_displayRotationDegrees;
+    }
+
     // ── 视频接收侧延迟探针（测试用，默认关闭）──────────────
     /// 等价于环境变量 KYLIN_LATPROBE=1；打开后无需重启即可持续测量
     Q_INVOKABLE void setLatencyProbeEnabled(bool on);
@@ -128,6 +146,8 @@ signals:
     void frameSizeChanged();
     void cpuFrameConsumerChanged();
     void ccdSourceChanged();
+    void ccdDisplayRotationEnabledChanged();
+    void displayRotationChanged();
     void recordingChanged();
     void stopped();
     void ended();
@@ -160,6 +180,8 @@ private:
     void doSetupPlayer();
     void releasePlayer();
     void ensureMpvCreated();
+    void refreshDisplayRotation();
+    static bool readCcdRotationEnvironmentDefault();
 
     // 视频接收侧延迟探针打点（仅导引头直显、且探针打开时生效）
     void reportLatencySample(bool newFrameRendered);
@@ -214,6 +236,8 @@ private:
     // 是否有 CPU 侧消费者需要读回像素（渲染线程读 / GUI 线程写，须 atomic）
     std::atomic<bool> m_cpuConsumerActive{true};
     std::atomic<bool> m_ccdSource{false};
+    bool m_ccdDisplayRotationEnabled = true;
+    qreal m_displayRotationDegrees = 0.0;
 
     bool m_playing = false;
     bool m_playClicked = false;
