@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import taoQuick 1.0
+import TaoQuick 1.0
 import "./"
 
 Rectangle {
@@ -18,6 +18,46 @@ Rectangle {
 
     MsgPopup2 {
         id: testmsg
+    }
+    ProtocolProfileDialog {
+        id: protocolProfileDialog
+        onProtocolFileConfirmed: {
+            pendingProfileAction = "custom"
+            protocolProfileLoading = true
+            imageData.loadProtocolProfile(profileUrl)
+        }
+        onExitRequested: {
+            seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+        }
+    }
+
+    Connections {
+        target: imageData
+        onProtocolProfileLoadResult: {
+            protocolProfileLoading = false
+            if (root.pendingProfileAction === "custom") {
+                if (success) {
+                    root.customProtocolActive = true
+                    root.seekerDeviceIndex = root.seekerDeviceList.length - 1
+                    seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                    testmsg.showToast("已加载图像协议：" + profileId, 1800)
+                } else {
+                    seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                    testmsg.showToast("协议加载失败：" + errorMessage, 2500)
+                }
+            } else if (root.pendingProfileAction === "default") {
+                if (success) {
+                    root.customProtocolActive = false
+                    root.seekerDeviceIndex = root.pendingDeviceIndex
+                    seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                } else {
+                    seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                    testmsg.showToast("恢复默认协议失败：" + errorMessage, 2500)
+                }
+            }
+            root.pendingProfileAction = ""
+            root.pendingDeviceIndex = -1
+        }
     }
 
     // 模板装订弹窗
@@ -56,6 +96,10 @@ Rectangle {
         "电视",
         "其他"
     ]
+    property bool customProtocolActive: false
+    property bool protocolProfileLoading: false
+    property string pendingProfileAction: ""
+    property int pendingDeviceIndex: -1
     readonly property bool gimbalLimitEnabled: seekerDeviceIndex !== 3
     readonly property real pitchLimitMin:
         seekerDeviceIndex === 0 ? -40
@@ -187,9 +231,23 @@ Rectangle {
                 titleFontSize: 16
                 model: root.seekerDeviceList
                 popupMinWidth: 200
-                onCurrentIndexChanged: {
-                    if (mycurrentIndex !== -1)
-                        root.seekerDeviceIndex = mycurrentIndex
+                enabled: !root.protocolProfileLoading
+                onActivated: {
+                    if (index === root.seekerDeviceList.length - 1) {
+                        // “其他”只有 JSON 加载成功后才成为新的有效配置。
+                        seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                        protocolProfileDialog.openForDevice("图像导引头")
+                    } else if (index === root.seekerDeviceIndex) {
+                        seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                    } else if (root.customProtocolActive) {
+                        root.pendingProfileAction = "default"
+                        root.pendingDeviceIndex = index
+                        root.protocolProfileLoading = true
+                        seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
+                        imageData.restoreDefaultProtocolProfile()
+                    } else {
+                        root.seekerDeviceIndex = index
+                    }
                 }
             }
 

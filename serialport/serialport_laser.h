@@ -9,6 +9,8 @@
 #include "./circularbuffer.h"
 #include "kalman/AlphaBetaTracker.h"
 #include "exguide_timesync.h"
+#include "../protocol/canonical_seeker_frame.h"
+#include "../protocol/generic_protocol.h"
 
 struct laser_send_frame;
 struct laser_recv_frame;
@@ -70,6 +72,19 @@ class LaserData : public QObject
     // recvTimeText 为北京时间“时:分:秒.毫秒微秒”（秒的小数部分6位，微秒精度）
     Q_PROPERTY(QDateTime recvDateTime READ recvDateTime NOTIFY recvDateTimeChanged)
     Q_PROPERTY(QString recvTimeText READ recvTimeText NOTIFY recvTimeTextChanged)
+    // 配置化协议层输出的厂家无关语义。QML 不再直接解释厂家状态位。
+    Q_PROPERTY(QString protocolProfileId READ protocolProfileId NOTIFY protocolProfileIdChanged)
+    Q_PROPERTY(QString trackingStatusName READ trackingStatusName NOTIFY trackingStatusNameChanged)
+    Q_PROPERTY(QString trackingStatusText READ trackingStatusText NOTIFY trackingStatusTextChanged)
+    Q_PROPERTY(bool detectorPeriodConfigured READ detectorPeriodConfigured NOTIFY detectorPeriodConfiguredChanged)
+    Q_PROPERTY(int detectorSelfTestState READ detectorSelfTestState NOTIFY detectorSelfTestStateChanged)
+    Q_PROPERTY(QString detectorSelfTestText READ detectorSelfTestText NOTIFY detectorSelfTestTextChanged)
+    Q_PROPERTY(int detectorSignalState READ detectorSignalState NOTIFY detectorSignalStateChanged)
+    Q_PROPERTY(QString detectorSignalText READ detectorSignalText NOTIFY detectorSignalTextChanged)
+    Q_PROPERTY(int faultStatusState READ faultStatusState NOTIFY faultStatusStateChanged)
+    Q_PROPERTY(QString faultStatusText READ faultStatusText NOTIFY faultStatusTextChanged)
+    Q_PROPERTY(QString faultCodeText READ faultCodeText NOTIFY faultCodeTextChanged)
+    Q_PROPERTY(int faultFlags READ faultFlags NOTIFY faultFlagsChanged)
 
 public:
     explicit LaserData(QObject *parent = nullptr);
@@ -114,6 +129,18 @@ public:
     bool timeScaleAccuracyValid() const;
     QDateTime recvDateTime() const;
     QString recvTimeText() const;
+    QString protocolProfileId() const;
+    QString trackingStatusName() const;
+    QString trackingStatusText() const;
+    bool detectorPeriodConfigured() const;
+    int detectorSelfTestState() const;
+    QString detectorSelfTestText() const;
+    int detectorSignalState() const;
+    QString detectorSignalText() const;
+    int faultStatusState() const;
+    QString faultStatusText() const;
+    QString faultCodeText() const;
+    int faultFlags() const;
 
 
     // ── 串口状态属性（主线程，QML 直接读取）──
@@ -129,6 +156,9 @@ public:
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
     Q_INVOKABLE void closePort();
     Q_INVOKABLE void scanPorts();
+    // 运行时切换接收/发送协议。自定义配置加载失败时仍保留当前配置。
+    Q_INVOKABLE void loadProtocolProfile(const QString &profileLocation);
+    Q_INVOKABLE void restoreDefaultProtocolProfile();
     // Q_INVOKABLE void sendData(const QByteArray &data);
 
 signals:
@@ -172,6 +202,18 @@ signals:
     void timeScaleAccuracyValidChanged();
     void recvDateTimeChanged();
     void recvTimeTextChanged();
+    void protocolProfileIdChanged();
+    void trackingStatusNameChanged();
+    void trackingStatusTextChanged();
+    void detectorPeriodConfiguredChanged();
+    void detectorSelfTestStateChanged();
+    void detectorSelfTestTextChanged();
+    void detectorSignalStateChanged();
+    void detectorSignalTextChanged();
+    void faultStatusStateChanged();
+    void faultStatusTextChanged();
+    void faultCodeTextChanged();
+    void faultFlagsChanged();
 
     // ── 本帧解析完成（上面所有字段已按本帧更新）──
     // 供数据保存等消费者使用：收到本信号时读到的一定是这一帧的解析结果
@@ -184,11 +226,17 @@ signals:
 
     // ── 弹窗请求信号（工作线程 → QML 弹窗提示）──
     void popupMessage(const QString &msg);
+    // 协议切换已完成；success=false 时旧协议保持不变。
+    void protocolProfileLoadResult(bool success,
+                                   const QString &profileId,
+                                   const QString &errorMessage);
 
     // ── 请求信号（→ 排队到工作线程）──
     void requestOpenPort(const QString &portName, int baudRate);
     void requestClosePort();
     void requestScanPorts();
+    void requestLoadProtocolProfile(const QString &profileLocation);
+    void requestRestoreDefaultProtocolProfile();
     
 public slots:
     // ── 工作线程回推状态（QueuedConnection）──
@@ -196,6 +244,10 @@ public slots:
     void setPortList(const QStringList &ports);
     void setError(const QString &msg);
     void updateFromFrame(const laser_recv_frame &frame);
+    void updateFromCanonicalFrame(const CanonicalSeekerFrame &frame);
+    void applyProtocolProfileResult(bool success,
+                                    const QString &profileId,
+                                    const QString &errorMessage);
 
 private:
     inline float fromRawValue_a(qint16 raw)
@@ -268,6 +320,18 @@ private:
     bool m_timeScaleAccuracyValid = false;
     QDateTime m_recvDateTime;      // 返回时间(UTC)
     QString m_recvTimeText;        // 返回时间(北京时间，时:分:秒.毫秒微秒)
+    QString m_protocolProfileId;
+    QString m_trackingStatusName = QStringLiteral("unknown");
+    QString m_trackingStatusText = QStringLiteral("未知");
+    bool m_detectorPeriodConfigured = false;
+    int m_detectorSelfTestState = -1;
+    QString m_detectorSelfTestText = QStringLiteral("NA");
+    int m_detectorSignalState = -1;
+    QString m_detectorSignalText = QStringLiteral("未知");
+    int m_faultStatusState = -1;
+    QString m_faultStatusText = QStringLiteral("NA");
+    QString m_faultCodeText = QStringLiteral("NA");
+    int m_faultFlags = 0;
 
     bool m_portOpen = false;
     QStringList m_availablePorts;
@@ -281,6 +345,7 @@ class LaserSendData : public QObject
     Q_PROPERTY(int m_frameStatus MEMBER m_frameStatus NOTIFY frameStatusChanged)
     Q_PROPERTY(int m_frameId MEMBER m_frameId NOTIFY frameIdChanged)
     Q_PROPERTY(int m_cmd MEMBER m_cmd NOTIFY cmdChanged)
+    Q_PROPERTY(QString command READ command WRITE setCommand NOTIFY commandChanged)
     Q_PROPERTY(int m_laserPeriod MEMBER m_laserPeriod NOTIFY laserPeriodChanged)
     Q_PROPERTY(float m_azimuthAngle MEMBER m_azimuthAngle NOTIFY azimuthAngleChanged)
     Q_PROPERTY(float m_elevationAngle MEMBER m_elevationAngle NOTIFY elevationAngleChanged)
@@ -294,6 +359,8 @@ public:
     explicit LaserSendData(QObject *parent = nullptr);
 
     Q_INVOKABLE void buildFrame() ;
+    Q_INVOKABLE void setCommand(const QString &command);
+    QString command() const { return m_command; }
 
     // 发送一次时间同步帧：m_timeSync 置1 → buildFrame() → 再置0
     // 由内部10分钟定时器周期调用，也可从 QML 手动触发
@@ -303,6 +370,7 @@ signals:
     void frameStatusChanged();
     void frameIdChanged();
     void cmdChanged();
+    void commandChanged();
     void laserPeriodChanged();
     void azimuthAngleChanged();
     void elevationAngleChanged();
@@ -312,7 +380,7 @@ signals:
     void elevationSearchRangeChanged();
     void searchRadiusChanged();
 
-    void requestSendData(laser_send_frame frame);
+    void requestSendCommand(ProtocolCommandRequest request);
 
 
 private:
@@ -325,6 +393,7 @@ private:
     int m_frameStatus = 0x11; //帧长与帧计数器
     int m_frameId = 0x15;     //M或S
     int m_cmd = 0;
+    QString m_command = QStringLiteral("none");
     int m_laserPeriod = 0;                    
     float m_azimuthAngle = 0.0f;              // 方位角度
     float m_elevationAngle = 0.0f;            // 俯仰角度
@@ -361,12 +430,18 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void laserFrameReceived(const laser_recv_frame &frame);
+    void canonicalFrameReceived(const CanonicalSeekerFrame &frame);
+    void protocolDiagnostic(const QString &message);
     // 原始帧字节流（与 laserFrameReceived 同帧发出，供数据保存等使用）
     void laserRawFrameReceived(const QByteArray &rawData);
     // 外引导源串口未打开时，通知 QML 弹窗提示
     void exguideSerialNotOpen(const QString &msg);
     // 激光导引头不可用：通知界面只取消激光导引头外引导源
     void exguideSourceUnavailable();
+    // 配置加载结果（发送到主线程 Data 对象）
+    void protocolProfileLoadFinished(bool success,
+                                     const QString &profileId,
+                                     const QString &errorMessage);
 
     // void reqExguideSend(std::vector<float> &data); //将信号连接到转台串口线程的外引导发送函数
 
@@ -382,7 +457,9 @@ public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
     void onScanPorts();
-    void onSendData(laser_send_frame frame);
+    void onSendCommand(ProtocolCommandRequest request);
+    void onLoadProtocolProfile(const QString &profileLocation);
+    void onRestoreDefaultProtocolProfile();
 
     void ExmodeChanged(int mode);
 
@@ -394,6 +471,17 @@ private:
     // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
     LaserData *m_laserData = nullptr;
     LaserSendData *m_laserSendData = nullptr;
+    ProtocolProfile m_protocolProfile;
+    ConfigurableFrameDecoder m_protocolDecoder;
+    ProtocolCommandEncoder m_protocolEncoder;
+    bool m_protocolEnabled = false;
+    bool loadProtocolProfile();
+    QString defaultProtocolProfileLocation() const;
+    bool applyProtocolProfile(const QString &profileLocation,
+                              QString *profileId,
+                              QString *error);
+    void handleDecodedFrame(const CanonicalSeekerFrame &frame);
+    void onReadyReadLegacy();
     uint8_t xorChecksumcore(const uint8_t* data, size_t len);
     uint8_t xorChecksum(const QByteArray& data);
     //维护一个存储导引头反馈的俯仰角与方位角的数据容器

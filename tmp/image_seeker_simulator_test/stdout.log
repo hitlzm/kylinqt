@@ -1,0 +1,3 @@
+image seeker simulator: COM4, 460800, 8N1, 20 ms
+sending 156-byte B frames continuously; press Ctrl+C to stop
+seq=50 pitch=-7.100 deg azimuth=4.900 deg

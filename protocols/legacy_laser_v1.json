@@ -1,0 +1,592 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy-laser-v1",
+  "vendor": "legacy",
+  "model": "laser-seeker",
+  "source": "laser",
+  "description": "当前激光导引头协议，作为配置化协议层的首个适配器。",
+  "capabilities": {
+    "lidarMeasurement": true,
+    "laserPeriodCommand": true,
+    "timeSync": true,
+    "deviationAngle": true,
+    "quadrantEnergy": true,
+    "_comment": "厂家能力开关；值为 true 表示当前设备支持对应能力。"
+  },
+  "frames": [
+    {
+      "name": "laserStatus",
+      "header": "55 AA DC",
+      "length": 48,
+      "checksum": {
+        "type": "xor8",
+        "start": 3,
+        "length": 44,
+        "storedOffset": 47,
+        "storedByteOrder": "big",
+        "_comment": "校验规则：从 start 起计算 length 个字节，结果存放在 storedOffset。"
+      },
+      "fields": [
+        {
+          "name": "frameStatus",
+          "offset": 3,
+          "type": "uint8",
+          "canonical": "frame.status",
+          "_comment": "帧状态字节，包含固定帧长标识和帧计数扩展位。"
+        },
+        {
+          "name": "frameId",
+          "offset": 4,
+          "type": "uint8",
+          "canonical": "frame.id",
+          "_comment": "帧类型标识；当前状态帧为 0x25。"
+        },
+        {
+          "name": "dytStatus",
+          "offset": 5,
+          "type": "uint8",
+          "canonical": "tracking.state",
+          "enum": [
+            {
+              "value": "0x00",
+              "name": "standby",
+              "label": "待机",
+              "_comment": "枚举项：name=standby，显示文本=待机。"
+            },
+            {
+              "value": "0x01",
+              "name": "selftest",
+              "label": "自检中",
+              "_comment": "枚举项：name=selftest，显示文本=自检中。"
+            },
+            {
+              "value": "0x04",
+              "name": "fixedSearch",
+              "label": "定轴搜索",
+              "_comment": "枚举项：name=fixedSearch，显示文本=定轴搜索。"
+            },
+            {
+              "value": "0x05",
+              "name": "rectangleSearch",
+              "label": "矩形搜索",
+              "_comment": "枚举项：name=rectangleSearch，显示文本=矩形搜索。"
+            },
+            {
+              "value": "0x06",
+              "name": "circleSearch",
+              "label": "圆形搜索",
+              "_comment": "枚举项：name=circleSearch，显示文本=圆形搜索。"
+            },
+            {
+              "value": "0x07",
+              "name": "captured",
+              "label": "捕获",
+              "_comment": "枚举项：name=captured，显示文本=捕获。"
+            },
+            {
+              "value": "0x08",
+              "name": "tracking",
+              "label": "稳定跟踪",
+              "_comment": "枚举项：name=tracking，显示文本=稳定跟踪。"
+            },
+            {
+              "value": "0x09",
+              "name": "memoryTracking",
+              "label": "记忆跟踪",
+              "_comment": "枚举项：name=memoryTracking，显示文本=记忆跟踪。"
+            },
+            {
+              "value": "0x0A",
+              "name": "fixedSearchPosition",
+              "label": "定轴搜索(位置)",
+              "_comment": "枚举项：name=fixedSearchPosition，显示文本=定轴搜索(位置)。"
+            },
+            {
+              "value": "0x0B",
+              "name": "rectangleSearchPosition",
+              "label": "矩形搜索(位置)",
+              "_comment": "枚举项：name=rectangleSearchPosition，显示文本=矩形搜索(位置)。"
+            },
+            {
+              "value": "0x0C",
+              "name": "circleSearchPosition",
+              "label": "圆形搜索(位置)",
+              "_comment": "枚举项：name=circleSearchPosition，显示文本=圆形搜索(位置)。"
+            }
+          ],
+          "_comment": "导引头工作与跟踪状态枚举，映射为 tracking.state。"
+        },
+        {
+          "name": "detectorStatus",
+          "offset": 6,
+          "type": "uint8",
+          "canonical": "status.detectorRaw",
+          "_comment": "探测器原始状态字节，保留用于诊断和原始语义。"
+        },
+        {
+          "name": "detectorPeriodConfigured",
+          "offset": 6,
+          "type": "uint8",
+          "bitOffset": 4,
+          "bitWidth": 1,
+          "canonical": "status.detectorPeriodConfigured",
+          "_comment": "探测器状态第4位：激光周期是否已设定。"
+        },
+        {
+          "name": "detectorSelfTest",
+          "offset": 6,
+          "type": "uint8",
+          "bitOffset": 2,
+          "bitWidth": 2,
+          "canonical": "status.detectorSelfTest",
+          "enum": [
+            {
+              "value": 0,
+              "name": "na",
+              "label": "NA",
+              "_comment": "枚举项：name=na，显示文本=NA。"
+            },
+            {
+              "value": 1,
+              "name": "testing",
+              "label": "自检中",
+              "_comment": "枚举项：name=testing，显示文本=自检中。"
+            },
+            {
+              "value": 2,
+              "name": "normal",
+              "label": "自检正常",
+              "_comment": "枚举项：name=normal，显示文本=自检正常。"
+            },
+            {
+              "value": 3,
+              "name": "fault",
+              "label": "自检故障",
+              "_comment": "枚举项：name=fault，显示文本=自检故障。"
+            }
+          ],
+          "_comment": "探测器状态第3~2位：自检状态枚举。"
+        },
+        {
+          "name": "detectorSignal",
+          "offset": 6,
+          "type": "uint8",
+          "bitOffset": 0,
+          "bitWidth": 2,
+          "canonical": "status.detectorSignal",
+          "enum": [
+            {
+              "value": 0,
+              "name": "normal",
+              "label": "正常",
+              "_comment": "枚举项：name=normal，显示文本=正常。"
+            },
+            {
+              "value": 1,
+              "name": "loss",
+              "label": "丢光",
+              "_comment": "枚举项：name=loss，显示文本=丢光。"
+            },
+            {
+              "value": 2,
+              "name": "outOfSync",
+              "label": "不同步",
+              "_comment": "枚举项：name=outOfSync，显示文本=不同步。"
+            },
+            {
+              "value": 3,
+              "name": "saturated",
+              "label": "能量饱和",
+              "_comment": "枚举项：name=saturated，显示文本=能量饱和。"
+            }
+          ],
+          "_comment": "探测器状态第1~0位：接收光状态枚举。"
+        },
+        {
+          "name": "faultInfo",
+          "offset": 7,
+          "type": "uint8",
+          "canonical": "status.faultRaw",
+          "_comment": "故障原始状态字节。"
+        },
+        {
+          "name": "faultState",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 6,
+          "bitWidth": 2,
+          "canonical": "status.faultState",
+          "enum": [
+            {
+              "value": 0,
+              "name": "na",
+              "label": "NA",
+              "_comment": "枚举项：name=na，显示文本=NA。"
+            },
+            {
+              "value": 1,
+              "name": "none",
+              "label": "无故障",
+              "_comment": "枚举项：name=none，显示文本=无故障。"
+            },
+            {
+              "value": 2,
+              "name": "fault",
+              "label": "有故障",
+              "_comment": "枚举项：name=fault，显示文本=有故障。"
+            }
+          ],
+          "_comment": "故障字节第7~6位：总体故障状态。"
+        },
+        {
+          "name": "faultCode",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 0,
+          "bitWidth": 6,
+          "canonical": "status.faultCode",
+          "_comment": "故障字节第5~0位：厂家故障码。"
+        },
+        {
+          "name": "axisFaultAzimuthGyro",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 0,
+          "bitWidth": 1,
+          "canonical": "status.axisFault.azimuthGyro",
+          "_comment": "故障码第0位：方位陀螺故障。"
+        },
+        {
+          "name": "axisFaultElevationGyro",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 1,
+          "bitWidth": 1,
+          "canonical": "status.axisFault.elevationGyro",
+          "_comment": "故障码第1位：俯仰陀螺故障。"
+        },
+        {
+          "name": "axisFaultAzimuthMotor",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 2,
+          "bitWidth": 1,
+          "canonical": "status.axisFault.azimuthMotor",
+          "_comment": "故障码第2位：方位电机故障。"
+        },
+        {
+          "name": "axisFaultElevationMotor",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 3,
+          "bitWidth": 1,
+          "canonical": "status.axisFault.elevationMotor",
+          "_comment": "故障码第3位：俯仰电机故障。"
+        },
+        {
+          "name": "axisFaultResolver",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 4,
+          "bitWidth": 1,
+          "canonical": "status.axisFault.resolver",
+          "_comment": "故障码第4位：旋变故障。"
+        },
+        {
+          "name": "axisFaultOther",
+          "offset": 7,
+          "type": "uint8",
+          "bitOffset": 5,
+          "bitWidth": 1,
+          "canonical": "status.axisFault.other",
+          "_comment": "故障码第5位：其他故障。"
+        },
+        {
+          "name": "opticalAzimuth",
+          "offset": 8,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg",
+          "canonical": "measurement.losAzimuthDeg",
+          "_comment": "光轴方位角；有符号16位大端，原始值×0.01=度。"
+        },
+        {
+          "name": "opticalPitch",
+          "offset": 10,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg",
+          "canonical": "measurement.losElevationDeg",
+          "_comment": "光轴俯仰角；有符号16位大端，原始值×0.01=度。"
+        },
+        {
+          "name": "gyroAzimuthRate",
+          "offset": 12,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.gyroAzimuthRateDegPerSec",
+          "_comment": "方位陀螺角速度；原始值×0.01=度/秒。"
+        },
+        {
+          "name": "gyroPitchRate",
+          "offset": 14,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.gyroElevationRateDegPerSec",
+          "_comment": "俯仰陀螺角速度；原始值×0.01=度/秒。"
+        },
+        {
+          "name": "losAzimuthRate",
+          "offset": 16,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.losAzimuthRateDegPerSec",
+          "_comment": "方位视线角速度；原始值×0.01=度/秒。"
+        },
+        {
+          "name": "losPitchRate",
+          "offset": 18,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.losElevationRateDegPerSec",
+          "_comment": "俯仰视线角速度；原始值×0.01=度/秒。"
+        },
+        {
+          "name": "deviationAzimuth",
+          "offset": 20,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.001,
+          "unit": "deg",
+          "canonical": "measurement.deviationAzimuthDeg",
+          "_comment": "方位偏差角；原始值×0.001=度。"
+        },
+        {
+          "name": "deviationPitch",
+          "offset": 22,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.001,
+          "unit": "deg",
+          "canonical": "measurement.deviationElevationDeg",
+          "_comment": "俯仰偏差角；原始值×0.001=度。"
+        },
+        {
+          "name": "laserPeriod",
+          "offset": 24,
+          "type": "uint16",
+          "endian": "big",
+          "scale": 0.002,
+          "unit": "ms",
+          "canonical": "measurement.laserPeriodMs",
+          "_comment": "激光周期；原始值×0.002=毫秒。"
+        },
+        {
+          "name": "gainStatus",
+          "offset": 28,
+          "type": "uint8",
+          "canonical": "status.gain",
+          "_comment": "激光探测器增益级状态码。"
+        },
+        {
+          "name": "quadrant1Energy",
+          "offset": 29,
+          "type": "uint8",
+          "scale": 0.01,
+          "canonical": "measurement.quadrant1Energy",
+          "_comment": "第一象限能量强度；原始值×0.01。"
+        },
+        {
+          "name": "quadrant2Energy",
+          "offset": 30,
+          "type": "uint8",
+          "scale": 0.01,
+          "canonical": "measurement.quadrant2Energy",
+          "_comment": "第二象限能量强度；原始值×0.01。"
+        },
+        {
+          "name": "quadrant3Energy",
+          "offset": 31,
+          "type": "uint8",
+          "scale": 0.01,
+          "canonical": "measurement.quadrant3Energy",
+          "_comment": "第三象限能量强度；原始值×0.01。"
+        },
+        {
+          "name": "quadrant4Energy",
+          "offset": 32,
+          "type": "uint8",
+          "scale": 0.01,
+          "canonical": "measurement.quadrant4Energy",
+          "_comment": "第四象限能量强度；原始值×0.01。"
+        },
+        {
+          "name": "softwareVersion1",
+          "offset": 33,
+          "type": "uint16",
+          "endian": "big",
+          "scale": 0.01,
+          "canonical": "version.processing",
+          "_comment": "处理板软件版本；原始值×0.01。"
+        },
+        {
+          "name": "softwareVersion2",
+          "offset": 35,
+          "type": "uint16",
+          "endian": "big",
+          "scale": 0.01,
+          "canonical": "version.control",
+          "_comment": "控制板软件版本；原始值×0.01。"
+        },
+        {
+          "name": "deviceTimeMs",
+          "offset": 37,
+          "type": "uint64",
+          "endian": "big",
+          "unit": "ms",
+          "canonical": "time.deviceUtcMs",
+          "_comment": "设备UTC毫秒时间戳；8字节无符号大端。"
+        },
+        {
+          "name": "deviceTimeUs",
+          "offset": 45,
+          "type": "uint16",
+          "endian": "big",
+          "unit": "us",
+          "canonical": "time.deviceSubMillisecondUs",
+          "_comment": "设备时间戳的微秒余量；范围0~999。"
+        }
+      ],
+      "_comment": "激光导引头状态帧；解析前会先匹配 header 和 length，再校验 checksum。"
+    }
+  ],
+  "commands": {
+    "_comment": "发送命令模板集合；键名供业务层引用，每项定义模板、命令码字段和动态参数。",
+    "laser.control": {
+      "template": "55 AA DC 11 15 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+      "commandCodeField": "commandCode",
+      "commandCodes": {
+        "none": 0,
+        "selfTest": 1,
+        "lock": 2,
+        "setLaserPeriod": 3,
+        "fixedSearch": 6,
+        "rectangleSearch": 7,
+        "circleSearch": 8,
+        "fixedSearchPosition": 9,
+        "rectangleSearchPosition": 10,
+        "circleSearchPosition": 11,
+        "_comment": "业务语义命令到厂家命令码的映射；新增厂家时只需修改这里。"
+      },
+      "checksum": {
+        "type": "xor8",
+        "start": 3,
+        "length": 22,
+        "storedOffset": 25,
+        "storedByteOrder": "big",
+        "_comment": "发送命令的异或校验规则：计算第3~24字节，结果写入第25字节。"
+      },
+      "fields": [
+        {
+          "name": "frameStatus",
+          "offset": 3,
+          "type": "uint8",
+          "_comment": "发送帧状态；低6位保留，高位写入本次发送计数。"
+        },
+        {
+          "name": "frameId",
+          "offset": 4,
+          "type": "uint8",
+          "_comment": "发送帧标识；当前控制帧为0x15。"
+        },
+        {
+          "name": "commandCode",
+          "offset": 5,
+          "type": "uint8",
+          "_comment": "厂家控制命令码；由 commandCodes 中的语义命令映射得到。"
+        },
+        {
+          "name": "laserPeriod",
+          "offset": 6,
+          "type": "uint16",
+          "endian": "big",
+          "scale": 0.002,
+          "unit": "ms",
+          "_comment": "激光周期；物理量毫秒，按×0.002换算为原始值。"
+        },
+        {
+          "name": "param2",
+          "offset": 8,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "命令参数2；按命令不同表示方位角或搜索中心方位角，单位度。"
+        },
+        {
+          "name": "param3",
+          "offset": 10,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "命令参数3；按命令不同表示俯仰角或搜索中心俯仰角，单位度。"
+        },
+        {
+          "name": "param4",
+          "offset": 12,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "命令参数4；按命令不同表示方位搜索范围或搜索半径，单位度。"
+        },
+        {
+          "name": "param5",
+          "offset": 14,
+          "type": "int16",
+          "endian": "big",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "命令参数5；按命令不同表示俯仰搜索范围或保留值，单位度。"
+        },
+        {
+          "name": "timeSync",
+          "offset": 16,
+          "type": "uint8",
+          "_comment": "时间同步标志；1表示本帧带UTC毫秒时间，后续补发帧清零。"
+        },
+        {
+          "name": "deviceTimeMs",
+          "offset": 17,
+          "type": "uint64",
+          "endian": "big",
+          "unit": "ms",
+          "_comment": "发送时写入的UTC毫秒时间戳，8字节无符号大端。"
+        }
+      ],
+      "_comment": "激光控制命令模板；template 为固定长度基础帧，fields 指定可动态写入的字节。"
+    }
+  },
+  "_comments": {
+    "schemaVersion": "配置架构版本；当前解析器仅接受 1。",
+    "id": "配置唯一标识；切换配置时用它区分协议。",
+    "vendor": "设备厂家名称，仅用于识别和诊断。",
+    "model": "设备型号或协议适用型号。",
+    "source": "数据源类型；laser 表示激光导引头。",
+    "description": "本配置用途的可读说明。",
+    "capabilities": "设备能力声明；业务层可据此决定功能是否可用。",
+    "frames": "接收帧定义列表；每项描述一种可识别的下行帧。",
+    "commands": "发送命令定义；键名为业务层使用的命令模板名。"
+  }
+}

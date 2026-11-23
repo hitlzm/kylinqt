@@ -1,0 +1,783 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy-image-v1",
+  "vendor": "legacy",
+  "model": "image-seeker",
+  "source": "image",
+  "description": "当前图像导引头协议，包含156字节接收状态帧和224字节控制帧。",
+  "capabilities": {
+    "lineOfSightMeasurement": true,
+    "frameAngleMeasurement": true,
+    "deviationPixelCommand": true,
+    "timeSync": true,
+    "templateSelection": true,
+    "searchCommand": true,
+    "captureReferenceImage": true,
+    "_comment": "能力开关；true表示当前设备支持对应功能。"
+  },
+  "frames": [
+    {
+      "name": "imageStatus",
+      "header": "77 AB",
+      "length": 156,
+      "checksum": {
+        "type": "crc16_ccitt",
+        "start": 0,
+        "length": 154,
+        "storedOffset": 154,
+        "storedByteOrder": "little",
+        "initialValue": "0x0000",
+        "_comment": "CRC16-CCITT，多项式0x1021，初值0x0000，计算前154字节，小端存放。"
+      },
+      "fields": [
+        {
+          "name": "frameHeader1",
+          "offset": 0,
+          "type": "uint8",
+          "canonical": "frame.header1",
+          "_comment": "接收帧头第一字节0x77。"
+        },
+        {
+          "name": "frameHeader2",
+          "offset": 1,
+          "type": "uint8",
+          "canonical": "frame.header2",
+          "_comment": "接收帧头第二字节0xAB。"
+        },
+        {
+          "name": "frameLength",
+          "offset": 2,
+          "type": "uint8",
+          "canonical": "frame.length",
+          "_comment": "接收帧内声明的长度字段。"
+        },
+        {
+          "name": "bFrameSequence",
+          "offset": 3,
+          "type": "uint16",
+          "canonical": "frame.sequence",
+          "_comment": "设备到上位机的B帧流水号。"
+        },
+        {
+          "name": "aFrameSequenceReply",
+          "offset": 5,
+          "type": "uint16",
+          "canonical": "command.ackSequence",
+          "_comment": "设备对A帧流水号的回告。"
+        },
+        {
+          "name": "aFrameValidFlag",
+          "offset": 7,
+          "type": "uint8",
+          "canonical": "command.ackValid",
+          "_comment": "A帧有效标志；0xAA表示收到有效A帧。"
+        },
+        {
+          "name": "seekerCtrlReply",
+          "offset": 8,
+          "type": "uint8",
+          "canonical": "command.seekerReply",
+          "_comment": "导引头控制字回告。"
+        },
+        {
+          "name": "opticalParamReply",
+          "offset": 9,
+          "type": "uint8",
+          "canonical": "command.opticalReply",
+          "_comment": "光学参数装订回告。"
+        },
+        {
+          "name": "currentWorkChannel",
+          "offset": 11,
+          "type": "uint8",
+          "canonical": "status.workChannel",
+          "_comment": "当前工作通道；0电视，1红外。"
+        },
+        {
+          "name": "selfCheckFlag",
+          "offset": 12,
+          "type": "uint8",
+          "canonical": "status.selfCheckRaw",
+          "_comment": "自检原始位域。"
+        },
+        {
+          "name": "selfCheckOverall",
+          "offset": 12,
+          "type": "uint8",
+          "bitOffset": 0,
+          "bitWidth": 1,
+          "canonical": "status.selfCheck.overall",
+          "_comment": "自检总体结果位。"
+        },
+        {
+          "name": "selfCheckIrVideo",
+          "offset": 12,
+          "type": "uint8",
+          "bitOffset": 1,
+          "bitWidth": 1,
+          "canonical": "status.selfCheck.irVideo",
+          "_comment": "红外视频接收自检位。"
+        },
+        {
+          "name": "selfCheckTvVideo",
+          "offset": 12,
+          "type": "uint8",
+          "bitOffset": 2,
+          "bitWidth": 1,
+          "canonical": "status.selfCheck.tvVideo",
+          "_comment": "电视视频接收自检位。"
+        },
+        {
+          "name": "selfCheckExternalComm",
+          "offset": 12,
+          "type": "uint8",
+          "bitOffset": 3,
+          "bitWidth": 1,
+          "canonical": "status.selfCheck.externalComm",
+          "_comment": "外部通讯自检位。"
+        },
+        {
+          "name": "selfCheckComm",
+          "offset": 12,
+          "type": "uint8",
+          "bitOffset": 4,
+          "bitWidth": 1,
+          "canonical": "status.selfCheck.comm",
+          "_comment": "通讯自检位。"
+        },
+        {
+          "name": "selfCheckServo",
+          "offset": 12,
+          "type": "uint8",
+          "bitOffset": 5,
+          "bitWidth": 1,
+          "canonical": "status.selfCheck.servo",
+          "_comment": "伺服自检位。"
+        },
+        {
+          "name": "pitchLosAngVel",
+          "offset": 13,
+          "type": "int16",
+          "scale": 0.002,
+          "unit": "deg/s",
+          "canonical": "measurement.losElevationRateDegPerSec",
+          "_comment": "俯仰视线角速度；×0.002度/秒。"
+        },
+        {
+          "name": "yawLosAngVel",
+          "offset": 15,
+          "type": "int16",
+          "scale": 0.002,
+          "unit": "deg/s",
+          "canonical": "measurement.losAzimuthRateDegPerSec",
+          "_comment": "偏航视线角速度；×0.002度/秒。"
+        },
+        {
+          "name": "targetBackgroundType",
+          "offset": 17,
+          "type": "uint8",
+          "canonical": "status.targetBackgroundRaw",
+          "_comment": "目标/背景类型原始位域。"
+        },
+        {
+          "name": "opticalWorkState",
+          "offset": 18,
+          "type": "uint8",
+          "canonical": "status.opticalWorkState",
+          "_comment": "光学工作状态。"
+        },
+        {
+          "name": "pitchFrameAngle",
+          "offset": 19,
+          "type": "int16",
+          "scale": 0.002,
+          "unit": "deg",
+          "canonical": "measurement.frameElevationDeg",
+          "_comment": "俯仰框架角；×0.002度。"
+        },
+        {
+          "name": "yawFrameAngle",
+          "offset": 21,
+          "type": "int16",
+          "scale": 0.002,
+          "unit": "deg",
+          "canonical": "measurement.frameAzimuthDeg",
+          "_comment": "偏航框架角；×0.002度。"
+        },
+        {
+          "name": "correctionCmdStatus",
+          "offset": 26,
+          "type": "uint8",
+          "canonical": "status.correctionCommand",
+          "_comment": "跟踪修正指令状态回告。"
+        },
+        {
+          "name": "correctionCmdCount",
+          "offset": 27,
+          "type": "uint8",
+          "canonical": "status.correctionCount",
+          "_comment": "已执行修正指令次数。"
+        },
+        {
+          "name": "pitchGyro",
+          "offset": 28,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.gyroElevationOutputDegPerSec",
+          "_comment": "俯仰陀螺原始值；×0.01度/秒。"
+        },
+        {
+          "name": "yawGyro",
+          "offset": 30,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.gyroAzimuthOutputDegPerSec",
+          "_comment": "偏航陀螺原始值；×0.01度/秒。"
+        },
+        {
+          "name": "trackingState",
+          "offset": 32,
+          "type": "uint8",
+          "canonical": "tracking.stateCode",
+          "_comment": "跟踪状态码。"
+        },
+        {
+          "name": "trackerState",
+          "offset": 33,
+          "type": "uint8",
+          "canonical": "tracking.trackerCode",
+          "_comment": "跟踪器状态码。"
+        },
+        {
+          "name": "deviceTimeMs",
+          "offset": 34,
+          "type": "uint64",
+          "unit": "ms",
+          "canonical": "time.deviceUtcMs",
+          "_comment": "设备UTC毫秒时间戳，8字节小端。"
+        },
+        {
+          "name": "deviceTimeUs",
+          "offset": 42,
+          "type": "uint16",
+          "unit": "us",
+          "canonical": "time.deviceSubMillisecondUs",
+          "_comment": "设备时间戳微秒余量。"
+        },
+        {
+          "name": "azimuthDeviationPixel",
+          "offset": 53,
+          "type": "int16",
+          "unit": "px",
+          "canonical": "measurement.deviationAzimuthPx",
+          "_comment": "方位偏差像素。"
+        },
+        {
+          "name": "pitchDeviationPixel",
+          "offset": 55,
+          "type": "int16",
+          "unit": "px",
+          "canonical": "measurement.deviationElevationPx",
+          "_comment": "俯仰偏差像素。"
+        },
+        {
+          "name": "azimuthGyroOutput",
+          "offset": 57,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.azimuthGyroOutputDegPerSec",
+          "_comment": "方位轴陀螺输出；×0.01度/秒。"
+        },
+        {
+          "name": "pitchGyroOutput",
+          "offset": 59,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "canonical": "measurement.elevationGyroOutputDegPerSec",
+          "_comment": "俯仰轴陀螺输出；×0.01度/秒。"
+        },
+        {
+          "name": "azimuthMasterCmd",
+          "offset": 61,
+          "type": "int16",
+          "scale": 0.01,
+          "canonical": "control.azimuthMaster",
+          "_comment": "方位主令；×0.01。"
+        },
+        {
+          "name": "pitchMasterCmd",
+          "offset": 63,
+          "type": "int16",
+          "scale": 0.01,
+          "canonical": "control.elevationMaster",
+          "_comment": "俯仰主令；×0.01。"
+        },
+        {
+          "name": "platformSelfCheck",
+          "offset": 73,
+          "type": "uint8",
+          "canonical": "status.platformSelfCheck",
+          "_comment": "平台自检结果。"
+        },
+        {
+          "name": "servoRunningTime",
+          "offset": 83,
+          "type": "int8",
+          "canonical": "status.servoRunningTime",
+          "_comment": "伺服运行时间；有符号8位。"
+        },
+        {
+          "name": "servoStep",
+          "offset": 90,
+          "type": "uint8",
+          "canonical": "status.servoStep",
+          "_comment": "伺服阶跃状态。"
+        },
+        {
+          "name": "infraredFrameNum",
+          "offset": 91,
+          "type": "uint32",
+          "canonical": "video.infraredFrame",
+          "_comment": "红外视频帧编号。"
+        },
+        {
+          "name": "temperature",
+          "offset": 95,
+          "type": "int16",
+          "canonical": "status.temperature",
+          "_comment": "设备温度原始值。"
+        },
+        {
+          "name": "tvFrameNum",
+          "offset": 101,
+          "type": "uint32",
+          "canonical": "video.tvFrame",
+          "_comment": "电视视频帧编号。"
+        },
+        {
+          "name": "infraredFrameRate",
+          "offset": 111,
+          "type": "uint8",
+          "unit": "Hz",
+          "canonical": "video.infraredFrameRateHz",
+          "_comment": "红外视频帧频。"
+        },
+        {
+          "name": "tvFrameRate",
+          "offset": 112,
+          "type": "uint8",
+          "unit": "Hz",
+          "canonical": "video.tvFrameRateHz",
+          "_comment": "电视视频帧频。"
+        },
+        {
+          "name": "gateSize",
+          "offset": 117,
+          "type": "uint16",
+          "canonical": "tracking.gateSize",
+          "_comment": "波门尺寸。"
+        },
+        {
+          "name": "softwareVersion1",
+          "offset": 131,
+          "type": "uint8",
+          "canonical": "version.item1",
+          "_comment": "软件版本1。"
+        },
+        {
+          "name": "softwareVersion2",
+          "offset": 132,
+          "type": "uint8",
+          "canonical": "version.item2",
+          "_comment": "软件版本2。"
+        },
+        {
+          "name": "softwareVersion3",
+          "offset": 133,
+          "type": "uint8",
+          "canonical": "version.item3",
+          "_comment": "软件版本3。"
+        }
+      ],
+      "_comment": "图像导引头156字节状态帧。"
+    }
+  ],
+  "commands": {
+    "_comment": "图像导引头统一控制帧；普通发送和偏差像素发送共用同一模板。",
+    "image.control": {
+      "template": "77 AA DC 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
+      "checksum": {
+        "type": "crc16_ccitt",
+        "start": 0,
+        "length": 222,
+        "storedOffset": 222,
+        "storedByteOrder": "little",
+        "initialValue": "0x0000",
+        "_comment": "发送帧CRC16-CCITT，计算前222字节，小端写入第222~223字节。"
+      },
+      "fields": [
+        {
+          "name": "aFrameSequence",
+          "offset": 3,
+          "type": "uint16",
+          "_comment": "上位机A帧流水号。"
+        },
+        {
+          "name": "seekerCtrlWord",
+          "offset": 5,
+          "type": "uint8",
+          "_comment": "导引头控制字。"
+        },
+        {
+          "name": "opticalParamCtrl",
+          "offset": 6,
+          "type": "uint8",
+          "_comment": "光学参数装订控制字。"
+        },
+        {
+          "name": "templateIndex",
+          "offset": 7,
+          "type": "uint8",
+          "_comment": "模板/通道索引。"
+        },
+        {
+          "name": "targetBackgroundType",
+          "offset": 8,
+          "type": "uint8",
+          "_comment": "目标背景类型位域。"
+        },
+        {
+          "name": "missileTargetDistance",
+          "offset": 9,
+          "type": "uint16",
+          "_comment": "弹目距离，米。"
+        },
+        {
+          "name": "missileSpeed",
+          "offset": 11,
+          "type": "uint16",
+          "scale": 0.1,
+          "unit": "m/s",
+          "_comment": "导弹速度，×0.1米/秒。"
+        },
+        {
+          "name": "bodyPitchAngle",
+          "offset": 13,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "弹体俯仰角，×0.01度。"
+        },
+        {
+          "name": "bodyYawAngle",
+          "offset": 15,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "弹体方位角，×0.01度。"
+        },
+        {
+          "name": "bodyRollAngle",
+          "offset": 17,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "弹体滚转角，×0.01度。"
+        },
+        {
+          "name": "bodyPitchRate",
+          "offset": 19,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "_comment": "弹体俯仰角速度，×0.01度/秒。"
+        },
+        {
+          "name": "bodyYawRate",
+          "offset": 21,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "_comment": "弹体方位角速度，×0.01度/秒。"
+        },
+        {
+          "name": "bodyRollRate",
+          "offset": 23,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "_comment": "弹体滚转角速度，×0.01度/秒。"
+        },
+        {
+          "name": "bodyVelX",
+          "offset": 25,
+          "type": "int16",
+          "scale": 0.1,
+          "unit": "m/s",
+          "_comment": "弹体X向速度，×0.1米/秒。"
+        },
+        {
+          "name": "bodyVelY",
+          "offset": 27,
+          "type": "int16",
+          "scale": 0.1,
+          "unit": "m/s",
+          "_comment": "弹体Y向速度，×0.1米/秒。"
+        },
+        {
+          "name": "bodyVelZ",
+          "offset": 29,
+          "type": "int16",
+          "scale": 0.1,
+          "unit": "m/s",
+          "_comment": "弹体Z向速度，×0.1米/秒。"
+        },
+        {
+          "name": "bodyPosX",
+          "offset": 31,
+          "type": "int16",
+          "unit": "m",
+          "_comment": "弹体X坐标，米。"
+        },
+        {
+          "name": "bodyPosY",
+          "offset": 33,
+          "type": "int16",
+          "unit": "m",
+          "_comment": "弹体Y坐标，米。"
+        },
+        {
+          "name": "bodyPosZ",
+          "offset": 35,
+          "type": "int16",
+          "unit": "m",
+          "_comment": "弹体Z坐标，米。"
+        },
+        {
+          "name": "pitchGimbalPreset",
+          "offset": 37,
+          "type": "int16",
+          "scale": 0.002,
+          "unit": "deg",
+          "_comment": "俯仰框架角预装，×0.002度。"
+        },
+        {
+          "name": "yawGimbalPreset",
+          "offset": 39,
+          "type": "int16",
+          "scale": 0.002,
+          "unit": "deg",
+          "_comment": "偏航框架角预装，×0.002度。"
+        },
+        {
+          "name": "irIntegrationTime",
+          "offset": 41,
+          "type": "uint8",
+          "scale": 0.1,
+          "unit": "ms",
+          "_comment": "红外积分时间，×0.1毫秒。"
+        },
+        {
+          "name": "trackingCorrectionCmd",
+          "offset": 46,
+          "type": "uint8",
+          "_comment": "跟踪位置修正指令。"
+        },
+        {
+          "name": "correctionFrameNumLow",
+          "offset": 47,
+          "type": "uint8",
+          "_comment": "修正图像帧序号低字节。"
+        },
+        {
+          "name": "correctionFrameNumMid",
+          "offset": 48,
+          "type": "uint8",
+          "_comment": "修正图像帧序号中字节。"
+        },
+        {
+          "name": "correctionFrameNumHigh",
+          "offset": 49,
+          "type": "uint8",
+          "_comment": "修正图像帧序号高字节。"
+        },
+        {
+          "name": "correctedPitchPos",
+          "offset": 50,
+          "type": "uint16",
+          "unit": "px",
+          "_comment": "修正后俯仰像素位置。"
+        },
+        {
+          "name": "correctedYawPos",
+          "offset": 52,
+          "type": "uint16",
+          "unit": "px",
+          "_comment": "修正后偏航像素位置。"
+        },
+        {
+          "name": "searchPitchRate",
+          "offset": 54,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "_comment": "搜索俯仰角速度，×0.01度/秒。"
+        },
+        {
+          "name": "searchYawRate",
+          "offset": 56,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg/s",
+          "_comment": "搜索偏航角速度，×0.01度/秒。"
+        },
+        {
+          "name": "gateSize",
+          "offset": 59,
+          "type": "uint8",
+          "_comment": "波门大小。"
+        },
+        {
+          "name": "captureRefImgCmd",
+          "offset": 60,
+          "type": "uint8",
+          "_comment": "拍摄参考图指令。"
+        },
+        {
+          "name": "timeSync",
+          "offset": 61,
+          "type": "uint8",
+          "_comment": "时间同步标志。"
+        },
+        {
+          "name": "deviceTimeMs",
+          "offset": 62,
+          "type": "uint64",
+          "unit": "ms",
+          "_comment": "UTC毫秒时间戳，8字节小端。"
+        },
+        {
+          "name": "targetAltitude",
+          "offset": 153,
+          "type": "int16",
+          "unit": "m",
+          "_comment": "目标海拔高度，米。"
+        },
+        {
+          "name": "aircraftPitch",
+          "offset": 155,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "载机俯仰角，×0.01度。"
+        },
+        {
+          "name": "aircraftYaw",
+          "offset": 157,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "载机方位角，×0.01度。"
+        },
+        {
+          "name": "aircraftRoll",
+          "offset": 159,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "载机滚转角，×0.01度。"
+        },
+        {
+          "name": "focalLength",
+          "offset": 161,
+          "type": "uint16",
+          "unit": "mm",
+          "_comment": "焦距，毫米。"
+        },
+        {
+          "name": "podPitchAngle",
+          "offset": 163,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "吊舱俯仰框架角，×0.01度。"
+        },
+        {
+          "name": "podYawAngle",
+          "offset": 165,
+          "type": "int16",
+          "scale": 0.01,
+          "unit": "deg",
+          "_comment": "吊舱方位框架角，×0.01度。"
+        },
+        {
+          "name": "satelliteMapScale",
+          "offset": 201,
+          "type": "uint8",
+          "scale": 0.1,
+          "_comment": "卫星图比例，×0.1。"
+        },
+        {
+          "name": "podType",
+          "offset": 202,
+          "type": "uint8",
+          "_comment": "吊舱类型。"
+        },
+        {
+          "name": "targetLongitude",
+          "offset": 203,
+          "type": "int32",
+          "_comment": "目标经度原始32位值。"
+        },
+        {
+          "name": "targetLatitude",
+          "offset": 207,
+          "type": "int32",
+          "_comment": "目标纬度原始32位值。"
+        },
+        {
+          "name": "aircraftLongitude",
+          "offset": 211,
+          "type": "int32",
+          "_comment": "载机经度原始32位值。"
+        },
+        {
+          "name": "aircraftLatitude",
+          "offset": 215,
+          "type": "int32",
+          "_comment": "载机纬度原始32位值。"
+        },
+        {
+          "name": "aircraftAltitude",
+          "offset": 219,
+          "type": "int16",
+          "unit": "m",
+          "_comment": "载机海拔，米。"
+        },
+        {
+          "name": "pixelSize",
+          "offset": 221,
+          "type": "uint8",
+          "unit": "um",
+          "_comment": "像元尺寸，微米。"
+        }
+      ],
+      "_comment": "224字节图像控制帧；普通控制与偏差像素修正共用模板。"
+    }
+  },
+  "_comments": {
+    "schemaVersion": "配置架构版本；当前为1。",
+    "id": "配置唯一标识；用于区分厂家、型号和协议版本。",
+    "vendor": "设备厂家名称。",
+    "model": "设备/协议适用型号。",
+    "source": "数据源类型；image表示图像导引头。",
+    "description": "协议用途说明。",
+    "capabilities": "设备能力声明。",
+    "frames": "接收帧定义。",
+    "commands": "发送命令定义。"
+  }
+}

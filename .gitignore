@@ -5,3 +5,7 @@ docs/
 docx_task/
 .codex-preview/
 .codex/
+dist/
+build-image-seeker-simulator/
+build-csrt-release/
+build-csrt-release-mingw/

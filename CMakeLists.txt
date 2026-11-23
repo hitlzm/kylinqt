@@ -15,6 +15,15 @@ option(KYLIN_CCD_DISPLAY_ROTATE_DEFAULT
        "Enable CCD display rotation by default when the supported RTSP source is connected"
        ON)
 
+set(KYLIN_PROTOCOL_SOURCES
+    protocol/canonical_seeker_frame.h
+    protocol/protocol_profile.cpp
+    protocol/protocol_profile.h
+    protocol/generic_protocol.cpp
+    protocol/generic_protocol.h
+    protocols/protocols.qrc
+)
+
 set(OpenCV_DIR "E:/opencv-4.2.0/DNN/install")
 
 include(taoQuick.cmake)
@@ -104,6 +113,7 @@ if(ANDROID)
     add_library(kylinqt SHARED
       main.cpp
       qml.qrc
+      ${KYLIN_PROTOCOL_SOURCES}
       serialport/serialport.cpp
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
@@ -116,6 +126,7 @@ else()
     add_executable(kylinqt
       main.cpp
       qml.qrc
+      ${KYLIN_PROTOCOL_SOURCES}
       serialport/serialport.cpp
       serialport/serialport_image.cpp
       serialport/serialport_laser.cpp
@@ -180,6 +191,18 @@ target_link_libraries(kylinqt
     ${OpenCV_LIBS}
 )
 
+# 将默认协议配置部署到可执行文件旁，便于现场修改/替换而无需重新编译。
+add_custom_command(TARGET kylinqt POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "$<TARGET_FILE_DIR:kylinqt>/protocols"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/protocols/legacy_laser_v1.json"
+        "$<TARGET_FILE_DIR:kylinqt>/protocols/legacy_laser_v1.json"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/protocols/legacy_image_v1.json"
+        "$<TARGET_FILE_DIR:kylinqt>/protocols/legacy_image_v1.json"
+)
+
 if(ONNXRUNTIME_LIBRARY)
     target_link_libraries(kylinqt PRIVATE ${ONNXRUNTIME_LIBRARY})
 endif()
@@ -207,6 +230,20 @@ if(KYLINQT_BUILD_SELFTESTS)
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     add_test(NAME video_display_geometry_selftest
              COMMAND kylinqt_video_display_geometry_selftest)
+
+    add_executable(kylinqt_protocol_selftest
+        protocol/selftests/protocol_selftest.cpp
+        protocol/generic_protocol.cpp
+        protocol/protocol_profile.cpp
+    )
+    target_include_directories(kylinqt_protocol_selftest
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_compile_definitions(kylinqt_protocol_selftest PRIVATE
+        KYLINQT_PROTOCOL_PROFILE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/protocols/legacy_laser_v1.json"
+        KYLINQT_IMAGE_PROTOCOL_PROFILE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/protocols/legacy_image_v1.json")
+    target_link_libraries(kylinqt_protocol_selftest PRIVATE Qt5::Core)
+    add_test(NAME protocol_selftest
+             COMMAND kylinqt_protocol_selftest)
 endif()
 
 # ── 视频接收侧延迟探针（utils/videolatencyprobe.*）─────────────────────

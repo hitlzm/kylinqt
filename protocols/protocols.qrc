@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/protocols">
+        <file alias="legacy_laser_v1.json">legacy_laser_v1.json</file>
+        <file alias="legacy_image_v1.json">legacy_image_v1.json</file>
+    </qresource>
+</RCC>

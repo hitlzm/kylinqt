@@ -83,6 +83,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<RMCData>("RMCData");
     qRegisterMetaType<sendExGuideData>("sendExGuideData");
     qRegisterMetaType<exGuideMeasurement>("exGuideMeasurement");
+    qRegisterMetaType<CanonicalSeekerFrame>("CanonicalSeekerFrame");
+    qRegisterMetaType<ProtocolCommandRequest>("ProtocolCommandRequest");
     // qRegisterMetaType<TiltFrame>("TiltFrame");   // 倾角仪串口停用
 
     // ═══ 主线程对象：QML 直接访问 ═══
@@ -190,7 +192,15 @@ int main(int argc, char *argv[])
     QObject::connect(laserData, &LaserData::requestOpenPort,  laserPort, &SerialPortLaser::onOpenPort,  Qt::QueuedConnection);
     QObject::connect(laserData, &LaserData::requestClosePort, laserPort, &SerialPortLaser::onClosePort, Qt::QueuedConnection);
     QObject::connect(laserData, &LaserData::requestScanPorts, laserPort, &SerialPortLaser::onScanPorts, Qt::QueuedConnection);
-    QObject::connect(laserSendData, &LaserSendData::requestSendData,  laserPort, &SerialPortLaser::onSendData,  Qt::QueuedConnection);
+    QObject::connect(laserData, &LaserData::requestLoadProtocolProfile,
+                     laserPort, &SerialPortLaser::onLoadProtocolProfile,
+                     Qt::QueuedConnection);
+    QObject::connect(laserData, &LaserData::requestRestoreDefaultProtocolProfile,
+                     laserPort, &SerialPortLaser::onRestoreDefaultProtocolProfile,
+                     Qt::QueuedConnection);
+    QObject::connect(laserSendData, &LaserSendData::requestSendCommand,
+                     laserPort, &SerialPortLaser::onSendCommand,
+                     Qt::QueuedConnection);
 
     // ── Laser: 工作线程 Worker → 主线程 Data ──
     QObject::connect(laserPort, &SerialPortLaser::portOpened,   laserData, &LaserData::setPortOpen, Qt::QueuedConnection);
@@ -198,12 +208,30 @@ int main(int argc, char *argv[])
     QObject::connect(laserPort, &SerialPortLaser::portError,    laserData, &LaserData::setError,    Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::portsChanged, laserData, &LaserData::setPortList, Qt::QueuedConnection);
     QObject::connect(laserPort, &SerialPortLaser::laserFrameReceived, laserData, &LaserData::updateFromFrame, Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::canonicalFrameReceived,
+                     laserData, &LaserData::updateFromCanonicalFrame,
+                     Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::protocolProfileLoadFinished,
+                     laserData, &LaserData::applyProtocolProfileResult,
+                     Qt::QueuedConnection);
+    QObject::connect(laserPort, &SerialPortLaser::protocolDiagnostic,
+                     logManager, [logManager](const QString &message) {
+        logManager->addLog(QStringLiteral("协议"), message);
+    }, Qt::QueuedConnection);
     
     // ── Image: 主线程 Data → 工作线程 Worker ──
     QObject::connect(imageData, &ImageData::requestOpenPort,  imagePort, &SerialPortImage::onOpenPort,  Qt::QueuedConnection);
     QObject::connect(imageData, &ImageData::requestClosePort, imagePort, &SerialPortImage::onClosePort, Qt::QueuedConnection);
     QObject::connect(imageData, &ImageData::requestScanPorts, imagePort, &SerialPortImage::onScanPorts, Qt::QueuedConnection);
-    QObject::connect(imageSendData, &ImageSendData::requestSendData,  imagePort, &SerialPortImage::onSendData,  Qt::QueuedConnection);
+    QObject::connect(imageData, &ImageData::requestLoadProtocolProfile,
+                     imagePort, &SerialPortImage::onLoadProtocolProfile,
+                     Qt::QueuedConnection);
+    QObject::connect(imageData, &ImageData::requestRestoreDefaultProtocolProfile,
+                     imagePort, &SerialPortImage::onRestoreDefaultProtocolProfile,
+                     Qt::QueuedConnection);
+    QObject::connect(imageSendData, &ImageSendData::requestSendCommand,
+                     imagePort, &SerialPortImage::onSendCommand,
+                     Qt::QueuedConnection);
 
 
     // ── Image: 工作线程 Worker → 主线程 Data ──
@@ -212,6 +240,16 @@ int main(int argc, char *argv[])
     QObject::connect(imagePort, &SerialPortImage::portError,    imageData, &ImageData::setError,    Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::portsChanged, imageData, &ImageData::setPortList, Qt::QueuedConnection);
     QObject::connect(imagePort, &SerialPortImage::imageFrameReceived, imageData, &ImageData::updateFromFrame, Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::canonicalFrameReceived,
+                     imageData, &ImageData::updateFromCanonicalFrame,
+                     Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::protocolProfileLoadFinished,
+                     imageData, &ImageData::applyProtocolProfileResult,
+                     Qt::QueuedConnection);
+    QObject::connect(imagePort, &SerialPortImage::protocolDiagnostic,
+                     logManager, [logManager](const QString &message) {
+        logManager->addLog(QStringLiteral("协议"), message);
+    }, Qt::QueuedConnection);
     // ── 图像 B 帧 / 激光接收帧：取各自 Data 对象解析后的工程量存 csv（不再是原始 hex）──
     // DirectConnection：两者同在主线程，且必须在本帧字段刚更新完时立即取值，
     // 否则排队执行时 Data 对象可能已经读到下一帧，导致同一帧数据写两遍/漏写。

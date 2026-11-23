@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import taoQuick 1.0
+import TaoQuick 1.0
 import "./"
 Rectangle {
     id: root
@@ -15,6 +15,46 @@ Rectangle {
     }
     MsgPopup2 {
         id: toastmsg
+    }
+    ProtocolProfileDialog {
+        id: protocolProfileDialog
+        onProtocolFileConfirmed: {
+            pendingProfileAction = "custom"
+            protocolProfileLoading = true
+            laserData.loadProtocolProfile(profileUrl)
+        }
+        onExitRequested: {
+            laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+        }
+    }
+
+    Connections {
+        target: laserData
+        onProtocolProfileLoadResult: {
+            protocolProfileLoading = false
+            if (root.pendingProfileAction === "custom") {
+                if (success) {
+                    root.customProtocolActive = true
+                    root.laserDeviceIndex = root.laserDeviceList.length - 1
+                    laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                    toastmsg.showToast("已加载激光协议：" + profileId, 1800)
+                } else {
+                    laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                    toastmsg.showToast("协议加载失败：" + errorMessage, 2500)
+                }
+            } else if (root.pendingProfileAction === "default") {
+                if (success) {
+                    root.customProtocolActive = false
+                    root.laserDeviceIndex = root.pendingDeviceIndex
+                    laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                } else {
+                    laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                    toastmsg.showToast("恢复默认协议失败：" + errorMessage, 2500)
+                }
+            }
+            root.pendingProfileAction = ""
+            root.pendingDeviceIndex = -1
+        }
     }
 
     // 输入校验标志（默认 true，未输入不算无效）
@@ -66,6 +106,11 @@ Rectangle {
         "默认设备",
         "其他"
     ]
+    property int laserDeviceIndex: 0
+    property bool customProtocolActive: false
+    property bool protocolProfileLoading: false
+    property string pendingProfileAction: ""
+    property int pendingDeviceIndex: -1
 
     property int currentCmd: 0
 
@@ -98,6 +143,24 @@ Rectangle {
                 titleFontSize: 16
                 model: root.laserDeviceList
                 popupMinWidth: 200
+                enabled: !root.protocolProfileLoading
+                onActivated: {
+                    if (index === root.laserDeviceList.length - 1) {
+                        // “其他”只有 JSON 加载成功后才成为新的有效配置。
+                        laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                        protocolProfileDialog.openForDevice("激光导引头")
+                    } else if (index === root.laserDeviceIndex) {
+                        laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                    } else if (root.customProtocolActive) {
+                        root.pendingProfileAction = "default"
+                        root.pendingDeviceIndex = index
+                        root.protocolProfileLoading = true
+                        laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
+                        laserData.restoreDefaultProtocolProfile()
+                    } else {
+                        root.laserDeviceIndex = index
+                    }
+                }
             }
 
             Text {
@@ -144,19 +207,19 @@ Rectangle {
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSendData.m_cmd= 0x00
+                            laserSendData.command = "none"
                             } else if (index === 2) {
                             firstColumn.disabledIndices = [0]      
                             secondColumn.disabledIndices = [1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSendData.m_cmd= 0x02
+                            laserSendData.command = "lock"
                             } else if (index === 3) {
                             firstColumn.disabledIndices = [1]      
                             secondColumn.disabledIndices = [0,1]
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
-                            laserSendData.m_cmd= 0x03
+                            laserSendData.command = "setLaserPeriod"
                             }
                             else if (index === 4 || index === 7) {
                             firstColumn.disabledIndices = [0]      
@@ -164,9 +227,9 @@ Rectangle {
                             thirdColumn.disabledIndices = [0,1]
                             fourthColumn.disabledIndices = [0,1]
                             if(index === 4){
-                                laserSendData.m_cmd= 0x06
+                                laserSendData.command = "fixedSearch"
                             }else{
-                                laserSendData.m_cmd= 0x09
+                                laserSendData.command = "fixedSearchPosition"
                             }
                             }
                             else if (index === 5 || index === 8) {
@@ -175,9 +238,9 @@ Rectangle {
                             thirdColumn.disabledIndices = []
                             fourthColumn.disabledIndices = [1]
                             if(index === 5){
-                                laserSendData.m_cmd= 0x07
+                                laserSendData.command = "rectangleSearch"
                             }else{
-                                laserSendData.m_cmd= 0x0A
+                                laserSendData.command = "rectangleSearchPosition"
                             }
                             }
                             else if (index === 6 || index === 9) {
@@ -186,9 +249,9 @@ Rectangle {
                             thirdColumn.disabledIndices = [1]
                             fourthColumn.disabledIndices = [0]
                             if(index === 6){
-                                laserSendData.m_cmd= 0x08
+                                laserSendData.command = "circleSearch"
                             }else{
-                                laserSendData.m_cmd= 0x0B
+                                laserSendData.command= "circleSearchPosition"
                             }
                             }
                 }
@@ -719,7 +782,7 @@ Rectangle {
             height: 32   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: directiontuo; label: "方位陀螺"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
-                        normal: laserData.dytfault1 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+                        normal: (laserData.faultFlags & 0x01) === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
         }
 
         Item {
@@ -727,7 +790,7 @@ Rectangle {
             height: 32   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: pitchtuo; label: "俯仰陀螺"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
-                        normal: laserData.dytfault2 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+                        normal: (laserData.faultFlags & 0x02) === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
         }
 
         Item {
@@ -735,7 +798,7 @@ Rectangle {
             height: 32   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: directionmotor; label: "方位电机"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
-                        normal: laserData.dytfault3 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+                        normal: (laserData.faultFlags & 0x04) === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
         }
 
         Item {
@@ -743,7 +806,7 @@ Rectangle {
             height: 32   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: pitchmotor; label: "俯仰电机"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
-                        normal: laserData.dytfault4 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+                        normal: (laserData.faultFlags & 0x08) === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
         }
 
         Item {
@@ -751,7 +814,7 @@ Rectangle {
             height: 32   
             anchors.verticalCenter: parent.verticalCenter
             Indicator { id: spin; label: "旋变"; fontSize: 18; height: 28; anchors.verticalCenter: parent.verticalCenter; anchors.horizontalCenter: parent.horizontalCenter; 
-                        normal: laserData.dytfault5 === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
+                        normal: (laserData.faultFlags & 0x10) === 0; onFaultTriggered: toastmsg.showToast(label + "故障") }
         }
     }
 

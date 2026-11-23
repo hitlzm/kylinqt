@@ -4,6 +4,12 @@
 #include "../log/LogManager.h"
 #include <QTimer>
 #include <QTimeZone>
+#include <QFile>
+#include <QFileInfo>
+#include <QMap>
+#include <QDir>
+#include <QUrl>
+#include <QCoreApplication>
 #include <cstring>
 #include "../utils/sendlatencyprobe.h"
 // ─────────────────────────────────────────────
@@ -72,6 +78,19 @@ inline quint64 readBigEndianU64(const uint8_t *p)
 }
 
 } // namespace
+
+static QString protocolProfileLocalPath(const QString &profileLocation)
+{
+    const QString trimmed = profileLocation.trimmed();
+    if (trimmed.isEmpty())
+        return QString();
+
+    const QUrl url = QUrl::fromUserInput(trimmed);
+    if (url.isLocalFile())
+        return QDir::cleanPath(url.toLocalFile());
+    return QDir::cleanPath(trimmed);
+}
+
 // ─────────────────────────────────────────────
 // LaserData
 // ─────────────────────────────────────────────
@@ -85,6 +104,20 @@ LaserData::LaserData(QObject *parent)
 void LaserData::openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
 void LaserData::closePort()                                     { emit requestClosePort(); }
 void LaserData::scanPorts()                                     { emit requestScanPorts(); }
+void LaserData::loadProtocolProfile(const QString &profileLocation)
+{
+    const QString path = protocolProfileLocalPath(profileLocation);
+    if (path.isEmpty()) {
+        applyProtocolProfileResult(false, QString(),
+                                   QStringLiteral("未选择协议 JSON 文件"));
+        return;
+    }
+    emit requestLoadProtocolProfile(path);
+}
+void LaserData::restoreDefaultProtocolProfile()
+{
+    emit requestRestoreDefaultProtocolProfile();
+}
 // void LaserData::sendData(const QByteArray &data)                { emit requestSendData(data); }
 
 // ── 工作线程回推：QueuedConnection 调用，更新状态并 NOTIFY QML ──
@@ -104,6 +137,18 @@ void LaserData::setPortOpen(bool open)
 }
 void LaserData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
 void LaserData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+
+void LaserData::applyProtocolProfileResult(bool success,
+                                           const QString &profileId,
+                                           const QString &errorMessage)
+{
+    if (success && m_protocolProfileId != profileId) {
+        m_protocolProfileId = profileId;
+        emit protocolProfileIdChanged();
+    }
+    emit protocolProfileLoadResult(success, success ? profileId : QString(),
+                                   success ? QString() : errorMessage);
+}
 
 int LaserData::frameStatus() const { return m_frameStatus; }
 int LaserData::frameId() const { return m_frameId; }
@@ -144,6 +189,18 @@ qint64 LaserData::timeScaleAccuracyUs() const { return m_timeScaleAccuracyUs; }
 bool LaserData::timeScaleAccuracyValid() const { return m_timeScaleAccuracyValid; }
 QDateTime LaserData::recvDateTime() const { return m_recvDateTime; }
 QString LaserData::recvTimeText() const { return m_recvTimeText; }
+QString LaserData::protocolProfileId() const { return m_protocolProfileId; }
+QString LaserData::trackingStatusName() const { return m_trackingStatusName; }
+QString LaserData::trackingStatusText() const { return m_trackingStatusText; }
+bool LaserData::detectorPeriodConfigured() const { return m_detectorPeriodConfigured; }
+int LaserData::detectorSelfTestState() const { return m_detectorSelfTestState; }
+QString LaserData::detectorSelfTestText() const { return m_detectorSelfTestText; }
+int LaserData::detectorSignalState() const { return m_detectorSignalState; }
+QString LaserData::detectorSignalText() const { return m_detectorSignalText; }
+int LaserData::faultStatusState() const { return m_faultStatusState; }
+QString LaserData::faultStatusText() const { return m_faultStatusText; }
+QString LaserData::faultCodeText() const { return m_faultCodeText; }
+int LaserData::faultFlags() const { return m_faultFlags; }
 
 // 本函数由 SerialPortLaser::parseData() 完成帧头/异或校验与大端转小端后经信号触发
 void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
@@ -344,6 +401,177 @@ void LaserData::updateFromFrame(const laser_recv_frame &pFrame)
     emit frameParsed();
 }
 
+void LaserData::updateFromCanonicalFrame(const CanonicalSeekerFrame &frame)
+{
+    // 过渡兼容：旧 QML 仍读取 LaserData 的原属性。这里只做内存 DTO 映射，
+    // 不重新序列化为旧帧，也不会再次经过旧协议解析器。
+    laser_recv_frame legacy = {};
+    if (frame.rawFrame.size() >= 3) {
+        legacy.frame_header1 = static_cast<quint8>(frame.rawFrame.at(0));
+        legacy.frame_header2 = static_cast<quint8>(frame.rawFrame.at(1));
+        legacy.frame_header3 = static_cast<quint8>(frame.rawFrame.at(2));
+    }
+    legacy.frame_status = static_cast<quint8>(
+                frame.rawInteger(QStringLiteral("frameStatus")));
+    legacy.frame_ID = static_cast<quint8>(
+                frame.rawInteger(QStringLiteral("frameId")));
+    legacy.dyt_status = static_cast<quint8>(
+                frame.rawInteger(QStringLiteral("dytStatus"),
+                                 frame.canonicalInteger(
+                                     QStringLiteral("tracking.stateRaw"))));
+    legacy.detector_status = static_cast<quint8>(
+                frame.rawInteger(QStringLiteral("detectorStatus")));
+    legacy.fault_info = static_cast<quint8>(
+                frame.rawInteger(QStringLiteral("faultInfo")));
+    legacy.optical_azimuth = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.losAzimuthDeg"))
+                / 0.01));
+    legacy.optical_pitch = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.losElevationDeg"))
+                / 0.01));
+    legacy.gyro_azimuth_rate = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.gyroAzimuthRateDegPerSec"))
+                / 0.01));
+    legacy.gyro_pitch_rate = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.gyroElevationRateDegPerSec"))
+                / 0.01));
+    legacy.los_azimuth_rate = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.losAzimuthRateDegPerSec"))
+                / 0.01));
+    legacy.los_pitch_rate = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.losElevationRateDegPerSec"))
+                / 0.01));
+    legacy.deviation_azimuth = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.deviationAzimuthDeg"))
+                / 0.001));
+    legacy.deviation_pitch = static_cast<qint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.deviationElevationDeg"))
+                / 0.001));
+    legacy.laser_period = static_cast<quint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.laserPeriodMs"))
+                / 0.002));
+    legacy.gain_status = static_cast<quint8>(
+                frame.rawInteger(QStringLiteral("gainStatus")));
+    legacy.quadrant1_energy = static_cast<quint8>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.quadrant1Energy"))
+                / 0.01));
+    legacy.quadrant2_energy = static_cast<quint8>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.quadrant2Energy"))
+                / 0.01));
+    legacy.quadrant3_energy = static_cast<quint8>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.quadrant3Energy"))
+                / 0.01));
+    legacy.quadrant4_energy = static_cast<quint8>(qRound(
+                frame.canonicalNumber(QStringLiteral("measurement.quadrant4Energy"))
+                / 0.01));
+    legacy.software_version1 = static_cast<quint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("version.processing"))
+                / 0.01));
+    legacy.software_version2 = static_cast<quint16>(qRound(
+                frame.canonicalNumber(QStringLiteral("version.control"))
+                / 0.01));
+
+    const qint64 deviceTimeMs = static_cast<qint64>(
+                frame.canonicalNumber(QStringLiteral("time.deviceUtcMs")));
+    for (int i = 0; i < 8; ++i) {
+        legacy.ms_time[i] = static_cast<quint8>(
+                    (static_cast<quint64>(deviceTimeMs)
+                     >> (8 * (7 - i))) & 0xFFu);
+    }
+    legacy.us_time = static_cast<quint16>(
+                frame.canonicalInteger(
+                    QStringLiteral("time.deviceSubMillisecondUs")));
+
+    const QString profileId = frame.profileId;
+    if (m_protocolProfileId != profileId) {
+        m_protocolProfileId = profileId;
+        emit protocolProfileIdChanged();
+    }
+    const QString trackingName = frame.canonicalText(
+                QStringLiteral("tracking.state"), QStringLiteral("unknown"));
+    if (m_trackingStatusName != trackingName) {
+        m_trackingStatusName = trackingName;
+        emit trackingStatusNameChanged();
+    }
+    const QString trackingText = frame.canonicalText(
+                QStringLiteral("tracking.stateLabel"), QStringLiteral("未知"));
+    if (m_trackingStatusText != trackingText) {
+        m_trackingStatusText = trackingText;
+        emit trackingStatusTextChanged();
+    }
+    const bool detectorPeriodConfigured = frame.canonicalBoolean(
+                QStringLiteral("status.detectorPeriodConfigured"));
+    if (m_detectorPeriodConfigured != detectorPeriodConfigured) {
+        m_detectorPeriodConfigured = detectorPeriodConfigured;
+        emit detectorPeriodConfiguredChanged();
+    }
+    const int selfTestState = static_cast<int>(frame.canonicalInteger(
+                QStringLiteral("status.detectorSelfTestRaw"), -1));
+    if (m_detectorSelfTestState != selfTestState) {
+        m_detectorSelfTestState = selfTestState;
+        emit detectorSelfTestStateChanged();
+    }
+    const QString selfTestText = frame.canonicalText(
+                QStringLiteral("status.detectorSelfTestLabel"),
+                QStringLiteral("NA"));
+    if (m_detectorSelfTestText != selfTestText) {
+        m_detectorSelfTestText = selfTestText;
+        emit detectorSelfTestTextChanged();
+    }
+    const int signalState = static_cast<int>(frame.canonicalInteger(
+                QStringLiteral("status.detectorSignalRaw"), -1));
+    if (m_detectorSignalState != signalState) {
+        m_detectorSignalState = signalState;
+        emit detectorSignalStateChanged();
+    }
+    const QString signalText = frame.canonicalText(
+                QStringLiteral("status.detectorSignalLabel"), QStringLiteral("未知"));
+    if (m_detectorSignalText != signalText) {
+        m_detectorSignalText = signalText;
+        emit detectorSignalTextChanged();
+    }
+    const int faultState = static_cast<int>(frame.canonicalInteger(
+                QStringLiteral("status.faultStateRaw"), -1));
+    if (m_faultStatusState != faultState) {
+        m_faultStatusState = faultState;
+        emit faultStatusStateChanged();
+    }
+    const QString faultText = frame.canonicalText(
+                QStringLiteral("status.faultStateLabel"), QStringLiteral("NA"));
+    if (m_faultStatusText != faultText) {
+        m_faultStatusText = faultText;
+        emit faultStatusTextChanged();
+    }
+    const qint64 faultCode = frame.canonicalInteger(
+                QStringLiteral("status.faultCode"), 0);
+    const QString faultCodeText = faultState == 2
+            ? QStringLiteral("0x%1").arg(faultCode, 2, 16, QLatin1Char('0')).toUpper()
+            : QStringLiteral("NA");
+    if (m_faultCodeText != faultCodeText) {
+        m_faultCodeText = faultCodeText;
+        emit faultCodeTextChanged();
+    }
+    int faultFlags = 0;
+    static const char *faultPaths[] = {
+        "status.axisFault.azimuthGyro",
+        "status.axisFault.elevationGyro",
+        "status.axisFault.azimuthMotor",
+        "status.axisFault.elevationMotor",
+        "status.axisFault.resolver",
+        "status.axisFault.other"
+    };
+    for (int bit = 0; bit < 6; ++bit) {
+        if (frame.canonicalBoolean(QString::fromLatin1(faultPaths[bit])))
+            faultFlags |= (1 << bit);
+    }
+    if (m_faultFlags != faultFlags) {
+        m_faultFlags = faultFlags;
+        emit faultFlagsChanged();
+    }
+
+    updateFromFrame(legacy);
+}
+
 int LaserData::getBitsFromQint8(qint8 value, int startBit, int endBit)
 {
     // 检查位索引范围（0~7）
@@ -383,63 +611,81 @@ void LaserSendData::sendTimeSyncFrame()
     m_timeSync = 0;                 //发完立即复位，避免后续人工发送的帧都带时间同步标志
 }
 
+void LaserSendData::setCommand(const QString &command)
+{
+    const QString normalized = command.trimmed();
+    if (m_command == normalized)
+        return;
+    m_command = normalized;
+
+    // m_cmd 仅为旧界面兼容保留；线上命令码由协议配置决定。
+    static const QMap<QString, int> legacyCodes = {
+        {QStringLiteral("none"), 0x00},
+        {QStringLiteral("selfTest"), 0x01},
+        {QStringLiteral("lock"), 0x02},
+        {QStringLiteral("setLaserPeriod"), 0x03},
+        {QStringLiteral("fixedSearch"), 0x06},
+        {QStringLiteral("rectangleSearch"), 0x07},
+        {QStringLiteral("circleSearch"), 0x08},
+        {QStringLiteral("fixedSearchPosition"), 0x09},
+        {QStringLiteral("rectangleSearchPosition"), 0x0A},
+        {QStringLiteral("circleSearchPosition"), 0x0B}
+    };
+    const int legacyCode = legacyCodes.value(m_command, -1);
+    if (legacyCode >= 0 && m_cmd != legacyCode) {
+        m_cmd = legacyCode;
+        emit cmdChanged();
+    }
+    emit commandChanged();
+}
+
 void LaserSendData::buildFrame() 
 {
     // 发送延迟探针：只统计人工点击发送按钮。
     // 时间同步帧由 10 分钟定时器触发（m_timeSync != 0），不是人工操作，不打点。
     if (!m_timeSync) SendLat::markClick(SendLat::Laser);
 
-    laser_send_frame frame = {};
-
-    frame.frame_header1 = 0x55;
-    frame.frame_header2 = 0xAA;
-    frame.frame_header3 = 0xDC;
-    frame.frame_status = static_cast<quint8>(m_frameStatus);   //帧长为固定值
-    frame.frame_ID = static_cast<quint8>(m_frameId);
-    frame.cmd = static_cast<quint8>(m_cmd);
-    frame.laser_period = static_cast<quint16>(m_laserPeriod / 0.002);
+    ProtocolCommandRequest request;
+    request.specName = QStringLiteral("laser.control");
+    request.semanticCommand = m_command;
+    request.values.insert(QStringLiteral("frameStatus"), m_frameStatus);
+    request.values.insert(QStringLiteral("frameId"), m_frameId);
+    request.values.insert(QStringLiteral("laserPeriod"),
+                          static_cast<double>(m_laserPeriod));
 
     // 根据命令字选择不同的参数映射
-    switch (m_cmd) {
-    case 0x02: // 锁定
-    case 0x06: // 定轴搜索
-    case 0x09: // 定轴搜索(位置回路)
-        frame.param2 = static_cast<qint16>(toRawValue(m_azimuthAngle));
-        frame.param3 = static_cast<qint16>(toRawValue(m_elevationAngle));
-        frame.param4 = 0;
-        frame.param5 = 0;
-        break;
-    case 0x07: // 矩形搜索
-    case 0x0A: // 矩形搜索(位置回路)
-        frame.param2 = static_cast<qint16>(toRawValue(m_searchCenterAzimuth));
-        frame.param3 = static_cast<qint16>(toRawValue(m_searchCenterElevation));
-        frame.param4 = static_cast<qint16>(toRawValue(m_azimuthSearchRange));
-        frame.param5 = static_cast<qint16>(toRawValue(m_elevationSearchRange));
-        break;
-    case 0x08: // 圆形搜索
-    case 0x0B: // 圆形搜索(位置回路)
-        frame.param2 = static_cast<qint16>(toRawValue(m_searchCenterAzimuth));
-        frame.param3 = static_cast<qint16>(toRawValue(m_searchCenterElevation));
-        frame.param4 = static_cast<qint16>(toRawValue(m_searchRadius));
-        frame.param5 = 0;
-        break;
-    default:
-        frame.param2 = static_cast<qint16>(toRawValue(m_azimuthAngle));
-        frame.param3 = static_cast<qint16>(toRawValue(m_elevationAngle));
-        frame.param4 = 0;
-        frame.param5 = 0;
-        break;
-    }
-    //时间同步信号与Unix毫秒时间：只在时间同步帧里填时间，其余帧该位保持0
-    frame.timeSync = static_cast<qint8>(m_timeSync);
-    if (m_timeSync) {
-        writeBigEndianU64(frame.time, beijingNowUtcMs());
+    if (m_command == QStringLiteral("lock")
+            || m_command == QStringLiteral("fixedSearch")
+            || m_command == QStringLiteral("fixedSearchPosition")) {
+        request.values.insert(QStringLiteral("param2"), m_azimuthAngle);
+        request.values.insert(QStringLiteral("param3"), m_elevationAngle);
+        request.values.insert(QStringLiteral("param4"), 0.0);
+        request.values.insert(QStringLiteral("param5"), 0.0);
+    } else if (m_command == QStringLiteral("rectangleSearch")
+               || m_command == QStringLiteral("rectangleSearchPosition")) {
+        request.values.insert(QStringLiteral("param2"), m_searchCenterAzimuth);
+        request.values.insert(QStringLiteral("param3"), m_searchCenterElevation);
+        request.values.insert(QStringLiteral("param4"), m_azimuthSearchRange);
+        request.values.insert(QStringLiteral("param5"), m_elevationSearchRange);
+    } else if (m_command == QStringLiteral("circleSearch")
+               || m_command == QStringLiteral("circleSearchPosition")) {
+        request.values.insert(QStringLiteral("param2"), m_searchCenterAzimuth);
+        request.values.insert(QStringLiteral("param3"), m_searchCenterElevation);
+        request.values.insert(QStringLiteral("param4"), m_searchRadius);
+        request.values.insert(QStringLiteral("param5"), 0.0);
     } else {
-        memset(frame.time, 0, sizeof(frame.time));
+        request.values.insert(QStringLiteral("param2"), 0.0);
+        request.values.insert(QStringLiteral("param3"), 0.0);
+        request.values.insert(QStringLiteral("param4"), 0.0);
+        request.values.insert(QStringLiteral("param5"), 0.0);
     }
-    frame.XOR_result = 0;
-    //m_cmd = 0; //发送后清零控制字
-    emit requestSendData(frame);
+
+    request.values.insert(QStringLiteral("timeSync"), m_timeSync ? 1 : 0);
+    if (m_timeSync) {
+        request.values.insert(QStringLiteral("deviceTimeMs"),
+                              static_cast<qulonglong>(beijingNowUtcMs()));
+    }
+    emit requestSendCommand(request);
 }
 
 // ─────────────────────────────────────────────
@@ -452,13 +698,93 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
     , m_laserSendData(new LaserSendData(nullptr))
     //, m_circularbuf(360)
 {
-
+    loadProtocolProfile();
 }
 
 SerialPortLaser::~SerialPortLaser() {
     //由app管理，无需手动释放
     // delete m_laserData;
     // delete m_laserSendData;
+}
+
+bool SerialPortLaser::loadProtocolProfile()
+{
+    const QString profilePath = defaultProtocolProfileLocation();
+    QString profileId;
+    QString error;
+    if (!applyProtocolProfile(profilePath, &profileId, &error)) {
+        m_protocolEnabled = false;
+        emit protocolDiagnostic(
+                    QStringLiteral("配置化协议未启用，回退到内置激光解析器: ") + error);
+        qWarning() << "[protocol]" << error;
+        return false;
+    }
+
+    qInfo() << "[protocol] loaded" << profileId << "from" << profilePath;
+    return true;
+}
+
+QString SerialPortLaser::defaultProtocolProfileLocation() const
+{
+    QString profilePath =
+            QString::fromLocal8Bit(qgetenv("KYLIN_LASER_PROTOCOL_PROFILE")).trimmed();
+    if (profilePath.isEmpty()) {
+        const QString deployedProfile = QCoreApplication::applicationDirPath()
+                + QStringLiteral("/protocols/legacy_laser_v1.json");
+        profilePath = QFileInfo::exists(deployedProfile)
+                ? deployedProfile
+                : QStringLiteral(":/protocols/legacy_laser_v1.json");
+    }
+    return profilePath;
+}
+
+bool SerialPortLaser::applyProtocolProfile(const QString &profileLocation,
+                                           QString *profileId,
+                                           QString *error)
+{
+    ProtocolProfile candidate;
+    QString loadError;
+    if (!ProtocolProfile::loadFromFile(
+                protocolProfileLocalPath(profileLocation), &candidate, &loadError)) {
+        if (error)
+            *error = loadError;
+        return false;
+    }
+
+    if (timer)
+        timer->stop();
+    m_protocolProfile = candidate;
+    m_protocolDecoder.setProfile(m_protocolProfile);
+    m_protocolEncoder.setProfile(m_protocolProfile);
+    m_protocolEnabled = true;
+    m_rxBuffer.clear();
+    if (profileId)
+        *profileId = m_protocolProfile.id;
+    if (error)
+        error->clear();
+    return true;
+}
+
+void SerialPortLaser::onLoadProtocolProfile(const QString &profileLocation)
+{
+    QString profileId;
+    QString error;
+    const bool success =
+            applyProtocolProfile(profileLocation, &profileId, &error);
+    if (success) {
+        emit protocolDiagnostic(
+                    QStringLiteral("激光协议已切换为 %1").arg(profileId));
+    } else {
+        emit protocolDiagnostic(
+                    QStringLiteral("激光协议 JSON 加载失败，保留原协议: ") + error);
+    }
+    emit protocolProfileLoadFinished(success, success ? profileId : QString(),
+                                     success ? QString() : error);
+}
+
+void SerialPortLaser::onRestoreDefaultProtocolProfile()
+{
+    onLoadProtocolProfile(defaultProtocolProfileLocation());
 }
 
 // ── Worker slots：接收主线程 Data 的请求（QueuedConnection）──
@@ -487,82 +813,100 @@ void SerialPortLaser::onClosePort()
     }
 }
 void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
-void SerialPortLaser::onSendData(laser_send_frame frame)
- {  
-    //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
-    if (!isOpen()) {
-        // 本次请求没有发出去，弹出配对令牌，避免后续样本错配到这次点击上
+void SerialPortLaser::onSendCommand(ProtocolCommandRequest request)
+{
+    if (!isOpen() || !m_protocolEnabled) {
         SendLat::discardClick(SendLat::Laser);
+        if (!m_protocolEnabled)
+            emit protocolDiagnostic(QStringLiteral("配置化激光协议未启用，命令未发送"));
         return;
     }
-    const uint8_t* mydata = reinterpret_cast<const uint8_t*>(&frame);
-    //进行部分数据大端序转化，大端序转化结束后再计算异或校验位
-    //以下为原写法（int 表达式直接窄化赋给 qint16/quint16，C++20 之前属实现定义行为），
-    //现改为“先按 quint16 组装，再按二进制补码解释”，线上字节完全一致：
-    //frame.laser_period = (static_cast<quint16>(static_cast<unsigned char>(mydata[6])) << 8) | static_cast<unsigned char>(mydata[7]);
-    //frame.param2 = (static_cast<qint16>(static_cast<unsigned char>(mydata[8])) << 8) | static_cast<unsigned char>(mydata[9]);
-    //frame.param3 = (static_cast<qint16>(static_cast<unsigned char>(mydata[10])) << 8) | static_cast<unsigned char>(mydata[11]);
-    //frame.param4 = (static_cast<qint16>(static_cast<unsigned char>(mydata[12])) << 8) | static_cast<unsigned char>(mydata[13]);
-    //frame.param5 = (static_cast<qint16>(static_cast<unsigned char>(mydata[14])) << 8) | static_cast<unsigned char>(mydata[15]);
-    //注意：mydata 指向 frame 自身的内存，先读原字节、再写回字段，不依赖赋值语句的求值顺序
-    frame.laser_period = readBigEndianU16(mydata + 6);
-    frame.param2       = readBigEndianI16(mydata + 8);
-    frame.param3       = readBigEndianI16(mydata + 10);
-    frame.param4       = readBigEndianI16(mydata + 12);
-    frame.param5       = readBigEndianI16(mydata + 14);
-    //校验位在定时器每拍发送前统一计算，这里无需预计算
-    auto data = QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
-    //断开上一次的连接
+    QByteArray initialFrame;
+    QString encodeError;
+    if (!m_protocolEncoder.encode(request, &initialFrame, &encodeError)) {
+        SendLat::discardClick(SendLat::Laser);
+        emit protocolDiagnostic(QStringLiteral("激光命令编码失败: ") + encodeError);
+        return;
+    }
+
     disconnect(timer, &QTimer::timeout, this, nullptr);
-
     int sendCount = 0;
-    static quint8 datacount=0;
-    timer->setInterval(20); // 20ms
-    // 连接定时器的超时信号
-    connect(timer, &QTimer::timeout, this, [=]() mutable {
-        // 帧计数器：先写当前值（从 0 开始），发送成功后再递增
-        data[3] = 0x11 | (datacount << 6);
+    quint8 dataCount = 0;
+    timer->setInterval(20);
+    connect(timer, &QTimer::timeout, this,
+            [this, request, sendCount, dataCount]() mutable {
+        QVariantMap values = request.values;
+        values.insert(QStringLiteral("frameStatus"), 0x11 | (dataCount << 6));
+        if (sendCount >= 1)
+            values.insert(QStringLiteral("timeSync"), 0);
 
-        //时间同步信号只在第一拍带出，后续拍清零（时间字节保留），避免一帧连发10拍都带同步标志
-        if (sendCount >= 1) {
-            data[16] = 0x00;
-        }
-
-        // 计算异或校验位并更新，不计入帧头与校验位
-        const char * checkdata2 = data.data();
-        uint8_t checksum2 = 0;
-        for (size_t i = 3; i < data.size() - 1; ++i) {
-            checksum2 ^= checkdata2[i];
-        }
-        //校验位在帧末：帧头3字节 + 帧长/帧ID + 数据包(cmd..param5) + 时间同步信号 + 8字节时间
-        data[25] = checksum2;
-
-        // 发送数据
-        // 发送延迟探针打点：本次请求的第一次 write（补发拍由探针内部忽略）。
-        SendLat::markSend(SendLat::Laser);
-        qint64 count = SerialPort::send(data);
-        // 发送成功才递增帧计数器（失败则下帧重发同一计数）
-        if (count >= data.size()) {
-            datacount++;
-            if(datacount >= 3){
-                datacount = 0;
-            }
-        }
-        sendCount++;
-
-        // 发送10次后停止并销毁定时器
-        if (sendCount >= 10) {
+        ProtocolCommandRequest tickRequest = request;
+        tickRequest.values = values;
+        QByteArray data;
+        QString error;
+        if (!m_protocolEncoder.encode(tickRequest, &data, &error)) {
+            emit protocolDiagnostic(QStringLiteral("激光命令编码失败: ") + error);
             timer->stop();
-            // timer->deleteLater();
+            return;
         }
+
+        SendLat::markSend(SendLat::Laser);
+        const qint64 count = SerialPort::send(data);
+        if (count >= data.size()) {
+            dataCount = static_cast<quint8>((dataCount + 1) % 3);
+        }
+        ++sendCount;
+        if (sendCount >= 10)
+            timer->stop();
     });
-
-    // 启动定时器（立即触发第一次发送，后续每20ms发送一次）
     timer->start();
- }
+}
 
-void SerialPortLaser::onReadyRead() {
+void SerialPortLaser::onReadyRead()
+{
+    if (!m_protocolEnabled) {
+        onReadyReadLegacy();
+        return;
+    }
+
+    const ProtocolDecodeBatch batch =
+            m_protocolDecoder.append(m_serialPort->readAll());
+    if (!batch.errors.isEmpty()) {
+        const ProtocolDecodeError &error = batch.errors.first();
+        emit protocolDiagnostic(
+                    QStringLiteral("激光协议帧%1: %2")
+                    .arg(error.frameName.isEmpty()
+                         ? QString()
+                         : QStringLiteral(" [") + error.frameName + QStringLiteral("]"),
+                         error.message));
+    }
+    for (const CanonicalSeekerFrame &frame : batch.frames)
+        handleDecodedFrame(frame);
+}
+
+void SerialPortLaser::handleDecodedFrame(const CanonicalSeekerFrame &frame)
+{
+    m_azimuth = frame.canonicalNumber(
+                QStringLiteral("measurement.losAzimuthDeg"));
+    m_pitch = frame.canonicalNumber(
+                QStringLiteral("measurement.losElevationDeg"));
+
+    emit canonicalFrameReceived(frame);
+    emit laserRawFrameReceived(frame.rawFrame);
+
+    // 1 秒模式只上报逐帧相对测量，绝对目标合成和预测由转台线程负责。
+    if (exindex == ExguideMode && exguidesetting == Exguide_1s) {
+        exGuideMeasurement sample;
+        sample.sourceId = 4;
+        sample.azimuth = m_azimuth;
+        sample.elevation = m_pitch;
+        sample.timestampMs = QDateTime::currentMSecsSinceEpoch();
+        emit exGuideMeasurementReady(sample);
+    }
+}
+
+void SerialPortLaser::onReadyReadLegacy() {
     // 仿照 BD 串口的处理：串口驱动一次 readyRead 到达的数据不一定是一整帧，
     // 先存入接收缓冲，找到帧头 0x55 0xAA 0xDC 后再按固定帧长切出完整一帧交给 parseData
     m_rxBuffer.append(m_serialPort->readAll());

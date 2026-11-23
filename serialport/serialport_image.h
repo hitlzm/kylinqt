@@ -9,6 +9,8 @@
 #include <QTimer>
 #include "kalman/AlphaBetaTracker.h"
 #include "exguide_timesync.h"
+#include "../protocol/canonical_seeker_frame.h"
+#include "../protocol/generic_protocol.h"
 
 //默认视频拉流地址：rtsp://192.168.1.100:554/stream
 
@@ -84,6 +86,7 @@ class ImageData : public QObject
     // recvTimeText 为北京时间“时:分:秒.毫秒微秒”（秒的小数部分6位，微秒精度）
     Q_PROPERTY(QDateTime recvDateTime READ recvDateTime NOTIFY recvDateTimeChanged)
     Q_PROPERTY(QString recvTimeText READ recvTimeText NOTIFY recvTimeTextChanged)
+    Q_PROPERTY(QString protocolProfileId READ protocolProfileId NOTIFY protocolProfileIdChanged)
 
 public:
     explicit ImageData(QObject *parent = nullptr);
@@ -144,6 +147,7 @@ public:
     bool timeScaleAccuracyValid() const;
     QDateTime recvDateTime() const;
     QString recvTimeText() const;
+    QString protocolProfileId() const { return m_protocolProfileId; }
 
 
     // ── 串口状态属性（主线程，QML 直接读取）──
@@ -159,6 +163,9 @@ public:
     Q_INVOKABLE void openPort(const QString &portName, int baudRate);
     Q_INVOKABLE void closePort();
     Q_INVOKABLE void scanPorts();
+    // 运行时切换接收/发送协议。自定义配置加载失败时仍保留当前配置。
+    Q_INVOKABLE void loadProtocolProfile(const QString &profileLocation);
+    Q_INVOKABLE void restoreDefaultProtocolProfile();
     // 启动一次“发送帧有效”检查：从下一帧 B 帧开始累计 20 帧，
     // 任一帧的 a_frame_valid_flag 为 0xAA 即判定本次发送有效。
     Q_INVOKABLE void beginAckCheck();
@@ -221,6 +228,7 @@ signals:
     void timeScaleAccuracyValidChanged();
     void recvDateTimeChanged();
     void recvTimeTextChanged();
+    void protocolProfileIdChanged();
 
     // ── 本帧解析完成（上面所有字段已按本帧更新）──
     // 供数据保存等消费者使用：收到本信号时读到的一定是这一帧的解析结果
@@ -233,11 +241,17 @@ signals:
 
     // ── 弹窗请求信号（工作线程 → QML 弹窗提示）──
     void popupMessage(const QString &msg);
+    // 协议切换已完成；success=false 时旧协议保持不变。
+    void protocolProfileLoadResult(bool success,
+                                   const QString &profileId,
+                                   const QString &errorMessage);
 
     // ── 请求信号（→ 排队到工作线程）──
     void requestOpenPort(const QString &portName, int baudRate);
     void requestClosePort();
     void requestScanPorts();
+    void requestLoadProtocolProfile(const QString &profileLocation);
+    void requestRestoreDefaultProtocolProfile();
     // void requestSendData(const QByteArray &data);
 
 public slots:
@@ -246,6 +260,10 @@ public slots:
     void setPortList(const QStringList &ports);
     void setError(const QString &msg);
     void updateFromFrame(const QByteArray &frame);
+    void updateFromCanonicalFrame(const CanonicalSeekerFrame &frame);
+    void applyProtocolProfileResult(bool success,
+                                    const QString &profileId,
+                                    const QString &errorMessage);
 
 private:
     inline float fromRawValue_a(qint16 raw)
@@ -338,6 +356,7 @@ private:
     bool m_timeScaleAccuracyValid = false;
     QDateTime m_recvDateTime;      // 返回时间(UTC)
     QString m_recvTimeText;        // 返回时间(北京时间，时:分:秒.毫秒微秒，微秒精度)
+    QString m_protocolProfileId;
 
     bool m_portOpen = false;
     QStringList m_availablePorts;
@@ -403,7 +422,7 @@ signals:
     void gateSizeChanged();
     void captureRefImgCmdChanged();
 
-    void requestSendData(image_send_frame frame);
+    void requestSendCommand(ProtocolCommandRequest request);
     void deviationPixelRelayed(int x, int y,int infraredFrameNum, int cbhTv4405, int templateIndex);
 
 public slots:
@@ -411,6 +430,10 @@ public slots:
     void buildDeviation(int num ,int x ,int y);
     
 private:
+    ProtocolCommandRequest makeControlRequest(bool deviationFrame,
+                                              int correctionFrameNum,
+                                              int correctedYawPixel,
+                                              int correctedPitchPixel) const;
     //把显示数据转化为串口原始数据
     inline qint16 toRawValue_a(float value) const
     {
@@ -512,6 +535,8 @@ signals:
     void portError(const QString &msg);
     void portsChanged(const QStringList &ports);
     void imageFrameReceived(const QByteArray &rawData);
+    void canonicalFrameReceived(const CanonicalSeekerFrame &frame);
+    void protocolDiagnostic(const QString &message);
     // 图像头串口已打开，但帧编号连续 2s 未变化：通信故障，通知 QML 弹窗
     void imageCommunicationFault(const QString &msg);
     // 外引导源串口未打开时，通知 QML 弹窗提示
@@ -528,11 +553,16 @@ signals:
     void reqExsend_20ms(double angle1 ,double angle2 );
 
     void reqSendDeviationPixel(int num ,int x , int y);
+    void protocolProfileLoadFinished(bool success,
+                                     const QString &profileId,
+                                     const QString &errorMessage);
 public slots:
     void onOpenPort(const QString &portName, int baudRate);
     void onClosePort();
     void onScanPorts();
-    void onSendData(image_send_frame frame);
+    void onSendCommand(ProtocolCommandRequest request);
+    void onLoadProtocolProfile(const QString &profileLocation);
+    void onRestoreDefaultProtocolProfile();
     void ExmodeChanged(int mode);
 
     
@@ -561,6 +591,17 @@ private:
     // 主线程（QML 侧）对象指针：只存引用，不拥有，析构时不能 delete
     ImageData *m_imageData = nullptr;
     ImageSendData *m_imageSendData = nullptr;
+    ProtocolProfile m_protocolProfile;
+    ConfigurableFrameDecoder m_protocolDecoder;
+    ProtocolCommandEncoder m_protocolEncoder;
+    bool m_protocolEnabled = false;
+    bool loadProtocolProfile();
+    QString defaultProtocolProfileLocation() const;
+    bool applyProtocolProfile(const QString &profileLocation,
+                              QString *profileId,
+                              QString *error);
+    void handleDecodedFrame(const CanonicalSeekerFrame &frame);
+    void onReadyReadLegacy();
     //图像导引头每20ms接收一次数据，1s共50组数据，预留200个位置
     // CircularBuffer<imageExGuideData> m_circularbuf;
     // Alpha-Beta 跟踪管理器：每20ms更新滤波，1s定时器外推预测角度
@@ -610,6 +651,7 @@ private:
     void checkImageFrameAlive();
 
     QByteArray m_rxBuffer;   // 串口接收缓冲：readyRead 到达的数据可能只是一帧的一部分，攒到完整帧头+固定帧长再切出交给 parseData
+    quint16 m_commandSequence = 0;
 };
 
 

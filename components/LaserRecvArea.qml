@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import taoQuick 1.0
+import TaoQuick 1.0
 import "./"
 
 Rectangle {
@@ -23,71 +23,28 @@ Rectangle {
     }
 
     function statusValue(index) {
-        if (index === 0) {
-            switch (laserData.dytStatus) {
-                case 0x00: return "待机"
-                case 0x01: return "自检中"
-                case 0x04: return "定轴搜索"
-                case 0x05: return "矩形搜索"
-                case 0x06: return "圆形搜索"
-                case 0x07: return "捕获"
-                case 0x08: return "稳定跟踪"
-                case 0x09: return "记忆跟踪"
-                case 0x0A: return "定轴搜索(位置)"
-                case 0x0B: return "矩形搜索(位置)"
-                case 0x0C: return "圆形搜索(位置)"
-                default: return "未知(0x" + laserData.dytStatus.toString(16) + ")"
-            }
-        }
-        // bits4：激光周期设定标志
-        if (index === 1)
-            return (laserData.detectorStatus & 0x10) ? "已设定" : "未设定"
-        // bits3~2：自检信息
-        if (index === 2) {
-            switch ((laserData.detectorStatus & 0x0C) >> 2) {
-                case 0x00: return "NA"
-                case 0x01: return "自检中"
-                case 0x02: return "自检正常"
-                case 0x03: return "自检故障"
-                default: return "NA"
-            }
-        }
-        // bits1~0：探测器状态
-        if (index === 3) {
-            switch (laserData.detectorStatus & 0x03) {
-                case 0x00: return "正常"
-                case 0x01: return "丢光"
-                case 0x02: return "不同步"
-                case 0x03: return "能量饱和"
-                default: return "未知"
-            }
-        }
-        if (index === 4) {
-            switch (laserData.faultInfo1) {
-                case 0x00: return "NA"
-                case 0x01: return "无故障"
-                case 0x02: return "有故障"
-                default: return "NA"
-            }
-        }
-        switch (laserData.faultInfo1) {
-            case 0x00: return "NA"
-            case 0x01: return "NA"
-            case 0x02: return "0x" + laserData.faultInfo2.toString(16).toUpperCase()
-            default: return "NA"
-        }
+        if (index === 0) return laserData.trackingStatusText
+        if (index === 1) return laserData.detectorPeriodConfigured ? "已设定" : "未设定"
+        if (index === 2) return laserData.detectorSelfTestText
+        if (index === 3) return laserData.detectorSignalText
+        if (index === 4) return laserData.faultStatusText
+        return laserData.faultCodeText
     }
 
     function statusValueColor(index) {
         // 探测器状态非正常（丢光/不同步/能量饱和）红色
-        if (index === 3) return (laserData.detectorStatus & 0x03) !== 0
+        if (index === 3) return laserData.detectorSignalState > 0
                 ? CusConfig.dataValueColorAbnormal : CusConfig.dataValueColor
         // 自检故障红色
-        if (index === 2) return (laserData.detectorStatus & 0x0C) === 0x0C
+        if (index === 2) return laserData.detectorSelfTestState === 3
                 ? CusConfig.dataValueColorAbnormal : CusConfig.dataValueColor
-        if (index === 4) return laserData.faultInfo1 === 1
-                ? CusConfig.dataValueColor : CusConfig.dataValueColorAbnormal
-        if (index === 5) return CusConfig.dataValueColorAbnormal
+        if (index === 4) {
+            if (laserData.faultStatusState === 2) return CusConfig.dataValueColorAbnormal
+            if (laserData.faultStatusState === 1) return CusConfig.dataValueColor
+            return CusConfig.dataValueColor
+        }
+        if (index === 5) return laserData.faultStatusState === 2
+                ? CusConfig.dataValueColorAbnormal : CusConfig.dataValueColor
         return CusConfig.dataValueColor
     }
 
@@ -99,15 +56,15 @@ Rectangle {
     }
 
     // 捕捉故障信息变化，出现故障时弹窗
-    property int faultStatus: laserData.faultInfo1
+    property int faultStatus: laserData.faultStatusState
     onFaultStatusChanged: {
         if (faultStatus === 0x02) {
             faultmsg.showToast("激光导引头故障", 1500)
         }
     }
 
-    // 探测器状态（第三部分 bits1~0）非正常时弹窗：1=丢光 2=不同步 3=能量饱和
-    property int detectorState: (laserData.detectorStatus & 0x03)
+    // 标准化探测器状态非正常时弹窗：1=丢光 2=不同步 3=能量饱和
+    property int detectorState: laserData.detectorSignalState
     property int detectorLossCount: 0
     onDetectorStateChanged: {
         if (detectorState === 0) return

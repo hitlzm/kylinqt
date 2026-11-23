@@ -5,6 +5,11 @@
 #include <QThread>
 #include <QTimer>
 #include <QTimeZone>
+#include <QCoreApplication>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QUrl>
 #include "../utils/sendlatencyprobe.h"
 // ─────────────────────────────────────────────
 // ImageData
@@ -48,6 +53,18 @@ static quint64 readUint64LE(const quint8 *src)
     return value;
 }
 
+static QString protocolProfileLocalPath(const QString &profileLocation)
+{
+    const QString trimmed = profileLocation.trimmed();
+    if (trimmed.isEmpty())
+        return QString();
+
+    const QUrl url = QUrl::fromUserInput(trimmed);
+    if (url.isLocalFile())
+        return QDir::cleanPath(url.toLocalFile());
+    return QDir::cleanPath(trimmed);
+}
+
 uint16_t SerialPortImage::crc16_table[256] = {0};
 
 ImageData::ImageData(QObject *parent)
@@ -59,6 +76,20 @@ ImageData::ImageData(QObject *parent)
 void ImageData::openPort(const QString &portName, int baudRate) { emit requestOpenPort(portName, baudRate); }
 void ImageData::closePort()                                     { emit requestClosePort(); }
 void ImageData::scanPorts()                                     { emit requestScanPorts(); }
+void ImageData::loadProtocolProfile(const QString &profileLocation)
+{
+    const QString path = protocolProfileLocalPath(profileLocation);
+    if (path.isEmpty()) {
+        applyProtocolProfileResult(false, QString(),
+                                   QStringLiteral("未选择协议 JSON 文件"));
+        return;
+    }
+    emit requestLoadProtocolProfile(path);
+}
+void ImageData::restoreDefaultProtocolProfile()
+{
+    emit requestRestoreDefaultProtocolProfile();
+}
 // void ImageData::sendData(const QByteArray &data)                { emit requestSendData(data); }
 
 // ── 工作线程回推 ──
@@ -84,6 +115,18 @@ void ImageData::setPortOpen(bool open)
 }
 void ImageData::setPortList(const QStringList &ports) { if (m_availablePorts != ports) { m_availablePorts = ports; emit availablePortsChanged(); } }
 void ImageData::setError(const QString &msg) { if (m_errorString != msg) { m_errorString = msg; emit errorStringChanged(); } }
+
+void ImageData::applyProtocolProfileResult(bool success,
+                                           const QString &profileId,
+                                           const QString &errorMessage)
+{
+    if (success && m_protocolProfileId != profileId) {
+        m_protocolProfileId = profileId;
+        emit protocolProfileIdChanged();
+    }
+    emit protocolProfileLoadResult(success, success ? profileId : QString(),
+                                   success ? QString() : errorMessage);
+}
 
 void ImageData::beginAckCheck()
 {
@@ -436,6 +479,158 @@ void ImageData::updateFromFrame(const QByteArray &frame)
     // 本帧各字段已全部更新，通知消费者（数据保存等）按同一份解析结果取用
     emit frameParsed();
 }
+
+void ImageData::updateFromCanonicalFrame(const CanonicalSeekerFrame &frame)
+{
+    // 过渡兼容：保留 ImageData 既有 QML 属性，但数据来自配置化标准模型，
+    // 不再依赖 image_recv_frame 的固定内存布局。
+    image_recv_frame legacy = {};
+    if (frame.rawFrame.size() >= 2) {
+        legacy.frame_header1 = static_cast<quint8>(frame.rawFrame.at(0));
+        legacy.frame_header2 = static_cast<quint8>(frame.rawFrame.at(1));
+    }
+    legacy.frame_length = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("frame.length")));
+    legacy.b_frame_sequence = static_cast<quint16>(
+                frame.canonicalInteger(QStringLiteral("frame.sequence")));
+    legacy.a_frame_sequence_reply = static_cast<quint16>(
+                frame.canonicalInteger(QStringLiteral("command.ackSequence")));
+    legacy.a_frame_valid_flag = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("command.ackValid")));
+    legacy.seeker_ctrl_reply = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("command.seekerReply")));
+    legacy.optical_param_reply = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("command.opticalReply")));
+    legacy.current_work_channel = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("status.workChannel")));
+
+    int selfCheck = 0;
+    static const char *selfCheckPaths[] = {
+        "status.selfCheck.overall",
+        "status.selfCheck.irVideo",
+        "status.selfCheck.tvVideo",
+        "status.selfCheck.externalComm",
+        "status.selfCheck.comm",
+        "status.selfCheck.servo"
+    };
+    for (int bit = 0; bit < 6; ++bit) {
+        if (frame.canonicalBoolean(QString::fromLatin1(selfCheckPaths[bit])))
+            selfCheck |= (1 << bit);
+    }
+    legacy.self_check_flag = static_cast<quint8>(selfCheck);
+    legacy.pitch_line_of_sight_ang_vel = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.losElevationRateDegPerSec"))
+                / 0.002));
+    legacy.yaw_line_of_sight_ang_vel = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.losAzimuthRateDegPerSec"))
+                / 0.002));
+    legacy.target_background_type = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.targetBackgroundRaw")));
+    legacy.optical_work_state = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.opticalWorkState")));
+    legacy.pitch_frame_angle = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.frameElevationDeg"))
+                / 0.002));
+    legacy.yaw_frame_angle = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.frameAzimuthDeg"))
+                / 0.002));
+    legacy.correction_cmd_status = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.correctionCommand")));
+    legacy.correction_cmd_count = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.correctionCount")));
+    legacy.pitch_gyro = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.gyroElevationOutputDegPerSec"))
+                / 0.01));
+    legacy.yaw_gyro = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.gyroAzimuthOutputDegPerSec"))
+                / 0.01));
+    legacy.tracking_state = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("tracking.stateCode")));
+    legacy.tracker_state = static_cast<quint8>(
+                frame.canonicalInteger(QStringLiteral("tracking.trackerCode")));
+
+    const qint64 deviceTimeMs = frame.canonicalInteger(
+                QStringLiteral("time.deviceUtcMs"));
+    for (int i = 0; i < 8; ++i) {
+        legacy.ms_time[i] = static_cast<quint8>(
+                    (static_cast<quint64>(deviceTimeMs) >> (8 * i)) & 0xFFu);
+    }
+    legacy.us_time = static_cast<quint16>(
+                frame.canonicalInteger(
+                    QStringLiteral("time.deviceSubMillisecondUs")));
+    legacy.azimuth_deviation_pixel = static_cast<qint16>(
+                frame.canonicalInteger(
+                    QStringLiteral("measurement.deviationAzimuthPx")));
+    legacy.pitch_deviation_pixel = static_cast<qint16>(
+                frame.canonicalInteger(
+                    QStringLiteral("measurement.deviationElevationPx")));
+    legacy.azimuth_gyro_output = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.azimuthGyroOutputDegPerSec"))
+                / 0.01));
+    legacy.pitch_gyro_output = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("measurement.elevationGyroOutputDegPerSec"))
+                / 0.01));
+    legacy.azimuth_master_cmd = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("control.azimuthMaster"))
+                / 0.01));
+    legacy.pitch_master_cmd = static_cast<qint16>(qRound(
+                frame.canonicalNumber(
+                    QStringLiteral("control.elevationMaster"))
+                / 0.01));
+    legacy.platform_self_check = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.platformSelfCheck")));
+    legacy.servo_running_time = static_cast<qint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.servoRunningTime")));
+    legacy.servo_step = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.servoStep")));
+    legacy.infrared_frame_num = static_cast<quint32>(
+                frame.canonicalInteger(
+                    QStringLiteral("video.infraredFrame")));
+    legacy.temperture = static_cast<qint16>(
+                frame.canonicalInteger(
+                    QStringLiteral("status.temperature")));
+    legacy.cbh_tv4405 = static_cast<quint32>(
+                frame.canonicalInteger(
+                    QStringLiteral("video.tvFrame")));
+    legacy.infrared_frame_rate = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("video.infraredFrameRateHz")));
+    legacy.tv_frame_rate = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("video.tvFrameRateHz")));
+    legacy.gate_size = static_cast<quint16>(
+                frame.canonicalInteger(
+                    QStringLiteral("tracking.gateSize")));
+    legacy.software_version1 = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("version.item1")));
+    legacy.software_version2 = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("version.item2")));
+    legacy.software_version3 = static_cast<quint8>(
+                frame.canonicalInteger(
+                    QStringLiteral("version.item3")));
+
+    updateFromFrame(QByteArray(reinterpret_cast<const char *>(&legacy),
+                               sizeof(legacy)));
+}
+
 int ImageData::getBitsFromQint8(qint8 value, int startBit, int endBit)
 {
     // 检查位索引范围（0~7）
@@ -476,168 +671,100 @@ void ImageSendData::sendTimeSyncFrame()
     m_timeSync = 0;                 //发完立即复位，避免后续人工发送的帧都带时间同步标志
 }
 
-void ImageSendData::buildFrame() 
+ProtocolCommandRequest ImageSendData::makeControlRequest(
+        bool deviationFrame,
+        int correctionFrameNum,
+        int correctedYawPixel,
+        int correctedPitchPixel) const
+{
+    ProtocolCommandRequest request;
+    request.specName = QStringLiteral("image.control");
+    QVariantMap &values = request.values;
+    values.insert(QStringLiteral("aFrameSequence"), m_aFrameSequence);
+    values.insert(QStringLiteral("seekerCtrlWord"),
+                  deviationFrame ? 0 : m_seekerCtrlWord);
+    values.insert(QStringLiteral("opticalParamCtrl"),
+                  deviationFrame ? 0 : m_opticalParamCtrl);
+    values.insert(QStringLiteral("templateIndex"), m_templateIndex);
+    values.insert(QStringLiteral("targetBackgroundType"),
+                  (m_targetBackgroundType4 << 5)
+                  | (m_targetBackgroundType3 << 4)
+                  | (m_targetBackgroundType2 << 3)
+                  | m_targetBackgroundType1);
+    values.insert(QStringLiteral("missileTargetDistance"),
+                  m_missileTargetDistance);
+    values.insert(QStringLiteral("missileSpeed"), m_missileSpeed);
+    values.insert(QStringLiteral("bodyPitchAngle"), m_bodyPitchAngle);
+    values.insert(QStringLiteral("bodyYawAngle"), m_bodyYawAngle);
+    values.insert(QStringLiteral("bodyRollAngle"), m_bodyRollAngle);
+    values.insert(QStringLiteral("bodyPitchRate"), m_bodyPitchRate);
+    values.insert(QStringLiteral("bodyYawRate"), m_bodyYawRate);
+    values.insert(QStringLiteral("bodyRollRate"), m_bodyRollRate);
+    values.insert(QStringLiteral("bodyVelX"), m_bodyVelX);
+    values.insert(QStringLiteral("bodyVelY"), m_bodyVelY);
+    values.insert(QStringLiteral("bodyVelZ"), m_bodyVelZ);
+    values.insert(QStringLiteral("bodyPosX"), m_bodyPosX);
+    values.insert(QStringLiteral("bodyPosY"), m_bodyPosY);
+    values.insert(QStringLiteral("bodyPosZ"), m_bodyPosZ);
+    values.insert(QStringLiteral("pitchGimbalPreset"), m_pitchGimbalPreset);
+    values.insert(QStringLiteral("yawGimbalPreset"), m_yawGimbalPreset);
+    values.insert(QStringLiteral("irIntegrationTime"), m_irIntegrationTime);
+    values.insert(QStringLiteral("trackingCorrectionCmd"),
+                  deviationFrame ? 1 : m_trackingCorrectionCmd);
+    const quint32 correctionFrame = static_cast<quint32>(
+                deviationFrame ? correctionFrameNum : m_correctionFrameNum);
+    values.insert(QStringLiteral("correctionFrameNumLow"),
+                  correctionFrame & 0xFF);
+    values.insert(QStringLiteral("correctionFrameNumMid"),
+                  (correctionFrame >> 8) & 0xFF);
+    values.insert(QStringLiteral("correctionFrameNumHigh"),
+                  (correctionFrame >> 16) & 0xFF);
+    values.insert(QStringLiteral("correctedPitchPos"),
+                  deviationFrame ? correctedPitchPixel : m_correctedPitchPos);
+    values.insert(QStringLiteral("correctedYawPos"),
+                  deviationFrame ? correctedYawPixel : m_correctedYawPos);
+    values.insert(QStringLiteral("searchPitchRate"), m_searchPitchRate);
+    values.insert(QStringLiteral("searchYawRate"), m_searchYawRate);
+    values.insert(QStringLiteral("gateSize"), m_gateSize);
+    values.insert(QStringLiteral("captureRefImgCmd"), m_captureRefImgCmd);
+    values.insert(QStringLiteral("timeSync"), m_timeSync ? 1 : 0);
+    if (m_timeSync)
+        values.insert(QStringLiteral("deviceTimeMs"),
+                      static_cast<qulonglong>(beijingNowUtcMs()));
+    values.insert(QStringLiteral("targetAltitude"), m_targetAltitude);
+    values.insert(QStringLiteral("aircraftPitch"), m_aircraftPitch);
+    values.insert(QStringLiteral("aircraftYaw"), m_aircraftYaw);
+    values.insert(QStringLiteral("aircraftRoll"), m_aircraftRoll);
+    values.insert(QStringLiteral("focalLength"), m_focalLength);
+    values.insert(QStringLiteral("podPitchAngle"), m_podPitchAngle);
+    values.insert(QStringLiteral("podYawAngle"), m_podYawAngle);
+    values.insert(QStringLiteral("satelliteMapScale"), m_satelliteMapScale);
+    values.insert(QStringLiteral("podType"), m_podType);
+    values.insert(QStringLiteral("targetLongitude"),
+                  static_cast<qint32>(m_targetLongitude));
+    values.insert(QStringLiteral("targetLatitude"),
+                  static_cast<qint32>(m_targetLatitude));
+    values.insert(QStringLiteral("aircraftLongitude"),
+                  static_cast<qint32>(m_aircraftLongitude));
+    values.insert(QStringLiteral("aircraftLatitude"),
+                  static_cast<qint32>(m_aircraftLatitude));
+    values.insert(QStringLiteral("aircraftAltitude"), m_aircraftAltitude);
+    values.insert(QStringLiteral("pixelSize"), m_pixelSize);
+    return request;
+}
+
+void ImageSendData::buildFrame()
 {
     // 发送延迟探针：只统计人工点击发送按钮。
-    // 时间同步帧由 10 分钟定时器触发（m_timeSync != 0），不是人工操作，不打点。
     if (!m_timeSync) SendLat::markClick(SendLat::Image);
-
-    image_send_frame frame = {};
-
-    frame.frame_header1 = 0x77;
-    frame.frame_header2 = 0xAA;
-    frame.frame_length = static_cast<quint8>(m_frameLength);
-    frame.a_frame_sequence = static_cast<quint16>(m_aFrameSequence);
-    frame.seeker_ctrl_word = static_cast<quint8>(m_seekerCtrlWord);
-    frame.optical_param_ctrl = static_cast<quint8>(m_opticalParamCtrl);
-    frame.template_index = static_cast<quint8>(m_templateIndex);
-    // frame.target_background_type = static_cast<quint8>(m_targetBackgroundType);
-    // 后面不发送信息可以置0
-    frame.target_background_type = static_cast<quint8>(
-        (m_targetBackgroundType4 << 5) | (m_targetBackgroundType3 << 4) |
-        (m_targetBackgroundType2 << 3) | m_targetBackgroundType1);
-    frame.missile_target_distance = static_cast<quint16>(m_missileTargetDistance);
-    frame.missile_speed = static_cast<quint16>(toRawValue_a(m_missileSpeed));
-    frame.body_pitch_angle = static_cast<qint16>(toRawValue_b(m_bodyPitchAngle));
-    frame.body_yaw_angle = static_cast<qint16>(toRawValue_b(m_bodyYawAngle));
-    frame.body_roll_angle = static_cast<qint16>(toRawValue_b(m_bodyRollAngle));
-    frame.body_pitch_rate = static_cast<qint16>(toRawValue_b(m_bodyPitchRate));
-    frame.body_yaw_rate = static_cast<qint16>(toRawValue_b(m_bodyYawRate));
-    frame.body_roll_rate = static_cast<qint16>(toRawValue_b(m_bodyRollRate));
-    frame.body_vel_x = static_cast<qint16>(toRawValue_a(m_bodyVelX));
-    frame.body_vel_y = static_cast<qint16>(toRawValue_a(m_bodyVelY));
-    frame.body_vel_z = static_cast<qint16>(toRawValue_a(m_bodyVelZ));
-    frame.body_pos_x = static_cast<qint16>(m_bodyPosX);
-    frame.body_pos_y = static_cast<qint16>(m_bodyPosY);
-    frame.body_pos_z = static_cast<qint16>(m_bodyPosZ);
-    frame.pitch_gimbal_preset = static_cast<qint16>(toRawValue_c(m_pitchGimbalPreset));
-    frame.yaw_gimbal_preset = static_cast<qint16>(toRawValue_c(m_yawGimbalPreset));
-    frame.ir_integration_time = static_cast<quint8>(toRawValue_a(m_irIntegrationTime));
-    memset(frame.reserved1, 0, sizeof(frame.reserved1));
-    frame.tracking_correction_cmd = static_cast<quint8>(m_trackingCorrectionCmd);
-    frame.correction_frame_num[0] = static_cast<quint8>(m_correctionFrameNum & 0xFF);
-    frame.correction_frame_num[1] = static_cast<quint8>((m_correctionFrameNum >> 8) & 0xFF);
-    frame.correction_frame_num[2] = static_cast<quint8>((m_correctionFrameNum >> 16) & 0xFF);
-    frame.corrected_pitch_pos = static_cast<quint16>(m_correctedPitchPos);
-    frame.corrected_yaw_pos = static_cast<quint16>(m_correctedYawPos);
-    frame.search_pitch_rate = static_cast<qint16>(toRawValue_b(m_searchPitchRate));
-    frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
-    frame.reserved2 = 0;    //可以不改这个是为了测指标用。改成了红外待机指令，模拟红外故障
-    frame.gate_size = static_cast<quint8>(m_gateSize);
-    // frame.osd_switch = static_cast<quint8>(m_osdSwitch);
-    frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
-    //加时间同步信号与具体时间：
-    //字节61：时间同步信号，只发送一拍即可；字节62-69：北京时间换算成 UTC 的毫秒时间戳(8字节小端)
-    frame.timeSync_sig = static_cast<qint8>(m_timeSync);
-    //加入判断：如果时间同步信号为真，则进行Unix毫秒计算并填入，否则该位填0
-    if(m_timeSync)
-    {
-        writeUint64LE(frame.time, beijingNowUtcMs());
-    }else{
-        memset(frame.time, 0, sizeof(frame.time));
-    }
-    
-    memset(frame.reserved3, 0, sizeof(frame.reserved3));
-    frame.target_altitude = static_cast<qint16>(m_targetAltitude);
-    frame.aircraft_pitch = static_cast<qint16>(toRawValue_b(m_aircraftPitch));
-    frame.aircraft_yaw = static_cast<qint16>(toRawValue_b(m_aircraftYaw));
-    frame.aircraft_roll = static_cast<qint16>(toRawValue_b(m_aircraftRoll));
-    frame.focal_length = static_cast<quint16>(m_focalLength);
-    frame.pod_pitch_angle = static_cast<qint16>(toRawValue_b(m_podPitchAngle));
-    //预留位置
-    frame.pod_yaw_angle = static_cast<qint16>(toRawValue_b(m_podYawAngle));
-    memset(frame.reserved4, 0, sizeof(frame.reserved4));
-    frame.satellite_map_scale = static_cast<quint8>(toRawValue_a(m_satelliteMapScale));
-    frame.pod_type = static_cast<quint8>(m_podType);
-    frame.target_longitude = static_cast<qint32>(m_targetLongitude);
-    frame.target_latitude = static_cast<qint32>(m_targetLatitude);
-    frame.aircraft_longitude = static_cast<qint32>(m_aircraftLongitude);
-    frame.aircraft_latitude = static_cast<qint32>(m_aircraftLatitude);
-    frame.aircraft_altitude = static_cast<qint16>(m_aircraftAltitude);
-    frame.pixel_size = static_cast<quint8>(m_pixelSize);
-    // uint16_t crc = SerialPortImage::crc16_ccitt_fast(
-    //     reinterpret_cast<const uint8_t*>(&frame), sizeof(frame) - sizeof(uint16_t));
-    // frame.crc16 = crc;
-    //将校验位计算移到工作线程
-    emit requestSendData(frame);
-    //将导引头控制字恢复零值
+    emit requestSendCommand(makeControlRequest(false, 0, 0, 0));
     m_seekerCtrlWord = 0;
     emit seekerCtrlWordChanged();
 }
 
-void ImageSendData::buildDeviation(int num ,int x ,int y)
+void ImageSendData::buildDeviation(int num, int x, int y)
 {
-    image_send_frame frame = {};
-
-    frame.frame_header1 = 0x77;
-    frame.frame_header2 = 0xAA;
-    frame.frame_length = static_cast<quint8>(m_frameLength);
-    frame.a_frame_sequence = static_cast<quint16>(m_aFrameSequence);
-    frame.seeker_ctrl_word = static_cast<quint8>(m_seekerCtrlWord);
-    frame.optical_param_ctrl = static_cast<quint8>(m_opticalParamCtrl);
-    frame.template_index = static_cast<quint8>(m_templateIndex);
-    // frame.target_background_type = static_cast<quint8>(m_targetBackgroundType);
-    // 后面不发送信息可以置0
-    frame.target_background_type = static_cast<quint8>(
-        (m_targetBackgroundType4 << 5) | (m_targetBackgroundType3 << 4) |
-        (m_targetBackgroundType2 << 3) | m_targetBackgroundType1);
-    frame.missile_target_distance = static_cast<quint16>(m_missileTargetDistance);
-    frame.missile_speed = static_cast<quint16>(toRawValue_a(m_missileSpeed));
-    frame.body_pitch_angle = static_cast<qint16>(toRawValue_b(m_bodyPitchAngle));
-    frame.body_yaw_angle = static_cast<qint16>(toRawValue_b(m_bodyYawAngle));
-    frame.body_roll_angle = static_cast<qint16>(toRawValue_b(m_bodyRollAngle));
-    frame.body_pitch_rate = static_cast<qint16>(toRawValue_b(m_bodyPitchRate));
-    frame.body_yaw_rate = static_cast<qint16>(toRawValue_b(m_bodyYawRate));
-    frame.body_roll_rate = static_cast<qint16>(toRawValue_b(m_bodyRollRate));
-    frame.body_vel_x = static_cast<qint16>(toRawValue_a(m_bodyVelX));
-    frame.body_vel_y = static_cast<qint16>(toRawValue_a(m_bodyVelY));
-    frame.body_vel_z = static_cast<qint16>(toRawValue_a(m_bodyVelZ));
-    frame.body_pos_x = static_cast<qint16>(m_bodyPosX);
-    frame.body_pos_y = static_cast<qint16>(m_bodyPosY);
-    frame.body_pos_z = static_cast<qint16>(m_bodyPosZ);
-    frame.pitch_gimbal_preset = static_cast<qint16>(toRawValue_c(m_pitchGimbalPreset));
-    frame.yaw_gimbal_preset = static_cast<qint16>(toRawValue_c(m_yawGimbalPreset));
-    frame.ir_integration_time = static_cast<quint8>(toRawValue_a(m_irIntegrationTime));
-    memset(frame.reserved1, 0, sizeof(frame.reserved1));
-    frame.tracking_correction_cmd = 1;  //修正帧序号置1 ,只发送一拍
-    frame.correction_frame_num[0] = static_cast<quint8>(num & 0xFF);
-    frame.correction_frame_num[1] = static_cast<quint8>((num >> 8) & 0xFF);
-    frame.correction_frame_num[2] = static_cast<quint8>((num >> 16) & 0xFF);
-    frame.corrected_pitch_pos = static_cast<quint16>(y);
-    frame.corrected_yaw_pos = static_cast<quint16>(x); 
-    frame.search_pitch_rate = static_cast<qint16>(toRawValue_b(m_searchPitchRate));
-    frame.search_yaw_rate = static_cast<qint16>(toRawValue_b(m_searchYawRate));
-    frame.reserved2 = 0;
-    frame.gate_size = static_cast<quint8>(m_gateSize);
-    // frame.osd_switch = static_cast<quint8>(m_osdSwitch);
-    frame.capture_ref_img_cmd = static_cast<quint8>(m_captureRefImgCmd);
-    //偏差像素帧与普通发送帧结构一致，同样填入时间同步信号与 UTC 毫秒时间戳
-    frame.timeSync_sig = static_cast<qint8>(m_timeSync);
-    if(m_timeSync)
-    {
-        writeUint64LE(frame.time, beijingNowUtcMs());
-    }else{
-        memset(frame.time, 0, sizeof(frame.time));
-    }
-    memset(frame.reserved3, 0, sizeof(frame.reserved3));
-    frame.target_altitude = static_cast<qint16>(m_targetAltitude);
-    frame.aircraft_pitch = static_cast<qint16>(toRawValue_b(m_aircraftPitch));
-    frame.aircraft_yaw = static_cast<qint16>(toRawValue_b(m_aircraftYaw));
-    frame.aircraft_roll = static_cast<qint16>(toRawValue_b(m_aircraftRoll));
-    frame.focal_length = static_cast<quint16>(m_focalLength);
-    frame.pod_pitch_angle = static_cast<qint16>(toRawValue_b(m_podPitchAngle));
-    //预留位置
-    frame.pod_yaw_angle = static_cast<qint16>(toRawValue_b(m_podYawAngle));
-    memset(frame.reserved4, 0, sizeof(frame.reserved4));
-    frame.satellite_map_scale = static_cast<quint8>(toRawValue_a(m_satelliteMapScale));
-    frame.pod_type = static_cast<quint8>(m_podType);
-    frame.target_longitude = static_cast<qint32>(m_targetLongitude);
-    frame.target_latitude = static_cast<qint32>(m_targetLatitude);
-    frame.aircraft_longitude = static_cast<qint32>(m_aircraftLongitude);
-    frame.aircraft_latitude = static_cast<qint32>(m_aircraftLatitude);
-    frame.aircraft_altitude = static_cast<qint16>(m_aircraftAltitude);
-    frame.pixel_size = static_cast<quint8>(m_pixelSize);
-    emit requestSendData(frame);
+    emit requestSendCommand(makeControlRequest(true, num, x, y));
 }
 
 
@@ -652,11 +779,91 @@ SerialPortImage::SerialPortImage(QObject *parent)
     //, m_circularbuf(200)
 {
     init_crc16_table();
+    loadProtocolProfile();
     m_frameWatchTimer = new QTimer(this);
     m_frameWatchTimer->setInterval(Image_FramePollMs);
     m_frameWatchTimer->setTimerType(Qt::CoarseTimer);
     connect(m_frameWatchTimer, &QTimer::timeout,
             this, &SerialPortImage::checkImageFrameAlive);
+}
+
+bool SerialPortImage::loadProtocolProfile()
+{
+    const QString profilePath = defaultProtocolProfileLocation();
+    QString profileId;
+    QString error;
+    if (!applyProtocolProfile(profilePath, &profileId, &error)) {
+        m_protocolEnabled = false;
+        emit protocolDiagnostic(
+                    QStringLiteral("配置化图像协议未启用，回退到内置解析器: ") + error);
+        qWarning() << "[protocol-image]" << error;
+        return false;
+    }
+    qInfo() << "[protocol-image] loaded" << profileId << "from" << profilePath;
+    return true;
+}
+
+QString SerialPortImage::defaultProtocolProfileLocation() const
+{
+    QString profilePath =
+            QString::fromLocal8Bit(qgetenv("KYLIN_IMAGE_PROTOCOL_PROFILE")).trimmed();
+    if (profilePath.isEmpty()) {
+        const QString deployedProfile = QCoreApplication::applicationDirPath()
+                + QStringLiteral("/protocols/legacy_image_v1.json");
+        profilePath = QFileInfo::exists(deployedProfile)
+                ? deployedProfile
+                : QStringLiteral(":/protocols/legacy_image_v1.json");
+    }
+    return profilePath;
+}
+
+bool SerialPortImage::applyProtocolProfile(const QString &profileLocation,
+                                           QString *profileId,
+                                           QString *error)
+{
+    ProtocolProfile candidate;
+    QString loadError;
+    if (!ProtocolProfile::loadFromFile(
+                protocolProfileLocalPath(profileLocation), &candidate, &loadError)) {
+        if (error)
+            *error = loadError;
+        return false;
+    }
+
+    if (timer)
+        timer->stop();
+    m_protocolProfile = candidate;
+    m_protocolDecoder.setProfile(m_protocolProfile);
+    m_protocolEncoder.setProfile(m_protocolProfile);
+    m_protocolEnabled = true;
+    m_rxBuffer.clear();
+    if (profileId)
+        *profileId = m_protocolProfile.id;
+    if (error)
+        error->clear();
+    return true;
+}
+
+void SerialPortImage::onLoadProtocolProfile(const QString &profileLocation)
+{
+    QString profileId;
+    QString error;
+    const bool success =
+            applyProtocolProfile(profileLocation, &profileId, &error);
+    if (success) {
+        emit protocolDiagnostic(
+                    QStringLiteral("图像协议已切换为 %1").arg(profileId));
+    } else {
+        emit protocolDiagnostic(
+                    QStringLiteral("图像协议 JSON 加载失败，保留原协议: ") + error);
+    }
+    emit protocolProfileLoadFinished(success, success ? profileId : QString(),
+                                     success ? QString() : error);
+}
+
+void SerialPortImage::onRestoreDefaultProtocolProfile()
+{
+    onLoadProtocolProfile(defaultProtocolProfileLocation());
 }
 
 SerialPortImage::~SerialPortImage() {
@@ -703,81 +910,103 @@ void SerialPortImage::onClosePort()  {
     }
 }
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
-void SerialPortImage::onSendData(image_send_frame frame) { 
-    //串口未打开时不发：10分钟周期时间同步会一直触发，避免每拍都打印一次写失败告警
-    if (!isOpen()) {
-        // 本次请求没有发出去，弹出配对令牌，避免后续样本错配到这次点击上
+void SerialPortImage::onSendCommand(ProtocolCommandRequest request)
+{
+    if (!isOpen() || !m_protocolEnabled || !timer) {
         SendLat::discardClick(SendLat::Image);
+        if (!m_protocolEnabled)
+            emit protocolDiagnostic(QStringLiteral("配置化图像协议未启用，命令未发送"));
         return;
     }
-    //校验位在定时器每拍发送前统一计算，这里无需预计算
-    auto data= QByteArray(reinterpret_cast<const char*>(&frame), sizeof(frame));
 
-    //引入定时器，每20ms发送一次
-    int sendCount = 0;
-    static quint16 num=0;
-    
-    timer->setInterval(20); // 20ms
-    // 先断开旧连接，避免重复绑定导致 lambda 被多次触发
+    QByteArray initialFrame;
+    QString encodeError;
+    if (!m_protocolEncoder.encode(request, &initialFrame, &encodeError)) {
+        SendLat::discardClick(SendLat::Image);
+        emit protocolDiagnostic(QStringLiteral("图像命令编码失败: ") + encodeError);
+        return;
+    }
+
     disconnect(timer, &QTimer::timeout, this, nullptr);
-    // 连接定时器的超时信号
-    connect(timer, &QTimer::timeout, this, [=]() mutable {
-        // 流水号：先写当前值（从 0 开始），发送成功后再递增
-        data[3] = static_cast<char>(num & 0xFF);        // 低字节
-        data[4] = static_cast<char>((num >> 8) & 0xFF); // 高字节
-
-        //发一拍处理
-        if(sendCount >= 1){
-            data[46]=0x00; //跟踪修正指令
-            data[61]=0x00; //时间同步指令
+    int sendCount = 0;
+    timer->setInterval(20);
+    connect(timer, &QTimer::timeout, this,
+            [this, request, sendCount]() mutable {
+        QVariantMap values = request.values;
+        values.insert(QStringLiteral("aFrameSequence"), m_commandSequence);
+        if (sendCount >= 1) {
+            values.insert(QStringLiteral("trackingCorrectionCmd"), 0);
+            values.insert(QStringLiteral("timeSync"), 0);
         }
-        // 时间只在时间同步信号为1的时候发送一次即可
-        //writeUint64LE(reinterpret_cast<quint8*>(data.data()) + 62, beijingNowUtcMs());
-        //加入发三拍处理
-        if(sendCount >= 3){
-            data[5]=0x00;    //导引头控制字
-            data[6]=0x00;    //光学参数装订控制字
-            data[60]=0x00;   //拍摄参考图
+        if (sendCount >= 3) {
+            values.insert(QStringLiteral("seekerCtrlWord"), 0);
+            values.insert(QStringLiteral("opticalParamCtrl"), 0);
+            values.insert(QStringLiteral("captureRefImgCmd"), 0);
         }
 
-        //控制导引头调节机构运动和波门调整在最后几帧要发0,否则导引头会认为还要继续运动。也可以改成松开按钮后置零并发送几拍0
-        // if(sendCount >= 7)
-        // {
-        //     data[54]=0x00;    
-        //     data[55]=0x00;    
-        //     data[56]=0x00;    
-        //     data[57]=0x00;  
-        //     data[59]=0x00;    
-        // }
-
-        //更新数据后重新计算并填入校验位
-        uint16_t crc = crc16_ccitt_fast(reinterpret_cast<const uint8_t*>(data.constData()), data.size() - sizeof(uint16_t));
-        data[222] = static_cast<char>(crc & 0xFF);        // 低字节
-        data[223] = static_cast<char>((crc >> 8) & 0xFF); // 高字节
-
-        // qDebug() << "SerialPortImage::onSendData:" << data.toHex();
-        // 发送延迟探针打点：本次请求的第一次 write（补发拍由探针内部忽略）。
-        // 注意上面那行 qDebug 的开销会被计入延迟，要拿干净数字请关掉逐帧打印。
-        SendLat::markSend(SendLat::Image);
-        // 发送数据
-        qint64 count=SerialPort::send(data);
-        //发送成功才递增流水号（失败则下帧重发同一流水号）
-        if(count >= 224){
-            num += 1;
-        }
-        sendCount++;
-
-        // 发送10次后停止并销毁定时器
-        if (sendCount >= 10) {
+        ProtocolCommandRequest tickRequest = request;
+        tickRequest.values = values;
+        QByteArray data;
+        QString error;
+        if (!m_protocolEncoder.encode(tickRequest, &data, &error)) {
+            emit protocolDiagnostic(
+                        QStringLiteral("图像命令编码失败: ") + error);
             timer->stop();
-            // timer->deleteLater();
+            return;
         }
-    });
 
-    // 启动定时器（等20ms后才发送一次）
+        SendLat::markSend(SendLat::Image);
+        const qint64 count = SerialPort::send(data);
+        if (count >= data.size())
+            ++m_commandSequence;
+        ++sendCount;
+        if (sendCount >= 10)
+            timer->stop();
+    });
     timer->start();
 }
 void SerialPortImage::onReadyRead()
+{
+    if (!m_protocolEnabled) {
+        onReadyReadLegacy();
+        return;
+    }
+
+    const ProtocolDecodeBatch batch =
+            m_protocolDecoder.append(m_serialPort->readAll());
+    if (!batch.errors.isEmpty()) {
+        const ProtocolDecodeError &error = batch.errors.first();
+        emit protocolDiagnostic(
+                    QStringLiteral("图像协议帧%1: %2")
+                    .arg(error.frameName.isEmpty()
+                         ? QString()
+                         : QStringLiteral(" [") + error.frameName + QStringLiteral("]"),
+                         error.message));
+    }
+    for (const CanonicalSeekerFrame &frame : batch.frames)
+        handleDecodedFrame(frame);
+}
+
+void SerialPortImage::handleDecodedFrame(const CanonicalSeekerFrame &frame)
+{
+    m_azimuth = frame.canonicalNumber(
+                QStringLiteral("measurement.frameAzimuthDeg"));
+    m_pitch = frame.canonicalNumber(
+                QStringLiteral("measurement.frameElevationDeg"));
+
+    emit canonicalFrameReceived(frame);
+
+    if (exindex == ExguideMode && exguidesetting == Exguide_1s) {
+        exGuideMeasurement sample;
+        sample.sourceId = 3;
+        sample.azimuth = m_azimuth;
+        sample.elevation = m_pitch;
+        sample.timestampMs = QDateTime::currentMSecsSinceEpoch();
+        emit exGuideMeasurementReady(sample);
+    }
+}
+
+void SerialPortImage::onReadyReadLegacy()
 {
     // 仿照 laser 串口的处理：串口驱动一次 readyRead 到达的数据不一定是一整帧，
     // 先存入接收缓冲，找到帧头 0x77 0xAB 后再按固定帧长切出完整一帧交给 parseData
