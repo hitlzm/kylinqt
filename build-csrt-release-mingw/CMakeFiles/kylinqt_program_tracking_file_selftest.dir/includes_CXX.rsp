@@ -1,0 +1,1 @@
+-I"E:/QTproject/kylinqt/build-csrt-release-mingw" -IE:/QTproject/kylinqt -I"E:/QTproject/kylinqt/build-csrt-release-mingw/kylinqt_program_tracking_file_selftest_autogen/include" -isystem E:/QT5.12.8/5.12.8/mingw73_64/include -isystem E:/QT5.12.8/5.12.8/mingw73_64/include/QtCore -isystem "E:/QT5.12.8/5.12.8/mingw73_64/./mkspecs/win32-g++"
