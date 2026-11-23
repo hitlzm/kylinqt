@@ -25,6 +25,15 @@ Rectangle {
     property bool axisAlarmShowing: false
     property int lastValidCmdHint: -1
     property string runCommandText: "未知"
+    property int waveGateSize: 30
+    readonly property int waveGateMinSize: 30
+    readonly property int waveGateMaxSize: 150
+
+    function adjustWaveGate(delta) {
+        waveGateSize = Math.max(waveGateMinSize,
+                                Math.min(waveGateMaxSize,
+                                         waveGateSize + delta))
+    }
 
     Connections {
         target: axisAlarmMsg
@@ -914,13 +923,69 @@ Rectangle {
                     onMoved: ccdData.setNoiseReductionLevel(Math.round(value))
                 }
                 Text {
-                    text: Math.round(noiseSlider.value)
+                    text: "波门："
                     font.pixelSize: 14
                     font.bold: true
-                    color: "#1a73e8"
-                    width: 24
-                    horizontalAlignment: Text.AlignRight
+                    horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
+                }
+                CusButton_White {
+                    id: waveGatePlusButton
+                    width: 28
+                    height: 28
+                    Layout.minimumWidth: 28
+                    Layout.preferredWidth: 28
+                    Layout.maximumWidth: 28
+                    Layout.minimumHeight: 28
+                    Layout.preferredHeight: 28
+                    Layout.maximumHeight: 28
+                    enabled: root.waveGateSize < root.waveGateMaxSize
+                    contentItem: Image {
+                        source: "qrc:/components/plus.png"
+                        width: 22
+                        height: 22
+                        sourceSize.width: 22
+                        sourceSize.height: 22
+                        fillMode: Image.PreserveAspectFit
+                        anchors.centerIn: parent
+                        opacity: waveGatePlusButton.pressed ? 0.65 : 1.0
+                    }
+                    onPressed: root.adjustWaveGate(1)
+                }
+                CusButton_White {
+                    id: waveGateMinusButton
+                    width: 28
+                    height: 28
+                    Layout.minimumWidth: 28
+                    Layout.preferredWidth: 28
+                    Layout.maximumWidth: 28
+                    Layout.minimumHeight: 28
+                    Layout.preferredHeight: 28
+                    Layout.maximumHeight: 28
+                    enabled: root.waveGateSize > root.waveGateMinSize
+                    contentItem: Image {
+                        source: "qrc:/components/minus.png"
+                        width: 22
+                        height: 22
+                        sourceSize.width: 22
+                        sourceSize.height: 22
+                        fillMode: Image.PreserveAspectFit
+                        anchors.centerIn: parent
+                        opacity: waveGateMinusButton.pressed ? 0.65 : 1.0
+                    }
+                    onPressed: root.adjustWaveGate(-1)
+                }
+                Timer {
+                    interval: 80
+                    repeat: true
+                    running: waveGatePlusButton.pressed
+                             || waveGateMinusButton.pressed
+                    onTriggered: {
+                        if (waveGatePlusButton.pressed)
+                            root.adjustWaveGate(1)
+                        else if (waveGateMinusButton.pressed)
+                            root.adjustWaveGate(-1)
+                    }
                 }
             }
 

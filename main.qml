@@ -137,6 +137,7 @@ ApplicationWindow {
                         // --- 第一个页面 ---
                         Item {
                             ImageArea {
+                                id: imageArea
                                 anchors.fill: parent
                             }
                         }
@@ -155,6 +156,7 @@ ApplicationWindow {
                 anchors.top:parent.top
                 anchors.left:dyt.right
                 anchors.leftMargin: 5
+                ccdTargetBoxSize: Math.round(imageArea.waveGateSize)
                 onGuideMagnifierToggleRequested: {
                     guideMagnifierOverlay.visible = !guideMagnifierOverlay.visible
                 }
@@ -192,6 +194,11 @@ ApplicationWindow {
                 id: ccdMagnifierOverlay
                 titleText: "视频2放大"
                 frameSource: myvideo.ccdVideoPlayerItem
+                targetBoxVisible: myvideo.ccdTargetBoxShown
+                targetBoxFrameX: myvideo.ccdTargetBoxFrameX
+                targetBoxFrameY: myvideo.ccdTargetBoxFrameY
+                targetBoxFrameWidth: myvideo.ccdTargetBoxWidth
+                targetBoxFrameHeight: myvideo.ccdTargetBoxHeight
                 x: parent ? Math.max(16, parent.width - width - 16) : 16
                 y: parent ? Math.max(56, (parent.height - height) / 2 + 24) : 56
                 onVisibleChanged: myvideo.ccdMagnifierVisible = visible

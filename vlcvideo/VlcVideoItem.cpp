@@ -23,9 +23,6 @@
 
 static const QLatin1String kCcdRotationUrl(
         "rtsp://admin:abcd1234@192.168.1.68:554/Streaming/Channels/101");
-// 临时测试源：与正式 CCD 使用相同的显示旋转和裁剪。
-static const QLatin1String kTemporaryCcdRotationUrl(
-        "rtsp://localhost:8554/live");
 static constexpr qreal kCcdDisplayRotationDegrees = -22.5;
 
 // ══════════════════════════════════════════════════════════════════
@@ -961,8 +958,7 @@ void VlcVideoItem::refreshDisplayRotation()
     const qreal nextDegrees =
             m_ccdSource.load()
             && m_ccdDisplayRotationEnabled
-            && (m_source == kCcdRotationUrl
-                || m_source == kTemporaryCcdRotationUrl)
+            && m_source == kCcdRotationUrl
             ? kCcdDisplayRotationDegrees
             : 0.0;
 
@@ -1623,5 +1619,6 @@ void VlcVideoItem::requestPixelAt(int x, int y)
     const int frameYpx = qBound(0, qRound((y - oy) / displayH * videoH), int(videoH) - 1);
     qDebug() << "[MpvVideo] pixelRead at (" << x << "," << y << ") → frame("
              << frameXpx << "," << frameYpx << ")";
+    emit frameClicked(frameXpx, frameYpx);
     emit reqDeviationToImg(frameXpx, frameYpx);
 }

@@ -10,6 +10,21 @@ Item {
     property string titleText: "放大"
     property bool overlayActive: false
     property real sizeScale: 1.0
+    property bool targetBoxVisible: false
+    property real targetBoxFrameX: 0
+    property real targetBoxFrameY: 0
+    property real targetBoxFrameWidth: 30
+    property real targetBoxFrameHeight: 30
+
+    readonly property real frameDisplayScale:
+        frameSource && frameSource.frameWidth > 0 && frameSource.frameHeight > 0
+        ? Math.min(width / frameSource.frameWidth,
+                   height / frameSource.frameHeight)
+        : 0
+    readonly property real frameDisplayWidth:
+        frameSource ? frameSource.frameWidth * frameDisplayScale : 0
+    readonly property real frameDisplayHeight:
+        frameSource ? frameSource.frameHeight * frameDisplayScale : 0
 
     width: parent ? Math.max(320, parent.width * 0.40 * sizeScale) : 800
     height: parent ? Math.max(240, parent.height * 0.40 * sizeScale) : 500
@@ -63,6 +78,24 @@ Item {
         anchors.fill: parent
         source: overlay.frameSource
         zoomFactor: 1.0
+    }
+
+    // 主视频面板中的目标框属于 QML 叠加层，不会进入共享纹理，因此放大窗
+    // 需要按同一帧坐标和显示比例重新绘制。
+    Rectangle {
+        visible: overlay.targetBoxVisible
+        width: overlay.targetBoxFrameWidth * overlay.frameDisplayScale
+        height: overlay.targetBoxFrameHeight * overlay.frameDisplayScale
+        x: (overlay.width - overlay.frameDisplayWidth) / 2
+           + (overlay.targetBoxFrameX - overlay.targetBoxFrameWidth / 2)
+             * overlay.frameDisplayScale
+        y: (overlay.height - overlay.frameDisplayHeight) / 2
+           + (overlay.targetBoxFrameY - overlay.targetBoxFrameHeight / 2)
+             * overlay.frameDisplayScale
+        color: "transparent"
+        border.color: "#00FF00"
+        border.width: 2
+        antialiasing: true
     }
 
     // 标题只用于区分视频来源，整个画面区域均可按住拖动。

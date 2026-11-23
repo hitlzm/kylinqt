@@ -162,6 +162,8 @@ signals:
     // ── 像素读取结果信号 ──────────────────────────────────
     /// 点击到视频画面内时发出，携带帧坐标，请求图像导引头发送偏差像素
     void reqDeviationToImg(int frameX, int frameY);
+    /// 点击到视频有效画面内时发出，供 QML 在画面上绘制目标框
+    void frameClicked(int frameX, int frameY);
     void errorReadingPixel(QString message);
 
 private slots:
