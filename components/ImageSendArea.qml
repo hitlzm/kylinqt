@@ -37,7 +37,6 @@ Rectangle {
             protocolProfileLoading = false
             if (root.pendingProfileAction === "custom") {
                 if (success) {
-                    root.customProtocolActive = true
                     root.seekerDeviceIndex = root.seekerDeviceList.length - 1
                     seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
                     testmsg.showToast("已加载图像协议：" + profileId, 1800)
@@ -47,7 +46,6 @@ Rectangle {
                 }
             } else if (root.pendingProfileAction === "default") {
                 if (success) {
-                    root.customProtocolActive = false
                     root.seekerDeviceIndex = root.pendingDeviceIndex
                     seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
                 } else {
@@ -96,7 +94,6 @@ Rectangle {
         "电视",
         "其他"
     ]
-    property bool customProtocolActive: false
     property bool protocolProfileLoading: false
     property string pendingProfileAction: ""
     property int pendingDeviceIndex: -1
@@ -237,16 +234,14 @@ Rectangle {
                         // “其他”只有 JSON 加载成功后才成为新的有效配置。
                         seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
                         protocolProfileDialog.openForDevice("图像导引头")
-                    } else if (index === root.seekerDeviceIndex) {
-                        seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
-                    } else if (root.customProtocolActive) {
+                    } else {
+                        // 任一预置设备都使用启动默认协议，必须无条件恢复，
+                        // 不能依赖界面缓存判断“其他”协议是否正在生效。
                         root.pendingProfileAction = "default"
                         root.pendingDeviceIndex = index
                         root.protocolProfileLoading = true
                         seekerDeviceComboBox.mycurrentIndex = root.seekerDeviceIndex
                         imageData.restoreDefaultProtocolProfile()
-                    } else {
-                        root.seekerDeviceIndex = index
                     }
                 }
             }

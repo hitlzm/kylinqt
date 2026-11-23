@@ -160,7 +160,7 @@
           "type": "int16",
           "scale": 0.002,
           "unit": "deg/s",
-          "canonical": "measurement.losElevationRateDegPerSec",
+          "canonical": "measurement.frameElevationDeg",
           "_comment": "俯仰视线角速度；×0.002度/秒。"
         },
         {
@@ -192,7 +192,7 @@
           "type": "int16",
           "scale": 0.002,
           "unit": "deg",
-          "canonical": "measurement.frameElevationDeg",
+          "canonical": "measurement.losElevationRateDegPerSec",
           "_comment": "俯仰框架角；×0.002度。"
         },
         {

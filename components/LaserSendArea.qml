@@ -34,7 +34,6 @@ Rectangle {
             protocolProfileLoading = false
             if (root.pendingProfileAction === "custom") {
                 if (success) {
-                    root.customProtocolActive = true
                     root.laserDeviceIndex = root.laserDeviceList.length - 1
                     laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
                     toastmsg.showToast("已加载激光协议：" + profileId, 1800)
@@ -44,7 +43,6 @@ Rectangle {
                 }
             } else if (root.pendingProfileAction === "default") {
                 if (success) {
-                    root.customProtocolActive = false
                     root.laserDeviceIndex = root.pendingDeviceIndex
                     laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
                 } else {
@@ -107,7 +105,6 @@ Rectangle {
         "其他"
     ]
     property int laserDeviceIndex: 0
-    property bool customProtocolActive: false
     property bool protocolProfileLoading: false
     property string pendingProfileAction: ""
     property int pendingDeviceIndex: -1
@@ -149,16 +146,14 @@ Rectangle {
                         // “其他”只有 JSON 加载成功后才成为新的有效配置。
                         laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
                         protocolProfileDialog.openForDevice("激光导引头")
-                    } else if (index === root.laserDeviceIndex) {
-                        laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
-                    } else if (root.customProtocolActive) {
+                    } else {
+                        // 任一预置设备都使用启动默认协议，必须无条件恢复，
+                        // 不能依赖界面缓存判断“其他”协议是否正在生效。
                         root.pendingProfileAction = "default"
                         root.pendingDeviceIndex = index
                         root.protocolProfileLoading = true
                         laserDeviceComboBox.mycurrentIndex = root.laserDeviceIndex
                         laserData.restoreDefaultProtocolProfile()
-                    } else {
-                        root.laserDeviceIndex = index
                     }
                 }
             }

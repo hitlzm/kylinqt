@@ -9,9 +9,10 @@
 
 ```text
 串口字节流
-  -> JSON 描述的分帧、校验、字段解码
-  -> CanonicalSeekerFrame（厂家无关中间数据）
-  -> LaserData / 后续 ImageData 的语义属性
+  -> 启动/恢复预置设备：软件内置帧解析器
+  -> 用户选择 JSON 后：JSON 分帧、校验、字段解码
+     -> CanonicalSeekerFrame（厂家无关中间数据）
+  -> LaserData / ImageData
   -> 显示、录制、外引导、转台控制
 ```
 
@@ -25,7 +26,8 @@ QML 语义命令
 ```
 
 不采用“解析后重新生成旧软件帧，再让旧解析器解析”的内部闭环。旧
-`laser_recv_frame` 只在回退解析路径中保留，用于配置异常时保障当前设备仍可运行。
+`laser_recv_frame` 和原图像帧解析路径保留为正式启动模式；只有用户主动选择
+JSON 协议后，接收链路才切换到配置化解析器。
 
 ## 已实现
 
@@ -55,30 +57,35 @@ protocols/legacy_image_v1.json
 :/protocols/legacy_laser_v1.json
 ```
 
-可以通过环境变量切换协议文件，便于联调：
+可以通过环境变量指定默认命令编码配置，便于联调：
 
 ```text
 KYLIN_LASER_PROTOCOL_PROFILE=E:\protocols\vendor_a_laser.json
 KYLIN_IMAGE_PROTOCOL_PROFILE=E:\protocols\vendor_a_image.json
 ```
 
-未设置环境变量时，加载顺序为：
+未设置环境变量时，默认命令编码配置的加载顺序为：
 
 1. 可执行文件目录下的 `protocols/legacy_laser_v1.json` 或
    `protocols/legacy_image_v1.json`。
 2. 编译进程序的对应 `:/protocols/...` 默认配置。
 
+程序启动时，图像和激光接收仍使用软件原有的内置解析器。上述 JSON 仅用于
+保持原有控制命令编码；它不会改变启动时的接收格式。
+
 ## 运行时切换
 
 图像导引头和激光导引头的“当前使用设备”下拉框选择“其他”时，会弹出协议
-文件选择框。用户选择 JSON 并确认后：
+文件选择框。用户可选择任意可访问的本地 JSON；该文件无需加入
+`protocols.qrc`。用户选定文件并确认后：
 
 1. 工作线程先在临时对象中完整加载和校验 JSON。
 2. 校验成功后，同时替换该导引头的接收解码器和命令编码器，并清空旧的半包缓存。
 3. 加载失败时继续使用切换前的协议，界面中的设备选择也恢复为原值。
 
 弹窗中点击“退出”不会加载文件，并保持原设备和原协议配置。由“其他”切回
-预置设备时，会重新加载启动时确定的默认协议。
+预置设备时，会清空 JSON 解码器并恢复软件原有解析器；控制命令编码则恢复为
+默认命令配置。
 
 该文件不存在、JSON 错误或字段越界时，程序会记录诊断信息，并回退到原有
 `SerialPortLaser::parseData()`。

@@ -779,7 +779,7 @@ SerialPortImage::SerialPortImage(QObject *parent)
     //, m_circularbuf(200)
 {
     init_crc16_table();
-    loadProtocolProfile();
+    loadDefaultCommandProtocolProfile();
     m_frameWatchTimer = new QTimer(this);
     m_frameWatchTimer->setInterval(Image_FramePollMs);
     m_frameWatchTimer->setTimerType(Qt::CoarseTimer);
@@ -787,19 +787,33 @@ SerialPortImage::SerialPortImage(QObject *parent)
             this, &SerialPortImage::checkImageFrameAlive);
 }
 
-bool SerialPortImage::loadProtocolProfile()
+bool SerialPortImage::loadDefaultCommandProtocolProfile()
 {
     const QString profilePath = defaultProtocolProfileLocation();
-    QString profileId;
+    ProtocolProfile candidate;
     QString error;
-    if (!applyProtocolProfile(profilePath, &profileId, &error)) {
-        m_protocolEnabled = false;
+    if (!ProtocolProfile::loadFromFile(
+                protocolProfileLocalPath(profilePath), &candidate, &error)) {
+        m_defaultCommandProtocolProfile = ProtocolProfile();
+        m_protocolProfile = ProtocolProfile();
+        m_protocolEncoder.setProfile(m_protocolProfile);
+        m_protocolDecoder.clearProfile();
+        m_protocolReceiveEnabled = false;
         emit protocolDiagnostic(
-                    QStringLiteral("配置化图像协议未启用，回退到内置解析器: ") + error);
-        qWarning() << "[protocol-image]" << error;
+                    QStringLiteral("默认发送协议加载失败，图像接收保持内置解析器: ")
+                    + error);
+        qWarning() << "[protocol-image-default]" << error;
         return false;
     }
-    qInfo() << "[protocol-image] loaded" << profileId << "from" << profilePath;
+
+    // 默认 JSON 仅用于维持原有命令编码；接收链路保持内置解析器。
+    m_defaultCommandProtocolProfile = candidate;
+    m_protocolProfile = candidate;
+    m_protocolEncoder.setProfile(m_protocolProfile);
+    m_protocolDecoder.clearProfile();
+    m_protocolReceiveEnabled = false;
+    qInfo() << "[protocol-image-default] command profile" << candidate.id
+            << "from" << profilePath << "; receive uses legacy parser";
     return true;
 }
 
@@ -835,7 +849,7 @@ bool SerialPortImage::applyProtocolProfile(const QString &profileLocation,
     m_protocolProfile = candidate;
     m_protocolDecoder.setProfile(m_protocolProfile);
     m_protocolEncoder.setProfile(m_protocolProfile);
-    m_protocolEnabled = true;
+    m_protocolReceiveEnabled = true;
     m_rxBuffer.clear();
     if (profileId)
         *profileId = m_protocolProfile.id;
@@ -863,7 +877,15 @@ void SerialPortImage::onLoadProtocolProfile(const QString &profileLocation)
 
 void SerialPortImage::onRestoreDefaultProtocolProfile()
 {
-    onLoadProtocolProfile(defaultProtocolProfileLocation());
+    if (timer)
+        timer->stop();
+    m_protocolProfile = m_defaultCommandProtocolProfile;
+    m_protocolEncoder.setProfile(m_protocolProfile);
+    m_protocolDecoder.clearProfile();
+    m_protocolReceiveEnabled = false;
+    m_rxBuffer.clear();
+    emit protocolDiagnostic(QStringLiteral("图像接收已恢复为内置解析器"));
+    emit protocolProfileLoadFinished(true, QString(), QString());
 }
 
 SerialPortImage::~SerialPortImage() {
@@ -912,9 +934,9 @@ void SerialPortImage::onClosePort()  {
 void SerialPortImage::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortImage::onSendCommand(ProtocolCommandRequest request)
 {
-    if (!isOpen() || !m_protocolEnabled || !timer) {
+    if (!isOpen() || !m_protocolEncoder.isConfigured() || !timer) {
         SendLat::discardClick(SendLat::Image);
-        if (!m_protocolEnabled)
+        if (!m_protocolEncoder.isConfigured())
             emit protocolDiagnostic(QStringLiteral("配置化图像协议未启用，命令未发送"));
         return;
     }
@@ -967,7 +989,7 @@ void SerialPortImage::onSendCommand(ProtocolCommandRequest request)
 }
 void SerialPortImage::onReadyRead()
 {
-    if (!m_protocolEnabled) {
+    if (!m_protocolReceiveEnabled) {
         onReadyReadLegacy();
         return;
     }

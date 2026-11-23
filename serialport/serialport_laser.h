@@ -472,10 +472,12 @@ private:
     LaserData *m_laserData = nullptr;
     LaserSendData *m_laserSendData = nullptr;
     ProtocolProfile m_protocolProfile;
+    ProtocolProfile m_defaultCommandProtocolProfile;
     ConfigurableFrameDecoder m_protocolDecoder;
     ProtocolCommandEncoder m_protocolEncoder;
-    bool m_protocolEnabled = false;
-    bool loadProtocolProfile();
+    // 仅用户选择 JSON 后启用；启动和恢复预置设备时使用内置解析器。
+    bool m_protocolReceiveEnabled = false;
+    bool loadDefaultCommandProtocolProfile();
     QString defaultProtocolProfileLocation() const;
     bool applyProtocolProfile(const QString &profileLocation,
                               QString *profileId,

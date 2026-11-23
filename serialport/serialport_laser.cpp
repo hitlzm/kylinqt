@@ -698,7 +698,7 @@ SerialPortLaser::SerialPortLaser(QObject *parent)
     , m_laserSendData(new LaserSendData(nullptr))
     //, m_circularbuf(360)
 {
-    loadProtocolProfile();
+    loadDefaultCommandProtocolProfile();
 }
 
 SerialPortLaser::~SerialPortLaser() {
@@ -707,20 +707,33 @@ SerialPortLaser::~SerialPortLaser() {
     // delete m_laserSendData;
 }
 
-bool SerialPortLaser::loadProtocolProfile()
+bool SerialPortLaser::loadDefaultCommandProtocolProfile()
 {
     const QString profilePath = defaultProtocolProfileLocation();
-    QString profileId;
+    ProtocolProfile candidate;
     QString error;
-    if (!applyProtocolProfile(profilePath, &profileId, &error)) {
-        m_protocolEnabled = false;
+    if (!ProtocolProfile::loadFromFile(
+                protocolProfileLocalPath(profilePath), &candidate, &error)) {
+        m_defaultCommandProtocolProfile = ProtocolProfile();
+        m_protocolProfile = ProtocolProfile();
+        m_protocolEncoder.setProfile(m_protocolProfile);
+        m_protocolDecoder.clearProfile();
+        m_protocolReceiveEnabled = false;
         emit protocolDiagnostic(
-                    QStringLiteral("配置化协议未启用，回退到内置激光解析器: ") + error);
-        qWarning() << "[protocol]" << error;
+                    QStringLiteral("默认发送协议加载失败，激光接收保持内置解析器: ")
+                    + error);
+        qWarning() << "[protocol-default]" << error;
         return false;
     }
 
-    qInfo() << "[protocol] loaded" << profileId << "from" << profilePath;
+    // 默认 JSON 仅用于维持原有命令编码；接收链路保持内置解析器。
+    m_defaultCommandProtocolProfile = candidate;
+    m_protocolProfile = candidate;
+    m_protocolEncoder.setProfile(m_protocolProfile);
+    m_protocolDecoder.clearProfile();
+    m_protocolReceiveEnabled = false;
+    qInfo() << "[protocol-default] command profile" << candidate.id
+            << "from" << profilePath << "; receive uses legacy parser";
     return true;
 }
 
@@ -756,7 +769,7 @@ bool SerialPortLaser::applyProtocolProfile(const QString &profileLocation,
     m_protocolProfile = candidate;
     m_protocolDecoder.setProfile(m_protocolProfile);
     m_protocolEncoder.setProfile(m_protocolProfile);
-    m_protocolEnabled = true;
+    m_protocolReceiveEnabled = true;
     m_rxBuffer.clear();
     if (profileId)
         *profileId = m_protocolProfile.id;
@@ -784,7 +797,15 @@ void SerialPortLaser::onLoadProtocolProfile(const QString &profileLocation)
 
 void SerialPortLaser::onRestoreDefaultProtocolProfile()
 {
-    onLoadProtocolProfile(defaultProtocolProfileLocation());
+    if (timer)
+        timer->stop();
+    m_protocolProfile = m_defaultCommandProtocolProfile;
+    m_protocolEncoder.setProfile(m_protocolProfile);
+    m_protocolDecoder.clearProfile();
+    m_protocolReceiveEnabled = false;
+    m_rxBuffer.clear();
+    emit protocolDiagnostic(QStringLiteral("激光接收已恢复为内置解析器"));
+    emit protocolProfileLoadFinished(true, QString(), QString());
 }
 
 // ── Worker slots：接收主线程 Data 的请求（QueuedConnection）──
@@ -815,9 +836,9 @@ void SerialPortLaser::onClosePort()
 void SerialPortLaser::onScanPorts()  { SerialPort::scanPorts(); emit portsChanged(m_availablePorts); }
 void SerialPortLaser::onSendCommand(ProtocolCommandRequest request)
 {
-    if (!isOpen() || !m_protocolEnabled) {
+    if (!isOpen() || !m_protocolEncoder.isConfigured()) {
         SendLat::discardClick(SendLat::Laser);
-        if (!m_protocolEnabled)
+        if (!m_protocolEncoder.isConfigured())
             emit protocolDiagnostic(QStringLiteral("配置化激光协议未启用，命令未发送"));
         return;
     }
@@ -865,7 +886,7 @@ void SerialPortLaser::onSendCommand(ProtocolCommandRequest request)
 
 void SerialPortLaser::onReadyRead()
 {
-    if (!m_protocolEnabled) {
+    if (!m_protocolReceiveEnabled) {
         onReadyReadLegacy();
         return;
     }
