@@ -19,6 +19,8 @@ Rectangle {
     property string playerObjectName: ""
     property bool magnifierVisible: false
     property bool showHeader: true
+    property int targetBoxWidth: 30
+    property int targetBoxHeight: 30
 
     readonly property var videoPlayerItem: videoPlayer
     readonly property bool streamConnected: _connected && !_stopped
@@ -27,6 +29,23 @@ Rectangle {
                                                && modeController.currentMode === 0
                                                && modeController.exguideSource === 5
                                                && modeController.exguidePeriod > 0
+    readonly property string targetBoxSourceUrl:
+        "rtsp://localhost:8554/live"
+    readonly property bool targetBoxSource:
+        isCcd && videoPlayer.source === targetBoxSourceUrl
+    readonly property real _videoDisplayScale:
+        videoPlayer.frameWidth > 0 && videoPlayer.frameHeight > 0
+        ? Math.min(videoPlayer.width / videoPlayer.frameWidth,
+                   videoPlayer.height / videoPlayer.frameHeight)
+        : 0
+    readonly property real _videoDisplayWidth:
+        videoPlayer.frameWidth * _videoDisplayScale
+    readonly property real _videoDisplayHeight:
+        videoPlayer.frameHeight * _videoDisplayScale
+    readonly property bool targetBoxShown:
+        _targetBoxVisible && targetBoxSource
+    readonly property int targetBoxFrameX: _targetBoxFrameX
+    readonly property int targetBoxFrameY: _targetBoxFrameY
 
     signal magnifierToggleRequested()
     // 只有导引头画面的点击才应转发偏差像素；CCD 由视觉处理链生成目标中心。
@@ -39,6 +58,9 @@ Rectangle {
     property int _retryCount: 0
     readonly property int _maxRetries: 1
     property bool _failureDialogShown: false
+    property bool _targetBoxVisible: false
+    property int _targetBoxFrameX: 0
+    property int _targetBoxFrameY: 0
     property real _lastWatchdogFrameSerial: 0
     property real _lastVideoFrameAt: 0
     readonly property int _streamStallTimeoutMs: 3000
@@ -47,8 +69,11 @@ Rectangle {
     property bool cpuFrameConsumer: ccdInferenceActive
     onCpuFrameConsumerChanged: videoPlayer.setCpuFrameConsumer(cpuFrameConsumer)
     onStreamConnectedChanged: {
-        if (isCcd)
+        if (isCcd) {
             ccdData.setVideoStreamConnected(streamConnected)
+            if (!streamConnected)
+                _targetBoxVisible = false
+        }
     }
 
     // ========== 标题和连接状态 ==========
@@ -120,6 +145,31 @@ Rectangle {
         anchors.topMargin: 2
         anchors.bottom: videoBorder.bottom
         anchors.bottomMargin: 2
+    }
+
+    // 目标框只叠加显示，不写入视频帧，也不参与推理或模板跟踪。
+    Item {
+        id: targetOverlay
+        anchors.fill: videoPlayer
+        clip: true
+        visible: targetBoxSource
+        z: 1
+
+        Rectangle {
+            visible: root.targetBoxShown
+            width: root.targetBoxWidth * root._videoDisplayScale
+            height: root.targetBoxHeight * root._videoDisplayScale
+            x: (videoPlayer.width - root._videoDisplayWidth) / 2
+               + (root._targetBoxFrameX - root.targetBoxWidth / 2)
+                 * root._videoDisplayScale
+            y: (videoPlayer.height - root._videoDisplayHeight) / 2
+               + (root._targetBoxFrameY - root.targetBoxHeight / 2)
+                 * root._videoDisplayScale
+            color: "transparent"
+            border.color: "#00FF00"
+            border.width: 2
+            antialiasing: true
+        }
     }
 
     Rectangle {
@@ -243,6 +293,7 @@ Rectangle {
         _connected = false
         _stopped = false
         _isPlaying = false
+        _targetBoxVisible = false
         videoPlayer.ccdSource = isCcd
         videoPlayer.stop()
         // 相同 URL 重连时先清空，确保 mpv 强制重新加载。
@@ -262,6 +313,7 @@ Rectangle {
         _connected = false
         _stopped = true
         _isPlaying = false
+        _targetBoxVisible = false
         stopOverlay.visible = true
     }
 
@@ -270,6 +322,7 @@ Rectangle {
         _connected = false
         _stopped = false
         _isPlaying = false
+        _targetBoxVisible = false
         stopOverlay.visible = true
         if (_retrying)
             return
@@ -350,6 +403,7 @@ Rectangle {
             streamWatchdog.stop()
             root._connected = false
             root._isPlaying = false
+            root._targetBoxVisible = false
             stopOverlay.visible = true
             if (wasConnected) {
                 root.handleConnectionFailure(
@@ -370,6 +424,7 @@ Rectangle {
             console.log(root.paneTitle + " VlcVideo：已停止")
             streamWatchdog.stop()
             root._isPlaying = false
+            root._targetBoxVisible = false
             stopOverlay.visible = true
         }
 
@@ -377,6 +432,14 @@ Rectangle {
             console.log(root.paneTitle + " 偏差像素请求: (" + frameX + ", " + frameY + ")")
             if (!root.isCcd)
                 root.deviationPixelRequested(frameX, frameY)
+        }
+
+        onFrameClicked: {
+            if (!root.targetBoxSource)
+                return
+            root._targetBoxFrameX = frameX
+            root._targetBoxFrameY = frameY
+            root._targetBoxVisible = true
         }
 
         onErrorReadingPixel: {

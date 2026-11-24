@@ -192,6 +192,11 @@ ApplicationWindow {
                 id: ccdMagnifierOverlay
                 titleText: "视频2放大"
                 frameSource: myvideo.ccdVideoPlayerItem
+                targetBoxVisible: myvideo.ccdTargetBoxShown
+                targetBoxFrameX: myvideo.ccdTargetBoxFrameX
+                targetBoxFrameY: myvideo.ccdTargetBoxFrameY
+                targetBoxFrameWidth: myvideo.ccdTargetBoxWidth
+                targetBoxFrameHeight: myvideo.ccdTargetBoxHeight
                 x: parent ? Math.max(16, parent.width - width - 16) : 16
                 y: parent ? Math.max(56, (parent.height - height) / 2 + 24) : 56
                 onVisibleChanged: myvideo.ccdMagnifierVisible = visible

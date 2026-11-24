@@ -22,6 +22,11 @@ Rectangle {
     readonly property bool visibleStreamPlaying: sourceGuide.checked
                                                  ? guidePane.streamPlaying
                                                  : ccdPane.streamPlaying
+    readonly property bool ccdTargetBoxShown: ccdPane.targetBoxShown
+    readonly property int ccdTargetBoxFrameX: ccdPane.targetBoxFrameX
+    readonly property int ccdTargetBoxFrameY: ccdPane.targetBoxFrameY
+    readonly property int ccdTargetBoxWidth: ccdPane.targetBoxWidth
+    readonly property int ccdTargetBoxHeight: ccdPane.targetBoxHeight
 
     signal guideMagnifierToggleRequested()
     signal ccdMagnifierToggleRequested()
@@ -146,6 +151,8 @@ Rectangle {
             showHeader: false
             z: sourceCCD.checked ? 2 : 1
             magnifierVisible: root.ccdMagnifierVisible
+            targetBoxWidth: 30
+            targetBoxHeight: 30
             onMagnifierToggleRequested: root.ccdMagnifierToggleRequested()
         }
     }
