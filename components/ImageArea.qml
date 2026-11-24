@@ -4,6 +4,7 @@ Item {
     id: root
     width: 1200
     height: 950
+    property alias waveGateSize: recvArea.waveGateSize
 
     ImageSendArea {
         id: sendArea

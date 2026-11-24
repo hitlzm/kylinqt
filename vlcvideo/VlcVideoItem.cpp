@@ -956,8 +956,7 @@ void VlcVideoItem::setCcdDisplayRotationEnabled(bool on)
 void VlcVideoItem::refreshDisplayRotation()
 {
     const qreal nextDegrees =
-            m_ccdSource.load()
-            && m_ccdDisplayRotationEnabled
+            m_ccdDisplayRotationEnabled
             && m_source == kCcdRotationUrl
             ? kCcdDisplayRotationDegrees
             : 0.0;

@@ -32,7 +32,7 @@ Rectangle {
     readonly property string targetBoxSourceUrl:
         "rtsp://localhost:8554/live"
     readonly property bool targetBoxSource:
-        isCcd && videoPlayer.source === targetBoxSourceUrl
+        videoPlayer.source === targetBoxSourceUrl
     readonly property real _videoDisplayScale:
         videoPlayer.frameWidth > 0 && videoPlayer.frameHeight > 0
         ? Math.min(videoPlayer.width / videoPlayer.frameWidth,
@@ -69,11 +69,10 @@ Rectangle {
     property bool cpuFrameConsumer: ccdInferenceActive
     onCpuFrameConsumerChanged: videoPlayer.setCpuFrameConsumer(cpuFrameConsumer)
     onStreamConnectedChanged: {
-        if (isCcd) {
+        if (isCcd)
             ccdData.setVideoStreamConnected(streamConnected)
-            if (!streamConnected)
-                _targetBoxVisible = false
-        }
+        if (!streamConnected)
+            _targetBoxVisible = false
     }
 
     // ========== 标题和连接状态 ==========

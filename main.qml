@@ -137,6 +137,7 @@ ApplicationWindow {
                         // --- 第一个页面 ---
                         Item {
                             ImageArea {
+                                id: imageArea
                                 anchors.fill: parent
                             }
                         }
@@ -155,6 +156,7 @@ ApplicationWindow {
                 anchors.top:parent.top
                 anchors.left:dyt.right
                 anchors.leftMargin: 5
+                targetBoxSize: Math.round(imageArea.waveGateSize)
                 onGuideMagnifierToggleRequested: {
                     guideMagnifierOverlay.visible = !guideMagnifierOverlay.visible
                 }
@@ -182,6 +184,11 @@ ApplicationWindow {
                 id: guideMagnifierOverlay
                 titleText: "视频1放大"
                 frameSource: myvideo.guideVideoPlayerItem
+                targetBoxVisible: myvideo.guideTargetBoxShown
+                targetBoxFrameX: myvideo.guideTargetBoxFrameX
+                targetBoxFrameY: myvideo.guideTargetBoxFrameY
+                targetBoxFrameWidth: myvideo.guideTargetBoxWidth
+                targetBoxFrameHeight: myvideo.guideTargetBoxHeight
                 x: parent ? 16 : 16
                 y: parent ? Math.max(56, (parent.height - height) / 2 - 24) : 56
                 onVisibleChanged: myvideo.guideMagnifierVisible = visible

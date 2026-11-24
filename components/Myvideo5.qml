@@ -22,6 +22,11 @@ Rectangle {
     readonly property bool visibleStreamPlaying: sourceGuide.checked
                                                  ? guidePane.streamPlaying
                                                  : ccdPane.streamPlaying
+    readonly property bool guideTargetBoxShown: guidePane.targetBoxShown
+    readonly property int guideTargetBoxFrameX: guidePane.targetBoxFrameX
+    readonly property int guideTargetBoxFrameY: guidePane.targetBoxFrameY
+    readonly property int guideTargetBoxWidth: guidePane.targetBoxWidth
+    readonly property int guideTargetBoxHeight: guidePane.targetBoxHeight
     readonly property bool ccdTargetBoxShown: ccdPane.targetBoxShown
     readonly property int ccdTargetBoxFrameX: ccdPane.targetBoxFrameX
     readonly property int ccdTargetBoxFrameY: ccdPane.targetBoxFrameY
@@ -31,6 +36,7 @@ Rectangle {
     signal guideMagnifierToggleRequested()
     signal ccdMagnifierToggleRequested()
 
+    property int targetBoxSize: 30
     property bool guideMagnifierVisible: false
     property bool ccdMagnifierVisible: false
     ButtonGroup { id: videoSourceGroup }
@@ -133,6 +139,8 @@ Rectangle {
             showHeader: false
             z: sourceGuide.checked ? 2 : 1
             magnifierVisible: root.guideMagnifierVisible
+            targetBoxWidth: root.targetBoxSize
+            targetBoxHeight: root.targetBoxSize
             onMagnifierToggleRequested: root.guideMagnifierToggleRequested()
             onDeviationPixelRequested: {
                 imageSendData.relayDeviationPixel(
@@ -151,8 +159,8 @@ Rectangle {
             showHeader: false
             z: sourceCCD.checked ? 2 : 1
             magnifierVisible: root.ccdMagnifierVisible
-            targetBoxWidth: 30
-            targetBoxHeight: 30
+            targetBoxWidth: root.targetBoxSize
+            targetBoxHeight: root.targetBoxSize
             onMagnifierToggleRequested: root.ccdMagnifierToggleRequested()
         }
     }
