@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.3
 import "."
-import TaoQuick 1.0
+import taoQuick 1.0
 
 Window {
     id: popup

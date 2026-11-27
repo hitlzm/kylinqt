@@ -3,7 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.12
-import TaoQuick 1.0
+import taoQuick 1.0
 
 Popup {
     id: root

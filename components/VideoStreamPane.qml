@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import VlcVideo 1.0
-import TaoQuick 1.0
+import taoQuick 1.0
 import "./"
 
 // 单路视频面板：连接状态、重连和断流检测全部按实例隔离。
